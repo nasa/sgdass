@@ -1,0 +1,80 @@
+model name      : AMD Ryzen Threadripper 3990X 64-Core Processor
+64    cores
+256Gb memory
+================================================================
+ Date: 2021.07.25-22:41:23
+ Dimension:          500  Number of iterations:           10
+INVS Dimension:    500 Wall time:        0.017687 s  CPU time:        0.017070
+INVS Dimension:    500 Wall time:        0.015112 s  CPU time:        0.014743
+INVS Dimension:    500 Wall time:        0.014831 s  CPU time:        0.014542
+INVS Dimension:    500 Wall time:        0.015044 s  CPU time:        0.014681
+INVS Dimension:    500 Wall time:        0.014714 s  CPU time:        0.014427
+INVS Dimension:    500 Wall time:        0.014809 s  CPU time:        0.014525
+INVS Dimension:    500 Wall time:        0.014849 s  CPU time:        0.014568
+INVS Dimension:    500 Wall time:        0.014834 s  CPU time:        0.014510
+INVS Dimension:    500 Wall time:        0.014804 s  CPU time:        0.014490
+INVS Dimension:    500 Wall time:        0.014945 s  CPU time:        0.014611
+ Date: 2021.07.25-22:41:23
+ Dimension:         1000  Number of iterations:           10
+INVS Dimension:   1000 Wall time:        0.068953 s  CPU time:        0.065804
+INVS Dimension:   1000 Wall time:        0.066866 s  CPU time:        0.064125
+INVS Dimension:   1000 Wall time:        0.067882 s  CPU time:        0.065039
+INVS Dimension:   1000 Wall time:        0.068373 s  CPU time:        0.065467
+INVS Dimension:   1000 Wall time:        0.068516 s  CPU time:        0.065779
+INVS Dimension:   1000 Wall time:        0.068364 s  CPU time:        0.065948
+INVS Dimension:   1000 Wall time:        0.067967 s  CPU time:        0.066025
+INVS Dimension:   1000 Wall time:        0.067982 s  CPU time:        0.065916
+INVS Dimension:   1000 Wall time:        0.068083 s  CPU time:        0.066060
+INVS Dimension:   1000 Wall time:        0.067830 s  CPU time:        0.065728
+ Date: 2021.07.25-22:41:24
+ Dimension:         4096  Number of iterations:           10
+INVS Dimension:   4096 Wall time:        2.865677 s  CPU time:        2.827215
+INVS Dimension:   4096 Wall time:        2.863561 s  CPU time:        2.827545
+INVS Dimension:   4096 Wall time:        2.872589 s  CPU time:        2.837324
+INVS Dimension:   4096 Wall time:        2.869565 s  CPU time:        2.832792
+INVS Dimension:   4096 Wall time:        2.876221 s  CPU time:        2.839406
+INVS Dimension:   4096 Wall time:        2.872131 s  CPU time:        2.835598
+INVS Dimension:   4096 Wall time:        2.886080 s  CPU time:        2.849649
+INVS Dimension:   4096 Wall time:        2.885399 s  CPU time:        2.847023
+INVS Dimension:   4096 Wall time:        2.885414 s  CPU time:        2.848036
+INVS Dimension:   4096 Wall time:        2.884582 s  CPU time:        2.847812
+ Date: 2021.07.25-22:41:52
+ Dimension:        10000  Number of iterations:            2
+INVS Dimension:  10000 Wall time:       11.591556 s  CPU time:       11.421605
+INVS Dimension:  10000 Wall time:       11.684030 s  CPU time:       11.516301
+ Date: 2021.07.25-22:42:16
+ Dimension:        20000  Number of iterations:            2
+INVS Dimension:  20000 Wall time:       52.120656 s  CPU time:       51.645834
+INVS Dimension:  20000 Wall time:       52.577094 s  CPU time:       52.083971
+ Date: 2021.07.25-22:44:02
+ Dimension:        30000  Number of iterations:            2
+INVS Dimension:  30000 Wall time:      132.626253 s  CPU time:      131.517280
+INVS Dimension:  30000 Wall time:      129.675990 s  CPU time:      128.424760
+ Date: 2021.07.25-22:48:27
+ Dimension:        40000  Number of iterations:            2
+INVS Dimension:  40000 Wall time:      248.740076 s  CPU time:      246.167361
+INVS Dimension:  40000 Wall time:      250.494641 s  CPU time:      247.534667
+ Date: 2021.07.25-22:56:50
+ Dimension:        50000  Number of iterations:            1
+INVS Dimension:  50000 Wall time:      372.877304 s  CPU time:      368.830202
+ Date: 2021.07.25-23:03:11
+ Dimension:        60000  Number of iterations:            1
+INVS Dimension:  60000 Wall time:      558.976569 s  CPU time:      554.695005
+ Date: 2021.07.25-23:12:41
+ Dimension:        70000  Number of iterations:            1
+INVS Dimension:  70000 Wall time:      902.474989 s  CPU time:      894.068611
+ Date: 2021.07.25-23:27:57
+ Dimension:        80000  Number of iterations:            1
+INVS Dimension:  80000 Wall time:     1157.915826 s  CPU time:     1147.971188
+ Date: 2021.07.25-23:47:32
+ Dimension:        90000  Number of iterations:            1
+INVS Dimension:  90000 Wall time:     1490.136714 s  CPU time:     1476.326433
+ Date: 2021.07.26-00:12:45
+ Dimension:       100000  Number of iterations:            1
+INVS Dimension: 100000 Wall time:     1920.656636 s  CPU time:     1903.534090
+ Date: 2021.07.26-00:45:13
+ Dimension:       150000  Number of iterations:            1
+INVS Dimension: 150000 Wall time:     5611.719376 s  CPU time:     5564.739513
+ Date: 2021.07.26-02:19:47
+ Dimension:       200000  Number of iterations:            1
+INVS Dimension: 200000 Wall time:    11566.606186 s  CPU time:    11481.333268

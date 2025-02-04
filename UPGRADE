@@ -1,0 +1,41 @@
+How to upgrade existing installation of SGDASS
+==============================================
+
+1) Check that your sgdass configuration file is not in /progs/sgdass directory.
+   If your configuration file is there, please copy it to /cont/
+
+2) Copy new tar-ball into /progs
+
+3) rm -fR /progs/sgdass
+
+4) cd /progs/ ; tar -xvf sgdass-YYYYMMDD.tar
+
+
+5) /progs/sgdass/sgdass_update.py MY_SGDASS_CONFIG_FILE 
+
+6) Special instruction for the first if you previous version is older than 2024.02.26:
+
+   Update definition of package petools (add a line --with-pgplot_tarball):
+
+   OLD:
+
+           options:     --prefix=${prefix}                       \
+                        --with-blas="-L${prefix}/lib -lopenblas" \
+                        --bits=64                                \
+                        --with-zlib=${prefix}                    \
+                        --with-readline=${prefix}                \
+                        --with-ncurses=${prefix}                 \
+                        CC=${gcc}                                \
+                        FC=${gfortran}
+
+    NEW:
+           options:     --prefix=${prefix}                       \
+                        --with-blas="-L${prefix}/lib -lopenblas" \
+                        --bits=64                                \
+                        --with-zlib=${prefix}                    \
+                        --with-readline=${prefix}                \
+                        --with-ncurses=${prefix}                 \
+                        --with-pgplot_tarball=${sgdass_root}/pgplot5.2.tar.gz \
+                        CC=${gcc}                                \
+                        FC=${gfortran}
+

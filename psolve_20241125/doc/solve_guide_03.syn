@@ -1,0 +1,536 @@
+                Synopsis of BATCH control language (   )
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
+$SETUP
+   {DEFAULTS [YES or NO]}
+   SOLUTION    [COMPLETE or FORWARD or BACK or GLOBAL_ONLY or INDEPENDENT or
+                SUPPRESS{ION} or *SUBTRACT]
+   CGM         [NONE or input_name] {output_name}
+   {MERGE_CGM  [NONE or (input_file )... ]
+      .
+      .
+      .                              }
+   ARC_FILES  {SAVE} [NONE or 0 or [dir_1 [0 or dir_2 [0 or dir_3]]]
+   ID          [60 characters]
+   {TRAIN [YES or NO GLO_PARLIM <number> INC_PARLIM <number>]}
+   {SORT  {NO  or  {YES}  STATIONS [NO or ALPHABET or LONGITUDE]
+                          SOURCES  [NO or ALPHABET or RIGHT_ASCENSION] } }
+   {USER_PROGRAM [NONE or NAME {USER_BUFFER $STRING$}] }
+   {USER_PARTIALS    [NONE or PROGRAM_NAME] }
+   {USER_CONSTRAINTS     [NONE or PROGRAM_NAME] }
+   {WEIGHTS  [NO or IN or (  [USE or REQUIRE or MAKE or APPEND]
+                           [weight_file or (#NUM weight_file ...) ]
+                           { [BY_SITE or BY_BASELINE or BY_ARC or DEFAULT] }
+                           { ALGORITHM [MYWAY or UPWEI or UPWEI_OPT or
+                             (ELIM paru_file)]     } ) ] }
+   {SOURCE_WEIGHTS [NO or ( [USE or REQUIRE] source_weight_file] ) }
+   {ELEVATION_DEPENDENT_NOISE [NO or [YES el_dep_noise_file] or
+                                     ([GLOBAL global_sigma]
+                                      {[STATION_FILE file_name]}) or
+                                      [MULTI_GLOB value]]}
+   {GPS_TEC_NOISE [NO or [YES gps_tec_noise_file] [NO_IONO_CONTRIB]}
+   {USER_TAG  [user_inits] SOL_TAG   [solution_tag]}
+   {SNR_MIN [NO or [SNR_MIN_X SNR_MIN_S]]}
+   {FAST_MODE [NONE or B3D or B1B3D]}
+   {FAST_DBG  [NONE or APPEARANCE  or PRINTOUT or TIMER or MONITOR]}
+   {FAST_COV  [GLOBAL or LOCAL or SEGMENTED or FULL]}
+   {SAVING_RATE  <rate>}
+   {EMULATION [0 or 9612]}
+   {SUPMET       [UND or PRE98 or PRE91 or COMB1 or SNGBA or META]}
+   {QUALCODE_LIMIT [1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9]}
+   SINGULARITY_CHECK [NONE or ACTION [NONE or WARINING or REPARAMETERIZE or
+                                      SKIP or STOP]
+                              SOUMIN [NO or <non-negative_integer>]
+                              STAMIN [NO or <non-negative_integer>]
+                              BASMIN [NO or <non-negative_integer>]]
+   {DECIMATION [NO or
+                      [CREATE  directory [ASCII or BINARY]] or
+                      [REQUIRE directory param] or
+                      [USE     directory param]
+               ]
+   {THEORETICAL_DELAY_FILE [NO or
+                      [DATEBASE database_name] or
+                      [IGNORE] or
+                      [UPDATE  DIRECTORY directory_name] or
+                      [USE     DIRECTORY directory_name] or
+               ]
+    EXTERNAL_IONO_PATH_DELAY {NONE or ([GEN or LOAD or USE] ionov_directory]
+   {WARNING [NO or ON or OFF]}
+   {APPLY [IMPORT NO]}
+   {name values}
+   {name}
+$FLAGS
+   SOURCES         [NO or YES or IN] {REF_EPOCH epoch} {src_comp}
+                   [ref_source or PICK or
+                    EXCEPT ([src_comp] source ...\) }
+   {PROPER_MOTIONS [NO or YES] {src_comp} {EXCEPT ([src_comp] source ...\) }
+ 
+   STATIONS    [NO or YES] {REF_EPOCH epoch} {sta_comp} {D}
+               [ref_station or PICK or
+               {EXCEPT ([sta_comp] station) ...\) ...}]
+   VELOCITIES  [YES or NO] {sta_comp}
+               {EXCEPT ([sta_comp] station) ...\) }
+   {HARMONIC_POS
+    [NONE  or
+     @file_name or
+               (NAME (name_of_harmonic)
+                STATION   [@file_name  or (station ...)]
+                PHASE     (value_in_rad)
+                FREQUENCY (value_in_rad/s)
+                NNT_CNS_SIGMA  (sigma_of_constraint) \
+                NNR_CNS_SIGMA  (sigma_of_constraint)  \
+               ) ...
+              )
+ 
+    ] ...
+   }
+  {SPLINE_POS
+    [ NONE or
+      @file_name or
+      STATION (station_name)
+      DEGREE  (degree_value)
+      [ NODE    (epoch)  MULT (multiplicity) ]...
+      CNS_STA_SIGMA                 (sigma_of_constraint)
+      CNS_VEL_SIGMA                 (sigma_of_constraint)
+      CNS_DER_SIGMA    (derivative) (sigma_of_constraint)
+    ] ...
+  }
+   ATMOSPHERES [NO or IN or FORCE or
+               [(MOST interval_in_minutes) or
+                (AUTO interval_in_minutes {EXCEPT NO {station} ...\})] ]
+   CLOCKS      {MAX_DEGREE [IN or ([AUTO or MOST] [1 or 2])]}
+                INTERVALS  [IN or or NO or
+                          ([FORCE or AUTO or MOST] interval_in_minutes)]
+ 
+  *CLOCKS                    [DEFAULT or
+          ([FORCE or AUTO or PICK or MOST] interval_in_minutes)]
+   UT1/PM      NO or
+           [(POLYNOMIAL {OFFSET xyu_comp} {RATE xyu_comp} {2ND_ORDER xyu_comp}
+                        {START or END or MIDNIGHT or NOON or MIDDLE or
+                         DAYOFTIME_EPOCH time or EPOCH date }) or
+            (SEGMENTS_G.RATE {INTERVAL int_in_min
+               PM_RATE_CONSTRAINT constraint_pm
+               UT_RATE_CONSTRAINT constraint_ut} }  ) or
+            (SEGMENTS_ONLY {INTERVAL wob_comp
+               PM_RATE_CONSTRAINT constraint_pm
+               UT_RATE_CONSTRAINT constraint_ut
+               {EOP_FILE NONE or RESET or APPEND} } ) or
+            (SINE_STYLE  PM_RATE_CONSTRAINT constraint_pm
+               UT_RATE_CONSTRAINT constraint_ut) ]
+ 
+   *UT1/PM      [YES or NO or
+                    (WOBBLE [({OFFSET wob_comp {RATE wob_comp}}) or (eop_type
+                {int_in_hrs constraint})] UT1 [({OFFSET ut1_comp
+                    {RATE ut1_comp}}) or (eop_type {int_in_hrs constraint})]
+                {OFF or APPEND or RESET})] {MIDDLE}
+   NUTATION        [NO or OFFSET or XY_OFFSET ]
+   PRECESSION      [NO or YES]
+  {ERM
+    [ NONE or
+      DEGREE    E1  degree
+      DEGREE    E2  degree
+      DEGREE    E3  degree
+      SPAN_DAYS E1  time_interval
+      SPAN_DAYS E2  time_interval
+      SPAN_DAYS E3  time_interval
+      DATE_BEG  start_date
+      DATE_END  end_date
+      CNS_DER_SIGMA  E1  order  sigma
+      CNS_DER_SIGMA  E2  order  sigma
+      CNS_DER_SIGMA  E3  order  sigma
+    ]
+  }
+  {HEO
+    [ NONE or
+      ( YES REF_EPOCH reference_epoch \
+        (
+          W name phase frequency  acceleration
+                 e12_est_flag     e3_est_flag
+                 e12_cns_flag     e3_cns_flag
+                 e12_vel_est_flag e3_vel_est_flag
+                 e12_vel_cns_flag e3_vel_cns_flag \ ...
+        )
+        (
+          C name_1 real_ampl_1 image_ampl_1  name_2 real_ampl_2 image_ampl_2
+        )
+        (
+          CNS constraint_name SIGMA sigma_value )
+        )
+      )
+    ]
+  }
+   {GRADIENTS      [(YES <interval_in_hours> {EXCEPT NO station ...\}) or
+                    (NO {EXCEPT YES <interval_in_hours> station ...\})]}
+   {HI_FREQ_EOP    [NO or (YES  file_name)]}
+   RELATIVITY      [NO or YES]
+   {AXIS           [NO or YES] {EXCEPT (station ...\)}}
+   BASELINE_CLOCKS [NO or YES or IN]
+   IONOSPHERE_SCALE [NO or SES or STA or BAS]
+   STRUCTURE_ADMITTANCE [NO or
+                            ([GLOBL or LOCAL]
+                             [YES or ALL or NO]
+                             {EXCEPT source1 source2 ...})
+                        ]
+$OUTPUT
+   RESET        [YES or NO]
+   FORWARD      [YES or NO or LAST or number_of_sessions]
+   BASELINES    [YES or NO]
+   MINIMUM      [YES or NO]
+   *SCREEN      [YES or NO]
+   *COVARIANCES [NO or
+                       (YES [ALL or BY_SESSION or CGM or (dbname ver)]
+                            [STA or NUT or EOP or ALL or SOU])]
+   {CORRELATIONS [NO or YES FORMAT [ASCII or BINARI]
+                    [{ GLO_GLO   PARAM_INCLUDE <par_filename>
+                                {PARAM_EXCLUDE <par_filename>} }
+                     { GLO_LOC   PARAM_INCLUDE <par_filename>
+                                {PARAM_EXCLUDE <par_filename>}}
+                     { LOC_LOC   PARAM_INCLUDE <par_filename>
+                                {PARAM_EXCLUDE <par_filename>}}
+                     { CROSS_LOC PARAM_INCLUDE <par_filename>
+                                {PARAM_EXCLUDE <par_filename>}}
+                                 SES_INCLUDE   <ses_filename>
+                                {SES_EXCLUDE   <ses_filename>}}
+                    ]
+                  ]
+   {STATION_TABLE [NO or YES ]}
+   {POS_ELLIPSES  [NO or YES]}
+   {MOD_FILES     [YES or NO]}
+   {RESIDUALS     [NONE or file_name]}
+   {MINIMIZE_SIGMAS     [YES or NO]}
+   {SINEX               [ NO or
+                           [ YES
+                             FORMAT_VERSION               value
+                             ALLOW_OVERWRITE              [YES or NO]
+                             GLOBAL                       [YES or NO]
+	                     LOCAL                        [YES or NO]
+                             SEGMENTED                    [YES or NO]
+                             ESTIMATES                    [YES or NO]
+                             COVARIANCES                  [YES or NO]
+                             CONSTRAINTS                  [YES or NO]
+                             DECOMPOSED_NORMAL_EQUATIONS  [YES or NO]
+                             ACKNOWLEDGMENTS_FILE         <input_file_name>
+                             COMMENTS_FILE                <input_file_name>
+                             INCLUDE_PARAM                <input_file_name>
+                             EXCLUDE_PARAM                <input_file_name>
+                             OUTPUT_FILE                  value
+                            ]
+                         ]
+   *{NORMAL_MATRIX      [NO or YES or ZERO]}
+   {SEG_OUTPUT          [YES or NO]}
+   *{MAPPED_EOP_OUTPUT  [YES <time_epoch> or NO]}
+   *{APRIORI_ZENDEL     [NO or YES]}
+   {CRES_EMULATION [199804 or 200308 or NO]}
+   {LISTING_OPTIONS
+        SRC_STAT  [PRE2004 or SHORT or LONG or POST2021]
+        SEG_STYLE [PRE2005 or POST2005 ]
+   }
+   {OUTPUT.IONOSPHERIC_MODEL [NO or ]
+                       COLLECT         [YES or NO]
+                       BIAS_COMPUTE    [YES or NO]
+                       REGR_COMPUTE    [YES or NO]
+                       DB_UPDATE       [YES or NO]
+                       IONO_INFO_DIR   <ionosphere_info_dir_name>
+                       IONO_DTEC_DIR   <dtec_dir_name>
+                       IONO_ADDW_DIR   <aditive_weight_dir_name>
+                       IONO_DEL_DIR    <delay_dir_name>
+                       IONO_NOI_DIR    <noise_dir_name>
+                       BCL_FIL         <baseline_depenedent_clock_file>
+                       BRK_FIL         <clock_break_file>
+                       GIM_MODE        <value>
+                       GIM_DEG         <value>
+                       GIM_TIM_STEP    <value>
+                       GIM_SCALE       <value>
+                       GIM_SEED        <value>
+                       GIM_VERB        <value>
+                      }
+   {NRD_TABLE [YES or NO]}
+   {CHI_SQUARE_TABLE [YES or NO]}
+$CARRY
+   STATIONS     [YES or NO] {sta_comp} {EXCEPT (station ...\)}
+   SOURCES      [YES or NO] {EXCEPT (source ...\)}
+   {AXIS        [YES or NO]}
+$DATA
+   SOURCES      [YES or NO] {EXCEPT (source ...\)}
+   STATIONS     [YES or NO] {EXCEPT (station ...\)}
+   *{BASELINES  [YES or NO] {EXCEPT (<station-station> ... \)}}
+   TYPE      [GROUP_DELAYS_AND_RATES or GROUP_DELAYS_ONLY or
+              PHASE_DELAYS_AND_RATES or PHASE_DELAYS_ONLY or
+              GRPRAT or PHSRAT or SNBRAT or GRPONL or PHSONL or
+              SNBONL or RATONL or  G_GXS or PX_GXS or PS_GXS or
+               PX_GX or  PX_GS or  PS_GX or  PS_GS or  P_PXS or
+                  GX or     GS or     PX or     PS]
+   {ELEVATION cutoff {EXCEPT cutoff (station ...\) {cutoff (station...\) ...}}}
+   {WVR_MASK [NO or mask {EXCEPT mask (station ...\) {mask (station...\) ...}}]}
+   *{EVERY [NO or (<N>  START  <M>)]}
+   NORATE_FLAG [NO or YES]
+$CALIBRATIONS
+  {ION     [ON or OFF or IN]}
+  (KEEP    [NO or <calibration_name>]) ...
+  (ENABLE  [NO or <calibration_name>]) ...
+  (DISABLE [NO or <calibration_name>]) ...
+  *DEFAULT
+   *{[AVAILABLE or (AVAILABLE corfile_display_name ...\)]}
+   *{(corfile_display_name [ON or OFF or IN]
+                          {[ALL or NONE] {EXCEPT station ...\}}) ...}
+   *{(GROUP corfile_display_name ...
+            [(PICK DEFAULT) or
+            ((PICK corfile_display_name ...)
+              {{ELSE corfile_display_name ...} ...}
+                {ELSE DEFAULT} )]
+                {STATIONS {[ALL or NONE] {EXCEPT station ...\}}} \) ...}
+   *{(USE corfile_display_name FOR corfile_display_name)        ...}
+$PARTIALS
+   {SET} <partial_name> {ON}
+$CONTRIBUTIONS
+  ({SET} [NO or NONE or IN or <contribution_name> ...] )
+$MODE_CALIBRATIONS
+  ({SET} [NO or NONE or IN or <mode_calibration_name> ...] ... )
+$MAPPING
+   STATIONS        [NONE or file_name]
+   PLATE_MODEL     [NONE or ( [AM0-2 or NUVEL]
+                              {REF_DATE <date>}
+                             *{SCALE scaling_factor} *{FIX plate_name} ) ]
+   VELOCITIES      [NONE or file_name] {REF_DATE <date>}
+   SOURCES         [NONE or file_name]
+   EARTH_ORIENTATION  [NONE or file_name] {[LIN or CUB or SPL]}
+                     {[UT1R or UT1S or NO_ZONAL]}
+   NUTATION_SERIES    [NONE or file_name]
+   SPLINE_DISPLACEMENTS
+     [NONE or
+      (BSP (file_name))...
+     ]
+   *{EPISODIC_MOTION   [NONE or file_name]}
+   {ECCENTRICITY      [NONE or file_name]}
+   {HI_FREQ_EOP      [NONE or file_name]}
+   {HARMONIC_EOP    [NONE or file_name]}
+   {PRESSURE_LOADING [NONE or file_name]}
+   {PIECE_WISE_STA   [NONE or file_name]}
+   {AXIS_OFFSET      [NONE or file_name]}
+   {SITPL            [file_name]}
+   {METRIC_TENSOR [NONE or IERS92 or GRS or TOPOCNTR]}
+   {POSITION_VARIATIONS  [NONE or
+                        (external_file [HARMONIC_MODEL or TIME_SERIES]
+                         [LINEAR or SPLINE] [REQUIRED or IF_AVAILABLE] ...) ]
+   ERM  [NONE or erm_file]
+   VTD_CONF [NONE or vtd_file]
+   EXTERNAL_TRP_DELAY [NONE or {[REQUIRE OR USE] DIRECTORY {directory_name} ]}]
+  ANTENNA_THERMAL      [NONE or (MODEL  model_use  model_file_name  INSITU
+                                [NONE or insitu_file_name)]
+$CONSTRAINTS
+   {EARTH_ORIENTATION [ IN or NO or
+                        ( YES {SIGMA x_s_mas y_s_mas u_s_ms} *{FACTOR sigfact}
+                          *{RATES
+                            [NO or { SIGMA x_s_mas/day y_s_mas/day u_s_ms/day}]}
+                        ) ]
+   *{NUTATION         [YES or NO] {SIGMA} {psi_mas eps_mas}}
+   {ATMOSPHERES [IN or NO or
+                (WEAKEST constraint_in_ps/hour) or
+                *(MOST constraint_in_ps/hour) or
+                (YES constraint_in_ps/hour
+                {EXCEPT constraint_in_ps/hour station})]}
+   {CLOCKS      [IN or NO or
+                 (WEAKESTconstraint_in_parts_in_1.d-14)
+                *(MOST constraint_in_parts_in_1.d-14)
+                    or
+                      (YES constraint_in_parts_in_1.d-14
+                      {EXCEPT constraint_in_parts_in_1.d-14 station})]}
+   *{GRADIENTS        [NO or (YES  <offset_const_mm>  <rate_const_mm/day>)]}
+   IONOSPHERE_SCALE [NO or (YES SIGMA value)]
+   {STATIONS   [NO
+                   or
+                      (XYZ [NO
+                               or
+                                  (NO  SIGMA <x_meter> <y_meters> <z_meter>
+                                             {EXCEPT (station ...\)} )
+                               or
+                                  (YES SIGMA <x_meter> <y_meters> <z_meter>
+                                             {EXCEPT (station ...\)} )
+                           ] )
+                      (UEN [NO
+                                or
+                                  (NO  SIGMA <u_meter> <e_meters> <n_meter>
+                                             {EXCEPT (station ...\)} )
+                                or
+                                  (YES SIGMA <u_meter> <e_meters> <n_meter>
+                                             {EXCEPT (station ...\)} )
+                           ] )
+               ] }
+   {VELOCITIES [NO or
+                      (XYZ [NO
+                               or
+                                  (NO SIGMA  <x_mm/year> <y_mm/year> <z_mm/year>
+                                             {EXCEPT (station ...\)} )
+                               or
+                                  (YES SIGMA <x_mm/year> <y_mm/year> <z_mm/year>
+                                             {EXCEPT (station ...\)} )
+                           ] )
+                      (UEN [NO
+                               or
+                                  (NO SIGMA  <u_mm/year> <e_mm/year> <n_mm/year>
+                                             {EXCEPT (station ...\)} )
+                               or
+                                  (YES SIGMA <u_mm/year> <e_mm/year> <n_mm/year>
+                                             {EXCEPT (station ...\)} )
+                           ] )
+                 ] }
+   *{PIECE_WISE_STA  [NO or (YES <mm/yr>)]}
+   *{NUVEL_COVAR      [YES or NO] fixed_plate {weight} {EXCEPT (station ...\)}}
+   {SOURCES           [NO or (YES {SIGMA <value_in_rad>} ) ] }
+   {SOURCES           [NO or (YES {SIGMA <value_in_rad/sec>} ) ] }
+   *{NO_NET_TRANSLATION  [NO or (YES {station_weight_file})]}
+   {NO_NET_TRANSLATION_POSITION [NO or
+                       ( {GLOBAL} {LOCAL} {SIGMA <value_in_meters>}
+                         [ALL or HORIZ ]
+                         {UNIFORM or WEIGHTED}
+                         {RIGHT_PART value_1 value_2 value3}
+                        {[YES or NO] {EXCEPT (station {station}...\) } } )
+   {NO_NET_TRANSLATION_VELOCITY [NO or
+                       ( {GLOBAL} {SIGMA <value_in_meters/year>}
+                         [ALL or HORIZ ]
+                         {UNIFORM or WEIGHTED}
+                         {RIGHT_PART value_1 value_2 value3}
+                        {[YES or NO] {EXCEPT (station {station}...\) } } )
+   {NO_NET_ROTATION_POSITION   [NO or
+                       ( {GLOBAL} {LOCAL} {SIGMA <value_in_meters>}
+                         {UNIFORM or WEIGHTED}
+                         {RIGHT_PART value_1 value_2 value3}
+                        {[YES or NO] {EXCEPT (station {station}...\) } } )
+   {NO_NET_ROTATION_VELOCITY   [NO or
+                       ( {GLOBA} {SIGMA <value_in_meters/year>}
+                         {UNIFORM or WEIGHTED}
+                         {RIGHT_PART value_1 value_2 value3}
+                        {[YES or NO] {EXCEPT (station {station}...\) } } )
+ 
+   {NO_NET_ROTATION_SOURCE      [NO or
+                       ( {GLOBAL} {LOCAL} {SIGMA <value_in_rad>}
+                         {UNIFORM or WEIGHTED}
+                         {[YES or NO] EXCEPT (source {source} ...\) ...} ) }
+   {NO_NET_ROTATION_PROPER_MOTION [NO or
+                       ( {SIGMA <value_in_rad/sec>}
+                         {UNIFORM or WEIGHTED}
+                         {[YES or NO] EXCEPT (source {source} ...\) ...} ) }
+   STRUCTURE_ADMITTANCE [NO or
+                            ([YES SIGMA value])
+                        ]
+$SUPPRESSION
+   {VELOCITIES      [YES or NO or sta_uen]
+                    {EXCEPT (sta_uen {station} ...\) ...}}
+   {STATIONS        [YES or NO or sta_xyz ]
+                    {EXCEPT (sta_xyz {station} ...\) ...}}
+   {RIGHT_ASCENSION [YES or NO] {EXCEPT {source ...\}}}
+   {DECLINATION [YES or NO] {EXCEPT {source ...\}}}
+   {STATION_ORIGIN  [YES or NO] {EXCEPT {station ...\}} }
+   {SOURCES         [YES or NO or src_comp]
+                    {EXCEPT (src_comp {source} ...\) ...}}
+   {PROPER_MOTIONS  [YES or NO or src_comp]
+                    {EXCEPT (src_comp {source} ...\) ...}}
+   {PRECESSION      [YES or NO]}
+   {RELATIVITY      [YES or NO]}
+   {DIRECTION       [NO or (YES station_1 TO station_2)]}
+   {VELOCITY_ORIGIN [YES or NO] {[HORIZ_ONLY or VERT_ONLY or BOTH or XYZ]}
+                                {EXCEPT {station ...\}} }
+   {VELOCITY_TIE    [NO  or (YES  (station_list ...\))
+                            ({AND (station_list ...\)} ... ) }
+   {STATION_TIE     [NO  or (YES  (station_list ...\})
+                            ({AND (station_list ...\}) ... }
+$ARCS
+   {SUPPRESS_FILE [NONE or file_name]
+   ARCFILE [NONE or file_name]
+   {( repo_name dbname ver
+	    {@<include_file>}
+            {ADDW <file_name>}
+            {ADDW_SCLE value}
+            {AOC  <file_name>}
+            {ATMOSPHERE_CONSTRAINTS [(AUTO constraint_in_ps/hour) or
+                                     (MOST constraint_in_ps/hour) or
+                                     (YES  constraint_in_ps/hour) or
+                                      IN or
+                                      NO]}
+            {ATMOSPHERE_FLAGS       [(AUTO INTERVAL interval_in_minutes) or
+                                     (MOST INTERVAL interval_in_minutes) or
+                                     (YES  INTERVAL interval_in_minutes) or
+                                      IN or
+                                      NO]}
+            {ATMOSPHERE_OFF    [nsites (site1 sites ...)] or [site] or ALL}
+            {ATMOSPHERE_OFFSET [nsites (site1 sites ...)] or [site] or ALL}
+           @{ATMOSPHERE_EXCLUDE
+            {BASDEP_CLO [YES or NO or IN]}
+            {CLOCK_CONSTRAINTS      [(AUTO constraint_in_parts_in_1.d-14) or
+                                     (MOST constraint_in_parts_in_1.d-14) or
+                                     (YES  constraint_in_parts_in_1.d-14) or
+                                      IN or
+                                      NO]}
+            {CLOCK_FLAGS MAX_DEGREE [(IN   [1 or 2]) or
+                                     (AUTO [1 or 2]) or
+                                     (MOST [1 or 2])   ]
+                                    [(AUTO   INTERVAL interval_in_minuts) or
+                                     (MOST   INTERVAL interval_in_minutes) or
+                                     (FORCE  INTERVAL interval_in_minutes) or
+                                      IN or
+                                      NO]}
+            {CLOCK_REF_SITES [nsites (site1 sites ...)] or [site]}
+            {CONTROL_ONLY}
+            {DTEC <file_name>}
+           @{DTEC_SBA_USED
+           @{DTEC_ERR_SCL
+            {ELEVATION cutoff [ALL or {NUM_STA} (station ...)}
+            {EDIT <file_name>}
+            {EOP_CONSTRAINT   SIGMA  xp_sigma yp_sigma ut1_sigma}
+	    {EOP_DAYOFTIME_EPOCH time}
+	    {EOP_EPOCH time}
+            {EOPR_CONSTRAINT  SIGMA  xp_rate_sigma yp_rate_sigma ut1_rate_sigma}
+	    {EQUAL_EFF_FREQ}
+            {EXT_ERR <file_name>}
+            {GRADIENTS_OFF [nsites (site1 sites)] or [site] or ALL}
+            {GRAD_OFF      [nsites (site1 sites)] or [site] or ALL}
+            [GRADIENT_CONSTRAINTS   [(AUTO constraint_mm constraint_mm/d ) or
+                                     (MOST constraint_mm constraint_mm/d ) or
+                                     (YES  constraint_mm constraint_mm/d ) or
+                                      NO]}
+            [GRADIENT_FLAGS          [(AUTO INTERVAL interval_in_hours) or
+                                      (YES  INTERVAL interval_in_hours) or
+                                      NO]}
+            {IN_EOP_CONSTRAINT}
+            {IONO_ERR <file_name>}
+            {[MOD_ONLY or CONTROL_ONLY]}
+            {[NO_EOP_CONSTRAINT or IN_EOP_CONSTRAINT or
+              EOP_CONSTRAINTS  {SIGMA xp_mas    yp_mas    ut1_ms}
+              EOPR_CONSTRAINTS {SIGMA xpr_mas/d ypr_mas/d utr_ms/d} ]}
+            {NO_EOP_MOD}
+            {NOCAL}
+            {NOCONTR}
+            {NOMAP}
+            {PARU_FILE <file_name>}
+            {REWEI SCALE value ADD_QUADR value }
+            {SNR_MIN value}
+            {SOU_EXCLUDE [nsources (source1 sources ...)] or [source]}
+            {SOU_OFF     [nsources (source1 sources ...)] or [source]}
+            {SOU_USE_DB_IGNORE}
+            {STA_INCLUDE [nsites (site1 sites ...)] or [site]}
+            {STA_EXCLUDE [nsites (site1 sites ...)] or [site]}
+            {STA_OFF     [nsites (site1 sites ...)] or [site]}
+            {STA_ON      [nsites (site1 sites ...)] or [site]}
+            {STA_POS_ON  [nsites (site1 sites ...)] or [site]}
+            {STA_POS_OFF [nsites (site1 sites ...)] or [site]}
+            {(SUPPRESS_XYULPE <ext_eop_comp_flag>)]}
+            {TEC_BIAS value}
+            {TEC_SCAL value}
+            {TYPE [GDR    or     GD or    PDR or     PD or
+                       GRPRAT or PHSRAT or SNBRAT or GRPONL or PHSONL or
+                       SNBONL or RATONL or  G_GXS or PX_GXS or PS_GXS or
+                        PX_GX or  PX_GS or  PS_GX or  PS_GS or  P_PXS or
+                           GX or     GS or     PX or     PS           or
+                        FUSED                                            ]}
+            {VTD_CONF control_file}
+   }
+ 
+ 
+Contact:
+~~~~~~~~
+ 
+Questions and comments about this guide should be directed to:
+ 
+Leonid Petrov ( Leonid.Petrov at nasa.gov )
+ 

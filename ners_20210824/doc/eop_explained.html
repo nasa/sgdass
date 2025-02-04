@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov  2014.12.03_00:25:02 -->
+<HTML>
+<HEAD>
+    <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <META NAME="GENERATOR" CONTENT="manually" >
+    <META HTTP-EQUIV="Description" Content="geodesy, geosciences, Earth Rotation, astronomy" >
+    <META NAME="Author" CONTENT="Leonid Petrov" >
+    <LINK REL="icon" HREF="/icons/ners_48.png" type="image/icon" />
+    <LINK REL="shortcut icon" HREF="/icons/ners_48.png" type="image/png" />
+    <LINK HREF="/ners.css" REL="stylesheet" TYPE="text/css">
+    <TITLE> Earth Orientation Parameters explained </TITLE>
+
+</HEAD>
+<BODY>
+<!--#include virtual='/ners_header.html' -->
+
+<H1> Earth orientation parameters explained
+</H1>
+
+ A rotation of a body in a 3D space in general is expressed by a three
+dimensional function of time. There exist more than one way to 
+describe a rotation. The most commonly used way is to represent
+a rotation with three Euler angles.
+<P>
+
+  Roughly speaking, the Earth's rotation can be considered as consisting 
+of two components, the tidally driven component with precisely known 
+frequencies and the component driven by an exchange of the angular momentum 
+between the solid Earth and geophysical fluids. The latter component is not 
+predictable in principle. The atmosphere contributes to the UT1 at a level 
+of 10<sup>-6</sup> rad, more than three orders of magnitude higher than the 
+accuracy of observations. The first component is also affected by the 
+atmosphere and can be predicted only at a level of 10<sup>-9</sup> rad.
+Therefore, the Earth's rotation has to be continuously measured with
+modern space geodesy techniques.
+<P>
+
+The Earth rotation is mathematically expressed as a transformation of 
+a vector in the rotating terrestrial coordinate system <B>r<sub>t</sub></B> 
+to the inertial celestial coordinate <B>r<sub>c</sub></B>. This can be 
+expressed as a product of the rotation matrix with a vector
+<P>
+
+<B>r<sub><small>c</small></sub></B> = &nbsp; M&#770<sub>3</sub>(E<sub>3</sub>(t)) &middot;
+                              M&#770<sub>2</sub>(E<sub>2</sub>(t)) &middot;
+                              M&#770<sub>1</sub>(E<sub>1</sub>(t)) &nbsp;
+                              <B>r<small><sub>t</sub></small></B>,
+<P>
+
+  where, E<sub>1</sub>(t), E<sub>2</sub>(t), E<sub>3</sub>(t) are Euler angles
+with respect to axes 1,2,3 and M&#770<small><sub>x</sub></small>(E<sub>x</sub>) is a rotation matrix
+with respect to axis x:
+
+<PRE>
+                  1       0       0
+
+       M1(E1) =   0  cos E1  sin E1
+
+                  0 -sin E1  cos E1 
+</PRE>
+
+<PRE>
+                                                 cos E2  0 -sin E2
+  
+                                      M2(E2) =   0       1       0
+
+                                                 sin E2  0  cos E2 
+</PRE>
+
+<PRE>
+                                                                               cos E3  sin E3  0
+
+                                                                     M3(E3) = -sin E3  0  cos E3
+
+                                                                               0       1       0
+</PRE>
+
+   However, accordint to the adopted so-called Newcomb-Andoyer formalism, the
+rotation matrix is decomposed as a product of 12 elementary rotations:
+<P>
+
+M&#770(t) = M&#770<sub>3</sub>(&zeta;t)) &middot;
+            M&#770<sub>2</sub>(-&theta;(t)) &middot;
+            M&#770<sub>3</sub>(z(t)) &middot;
+            M&#770<sub>1</sub>(-&epsilon;<sub>0</sub>(t)) &middot;
+            M&#770<sub>3</sub>(&Delta;&psi;(t)) &middot;
+            M&#770<sub>1</sub>(&epsilon;<sub>0</sub>(t) + &Delta;&epsilon;(t)) &middot;
+            M&#770<sub>3</sub>(-S<sub>1</sub>(t) + E<sub>3</sub>(t)) &middot;
+            M&#770<sub>2</sub>(E<sub>2</sub>(t)) &middot;
+            M&#770<sub>1</sub>(E<sub>1</sub>(t)) &middot;
+            M&#770<sub>3</sub>(H<sub>3</sub>(t)) &middot;
+            M&#770<sub>2</sub>(H<sub>2</sub>(t)) &middot;
+            M&#770<sub>1</sub>(H<sub>1</sub>(t))
+<P>
+where
+<UL>
+      <LI> &zeta;(t) &mdash; the first angle of the precession in right ascension. It is expressed 
+           as a lower degree polynomial with respect to TDB argument. 
+           TDB (Time Dynamic Barycentric) is a function of TAI.
+	   </LI><P>
+
+      <LI> &theta;(t) &mdash; precession declination ascension. It is expressed as a lower degree
+           polynomial with respect to TDB argument. 
+	   </LI><P>
+
+      <LI> z(t) &mdash; the second argument of precession in right ascension. It is expressed as 
+           a lower degree polynomial with respect to TDB argument. 
+	   </LI><P>
+
+      <LI> &epsilon;<sub>0</sub>(t) &mdash; the mean inclination of the ecliptic to the equator.
+           It is expressed as a lower degree polynomial with respect to TDB argument. 
+	   </LI><P>
+
+      <LI> &Delta;&psi;(t) &mdash; nutation in longitude. It is expressed in a quasi-harmonic
+           expansion  <BR>
+              <big>&sum;</big> (a<sub>s</sub>(i) + b<sub>s</sub>(i) t)*sin ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) +
+                               (a<sub>c</sub>(i) + b<sub>c</sub>(i) t)*cos ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) +
+                               &Psi;<sub>0</sub> + &Psi;<big>&#775</big> t
+
+           <BR>
+           where t is the TDB argument. 
+	   </LI><P>
+
+      <LI> &Delta;&epsilon;(t) &mdash; nutation in obliquity. It is expressed in a quasi-harmonic
+           expansion  <BR>
+              <big>&sum;</big> (a<sub>c</sub>(i) + b<sub>c</sub>(i) t)*cos ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) +
+                               (a<sub>s</sub>(i) + b<sub>s</sub>(i) t)*sin ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) +
+                               &Epsilon;<sub>0</sub> + &Epsilon;<big>&#775</big> t
+           <BR>
+           where t is the TDB argument. 
+	   </LI><P>
+
+      <LI> S<sub>1</sub>(t) &mdash; modified stellar argument. It is a function of low degree polynomials, &zeta;(t), &theta;(t),
+           z(t); &epsilon;<sub>0</sub>(t), &Delta;&psi;(t), &Delta;&epsilon;(t)
+	   </LI><P>
+
+      <LI> E<sub>3</sub>(t) &mdash; Euler angle around axis 3 (i.e. axial rotation).
+           It is related to a commonly used argument UT1(t) or UT1MTAI(t) (UT1 minus Tai):
+           <BR>
+           E<sub>3</sub>(t) = - &kappa; UT1(t) =  - &kappa; (t - UT1MTAI(t)), where
+           &kappa; = 1.00273781191135448*2&pi;/86400.0. Units for E<sub>3</sub>(t),
+           units for UT1(t) or UT1MTAI(t) is seconds.
+	   E<sub>3</sub>(t) is a slowly variating function of time and is
+           determined from observations.
+           </LI><P> 
+
+      <LI> E<sub>2</sub>(t) &mdash; Euler angle around axis 2 (i.e. axial rotation).
+           It is related to a commonly used argument X pole coordinate.
+	   E<sub>2</sub>(t) is a slowly variating function of time and is
+           determined from observations.
+           </LI><P>
+
+      <LI> E<sub>1</sub>(t) &mdash; Euler angle around axis 1 (i.e. axial rotation).
+           It is related to a commonly used argument Y pole coordinate.
+	   E<sub>1</sub>(t) is a slowly variating function of time and is
+           determined from observations.
+           </LI><P>
+
+      <LI> H<sub>3</sub>(t) &mdash; Euler angle around axis 3 that holds harmonic
+           variations. It is expressed in a form of quasi-harmonic expansion
+           <BR>
+              H<sub>3</sub>(t) = <big>&sum;</big> 
+                    a<sub>c</sub>(i) * cos ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) +
+                    a<sub>s</sub>(i) * sin ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) +
+           <BR>
+           Coefficients of the expansion are determined from analysis of space geodesy 
+           observations.
+           </LI><P>
+
+      <LI> H<sub>2</sub>(t) &mdash; Euler angle around axis 2 that holds harmonic
+           variations. It is expressed in a form of quasi-harmonic expansion
+           <BR>
+              H<sub>2</sub>(t) = <big>&sum;</big> 
+                   ( a<sub>c</sub>(i) + a&#775<sub>c</sub> ) * sin ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) -
+                   ( a<sub>s</sub>(i) + a&#775<sub>s</sub> ) * cos ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> )
+           <BR>
+           Coefficients of the expansion are determined from analysis of space geodesy 
+           observations.
+           </LI><P>
+
+      <LI> H<sub>1</sub>(t) &mdash; Euler angle around axis 1 that holds harmonic
+           variations. It is expressed in a form of quasi-harmonic expansion
+           <BR>
+              H<sub>1</sub>(t) = <big>&sum;</big> 
+                   ( a<sub>c</sub>(i) + a&#775<sub>c</sub> ) * cos ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> ) +
+                   ( a<sub>s</sub>(i) + a&#775<sub>s</sub> ) * sin ( p(i) + q(i) t + 1/2 r(i) t<sup>2</sup> )
+           <BR>
+           Coefficients of the expansion are determined from analysis of space geodesy 
+           observations.
+           </LI><P>
+</UL>
+
+  The choice of Earth rotation parameterization is not logical, not economical, not optimal.
+This choice follows a historical tradition. Decomposition of a product of three matrix into 
+a product of 12 matrix can be done by more than one way. There is an alternative decomposition
+Ginot-Capitaine. That decomposition is entirely equivalent to the Newcomb-Andoyer formalism.
+<P>
+
+ <EM class="ners">NERS</EM> library keeps numerical coefficients of expansion   
+&zeta;(t), &theta;(t), z(t); &epsilon;<sub>0</sub>(t), &Delta;&psi;(t), 
+&Delta;&epsilon;(t), and S<sub>1</sub>(t) and has the code that computes them 
+on the specified moment of time. Empirical functions E(t) and H(t) are taken 
+from the <EM class="ners">NERS</EM> server EOP message. Function E(t) comes 
+as a table of values on specified, in general non-equidistant epochs. 
+The tables are updated several times a day. Function H(t) comes in a form of 
+a table of expansion coefficients determined from analysis of observations. 
+It is updated 4&ndash;6 times a year. See <A HREF="ners_how.html">NERS how</A>
+for explanation how <EM class="ners">NERS</A></EM> server generates the EOP message.
+<P>
+
+  <EM class="ners">NERS</EM> client automatically downloads the EOP message and 
+extracts from there E(t) and H(t) functions relevant to the request, and computes 
+the Earth's rotation matrix.
+<P>
+
+<HR size="1">
+<!--#include virtual='/ners_footer.html' -->
+</BODY>
+</HTML>

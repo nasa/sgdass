@@ -1,0 +1,39 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+#  Frequency sequence used by Haystack in 2017-2021
+#
+#  Astronomical convention is used for band definition
+#  For instance notation 2004.1 32.0 means the band
+#  that covers range [2004.1, 2036.1] MHz
+#
+#  Last updated by L. Petrov on 2024.10.07_13:34:26
+#
+#  f01 sequence
+#
+HDS_NAME  h01
+MOD_NAME  f04
+#
+STATION FORTLEZA  Ft  ft_01
+STATION WETTZELL  Wz  wz_01
+#
+#
+#  Bnd Low_frq bandwidh Sub
+#
+BAND C   2344.99   8.0  Dir
+BAND C   2352.99   8.0  Dir
+BAND C   2360.99   8.0  Dir
+BAND C   2368.99   8.0  Dir
+BAND D   2376.99   8.0  Dir
+BAND D   2384.99   8.0  Dir
+#
+BAND A   8204.99   8.0  Dir
+BAND A   8212.99   8.0  Dir
+BAND A   8252.99   8.0  Dir
+BAND A   8352.99   8.0  Dir
+BAND A   8512.99   8.0  Dir
+#
+BAND B   8732.99   8.0  Dir
+BAND B   8852.99   8.0  Dir
+BAND B   8912.99   8.0  Dir
+BAND B   8924.99   8.0  Dir
+BAND B   8932.99   8.0  Dir

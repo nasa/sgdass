@@ -1,0 +1,386 @@
+2024.11.27     a) Updated vtd_apriori.py
+                  Directories with slant path delays creted before are
+                  not compatible. They should be removed before the 
+                  first use of vtd_apriori.py
+
+2024.09.12     a) Updated phase feed rotation tracking for satellites to
+                  preserve the continuity (+/- 2pi radians) of 
+		  differential feed rotation (aka windup) rather than 
+                  tracking individual feed rotation values by antenna.
+                  (Joe Skeens).
+
+               b) Simplified the feed rotation vector primitives to
+                  agree with the formalism to be published in an 
+		  upcoming paper (Joe Skeens).
+
+2024.05.11     a) added support of antenna and source phase
+                  center variations in data reduction.
+                  Added a keyword PHASE_OFFSET_FILE
+                  Old VTD configuration files need be 
+                  updated using vtd_control_update tool. 
+
+               b) Implemented data reduction for phase center 
+                  offset and its variations (satellite and receiver), 
+                  as well as carrier phase windup in the calculation 
+                  of the geometric delay. Phase center offset is 
+                  implemented as a receiver position shift, and 
+                  phase center variation and carrier phase windup
+                  are implemented as delays.
+
+               c) Added a new MOUNT_TYPE GNSS. For that type of 
+                  antennas, phase center variation according 
+                  to definitions from the file specified in the
+                  keyword PHASE_OFFSET_FILE is computed
+                  instead of antenna axis offset.
+
+               d) Updated the algorithm for computation 
+                  of the interferometric polynomial in 
+                  dfx2fits -- the old version can accumulated 
+                  noticeable errors due to rounding.
+                 
+
+2023.12.23     a) added support of computation of path delay for 
+                  Earth orbiting satellites
+
+               b) Added option --missing for vtd_apriori_update.py
+                  that checks for missing static apriori. 
+                  It updates the specified file only if it is missing
+
+2023.03.14     a) Added support of a priori proper motions and parallaxes
+                  for computation of path delay. Added new keyword
+                  SOURCE_PRLX_PRP_MOTION in the VTD control file
+                  for specifying a priori proper motions and/or
+                  parallaxes used for path delay computation.
+                  The format of the a priori file is described
+                  in doc/prlx_prp_format.txt
+                  
+               b) Made a change: Galactic aberration is not computed
+                  for objects with non-zero a priori parallaxes.
+
+2022.10.01        JPL planetary ephemeride was upgraded to de440.
+                  The older ephemeride files are not supported.
+                  VTD control files should be updated to point to
+                  ephemeride file de440. The de440.eph file 
+                  distributed with VTD is valid for 1970-2070 time
+                  range.
+
+2022.08.30     a) Added support of IONOSPHERE_SCALE control file keyword.
+                  The ionospheric contribution computed from TEC maps
+                  is multiplied by that parameter.
+               b) Added support of SOU_DEBIAS_MODE control file keyword.
+                  It specifies the name of the source position de-bias 
+                  model. It is for compensation of the source position 
+                  bias caused by the the deficiency of an ionospheric 
+                  model or other models. The contribution of the de-bias 
+                  model to path delay is computed on the basis of an 
+                  empirical model that describes the position bias
+                  in declination as a function of declination. Supported 
+                  models: MOD1 and MOD2.
+
+2021.04.30     a) Added computation of W-projection of the baseline vector
+               b) Added accounting for aberration in computation of  uvw
+                  baseline vector projections
+               c) Added difxvtd utility for computation of the path delay
+                  for the DiFX correlator.
+
+2020.11.05     a) now when source structure path delay is computed,
+                  correlated flux density is computed as well and 
+                  is available as DER_DEL(VTD__COR_FD1) and 
+                  DER_DEL(VTD__COR_FD2) for high and low frequencies.
+
+2020.03.22     a) Added  support of CAPITAINE_2005 precession expression.
+               b) Added support of MEAN_POLE_MODEL keyword. Supported
+                  values: NONE, IERS2010, IERS2022.
+               c) keyword MPL_FILE is removed.
+               d) Undated vtd_control_update so it upgrades old VTD.
+                  controls of format revision 2019.03.03 to the current
+                  format revision.
+               e) Added option -d (--download) in vtd_apriori_update.py
+                  This option removes the old local VTD a priori files
+                  and downloads them from the remote server instead
+                  of upgrade. This option has to be used when the number
+                  of sites with a priori loading and slant path delay is
+                  changed at the remote server.
+               f) Added support of dowloading harmonic vairaitons of
+                  site position displacements caused by loading 
+                  in vtd_apriori_update.py . Support of two new mnadatory
+                  keywords is added in vtd_apriori_update.py
+                  HPS_URL:
+                  LOAD_HPS_DIR:
+               g) Extended read/write locks in vtd_apriori_update.py 
+                  for ionosphere TEC maps and slant path delay.
+
+2019.10.13     Fixed a bug in bindisp_merge related to locking.
+               
+               Changed name of lock files.
+
+2019.09.15     Enabled handling read/write locks in vtd_apriori_update.py 
+               to prevent crashing software that reds loadings during
+               update time:
+           
+               Added support one new source catalogue format
+               #  Source position file format  1.0  of 2019.08.08
+
+               Fixed several bugs related to configuration with curl.
+
+2019.05.25     Added vtd_apriori_update.py program for automatic
+               downloading ephemeral a priori: the Earth 
+               orientation parameters, expansion coefficients
+               of the ionosphere contribution, time series of 
+               3D crustal deformations caused by mass loading,
+               and the expansion coefficients of slant path 
+               delay.
+
+               Fixed a long-standing bug related to handling
+               locks when loading mass loading displacements.
+
+               Added ./reconfigure command that re-runs stored
+               configuration. ./reconfigure -d displays the last
+               configuration.
+
+               Forced shell intermediate files, for instance object
+               files created by the compiler be group readable and 
+               group writable. Forced make invoke shell bypassing
+               startup scripts which made running make significantly 
+               faster.
+
+               Added support of environment variables in VTD control 
+               file. Format: ${VAR_NAME}, where VAR_NAME is an 
+               environment variable. VTD expands the environment 
+               variable at any occurrence of the control file.
+               Nested environment variables are supported.
+
+               Added setting stack size and environment
+               variable GOMP_STACKSIZE on start-up of executables.
+               That eliminated necessity to setup stackszie and
+               GOMP_STACKSIZE to avoid a crash during loading
+               the executable.
+
+               Added document vtd_apriori_update.txt (and .html)
+               in doc/ directory.
+
+2019.04.04     Fixed examples. 
+               Fixed VTD_LOAD to prevent a crash in the attempt to 
+               compute solid tides displacement for an orbiting
+               radiotelescope.
+
+2019.03.03     Added support up to 9 ionosphere TEC map files.
+
+2018.10.15     Added support --with-curl configure option.
+               cfitsio-3.42 and newer may be compiled with 
+               curl support, and in that case VTD needs be 
+               linked against curl.
+
+2018.06.30     Made a change needed to be compatible with 
+               ners-20180628 related to computation of 
+               accumulated secular term in nutation.
+
+2018.05.31     Added support of value NERS for EOP_TIME_SCALE, 
+               UZT_MODEL, UZT_USE keyword in the control file.
+               Thus, when NERS is used, VTD control file should
+               have these definitions:
+              
+               LEAP_SECOND:             NERS
+               EOP_SERIES:              NERS
+               EOP_TIME_SCALE:          NERS
+               UZT_MODEL:               NERS
+               UZT_USE:                 NERS
+               HARMONIC_EOP_FILE:       NERS
+               PRECESSION_EXPRESSION:   NERS
+               NUTATION_EXPANSION:      NERS
+               EROT_COMPAT:             NONE
+               GEODESIC_NUTATION:       NONE
+
+               Fixed several bugs related to gfortran 8.1
+
+
+2018.04.04     Added utility bindisp_merge for merging loading binary files
+
+               Fixed support of NERS
+
+2017.12.27     Added support of value NERS for the keyword LEAP_SECOND.
+               LEAP_SECOND: NERS will force VTD to download the table 
+               of leap seconds using the default NERS configuration file.
+
+2017.10.27     Fixed a regression bug in the previous release that 
+               prevented installation.
+
+2017.10.17     Added computation of group delay and delay rate with 
+               respect to geocenter for the 1st and the 2nd
+               station of a baseline. These parameters are placed
+               in DEL_DEL and DEL_RAT arrays.
+
+2017.05.15     a) Fixed errors related to computation of source structure
+                  delays.
+
+               b) Fixed bugs in the installation procedure.
+
+               c) Fixed regression bug in vtd_example_03
+
+2016.11.17     Added support for NERS (Network Earth Rotation Service).
+               NERS retrieves the Earth rotation parameters from
+               the NERS server automatically. Thus, there is no need
+               to refresh the Earth rotation series manually.
+               To set the NERS, the following five parameters are
+               specified:
+
+               AEM_FILE:                NONE
+               ERM_FILE:                NONE
+	       EOP_SERIES:              file
+               PRECESSION_EXPRESSION:   NERS
+               NUTATION_EXPANSION:      NERS
+
+               where file is the name of the NERS client configuration
+               file.
+
+               Keyword HARMONIC_EOP_FILE supports a special value:
+
+                       HARMONIC_EOP_FILE:       NERS
+
+               in that case the harmonic Earth orientation variations
+               are taken from the Network Earth Rotation Service.
+
+               VTD now depends on ners library.
+
+2016.08.30  a) Added support for BWG (beam waveguide) antennas.
+               For computing axis offset, the BWG antennas are the
+               same as AZEL, however the feedhorn rotation angle
+               for BWG antennas is different than for AZEL.
+               Added support of alias for NASR (the same as NASP)
+               for Nasmyth right-handed mounting and NASL 
+               (the same as NASL) for Nasmyth left-handed mounting.
+
+            b) Added support for NERS EOP time series
+
+
+2016.02.17  a) Added partial derivative over relativistic parameter
+               Gamma for VLBI observations
+
+            b) Added generation of the file with definitions of
+               environment variables for bash shell as well.
+               The have names vtg_vars.sh and export_vtd_vars.sh
+
+
+2015.08.07     changed BINDISP format of file with station 
+               displacements: extended the header.
+
+
+2014.08.20  a) Added support of a new keyword 
+               ATMOSPHERE_PATH_DELAY_PARTIAL. In the previous
+               version the role of partial derivative of
+               atmosphere path delay in zenith direction played
+               WET_MAPPING_FUNCTION. In the new version
+               WET_MAPPING_FUNCTION is used only for computing
+               a priori path delay.
+
+            b) Added new qualifiers of ATMOSPHERE_PATH_DELAY_PARTIAL:
+	       partial derivative of path delay with respect to
+               atmosphere path delay in zenith direction played
+
+               -- TOTAL_SCALE    -- partial derivative is equal 
+                                    to the ratio of slant path
+                                    delay to the path delay in
+                                    zenith direction
+
+               -- WATER_SCALE    -- partial derivative is equal 
+                                    to the ratio of water vapor 
+                                    component of slant path delay 
+                                    to the water vapor component of
+                                    path delay in zenith direction
+
+               -- GAUSSIAN_LAYER -- partial derivative is defined
+                                    for the model when the dependence of 
+                                    concentration of residual atmosphere 
+                                    with height is described as a Gaussian
+                                    function with the specified mean
+                                    (i.e. layer height) and the specified
+                                    full width half maximum (FWHM). The 
+                                    height of the layer is specified in 
+                                    the 3rd qualifier and the FWHM is 
+                                    specified in the 4th qualifier.
+
+            c) Added new program vtd_control_update that automatically
+               converts the specified control file in the old format to 
+               the current format.
+                                    
+2014.06.29     Added support of multiple slant path delay 
+               that define delays for the same station for
+               different ranges of epochs
+
+2014.04.04     Added support of MAC OS (Darwin) operating system.
+
+2014.02.18     Made changes in dealing with external atmosphere 
+               path delay to support the new data format.
+
+2013.09.30  a) Added support of new mountings NASM and NASP
+               (Nasmyth minus and Nasmyth plus, f.e. YEBES40M).
+            b) Added support of feed horn angle computation for
+               antennas with EQUA, X-YE, NASM, NASP mounting
+               type.
+            c) Added parameter FEED1 and FEED2 in DER_DEL array.
+            d) VTD now correctly computes path delay for
+               antennas with mounting types EQUA, X-YE, NASM
+               and NASP.
+            e) Changed form of station description file and 
+               added column antenna diameter.
+
+2013.02.08  a) Fixed installation bug: vtd checked wrong header
+            b) Fixed a typo in fitslib library header
+            c) Fixed an uninitialized variable bug which may
+               cause a crash segmentation fault
+
+
+2012.11.29  a) Fixed installation bug that did prevent installation
+               of vtd_example_06.
+            b) Added support of EROT_COMPAT NO_SARG argument.
+               If this option is set, then UT1 and polar motion
+               are set to zero regardless values EOP files.
+               This may be needed for testing.
+            c) Fixed a bug: library so-name was incorrectly
+               set to libfitio.so.1 instead of libfitlib.so.1
+
+2012.11.25  a) Added support of a case when one of the 
+               stations is on the orbit
+            b) Added routine for computation of light
+               time between the orbiting and downlink
+               station.
+
+
+2010.06.20  a) Added support of ionosphere path delay.
+            b) Added support of slanted path delay biases.
+            c) Added C-language bindings
+            d) Improved documentation. Added two new documents: 
+               Formats of a priori files for VTD and
+               VTD a priori files management
+            e) Increased VTD__NDER.
+
+2009.05.30  a) Added support of the contribution of slanted path delay
+               in the neutral atmosphere.
+            b) Added support for antenna thermal deformation.
+
+2008.05.02  a) Added support of two new keywords in the control file:
+	       ANTENNA_THERMAL_DEFORMATION, GALACTIC_ABERRATION.
+            b) renamed EXTERNAL_PATH_DELAY_FILE to EXTERNAL_DELAY_DIR
+            c) added keywords EXTERNAL_DELAY_DIR_2ND, EXTERNAL_DELAY_DIR_3RD
+               EXTERNAL_DELAY_DIR_4TH
+            d) added keywords SOURCE_COORDINATES_2ND, 
+               SOURCE_COORDINATES_3RD, SOURCE_COORDINATES_4TH
+
+
+
+2007.06.18  a) Added support of three new keywords in the control file:
+               ANTENNA_DEFORMATIONS_FILE, EXTERNAL_PATH_DELAY_FILE,
+               PARALLACTIC_ANGLE
+            b) Added computed of reduction for the feed-horn rotation
+            c) Added support of reduction for source structure
+            d) Fixed examples
+            e) Updated documentation
+
+2007.01.11  a) Renamed VTD_DO to VTD_DELAY.
+            b) Added new parameter DOPPLER_EXPR in the control file.
+            c) Added new routine VTD_DOPPLER for computation of the 
+               Doppler frequency shift.
+            d) Added vtd_example_02 and vtd_example_03.
+            e) Updated documentation.
+            f) Fixed a minor error in the routine for computation of the 
+               time delay for near zone objects.

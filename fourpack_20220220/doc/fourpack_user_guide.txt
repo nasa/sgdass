@@ -1,0 +1,1468 @@
+Title:         User guide for library fourpack
+Author:        Leonid Petrov
+Last modified: 2016.04.28
+
+Library fourpack is for three tasks:
+
+a) a convenient user interface to fast Fourier transform kernel 
+   either fftw or Intel math kernel library for 1D and 2D cases.
+
+b) applying a simple filter in Fourier domain
+
+c) direct and inverse spherical harmonic transform on a regular 
+   latitude/longitude grid invoking Driscoll and Healy (1994) 
+   sampling theorem. It also provides inverse vector spherical
+   harmonics transform. The routines utilizes OpenMP parallelization.
+   The routines do not lose accuracy at high degree/order. They were
+   tested at degree/order 21599.
+
+User interface:
+
+1.0 Initialization/quitting.
+============================
+
+    Internal data structures of fourpack package should be initialized
+before first usage. There are four procedures for initialization. The 
+first two routines initialize FFT interface. The last two routines initialize 
+both FFT and spherical harmonics transform interface and return the address 
+of the fourpack object that is used for all consecutive calls.
+
+   1.1) INIT_FFT_MKL ( NTHREADS, IUER ) -- initializes Intel Math Kernel 
+        Library interface for FFT
+
+   1.2) INIT_FFTW ( WISDOM_FILE, FFTW_MODE, FFTW_TIMEOUT, NTHREADS, IUER )
+        -- initializes the FFTW interface for FFT
+
+   1.3) SPHE_INIT ( NUM_THR, IUER ) -- initializes the simplified spherical
+        harmonics transform and the FFTW interface for FFT.
+
+   1.4) SPHE_INIT_PLAN ( WISDOM_FILE, FFTW_MODE, FFTW_TIMEOUT, NTHREADS, 
+        IUER ) -- initializes the full interface for spherical harmonics 
+        transform and the FFTW interface for FFT.
+
+
+  The allocated data structures are released by call of sphe_quit after 
+  the use of Fourpack library.
+
+
+2.0 Fast Fourier transform.
+===========================
+
+      2.1) FFT_1D_C16 ( DIM, IEXP, ARR, IUER ) -- performs fast Fourier 
+           transform in place, either forward ( IEXP = 1 ), or backward 
+           ( IEXP = -1 ) under the complex double precision array ARR of
+            dimension DIM.
+
+      2.2) FFT_1D_C8  ( DIM, IEXP, ARR, IUER ) -- the same as FFT_1D_C16,
+           but array ARR is of complex single precision type.
+
+      2.3) FFT_2D_C16 ( DIM1, DIM2, IEXP, ARR, IUER ) -- performs fast 
+           Fourier transform in place, either forward ( IEXP = 1 ), 
+           or backward ( IEXP = -1 ) under the complex double precision 
+           2-dimensional array ARR.
+
+      2.4) FFT_2D_C8  ( DIM1, DIM2, IEXP, ARR, IUER ) -- the same as 
+           FFT_2D_C16, but array ARR is of complex single precision type.
+
+      2.5) FFT_1D_R2C_R8  ( DIM, ARR_R8, ARR_C16, IUER ) -- performs 
+           forward fast Fourier transform under the real*8 array ARR_R8 of 
+           dimension DIM. Results is complex*16 array ARR_C16 of n/2+1 for 
+           non-negative frequencies.
+
+      2.6) FFT_1D_R2C_R4  ( DIM, ARR_R4, ARR_C8, IUER ) -- the same as 
+           FFT_1D_R2C_R8  but ARR_R4 and ARR_C8 are of real*4 and complex*8
+           type respectively.
+
+      2.7) FFT_1D_C2R_C16 ( DIM, ARR_C16, ARR_R8, IUER ) -- performs 
+           backward (inverse) fast Fourier transform under the complex*16 
+           array ARR_C16 of the 1-dimensional Hermitian-conjugated spectrum 
+           of dimension DIM. ARR_C16 keeps only dim/2+1 elements for 
+           non-negative frequencies. Result, the real*8 array in time 
+           order, is put in the output array ARR_R8.
+
+      2.8) FFT_1D_C2R_C8  ( DIM, ARR_C8, ARR_R4, IUER ) -- the same as 
+           FFT_1D_C2R_C16, but ARR_C8 and ARR_R4 are of complex*8 and 
+           real*4 type respectively.
+
+3.0 Power spectrum and filters.
+===============================
+
+      3.1) POWER_SPECTRUM_R8 ( N, MODE, TIM_ARR, VAL_ARR, FRQ_ARR, 
+           POW_ARR, IUER ) -- computes the power spectrum of the 
+           real 1D array of data VAL_ARR of dimension of N that is 
+           a function of argument TIM_ARR using fast Fourier transform. 
+           The result is function POW_ARR of argument FRQ_ARR of 
+           dimension N/2+1. Frequency runs from 0 through the Nyquist 
+           frequency 2/(TIM_ARR(2)-TIM_ARR(1)) with step 
+           1/(TIM_ARR(N)-TIM_ARR(1)). Depending on MODE, several windows 
+           will be applied to the data before Fourier transform. 
+           All arguments are of real*8 type.
+
+      3.2) POWER_SPECTRUM_R4 ( N, MODE, TIM_ARR, VAL_ARR, &
+           FRQ_ARR, POW_ARR, IUER ) -- the same as POWER_SPECTRUM_R8,
+           but all arguments are of real*8 type.
+
+      3.3) ROOT_EDGE_FILTER_R8 ( N, MODE, FRQ_THR, BETA, TIM_ARR, VAL_ARR, 
+           IUER ) -- implements either low-pass ( MODE = 1 ), or high=pass 
+           ( MODE =2 ) filter. Filtering is performed in three steps: 
+           1) Fourier transform to the frequency domain; 2) multiplication 
+           the result by the filter function;  3) inverse Fourier transform 
+           of the result. All variables are of real*8 type.
+
+      3.4) ROOT_EDGE_FILTER_R4 ( N, MODE, FRQ_THR, BETA, &
+           TIM_ARR, VAL_ARR, IUER ) -- the same as ROOT_EDGE_FILTER_R8, 
+           but all arguments are of real*8 type.
+
+      3.5) ROOT_BAND_FILTER_R8 ( N, FRQ_LOW, FRQ_HIGH, BETA, TIM_ARR, VAL_ARR, 
+           IUER ) -- implements the band-pass digital filter. Filtering is
+           performed in three steps: 1) Fourier transform to the frequency 
+           domain; 2) multiplication the result by the filter function;
+           3) inverse Fourier transform of the result.  All variables are of 
+           real*8 type.
+
+      3.6) ROOT_BAND_FILTER_R4 ( N, FRQ_LOW, FRQ_HIGH, BETA, TIM_ARR, VAL_ARR, 
+           IUER ) -- the same as ROOT_BAND_FILTER_R8, but all arguments are
+           of real*8 type.
+
+4.0 Spherical harmonics transform.
+==================================
+
+      4.1) SPHE_DIR_2NN ( FSH, N, FUN, MD, DEG, NORM, IPHS, SPH, IUER )
+           expands a grid containing 2*N samples in longitude and N samples 
+           in latitude into spherical harmonics. This routine makes use of 
+           the sampling theorem presented in Driscoll and Healy (1994) and 
+           employs the FFTs when calculating the sin and cos terms. 
+           The number of samples, N, must be EVEN for this routine to work, 
+           and the spherical harmonic expansion is exact if the function 
+           is bandlimited to degree N/2-1. 
+
+      4.2) SPHE_INV_2NN ( FSH, MD, DEG, NORM, IPHS, SPH, N, FUN, IUER )
+           -- given the spherical harmonic coefficients SPH of degree/order 
+           MD, will evaluate the function on a grid with an equal number 
+           of samples N latitude and 2*N in longitude. This is the inverse 
+           the routine SPHE_DIR_2NN, both of which are done quickly using 
+           FFTs for each degree of each latitude band. The number of samples 
+           specified by the spherical harmonic bandwidth DEG may be equal 
+           or less than MD.
+
+      4.3) SPHE_INV_2NN_VEC ( FSH, MD, DEG, SPH, N, FUN, IUER ) --
+           evaluates function FUN and its partial derivatives over 
+           longitude and latitude on a regular lon/lat grid 2(N-1)*N given 
+           its spherical harmonics transform and its tangential derivative.                                             *
+
+           Four-dimensional array SPH has the first dimension 1:2 that
+           runs over cosine and sine components, second dimension 0:DEG
+           runs over degree, third dimension 0:DEG runs over order, and
+           the fourth dimension 1:2 runs over spherical harmonics and its
+           tangential constituent. SPH contains components nm and mn of
+           degree/order: SPH(a,c,b,d) = SPH(a,b,c,d). The so-called
+           tangential constituent is the Spherical Harmonics Transform of
+           a function that may be different than FUN.
+
+      4.4) SPHE_COMP_VAL ( FSH, MD, DEG, LAT_VAL, LON_VAL, NORM, IPHS, SPH, 
+           IUER ) -- computes the value at a given latitude and longitude 
+           of the function given the set of spherical harmonics of degree/order
+           DEG. Using another language, it computes the value of the the inverse 
+           spherical harmonics transform at a given latitude and longitude.
+
+      4.5) SPHE_COMP_VEC ( FSH, MD, DEG, LAT_VAL, LON_VAL, NORM, IPHS, SPH, 
+           RES, IUER ) -- determines the value and its derivative towards 
+           north and east at a given latitude and longitude of the function 
+           the given set of spherical harmonics of degree/order DEG. Using 
+           another language, it computes the value of the the inverse spherical 
+           harmonics transform and its partial derivatives over north and east
+           direction at a given latitude and longitude.
+
+
+5.0 Auxiliary programs.
+======================
+
+    5.1) Program  create_fftw_plan creates the so-called wisdom file --
+         parameter for the tune-up of the FFTW library that performs
+         fast Fourier transform. If hyphen precedes the method, then
+         create_fftw_plan prints timing.
+
+         Usage: create_fftw_plan <method> <num_threads> <request_file> <plan_file>
+
+         where method is MEASURE, PATIENT, or EXHAUSTIVE
+           
+               num_threads  -- the number of threads
+
+               request_file -- the name of the control file with the request
+
+                      Format of the request file: plain ascii file with two 2 or 
+                      three words separated by one or more blanks
+
+                      1st word: procedure, one of 
+                      
+                          f    -- complex in-place direct/inverse FFT, complex*8
+                          fr2c -- real*4 to complex*8 direct FFT
+                          fc2r -- complex*8 to real*4 inverse FFT
+                          d    -- complex in-place direct/inverse FFT, complex*16
+                          dr2c -- real*8 to complex*16 direct FFT
+                          dc2r -- complex*16 to real*8 inverse FFT
+                          dim1 -- first dimension;
+                          dim2 -- (optional) second dimension.
+
+               plan_file    -- output plan file
+
+         Using a plan files may increase performance by 1.2-5 times.
+         NB: a plan is thread specific. A plan for K threads is invalid 
+         for M threads.
+
+
+References:                                                        
+===========
+                                                                      
+    1) J.R. Driscoll  and D.M. Healy, "Computing Fourier Transforms    
+       and Convolutions on the 2-Sphere", (1994), Adv. Applied. Math., 
+       15, 202-250, doi:10.1006/aama.1994.1008.                        
+                                                                       
+    2) S.A. Holmes, W.E. Featherstone, "A unified approach to the      
+       Clenshaw summation and the recursive computation of very high   
+       degree and order normalised associated Legendre functions,      
+       (2002), J. Geodesy, 76, 279-299, 10.1007/s00190-002-0216-2      
+                                                                       
+    3) T. Fukushima, "Numerical computation of spherical harmonics     
+       of arbitrary degree and order by extending exponent of          
+       floating point numbers", (2012), J. Geodesy, 86, 271-285,       
+       10.1007/s00190-011-0519-2.                                      
+                                                                       
+    4) M.A. Wieczorek, " SHTOOLS -- Tools for working with spherical   
+       harmonics", http://shtools.ipgp.fr/                             
+                                                                      
+6.0 Examples:
+=============
+
+     See source code of two examplse in example/fourpack_example_01.f
+and example/fourpack_example_02.f
+
+     See results of timing text in doc/timint
+
+7.0 Interace description:
+=========================
+
+FUNCTION   SPHE_INIT ( NUM_THR, IUER )
+                                                                      
+    Routine SPHE_INIT initializes internal data structure for           
+    consecutive computation of direct or inverse spherical transform.  
+    It returns the address of the internal data structure and performs 
+    some initialization.                                              
+                                                                       
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    NUM_THR ( INTEGER*4 ) -- the number of threads used in subsequent    
+                             computations. If NUN_THR == -1, then        
+                             the number of threads is read from the      
+                             environment variable OMP_NUM_THREADS.        
+                                                                       
+    _________________________ Modified parameters: ______________________ 
+                                                                         
+       IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                              Input: switch IUER=0 -- no error messages  
+                                     will be generated even in the case  
+                                     of error. IUER=-1 -- in the case of 
+                                     error the message will be put on    
+                                     stdout.                             
+                              Output: 0 in the case of successful        
+                                      completion and non-zero in the     
+                                      case of error.                     
+
+    _________________________ Value: ______________________ 
+ 
+    SPHE_INIT ( INTEGER*8 ) -- address of the created fourpack object
+ 
+---------------------------------------------------------------------------
+FUNCTION   SPHE_INIT_PLAN ( WISDOM_FILE, FFTW_MODE, FFTW_TIMEOUT, &
+                            NTHREADS, IUER )
+                                                                       
+    Routine SPHE_INIT_PLAN initialize internal data structure for      
+    consecutive computation of a fast Fourier transform or direct or   
+    inverse spherical transform. It returns the address of the         
+    internal data structure and performs some initializations.         
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+     WISDOM_FILE ( CHARACTER ) -- Name of the so-called wisdom file that  
+                                  contains tune-up parameters of FFTW     
+                                  library. The file name may be blank --  
+                                  in that case no wisdom is acquired.    
+     FFTW_MODE ( INTEGER*4 ) -- Used mode of FFTW. The following modes  
+                                are supported:                          
+                                0 -- ESTIMATE -- provides a reasonable  
+                                     speed for execution and very fast  
+                                     plan evaluation. Recommended for   
+                                     using unless, an evidence exists   
+                                     that other modes will be faster.   
+                                1 -- MEASURE -- may faster than         
+                                     ESTIMATE, but may be 100 times     
+                                     slower for startup. Recommended    
+                                     only with a wisdom file.           
+                                2 -- PATIENT -- may faster than         
+                                     ESTIMATE, nut may be 1000 times    
+                                     slower for startup. Recommended    
+                                     only with a wisdom file.           
+                                3 -- EXHAUSTIVE -- may faster than      
+                                     ESTIMATE, but it may take 10000    
+                                     times slower for a startup.        
+                                     You should be crazy if you try it  
+                                     without a wisdom file.             
+   FFTW_TIMEOUT ( REAL*8    ) -- Maximum amount of time in seconds for  
+                                 creation of plan. FFTW may be so slow  
+                                 in deciding which plan to use that you 
+                                 will certainly want to limit this time.
+                                 0.01 is good value for dimensions      
+                                 less than 65536.                       
+       NTHREADS ( INTEGER*4 ) -- The number of threads to be used.      
+                                 Value 0 means no threads. Value -1     
+                                 means to get the number of threads     
+                                 from the environment variable          
+                                 OMP_NUM_THREADS. NB: FFTW wisdom       
+                                 created for a non-thread environment    
+                                 will be discarded if the number of     
+                                 threads > 1.                           
+                                                                        
+    _________________________ Modified parameters: ______________________ 
+                                                                        
+      IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                             Input: switch IUER=0 -- no error messages  
+                                    will be generated even in the case  
+                                    of error. IUER=-1 -- in the case of 
+                                    error the message will be put on    
+                                    stdout.                             
+                             Output: 0 in the case of successful        
+                                     completion and non-zero in the     
+                                   case of error.                     
+
+    _________________________ Value: ______________________ 
+ 
+    SPHE_INIT_PLAN ( INTEGER*8 ) -- address of the created fourpack object
+
+-------------------------------------------------------------------------
+SUBROUTINE INIT_FFT_MKL ( NTHREADS, IUER )
+
+    Routine  INIT_FFT_MKL  initializes the interface to fast FFT        
+    routines supplied by the Intel proprietary MKL library. Upon      
+    calling  INIT_FFT_MKL, all subsequent calls to routines of         
+    the FAST_FFT library will be served bu MKL subroutines.            
+                                                                         
+    NB: in order to compile this routine you need to create file       
+    mkl_dfti by this command:                                          
+                                                                         
+    cd ${path_to_intel}/intel/mkl/include                              
+    ${fortran_compiler} -c mkl_dfti.f90                                
+                                                                         
+    Besides, you need to add -I ${path_to_intel}/intel/mkl/include to  
+    the compiler options in order to find the mkl_dfti module.         
+                                                                         
+    _________________________ Input parameters: ________________________ 
+    
+    NTHREADS ( INTEGER*4 ) -- The number of threads to be used.      
+                              Value 0 means no threads. Value -1     
+                              means to get the number of threads     
+                              from the environment variable          
+                              OMP_NUM_THREADS. NB: FFTW wisdom       
+                              created for a non-thread environment    
+                              will be discarded if the number of     
+                              threads > 1.                           
+                                                                         
+    _________________________ Modified parameters: ______________________ 
+                                                                         
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                              Input: switch IUER=0 -- no error messages  
+                                     will be generated even in the case  
+                                     of error. IUER=-1 -- in the case of 
+                                     error the message will be put on    
+                                     stdout.                             
+                              Output: 0 in the case of successful        
+                                      completion and non-zero in the     
+                                      case of error.                     
+
+-------------------------------------------------------------------------
+
+FUNCTION INIT_FFTW ( WISDOM_FILE, FFTW_MODE, FFTW_TIMEOUT, &
+                     NTHREADS, IUER )
+                                                                      
+    Routine  INIT_FFTW  reads the so-called WISDOM_FILE with           
+    parameters of the tune-up of the FFTW library that implements      
+    fast Fourier transform and performs initialization of threads.      
+    It reads OMP_NUM_THREADS and determines the number of threads.     
+    If OMP_NUM_THREADS is not defined, one thread will be used.        
+                                                                       
+    The wisdom file should be created by a separate program            
+    create_fftw_wisdom.                                                
+                                                                       
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    WISDOM_FILE ( CHARACTER ) -- Name of the so-called wisdom file that  
+                                 contains tune-up parameters of FFTW     
+                                 library. The file name may be blank --  
+                                 in that case no wisdom is acquired.    
+    FFTW_MODE ( INTEGER*4 ) -- Used mode of FFTW. The following modes  
+                               are supported:                          
+                               0 -- ESTIMATE -- provides a reasonable  
+                                    speed for execution and very fast  
+                                    plan evaluation. Recommended for   
+                                    using unless, an evidence exists   
+                                    that other modes will be faster.   
+                               1 -- MEASURE -- may faster than         
+                                    ESTIMATE, but may be 100 times     
+                                    slower for startup. Recommended    
+                                    only with a wisdom file.           
+                               2 -- PATIENT -- may faster than         
+                                    ESTIMATE, nut may be 1000 times    
+                                    slower for startup. Recommended    
+                                    only with a wisdom file.           
+                               3 -- EXHAUSTIVE -- may faster than      
+                                    ESTIMATE, but it may take 10000    
+                                    times slower for a startup.        
+                                    You should be crazy if you try it  
+                                    without a wisdom file.             
+    FFTW_TIMEOUT ( REAL*8    ) -- Maximum amount of time in seconds for  
+                                  creation of plan. FFTW may be so slow  
+                                  in deciding which plan to use that you 
+                                  will certainly want to limit this time.
+                                  0.01 is good value for dimensions      
+                                  less than 65536.                       
+    NTHREADS ( INTEGER*4 ) --     The number of threads to be used.      
+                                  Value 0 means no threads. Value -1     
+                                  means to get the number of threads     
+                                  from the environment variable          
+                                  OMP_NUM_THREADS. NB: FFTW wisdom       
+                                  created for a non-thread environment    
+                                  will be discarded if the number of     
+                                  threads > 1.                           
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                       
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                            Input: switch IUER=0 -- no error messages  
+                                   will be generated even in the case  
+                                   of error. IUER=-1 -- in the case of 
+                                   error the message will be put on    
+                                   stdout.                             
+                            Output: 0 in the case of successful        
+                                    completion and non-zero in the     
+                                    case of error.                     
+                                                                       
+   _________________________ Value: ___________________________________ 
+                                                                       
+   INIT_FFTW ( INTEGER*4 ) -- returns the number of threads            
+                              initialized.                            
+                                                                       
+
+-------------------------------------------------------------------------
+SUBROUTINE SPHE_QUIT ( FSH )
+
+    Routine SPHE_QUIT releases dynamic memory allocated inside  the    
+    initialize internal data structure for consecutive computation     
+    of direct or inverse spherical transform and then releases memory  
+    allocated for this structure itself.                               
+                                                                       
+    Input parameters: 
+                                                                       
+    FSH ( SPHE_TYPE ) -- Internal data structure of fourpack package    
+                         that keeps internal arrays with intermediate   
+                         results and their status for possible re-use.  
+
+-------------------------------------------------------------------------
+SUBROUTINE FFT_1D_C16 ( DIM, IEXP, ARR, IUER )
+                                                                         
+      Routine  FFT_1D_C16  performs fast Fourier transform in place,     
+      either forward ( IEXP = 1 ), or backward ( IEXP = -1 ) under       
+      the complex double precision array ARR of dimension DIM.           
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+     DIM ( INTEGER*4 ) -- Dimension of the array. NB: dimension that     
+                          is the power of 2 yields the best performance. 
+    IEXP ( INTEGER*4 ) -- Direction of the transform:                    
+                           1 -- forward  (direct)  FFT.                  
+                          -1 -- backward (reverse) FFT.                  
+                                                                         
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+     ARR ( COMPLEX*16 ) -- Array to be transformed.                      
+                           Input for forward FFT:  array ordered in time.*     
+                           Output of the backward FFT in this order:     
+                           [1, dim/2-1] -- increase in frequency order   
+                                         starting from the zero frequency
+                           [dim/2, dim] -- increase in frequency         
+                                           starting from -n/2 through 1/n
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                              Input: switch IUER=0 -- no error messages  
+                                     will be generated even in the case  
+                                     of error. IUER=-1 -- in the case of 
+                                     error the message will be put on    
+                                     stdout.                             
+                              Output: 0 in the case of successful        
+                                      completion and non-zero in the     
+                                      case of error.                     
+
+-------------------------------------------------------------------------
+SUBROUTINE FFT_1D_C8 ( DIM, IEXP, ARR, IUER )
+                                                                         
+      Routine  FFT_1D_C8  performs fast Fourier transform in place,      
+      either forward ( IEXP = 1 ), or backward ( IEXP = -1 ) under       
+      the complex single precision array ARR of dimension DIM.           
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+     DIM ( INTEGER*4 ) -- Dimension of the array. NB: dimension that     
+                          is the power of 2 yields the best performance. 
+    IEXP ( INTEGER*4 ) -- Direction of the transform:                    
+                           1 -- forward  (direct)  FFT.                  
+                          -1 -- backward (reverse) FFT.                  
+                                                                         
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+     ARR ( COMPLEX*8 )  -- Array to be transformed.                      
+                           Input for forward FFT:  array ordered in time.*     
+                           Output of the backward FFT in this order:     
+                           [1, dim/2-1] -- increase in frequency order   
+                                         starting from the zero frequency
+                           [dim/2, dim] -- increase in frequency         
+                                           starting from -n/2 through 1/n
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                              Input: switch IUER=0 -- no error messages  
+                                     will be generated even in the case  
+                                     of error. IUER=-1 -- in the case of 
+                                     error the message will be put on    
+                                     stdout.                             
+                              Output: 0 in the case of successful        
+                                      completion and non-zero in the     
+                                      case of error.                     
+                                                                         
+-------------------------------------------------------------------------
+SUBROUTINE FFT_2D_C16 ( DIM1, DIM2, IEXP, ARR, IUER )
+                                                                         
+    Routine  FFT_2D_C16  performs fast Fourier transform in place,     
+    either forward ( IEXP = 1 ), or backward ( IEXP = -1 ) under       
+    the complex double precision 2-dimensional array ARR.              
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    DIM1 ( INTEGER*4 ) -- 1st dimension of the array. NB: dimension that 
+                          is the power of 2 yields the best performance. 
+    DIM2 ( INTEGER*4 ) -- 2nd dimension of the array. NB: dimension that 
+                          is the power of 2 yields the best performance. 
+    IEXP ( INTEGER*4 ) -- Direction of the transform:                    
+                           1 -- forward  (direct)  FFT.                  
+                          -1 -- backward (reverse) FFT.                  
+                                                                         
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+     ARR ( COMPLEX*16 ) -- Array to be transformed.                      
+                           Input for forward FFT:  array ordered in time.
+                           Output of the backward FFT in this order:     
+                           [1, dim/2-1] -- increase in frequency order   
+                                         starting from the zero frequency
+                           [dim/2, dim] -- increase in frequency         
+                                           starting from -n/2 through 1/n
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                              Input: switch IUER=0 -- no error messages  
+                                     will be generated even in the case  
+                                     of error. IUER=-1 -- in the case of 
+                                     error the message will be put on    
+                                     stdout.                             
+                              Output: 0 in the case of successful        
+                                      completion and non-zero in the     
+                                      case of error.                     
+                                                                         
+-------------------------------------------------------------------------
+SUBROUTINE FFT_2D_C8 ( DIM1, DIM2, IEXP, ARR, IUER )
+                                                                         
+    Routine  FFT_2D_C8  performs fast Fourier transform in place,      
+    either forward ( IEXP = 1 ), or backward ( IEXP = -1 ) under       
+    the complex single precision 2-dimensional array ARR.              
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    DIM1 ( INTEGER*4 ) -- 1st dimension of the array. NB: dimension that 
+                          is the power of 2 yields the best performance. 
+    DIM2 ( INTEGER*4 ) -- 2nd dimension of the array. NB: dimension that 
+                          is the power of 2 yields the best performance. 
+    IEXP ( INTEGER*4 ) -- Direction of the transform:                    
+                           1 -- forward  (direct)  FFT.                  
+                          -1 -- backward (reverse) FFT.                  
+                                                                         
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+     ARR ( COMPLEX*8 )  -- Array to be transformed.                      
+                           Input for forward FFT:  array ordered in time.*     
+                           Output of the backward FFT in this order:     
+                           [1, dim/2-1] -- increase in frequency order   
+                                         starting from the zero frequency
+                           [dim/2, dim] -- increase in frequency         
+                                           starting from -n/2 through 1/n
+                                                                         
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                              Input: switch IUER=0 -- no error messages  
+                                     will be generated even in the case  
+                                     of error. IUER=-1 -- in the case of 
+                                     error the message will be put on    
+                                     stdout.                             
+                              Output: 0 in the case of successful        
+                                      completion and non-zero in the     
+                                      case of error.                     
+                                                                         
+-------------------------------------------------------------------------
+SUBROUTINE FFT_1D_R2C_R8 ( DIM, ARR_R8, ARR_C16, IUER )
+                                                                         
+    Routine FFT_1D_R2C_R8 performs forward fast Fourier transform      
+    under the real*8 array ARR_R8 of dimension DIM. Results is         
+    complex*16 array ARR_C16 of n/2+1 for non-negative frequencies.    
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    DIM ( INTEGER*4  ) -- Dimension of the array input.              
+                          NB: dimension that is the power of         
+                          2 yields the best performance.             
+    ARR_R8 ( REAL*8  ) -- Array to be transformed. Should be time    
+                          ordered.                                   
+                                                                         
+    _________________________ Output parameters: _______________________ 
+                                                                         
+    ARR_C16 ( COMPLEX*16 ) -- Fourier transform of the input array.      
+                              Dimension: DIM/2+1. Frequencies start      
+                              from 0 and run through dim/2               
+                                                                         
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+                                                                         
+
+-------------------------------------------------------------------------
+SUBROUTINE FFT_1D_R2C_R4 ( DIM, ARR_R4, ARR_C8, IUER )
+                                                                         
+    Routine  FFT_1D_R2C_R4  performs forward fast Fourier transform    
+    under the real*4 array ARR_R4 of dimension DIM. Results is         
+    complex*16 array ARR_C8 of n/2+1 for non-negative frequencies.     
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    DIM ( INTEGER*4     ) -- Dimension of the array input. NB: dimension 
+                             that is the power of 2 yields the best      
+                             performance.                                
+    ARR_R4 ( REAL*4     ) -- Real array to be transformed. Should be     
+                             time ordered.                               
+                                                                         
+    _________________________ Output parameters: _______________________ 
+                                                                         
+    ARR_C8 ( COMPLEX*8  ) -- Fourier transform of the input array.       
+                             Dimension: DIM/2+1. Frequencies start from  
+                             0 and run through dim/2                     
+                                                                         
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+                                                                         
+-------------------------------------------------------------------------
+SUBROUTINE FFT_1D_C2R_C16 ( DIM, ARR_C16, ARR_R8, IUER )
+                                                                         
+    Routine  FFT_1D_C2R_C16  performs backward (inverse) fast Fourier  
+    transform under the complex*16 array ARR_C16 of the 1-dimensional  
+    Hermtian-conjugated spectrum of dimension DIM. ARR_C16 keeps only  
+    dim/2+1 elements for non-negative frequencies. Result, the real*8  
+    array in time order, is put in the output array ARR_R8.            
+                                                                         
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    DIM ( INTEGER*4  )     -- Dimension of the array input.              
+                              NB: dimension that is the power of 2       
+                              yields the best performance.               
+    ARR_C16 ( COMPLEX*16 ) -- Array to be transformed. A portion of the  
+                              Hermitian-conjugated spectrum for          
+                              non-negative frequencies. Dimension:       
+                              DIM/2+1. Frequencies start from 0 and run  
+                              through dim/2.                             
+                                                                         
+    _________________________ Output parameters: _______________________ 
+                                                                         
+    ARR_R8 ( REAL*8      ) -- Array to be transformed. Should be time    
+                              ordered.                                   
+                                                                        
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+
+-------------------------------------------------------------------------
+SUBROUTINE FFT_1D_C2R_C8 ( DIM, ARR_C8, ARR_R4, IUER )
+                                                                         
+    Routine  FFT_1D_C2R_C8  performs backward (inverse) fast Fourier   
+    transform under the complex*8 array ARR_C8 of the 1-dimensional    
+    Hermtian-conjugated spectrum of dimension DIM. ARR_C8 keeps only   
+    dim/2+1 elements for non-negative frequencies. Result, the real*8  
+    array in time order, is put in the output array ARR_R8.            
+   
+    _________________________ Input parameters: ________________________ 
+                                                                         
+    DIM ( INTEGER*4    ) -- Dimension of the array input. NB: dimension  
+                            that is the power of 2 yields the best       
+                            performance.                                 
+    ARR_C8 ( COMPLEX*8 ) -- Array to be transformed. A portion of the    
+                            Hermitian-conjugated spectrum for            
+                            non-negative frequencies. Dimension: DIM/2+1.
+                            Frequencies start from 0 and run through     
+                            dim/2.                                       
+                                                                         
+    _________________________ Output parameters: _______________________ 
+                                                                         
+    ARR_R4 ( REAL*4    ) -- Array to be transformed. Should be time      
+                            ordered.                                     
+                                                                         
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+                                                                         
+-------------------------------------------------------------------------
+SUBROUTINE POWER_SPECTRUM_R8 ( N, MODE, TIM_ARR, VAL_ARR, &
+           FRQ_ARR, POW_ARR, IUER )
+
+    Routine  POWER_SPECTRUM_R8  computes the power spectrum of the     
+    real 1D array of data VAL_ARR of dimension of N that is a function 
+    of argument TIM_ARR using fast Fourier transform. The result is    
+    function POW_ARR of argument FRQ_ARR of dimension N/2+1. Frequency 
+    runs from 0 through the Nyquest frequency                          
+    2/(TIM_ARR(2)-TIM_ARR(1)) with step 1/(TIM_ARR(N)-TIM_ARR(1)).     
+    Depending on MODE, several windows will be applied to the data     
+    before Fourier transform.                                           
+    _________________________ Input parameters: ________________________ 
+    
+    N       ( INTEGER*4 ) -- The number of points of the input array.    
+    MODE    ( INTEGER*4 ) -- Windowing mode.                             
+                             0 -- no window applied.                     
+                             1 -- Hann window (recommended).             
+                              2 -- Hamming window.                        
+    TIM_ARR ( REAL*8    ) -- Argument of the input data. It may not      
+                             be necessarily time. Dimension: N.          
+                             NB: the argument MUST be ordered in         
+                             ascending order and MUST have the           
+                             equidistant step. Dimension: N.             
+    VAL_ARR ( REAL*8    ) -- The function, which power spectrum is to    
+                             be computed.                                
+    
+    _________________________ Output parameters: _______________________ 
+    
+    FRQ_ARR ( REAL*8    ) -- Argument of the power spectrum.             
+                             Runs from 0.0 through                       
+                             2/(TIM_ARR(2)-TIM_ARR(1)) with step         
+                             1/(N*(TIM_ARR(N)-TIM_ARR(1))).              
+                             Dimension: N/2+1.                           
+    POW_ARR ( REAL*8    ) -- The power spectrum. Dimension: N/2+1.       
+                             Unit: square of val_arr.                   
+    
+    ________________________ Modified parameters: ______________________ 
+    
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+    
+-------------------------------------------------------------------------
+SUBROUTINE POWER_SPECTRUM_R4 ( N, MODE, TIM_ARR, VAL_ARR, &
+           FRQ_ARR, POW_ARR, IUER )
+
+    Routine  POWER_SPECTRUM_R4  computes the power spectrum of the     
+    real 1D array of data VAL_ARR of dimension of N that is a function 
+    of argument TIM_ARR using fast Fourier transform. The result is    
+    function POW_ARR of argument FRQ_ARR of dimension N/2+1. Frequency 
+    runs from 0 through the Nyquest frequency                          
+    2/(TIM_ARR(2)-TIM_ARR(1)) with step 1/(TIM_ARR(N)-TIM_ARR(1)).     
+    Depending on MODE, several windows will be applied to the data     
+    before Fourier transform.                                           
+                                                                       
+    _________________________ Input parameters: ________________________ 
+                                                                       
+    N    ( INTEGER*4 ) --    The number of points of the input array.    
+    MODE ( INTEGER*4 ) --    Windowing mode.                             
+                             0 -- no window applied.                     
+                             1 -- Hann window (recommended).             
+                             2 -- Hanning window.                        
+    TIM_ARR ( REAL*4    ) -- Argument of the input data. It may not      
+                             be necessarily time. Dimension: N.          
+                             NB: the argument MUST be ordered in         
+                             ascending order and MUST have the           
+                             equidistant step. Dimension: N.             
+    VAL_ARR ( REAL*4    ) -- The function, which power spectrum is to    
+                             be computed.                                
+                                                                       
+    _________________________ Output parameters: _______________________ 
+                                                                       
+    FRQ_ARR ( REAL*4    ) -- Argument of the power spectrum.             
+                             Runs from 0.0 through                       
+                             2/(TIM_ARR(2)-TIM_ARR(1)) with step         
+                             1/(N*(TIM_ARR(N)-TIM_ARR(1))).              
+                             Dimension: N/2+1.                           
+    POW_ARR ( REAL*4    ) -- The power spectrum. Dimension: N/2+1.       
+                             Unit: square of val_arr.                   
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                         
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                            Input: switch IUER=0 -- no error messages   
+                                   will be generated even in the case   
+                                   of error. IUER=-1 -- in the case of  
+                                   error the message will be put on     
+                                   stdout.                              
+                            Output: 0 in the case of successful         
+                                    completion and non-zero in the      
+                                    case of error.                      
+
+-------------------------------------------------------------------------
+SUBROUTINE ROOT_EDGE_FILTER_R8 ( N, MODE, FRQ_THR, BETA, &
+           TIM_ARR, VAL_ARR, IUER )
+
+    Routine  ROOT_EDGE_FILTER_R8  implements either low-pass           
+    ( MODE = 1 ), or high=pass ( MODE =2 ) filter. Filtering is        
+    performed in three steps: 1) Fourier transform to the frequency    
+    domain; 2) multiplication the result by the filter function;       
+    3) inverse Fourier transform of the result.                        
+                                                                       
+    The following filter function H(f) for the high-pass filter is used:     
+                                                                             
+    1             beta*(f + f_o)/f_o                  beta*(f - f_o)/f_o       
+    - * --------------------------------- - ---------------------------------- 
+    2   sqrt(1 + (beta*(f + f_o)/f_o))**2)  sqrt(1 + (beta*(f - f_o)/f_o))**2) 
+                                                                             
+    The low-pass filter is 1 - H(f)                                    
+                                                                       
+    Parameter f_o determines the cut-off frequency, and beta           
+    determines the sharpness of the filter: the higher, the sharper.   
+    beta=20 is recommended for many applications.                      
+                                                                       
+    _________________________ Input parameters: ________________________ 
+                                                                       
+    N      ( INTEGER*4 ) -- The number of points of the input array.    
+    MODE   ( INTEGER*4 ) -- Filter mode:                                
+                           1 -- low-pass filter ( frequencies          
+                                f < frq_thr are passed, higher         
+                                frequencies are removed ).             
+                           2 -- high pass filter ( frequencies         
+                                f > frq_thr are passed, lower          
+                                frequencies are removed ).             
+    FRQ_THR ( REAL*8    ) -- The cut-off cyclic frequency of the filter. 
+                             Units: reciprocal to TIM_ARR units.         
+    BETA    ( REAL*8    ) -- Parameter that determines the sharpness     
+                             of the filter. The higher beta, the closer  
+                             the filter shape in the frequency domain    
+                             to the capital greek letter "Pi" shape.     
+                             NB: a very sharp filter results in an       
+                             extended base in the time domain.           
+    TIM_ARR ( REAL*8    ) -- Argument of the input data. It may not      
+                             be necessarily time. Dimension: N.          
+                             NB: the argument MUST be ordered in         
+                             ascending order and MUST have the           
+                             equidistant step. Dimension: N.             
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                       
+    VAL_ARR ( REAL*8    ) --   The function that is to be transformed.     
+                               Dimension: N.                               
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+                                                                       
+-------------------------------------------------------------------------
+SUBROUTINE ROOT_EDGE_FILTER_R4 ( N, MODE, FRQ_THR, BETA, &
+           TIM_ARR, VAL_ARR, IUER )
+
+    Routine  ROOT_EDGE_FILTER_R4  implements either low-pass           
+    ( MODE = 1 ), or high=pass ( MODE =2 ) filter. Filtering is        
+    performed in three steps: 1) Fourier transfrom to the frequency    
+    domain; 2) multiplication the result by the filter function;      
+    3) inverse Fourier transform of the result.                        
+                                                                       
+    The following filter function H(f) for the high-pass filter is used:    
+                                                                             
+    1             beta*(f + f_o)/f_o                  beta*(f - f_o)/f_o       
+    - * --------------------------------- - ---------------------------------- 
+    2   sqrt(1 + (beta*(f + f_o)/f_o))**2)  sqrt(1 + (beta*(f - f_o)/f_o))**2) 
+                                                                             
+    The low-pass filter is 1 - H(f)                                 
+                                                                       
+    Parameter f_o determines the cut-off frequency, and beta determines 
+    the sharpness of the filter: the higher, the sharper.             
+    beta=20 is recommended for many applications.                      
+                                                                       
+    _________________________ Input parameters: ________________________ 
+                                                                        
+    N    ( INTEGER*4 ) --   The number of points of the input array.    
+    MODE ( INTEGER*4 ) --   Filter mode:                                
+                            1 -- low-pass filter ( frequencies          
+                                 f < frq_thr are passed, higher         
+                                 frequencies are removed ).             
+                            2 -- high pass filter ( frequencies         
+                                 f > frq_thr are passed, lower          
+                                 frequencies are removed ).             
+    FRQ_THR ( REAL*4 ) --   The cut-off cyclic frequency of the filter. 
+                            Units: reciprocal to TIM_ARR units.         
+    BETA ( REAL*4    ) --   Parameter that determines the sharpness     
+                            of the filter. The higher beta, the closer  
+                            the filter shape in the frequency domain    
+                            to the capital greek letter "Pi" shape.     
+                            NB: a very sharp filter results in an       
+                            extended base in the time domain.           
+    TIM_ARR ( REAL*4    ) -- Argument of the input data. It may not      
+                             be necessarily time. Dimension: N.          
+                             NB: the argument MUST be ordered in         
+                             ascending order and MUST have the           
+                             equidistant step. Dimension: N.             
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                        
+    VAL_ARR ( REAL*4    ) --   The function that is to be transformed.     
+                               Dimension: N.                               
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+                                                                       
+-------------------------------------------------------------------------
+SUBROUTINE ROOT_BAND_FILTER_R8 ( N, FRQ_LOW, FRQ_HIGH, BETA, &
+           TIM_ARR, VAL_ARR, IUER )
+                                                                      
+    Routine  ROOT_BAND_FILTER_R8  implements the band-pass digital     
+    filter. Filtering is                                               
+    performed in three steps: 1) Fourier transform to the frequency    
+    domain; 2) multiplication the result by the filter function;      
+    3) inverse Fourier transform of the result.                        
+                                                                       
+    Filter function K(f,f_l,f_h) = (1 - H(f,f_l)*H(f,f_h),             
+    where H(f,f_o):                                                    
+                                                                             
+    1             beta*(f + f_o)/f_o                  beta*(f - f_o)/f_o       
+    - * --------------------------------- - ---------------------------------- 
+    2   sqrt(1 + (beta*(f + f_o)/f_o))**2)  sqrt(1 + (beta*(f - f_o)/f_o))**2) 
+                                                                             
+    Parameter f_l, f_h determines the low and high cut-off
+    frequencies, while parameter beta determines the sharpness of     
+    the filter: the higher, the sharper. beta=20 is recommended for    
+    many applications.                                                 
+                                                                       
+    _________________________ Input parameters: ________________________ 
+                                                                        
+    N       ( INTEGER*4 ) --  The number of points of the input array.   
+    FRQ_LOW ( REAL*8    ) --  The low cut-off cyclic frequency of the    
+                              filter. Frequencies f < FRE_LOW will not be 
+                              passed. Units: reciprocal to TIM_ARR units.
+    FRQ_HIGH ( REAL*8    ) -- The high cut-off cyclic frequency of the   
+                              filter. Frequencies f > FRE_HIGH will not   
+                              be passed. Units: reciprocal to TIM_ARR    
+                              units.                                     
+    BETA ( REAL*8    )     -- Parameter that determines the sharpness    
+                              of the filter. The higher beta, the closer 
+                              the filter shape in the frequency domain   
+                              to the capital greek letter "Pi" shape.    
+                              NB: a very sharp filter results in an      
+                              extended base in the time domain.          
+    TIM_ARR ( REAL*8    ) --  Argument of the input data. It may not     
+                              be necessarily time. Dimension: N.         
+                              NB: the argument MUST be ordered in        
+                              ascending order and MUST have the          
+                              equidistant step. Dimension: N.            
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                        
+    VAL_ARR ( REAL*8      ) -- The function that is to be transformed.     
+                               Dimension: N.                               
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+                                                                       
+-------------------------------------------------------------------------
+SUBROUTINE ROOT_BAND_FILTER_R4 ( N, FRQ_LOW, FRQ_HIGH, BETA, &
+           TIM_ARR, VAL_ARR, IUER )
+                                                                      
+    Routine  ROOT_BAND_FILTER_R4  implements the band-pass digital     
+    filter. Filtering is                                               
+    performed in three steps: 1) Fourier transform to the frequency    
+    domain; 2) multiplication the result by the filter function;      
+    3) inverse Fourier transform of the result.                        
+                                                                       
+    Filter function K(f,f_l,f_h) = (1 - H(f,f_l)*H(f,f_h),             
+    where H(f,f_o):                                                    
+                                                                             
+    1             beta*(f + f_o)/f_o                  beta*(f - f_o)/f_o       
+    - * --------------------------------- - ---------------------------------- 
+    2   sqrt(1 + (beta*(f + f_o)/f_o))**2)  sqrt(1 + (beta*(f - f_o)/f_o))**2) 
+                                                                             
+    Parameter f_l, f_h determines the low and high cut-off
+    frequencies, while parameter beta determines the sharpness of     
+    the filter: the higher, the sharper. beta=20 is recommended for    
+    many applications.                                                 
+                                                                       
+    _________________________ Input parameters: ________________________ 
+                                                                        
+    N       ( INTEGER*4 ) --  The number of points of the input array.   
+    FRQ_LOW ( REAL*4    ) --  The low cut-off cyclic frequency of the    
+                              filter. Frequencies f < FRE_LOW will not be 
+                              passed. Units: reciprocal to TIM_ARR units.
+    FRQ_HIGH ( REAL*4    ) -- The high cut-off cyclic frequency of the   
+                              filter. Frequencies f > FRE_HIGH will not   
+                              be passed. Units: reciprocal to TIM_ARR    
+                              units.                                     
+    BETA ( REAL*4    )     -- Parameter that determines the sharpness    
+                              of the filter. The higher beta, the closer 
+                              the filter shape in the frequency domain   
+                              to the capital greek letter "Pi" shape.    
+                              NB: a very sharp filter results in an      
+                              extended base in the time domain.          
+    TIM_ARR ( REAL*4    ) --  Argument of the input data. It may not     
+                              be necessarily time. Dimension: N.         
+                              NB: the argument MUST be ordered in        
+                              ascending order and MUST have the          
+                              equidistant step. Dimension: N.            
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                        
+    VAL_ARR ( REAL*4      ) -- The function that is to be transformed.     
+                               Dimension: N.                               
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.                  
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+
+-------------------------------------------------------------------------
+SUBROUTINE SPHE_DIR_2NN ( FSH, N, FUN, MD, DEG, NORM, IPHS, SPH, IUER )
+
+    This routine will expand a grid containing 2*N samples           
+    in longitude and N samples in latitude into spherical harmonics.   
+    This routine makes use of the sampling theorem presented in        
+    Driscoll and Healy (1994) and employs FFTs when calculating        
+    the sin and cos terms. The number of samples, N, must be EVEN      
+    for this routine to work, and the spherical harmonic expansion     
+    is exact if the function is bandlimited to degree N/2-1.           
+                                                                       
+    In a case if the dimension of transform is less or equal           
+    FSH__MAX_SCL, then the Legendre associated functions are computed  
+    on the fly  using the scaling methodology presented in Holmes and  
+    Featherston (2002). When NORM is 1,2 or 4, these are accurate to   
+    about degree 2800. When NORM is 3, the routine is only stable to   
+    about degree 15. In a case if the dimension of transform is        
+    greater than FSH__MAX_SCL=2700, then the Legendre functions are    
+    computed on the fly using the X-number algebra introduced by       
+    Fukushima (2011). The essence of that approach is that the         
+    intermediate variables needed for computation of Legendre          
+    associated functions are kept in two numbers: the double precision 
+    float number and integer number for additional exponent.           
+                                                                       
+    The input grid contains N samples in latitude from -90 to          
+    90-interval, and 2*N samples in longitude from 0 to                
+    360-interval, where interval is the latitudinal sampling           
+    interval 180/N.                                                    
+                                                                       
+    The input grid must contain N samples in latitude and 2N samples   
+    in longitude. The sampling intervals in latitude and longitude     
+    are 180/N and 360/N respectively. When performing the FFTs in      
+    longitude, the frequencies greater than N/2-1 are simply discarded 
+    to prevent aliasing.                                               
+                                                                       
+    Notes:                                                             
+    1. This routine does not use the fast Legendre transforms that     
+       are presented in Driscoll and Heally (1994).                    
+    2. Use of a N by 2N grid is implemented because many geographic    
+       grids are sampled this way. When taking the Fourier transforms  
+       in longitude, all of the higher frequencies are ultimately      
+       discarded. If, instead, every other column of the grid were     
+       discarded to form a NxN grid, higher frequencies could be       
+       aliased into lower frequencies.                                 
+                                                                       
+                                                                       
+    ________________________ Input parameters: _________________________ 
+                                                                      
+    FSH ( SPHE_TYPE ) -- Internal data structure that keeps internal    
+                       arrays with intermediate results and their     
+                       status for possible re-use.                    
+    N ( INTEGER*4 ) -- Dimension of the input function along          
+                       latitude.                                      
+    FUN ( REAL*8    ) -- The function that is to be expanded.           
+                       Dimension 2N*N (longitude,latitude).           
+    MD ( INTEGER*4 ) -- Dimension of the array for spherical function. 
+    DEG ( INTEGER*4 ) -- Maximum degree of the transform. Should not    
+                       exceed MD.                                     
+    NORM ( INTEGER*4 ) -- Normalization to be used when calculating      
+                       Legendre functions                             
+                       1 -- "geodesy";                                
+                       2 -- Schmidt;                                  
+                       3 -- unnormalized;                             
+                       4 -- orthonormalized;                          
+    IPHS ( INTEGER*4 ) -- Phase flag.                                    
+                        1: Do not include the Condon-Shortley phase   
+                           factor of (-1)^m.                          
+                       -1: Apply the Condon-Shortley phase factor     
+                           of (-1)^m.                                 
+                                                                      
+    ________________________ Output parameters: ________________________ 
+                                                                      
+    SPH ( REAL*8    ) -- Array with spherical transform coefficients.   
+                         Dimension: (2,0:MD,0:MD). The first dimesion   
+                         runs over cosine/sine component, the second    
+                         dimension runs over order degree m, the third  
+                         dimension runs over order l.                   
+                         NB: only coefficients l =< m are filled!       
+                         The part of array SPH l > m is filled with     
+                        zeroes.                                        
+                                                                      
+    ________________________ Modified parameters: ______________________ 
+                    
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                               Input: switch IUER=0 -- no error messages  
+                                      will be generated even in the case  
+                                      of error. IUER=-1 -- in the case of 
+                                      error the message will be put on    
+                                      stdout.                             
+                               Output: 0 in the case of successful        
+                                       completion and non-zero in the     
+                                       case of error.                     
+                                                                      
+-------------------------------------------------------------------------
+FUNCTION SPHE_INV_2NN ( FSH, MD, DEG, NORM, IPHS, SPH, N, FUN, IUER )
+                                                                      
+    Routine  SPHE_INV_2NN  given the spherical harmonic coefficients   
+    SPH of degree/order MD, will evaluate the function on a grid with   
+    an equal number of samples N latitude and 2*N in longitude.        
+    This is the inverse the routine SPHE_DIR_2NN, both of which are    
+    done quickly using FFTs for each degree of each latitude band.     
+    The number of samples specified by the spherical harmonic          
+    bandwidth DEG may be equal or less than MD.                        
+                                                                       
+    Note that N is always EVEN for this routine.                       
+                                                                       
+    In a case if the dimension of transform is less or equal           
+    FSH__MAX_SCL, then the Legendre associated functions are computed  
+    on the fly  using the scaling methodology presented in Holmes and  
+    Featherston (2002). When NORM is 1,2 or 4, these are accurate to   
+    about degree 2800. When NORM is 3, the routine is only stable to   
+    about degree 15. In a case if the dimension of transform is        
+    greater than FSH__MAX_SCL, then the Legendre functions are         
+    computed on the fly using the X-number algebra introduced by       
+    Fukushima (2011). The essence of that approach is that the         
+    intermediate variables needed for computation of Legendre          
+    associated functions are kept in two numbers: the double precision 
+    float number and the integer number for additional exponent.           
+                                                                       
+    The output grid contains N samples in latitude from -90 to         
+    +90 deg interval, including south pole, but excluding north pole   
+    and in longitude from 0 to 360-1*interval (or 2(N-1) x N), where   
+    interval is the sampling interval, and n=2*(deg+1)+1.              
+                                                                       
+    NB: the grid excludes the northern pole.                          
+                                                                       
+    The output grid contains N samples in latitude from -90 to         
+    90-interval, and in longitude from 0 to 360-2*interval             
+    (or 2N x N), where interval is the sampling interval, and          
+    n=2*(deg+1).
+                                                                       
+    ________________________ Input parameters: _________________________ 
+                                                                       
+    FSH  ( SPHE_TYPE ) -- Internal data structure that keeps internal    
+                          arrays with intermediate results and their     
+                          status for possible re-use.                    
+
+    MD   ( INTEGER*4 ) -- Dimension of the array for spherical function. 
+
+    DEG  ( INTEGER*4 ) -- Maximum degree of the transform. Should not    
+                          exceed MD.                                     
+
+    NORM ( INTEGER*4 ) -- Normalization to be used when calculating      
+                          Legendre functions                             
+                          1 -- "geodesy";                                
+                          2 -- Schmidt;                                  
+                          3 -- unnormalized;                             
+                          4 -- orthonormalized;                          
+
+    IPHS ( INTEGER*4 ) -- Phase flag.                                    
+                           1: Do not include the Condon-Shortley phase   
+                              factor of (-1)^m.                          
+                          -1: Apply the Condon-Shortley phase factor     
+                              of (-1)^m.                                 
+    SPH ( REAL*8    ) --  Array with spherical transform coefficients.   
+                          Dimension: (2,0:MD,0:MD). The first dimension   
+                          runs over cosine/sine component, the second    
+                          dimension runs degree m, the third dimension   
+                          runs over order l.                             
+                          NB: only coefficients l =< m are filled!       
+                          The part of array SPH l > m is filled with     
+                          zeroes.                                        
+
+    N ( INTEGER*4 ) --    Dimension of the output function along         
+                          latitude.                                      
+                                    
+    ________________________ Output parameters: ________________________ 
+                                                                      
+    FUN ( REAL*8    ) -- The function that is to be expanded.           
+                         Dimension 2N*N (longitude,latitude).           
+                                                                      
+    ________________________ Modified parameters: ______________________ 
+                                                                      
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                            Input: switch IUER=0 -- no error messages  
+                                   will be generated even in the case  
+                                   of error. IUER=-1 -- in the case of 
+                                   error the message will be put on    
+                                   stdout.                             
+                             Output: 0 in the case of successful        
+                                     completion and non-zero in the     
+                                     case of error.                     
+                                                                      
+-------------------------------------------------------------------------
+SUBROUTINE SPHE_INV_2NN_VEC ( FSH, MD, DEG, SPH, N, FUN, IUER )
+
+    Routine  SPHE_INV_2NN_VEC  evaluates function FUN and its partial  
+    derivatives over longitude and latitude on a regular lon/lat       
+    grid 2(N-1)*N given its spherical harmonics transform and its      
+    tangential derivative.                                             
+                                                                       
+    Four-dimensional array SPH has the first dimension 1:2 that        
+    runs over cosine and sine components, second dimension 0:DEG       
+    runs over degree, third dimension 0:DEG runs over order, and       
+    the fourth dimension 1:2 runs over spherical harmonics and its     
+    tangential constituent. SPH contains components nm and mn of       
+    degree/order: SPH(a,c,b,d) = SPH(a,b,c,d). The so-called           
+    tangential constituent is the Spherical Harmonics Transform of     
+    a function that may be different than FUN.                         
+                                                                       
+    The output is placed in three-dimensional array FUN defined on     
+    a regular longitude/latitude grid at the unit sphere.              
+    Its first slide is the value of the function restored from the     
+    spherical harmonics defined in the 1st slice of SPH. The second    
+    slice of FUN is the partial derivative of function defined by its  
+    spherical harmonics stored in the 2nd slice of SPH over the        
+    longitudinal direction. The third slice of FUN is the partial      
+    derivative of the function defined by its spherical harmonics      
+    stored in the 2nd slice of SPH over the latitudinal direction.     
+                                                                       
+    FUN(i,j,1) = \sum_n \sum_m SPH(b,c,1) * Y_mn                       
+    FUN(i,j,2) = \sum_n \sum_m SPH(b,c,2) * \d Y_mn \d long / cos\phi  
+    FUN(i,j,3) = \sum_n \sum_m SPH(b,c,2) * \d Y_mn \d latitude        
+                                                                       
+    This is the inverse of the routine SPHE_DIR_2NN, both of which are 
+    done quickly using FFTs for each degree of each latitude band.     
+    The number of samples is determined by the spherical harmonic      
+    bandwidth DEG may be equal or less than MD.                        
+                                                                       
+    Note that N is always ODD for this routine.                        
+                                                                       
+    In a case if the dimension of transform is less or equal           
+    FSH__MAX_SCL, then the Legendre associated functions are computed  
+    on the fly  using the scaling methodology presented in Holmes and  
+    Featherston (2002). When NORM is 1,2 or 4, these are accurate to   
+    about degree 2800. When NORM is 3, the routine is only stable to   
+    about degree 15. In a case if the dimension of transform is        
+    greater than FSH__MAX_SCL, then the Legendre functions are         
+    computed on the fly using the X-number algebra introduced by       
+    Fukushima (2011). The essence of that approach is that the         
+    intermediate variables needed for computation of Legendre          
+    associated functions are kept in two numbers: the double precision 
+    float number and integer number for additional exponent.           
+    Geodesy normalization for spherical harmonics us used.             
+                                                                       
+    The output grid contains N samples in latitude from -90 to         
+    +90 deg interval, including both poles, and in longitude from      
+    0 to 360-1*interval (or 2(N-1) x N), where interval is the         
+    sampling interval, and n=2*(deg+1)+1.                              
+                                                                       
+    NB: the grid includes both poles.                                  
+                                                                       
+                                                                       
+    ________________________ Input parameters: _________________________ 
+                                                                         
+    FSH ( SPHE_TYPE ) -- Internal data structure that keeps internal    
+                         arrays with intermediate results and their     
+                         status for possible re-use.                    
+    MD  ( INTEGER*4 ) -- Dimension of the array for spherical function. 
+    DEG ( INTEGER*4 ) -- Maximum degree of the transform. Should not    
+                         exceed MD.                                     
+    SPH ( REAL*8    ) -- Array with spherical transform coefficients.   
+                         Dimension: (2,0:MD,0:MD,2). The first dimension 
+                         runs over cosine/sine component, the second    
+                         dimension runs degree m, the third dimension   
+                         runs over order l. The fourth dimension runs   
+                         over 1 and 2.                                  
+    N ( INTEGER*4 ) --   Dimension of the output function along         
+                         latitude.                                      
+                                                                       
+    ________________________ Output parameters: ________________________ 
+                                                                       
+    FUN ( REAL*8    ) -- The function that is to be expanded.           
+                         Dimension 2N*N (longitude,latitude).           
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                       
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                            Input: switch IUER=0 -- no error messages  
+                                   will be generated even in the case  
+                                   of error. IUER=-1 -- in the case of 
+                                   error the message will be put on    
+                                   stdout.                             
+                            Output: 0 in the case of successful        
+                                    completion and non-zero in the     
+                                    case of error.                     
+                                                                       
+-------------------------------------------------------------------------
+FUNCTION SPHE_COMP_VAL ( FSH, MD, DEG, LAT_VAL, LON_VAL, NORM, &
+         IPHS, SPH, IUER )
+
+    Routine SPHE_COMP_VAL  determines the value at a given latitude    
+    and longitude corresponding to the given set of spherical          
+    harmonics.                                                         
+                                                                       
+    ________________________ Input parameters: _________________________ 
+                                                                        
+    FSH ( SPHE_TYPE   ) -- Internal data structure that keeps internal 
+                           arrays with intermediate results and their  
+                           status for possible re-use.                 
+    MD  ( INTEGER*4   ) -- Dimension of the array for spherical        
+                           function.                                   
+    DEG ( INTEGER*4   ) -- Maximum degree of the transform. Should not 
+                           exceed MD.                                  
+    LAT_VAL ( REAL*8  ) -- Latitude of the point in radians.           
+    LON_VAL ( REAL*8  ) -- Longitude of the point in radians.          
+    NORM ( INTEGER*4  ) -- Normalization to be used when calculating   
+                           Legendre functions                          
+                           1 -- "geodesy";                             
+                           2 -- Schmidt;                               
+                           3 -- unnormalized;                          
+                           4 -- orthonormalized;                       
+    IPHS ( INTEGER*4 ) --  Phase flag.                                 
+                           1: Do not include the Condon-Shortley phase 
+                              factor of (-1)^m.                        
+                          -1: Apply the Condon-Shortley phase factor   
+                              of (-1)^m.                               
+    SPH ( REAL*8     ) -- Array with spherical transform coefficients. 
+                          Dimension: (2,0:MD,0:MD). The first dimension 
+                          runs over cosine/sine component, the second 
+                          dimension runs over order l, the third       
+                          dimension runs over degree.                   
+                          NB: only coefficients l =< m are filled!     
+                          The part of array SPH l > m is filled with   
+                          zeroes.                                      
+                                                                       
+    ________________________ Modified parameters: ______________________ 
+                                                                       
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                            Input: switch IUER=0 -- no error messages  
+                                   will be generated even in the case  
+                                   of error. IUER=-1 -- in the case of 
+                                   error the message will be put on    
+                                   stdout.                             
+                            Output: 0 in the case of successful        
+                                    completion and non-zero in the     
+                                    case of error.                     
+
+-------------------------------------------------------------------------
+SUBROUTINE SPHE_COMP_VEC ( FSH, MD, DEG, LAT_VAL, LON_VAL, NORM,
+           IPHS, SPH, RES, IUER )
+
+    Routine  SPHE_COMP_VEC  determines the value and its derivative    
+    towards north and east at a given latitude and longitude           
+    corresponding to the given set of spherical harmonics.             
+                                                                       
+    NB: spherical harmonics SPH array is transposed with respect to    
+    intuitive expectation: the second dimension runs over order m       
+    and the third dimension runs over degree l.                        
+                                                                       
+    ________________________ Input parameters: _________________________ 
+                                                                       
+    FSH     ( SPHE_TYPE ) -- Internal data structure that keeps internal 
+                             arrays with intermediate results and their  
+                             status for possible re-use.                 
+    MD      ( INTEGER*4 ) -- Dimension of the array for spherical        
+                             function.                                   
+    DEG     ( INTEGER*4 ) -- Maximum degree of the transform. Should not 
+                             exceed MD.                                  
+    LAT_VAL ( REAL*8    ) -- Latitude of the point in radians.           
+    LON_VAL ( REAL*8    ) -- Longitude of the point in radians.          
+    NORM    ( INTEGER*4 ) -- Normalization to be used when calculating   
+                             Legendre functions. Presently, only         
+                             1 -- "geodesy" is supported
+    IPHS ( INTEGER*4 )    -- Phase flag.                                 
+                             1: Do not include the Condon-Shortley phase 
+                                factor of (-1)^m.                        
+                            -1: Apply the Condon-Shortley phase factor   
+                                of (-1)^m.                               
+    SPH ( REAL*8    )     -- Array with spherical transform coefficients. 
+                             Dimension: (2,0:MD,0:MD,2). The first dimension 
+                             runs over cosine/sine component, the second  
+                             dimension runs over order m, the third       
+                             dimension runs over degree l, the fourth     
+                             dimension runs over radial and transverse    
+                             components.                                  
+                             NB: only coefficients l >= m are filled!     
+                             The part of array SPH l < m is filled with   
+                             zeroes.                                      
+     RES ( REAL*8    )    -- Vector of results: value, north derivative,  
+                             east derivative. Dimension: 3.               
+                                                                       
+     ________________________ Modified parameters: ______________________ 
+                                                                       
+     IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                             Input: switch IUER=0 -- no error messages  
+                                    will be generated even in the case  
+                                    of error. IUER=-1 -- in the case of 
+                                    error the message will be put on    
+                                    stdout.                             
+                             Output: 0 in the case of successful        
+                                     completion and non-zero in the     
+                                     case of error.                     
+                                                                       

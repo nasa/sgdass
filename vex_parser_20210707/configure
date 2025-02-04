@@ -1,0 +1,108 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of vex_parser. It creates the    *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ###  03-JUN-2020   configure    v1.0 (c) L. Petrov 03-JUN-2020 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv VEX_PARSER_VERSION  "20210707"
+setenv PETOOLS_VERSION_MIN "20200501"
+setenv VEX_PARSER_PREFIX     /opt
+setenv VEX_PARSER_ROOT       `dirname $0`
+if ( $VEX_PARSER_ROOT == '.' ) setenv VEX_PARSER_ROOT `pwd`
+setenv PETOOLS_DIR         /opt64
+setenv CONF_LOG            ${VEX_PARSER_ROOT}/temp/conf.log
+setenv BUILD_LOG           ${VEX_PARSER_ROOT}/temp/build.log
+setenv VEX_PARSER_NOOPT    NO
+setenv vex_parser_debug    0
+#
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_prefix > 0 ) then
+          setenv vex_parser_debug 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv VEX_PARSER_NOOPT YES
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv VEX_PARSER_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_DIR "$str"
+          set find_option = 1
+     endif
+#
+     set match_nopetools=`echo $arg | awk '{print index ($1,"--without-petools")}'`
+     if ( $match_nopetools > 0 ) then
+	  echo "petools is a mandatory library"
+	  exit 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $VEX_PARSER_ROOT/doc/vex_parser_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "vex_parser: $VEX_PARSER_VERSION"
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+echo "vex_parser config  $date_stamp  on  $host_name" >! $CONF_LOG
+echo $0 $argv >> $CONF_LOG
+if ( $vex_parser_debug == 1 ) then
+     csh -x support/config.csh | tee -a $CONF_LOG   
+   else
+     support/config.csh | tee -a $CONF_LOG   
+endif 
+if ( `grep Error $CONF_LOG` == "" ) then
+     set config_status = 0
+  else 
+     set config_status = 1
+endif 
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run gmake"
+     exit $config_status 
+  else
+     exit $config_status 
+endif

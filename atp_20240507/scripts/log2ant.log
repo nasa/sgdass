@@ -1,0 +1,11 @@
+17:47:16 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "dat"
+17:47:16 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "met"
+17:47:16 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "tsys"
+17:47:16 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "sefd"
+17:47:16 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "phc"
+17:47:16 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "fmt"
+17:47:16 log2ant-0.1.2 (Lands Run Falls (rc2)): starting
+17:47:16 Warning: SgStnLogCollector::readLogFile(): station WETTZELL: got unexpected `on source' record; string: "2021.275.07:29:50.00:preob"
+17:47:16 Warning: SgStnLogCollector::readLogFile(): station WETTZELL: got unexpected `on source' record; string: "2021.275.07:29:50.00&preob/onsource"
+17:47:16 Warning: SgStnLogCollector::readLogFile(): station WETTZELL: no proc record has been found in the log file
+17:47:16 Warning: SgStnLogReadings::createAntCalFile(): station WETTZELL: the sked's channel setup is missing

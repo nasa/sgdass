@@ -1,0 +1,9 @@
+       SUBROUTINE WRITE_SCREEN(BUFFER)
+       IMPLICIT NONE
+!
+       CHARACTER*(*) BUFFER
+!
+       CALL ADDSTR_F(BUFFER)
+       CALL NL_MN()
+       RETURN
+       END

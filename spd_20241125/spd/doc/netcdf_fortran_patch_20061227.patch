@@ -1,0 +1,93 @@
+--- fortran/cfortran.h.orig	2006-12-27 22:05:06.000000000 -0500
++++ fortran/cfortran.h	2006-12-27 22:05:16.000000000 -0500
+@@ -1,6 +1,12 @@
+ /* cfortran.h  4.3 */
+ /* http://www-zeus.desy.de/~burow/cfortran/                   */
+ /* Burkhard Burow  burow@desy.de                 1990 - 2001. */
++/* 2005.09.14  Leonid Petrov lpetrov@lacerta.miz.nao.ac.jp         */
++/*             a) added support of Intel Fortran compiler:         */
++/*                activated when Intel_Fortran symbols is defined  */
++/*             b) added support of suppression of appending the    */
++/*                underscore to function name when symbol          */
++/*                NoUnderscoreAppend is defined                    */
+ 
+ #ifndef __CFORTRAN_LOADED
+ #define __CFORTRAN_LOADED
+@@ -75,7 +81,7 @@
+ 
+ /* Remainder of cfortran.h depends on the Fortran compiler. */
+ 
+-#if defined(CLIPPERFortran) || defined(pgiFortran) || defined(__CYGWIN32__)
++#if defined(CLIPPERFortran) || defined(pgiFortran) || defined(__CYGWIN32__) 
+ #ifndef f2cFortran
+ #define f2cFortran
+ #endif
+@@ -83,8 +89,8 @@
+ 
+ /* VAX/VMS does not let us \-split long #if lines. */ 
+ /* Split #if into 2 because some HP-UX can't handle long #if */
+-#if !(defined(NAGf90Fortran)||defined(f2cFortran)||defined(hpuxFortran)||defined(apolloFortran)||defined(sunFortran)||defined(IBMR2Fortran)||defined(CRAYFortran)||defined(PATHSCALE_COMPILER)||defined(gFortran))
+-#if !(defined(mipsFortran)||defined(DECFortran)||defined(vmsFortran)||defined(CONVEXFortran)||defined(PowerStationFortran)||defined(AbsoftUNIXFortran)||defined(AbsoftProFortran)||defined(SXFortran))
++#if !(defined(NAGf90Fortran)||defined(f2cFortran)||defined(hpuxFortran)||defined(apolloFortran)||defined(sunFortran)||defined(IBMR2Fortran)||defined(CRAYFortran)||defined(PATHSCALE_COMPILER))
++#if !(defined(mipsFortran)||defined(DECFortran)||defined(vmsFortran)||defined(CONVEXFortran)||defined(PowerStationFortran)||defined(AbsoftUNIXFortran)||defined(AbsoftProFortran)||defined(Intel_Fortran)||defined(SXFortran))
+ /* If no Fortran compiler is given, we choose one for the machines we know.   */
+ #if defined(lynx) || defined(VAXUltrix)
+ #define f2cFortran    /* Lynx:      Only support f2c at the moment.
+@@ -128,12 +134,15 @@
+ #if   defined(__PATHCC__)
+ #define     PATHSCALE_COMPILER
+ #endif
++#if   defined(__INTEL_COMPILER)
++#define            Intel_Fortran
++#endif
+ #endif /* ...Fortran */
+ #endif /* ...Fortran */
+ 
+ /* Split #if into 2 because some HP-UX can't handle long #if */
+-#if !(defined(NAGf90Fortran)||defined(f2cFortran)||defined(hpuxFortran)||defined(apolloFortran)||defined(sunFortran)||defined(IBMR2Fortran)||defined(CRAYFortran)||defined(PATHSCALE_COMPILER)||defined(gFortran))
+-#if !(defined(mipsFortran)||defined(DECFortran)||defined(vmsFortran)||defined(CONVEXFortran)||defined(PowerStationFortran)||defined(AbsoftUNIXFortran)||defined(AbsoftProFortran)||defined(SXFortran))
++#if !(defined(NAGf90Fortran)||defined(f2cFortran)||defined(hpuxFortran)||defined(apolloFortran)||defined(sunFortran)||defined(IBMR2Fortran)||defined(CRAYFortran)||defined(PATHSCALE_COMPILER))
++#if !(defined(mipsFortran)||defined(DECFortran)||defined(vmsFortran)||defined(CONVEXFortran)||defined(PowerStationFortran)||defined(AbsoftUNIXFortran)||defined(AbsoftProFortran)||defined(Intel_Fortran)||defined(SXFortran))
+ /* If your compiler barfs on ' #error', replace # with the trigraph for #     */
+  #error "cfortran.h:  Can't find your environment among:\
+     - MIPS cc and f77 2.0. (e.g. Silicon Graphics, DECstations, ...)     \
+@@ -157,6 +166,7 @@
+     - Absoft UNIX F77: Use #define AbsoftUNIXFortran or cc -DAbsoftUNIXFortran \
+     - Absoft Pro Fortran: Use #define AbsoftProFortran \
+     - Portland Group Fortran: Use #define pgiFortran \
++    - Intel Fortran: Use #define Intel_Fortran \
+     - PathScale Fortran: Use #define PATHSCALE_COMPILER"
+ /* Compiler must throw us out at this point! */
+ #endif
+@@ -170,11 +180,15 @@
+ 
+ /* Throughout cfortran.h we use: UN = Uppercase Name.  LN = Lowercase Name.   */
+ 
+-#if defined(f2cFortran) || defined(NAGf90Fortran) || defined(DECFortran) || defined(mipsFortran) || defined(apolloFortran) || defined(sunFortran) || defined(CONVEXFortran) || defined(SXFortran) || defined(extname) || defined(PATHSCALE_COMPILER) || defined(gFortran)
++#if defined(f2cFortran) || defined(NAGf90Fortran) || defined(DECFortran) || defined(mipsFortran) || defined(apolloFortran) || defined(sunFortran) || defined(CONVEXFortran) || defined(SXFortran) || defined(extname) || defined(PATHSCALE_COMPILER) || defined(Intel_Fortran)
++#if defined(NoUnderscoreAppend)
++#define CFC_(UN,LN)            _(LN,)       /* No underscore appended. Lowercase FORTRAN symbols.     */
++#else
+ #define CFC_(UN,LN)            _(LN,_)      /* Lowercase FORTRAN symbols.     */
++#endif
+ #define orig_fcallsc(UN,LN)    CFC_(UN,LN)
+ #else 
+-#if defined(CRAYFortran) || defined(PowerStationFortran) || defined(AbsoftProFortran)
++#if defined(CRAYFortran) || defined(PowerStationFortran) || defined(AbsoftProFortran) 
+ #ifdef _CRAY          /* (UN), not UN, circumvents CRAY preprocessor bug.     */
+ #define CFC_(UN,LN)            (UN)         /* Uppercase FORTRAN symbols.     */
+ #else                 /* At least VISUAL_CPLUSPLUS barfs on (UN), so need UN. */
+@@ -368,7 +382,7 @@
+ #define C2FLOGICAL(L) _btol(L)
+ #define F2CLOGICAL(L) _ltob(&(L))     /* Strangely _ltob() expects a pointer. */
+ #else
+-#if defined(IBMR2Fortran) || defined(vmsFortran) || defined(DECFortran) || defined(AbsoftUNIXFortran)
++#if defined(IBMR2Fortran) || defined(vmsFortran) || defined(DECFortran) || defined(AbsoftUNIXFortran) || defined(Intel_Fortran)
+ /* How come no AbsoftProFortran ? */
+ #define C2FLOGICAL(L) ((L)?(L)|1:(L)&~(int)1)
+ #define F2CLOGICAL(L) ((L)&1?(L):0)
+@@ -2367,4 +2381,3 @@
+ 
+ 
+ #endif	 /* __CFORTRAN_LOADED */
+-

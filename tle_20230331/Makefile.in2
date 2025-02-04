@@ -1,0 +1,81 @@
+build:
+	@echo "Building tle started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`  | & tee  > $(BUILD_LOG)
+	@echo " "                                                                           | & tee -a $(BUILD_LOG)
+	source support/tle_vars; cd src;     umask 0002; make -j $(NUM_PROC) lib            | & tee -a $(BUILD_LOG)
+	source support/tle_vars; cd example; umask 0002; make -j $(NUM_PROC) bin            | & tee -a $(BUILD_LOG)
+	@echo " "                                                                           | & tee -a $(BUILD_LOG)
+	@echo "Building tle finihsed at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`  | & tee -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+.PHONY: install
+install:
+	@echo "Installing tle started at $(DATE)"
+	if ( -d $(TLE_PREFIX)          == 0 ) mkdir $(TLE_PREFIX)
+	if ( -d $(TLE_PREFIX)/lib      == 0 ) mkdir $(TLE_PREFIX)/lib
+	if ( -d $(TLE_PREFIX)/bin      == 0 ) mkdir $(TLE_PREFIX)/bin
+	if ( -d $(TLE_PREFIX)/share    == 0 ) mkdir $(TLE_PREFIX)/share
+	cp src/libtle.a                             $(TLE_PREFIX)/lib/libtle.a
+	cp bin/tle_example_to_coo                   $(TLE_PREFIX)/bin/tle_example_to_coo
+	cp bin/tle_example_to_azel                  $(TLE_PREFIX)/bin/tle_example_to_azel
+	cp bin/tle_dir_to_azel                      $(TLE_PREFIX)/bin/tle_dir_to_azel
+	cp share/GPS43_22004.tle                    $(TLE_PREFIX)/share
+        ifeq ($(TLE_OS),Linux)
+	    cp src/libtle.so.1.0 $(TLE_PREFIX)/lib/libtle.so.1.0
+	    ln -sf libtle.so.1.0   $(TLE_PREFIX)/lib/libtle.so.1
+	    ln -sf libtle.so.1.0   $(TLE_PREFIX)/lib/libtle.so
+        endif
+        ifeq ($(TLE_OS),Darwin)
+	    cp src/libtle.1.dylib  $(TLE_PREFIX)/lib/libtle.1.dylib
+	    if ( -l $(TLE_PREFIX)/lib/libtle.dylib ) rm $(TLE_PREFIX)/lib/libtle.dylib
+	    ln -s $(TLE_PREFIX)/lib/libtle.1.dylib   $(TLE_PREFIX)/lib/libtle.dylib
+	    install_name_tool -id $(TLE_PREFIX)/lib/libtle.dylib $(TLE_PREFIX)/lib/libtle.1.dylib
+	    install_name_tool -change $(TLE_ROOT)/lib/libtle.1.dylib $(TLE_PREFIX)/lib/libtle.dylib $(TLE_PREFIX)/bin/tle_example_to_coo
+	    install_name_tool -change $(TLE_ROOT)/lib/libtle.1.dylib $(TLE_PREFIX)/lib/libtle.dylib $(TLE_PREFIX)/bin/tle_example_to_azel
+	    install_name_tool -change $(TLE_ROOT)/lib/libtle.1.dylib $(TLE_PREFIX)/lib/libtle.dylib $(TLE_PREFIX)/bin/tle_dir_to_azel
+        endif
+
+uninstall:
+	if ( -f $(TLE_PREFIX)/lib/libtle.a            ) rm -f $(TLE_PREFIX)/lib/libtle.a
+	if ( -f $(TLE_PREFIX)/lib/libtle.so.1.0       ) rm -f $(TLE_PREFIX)/lib/libtle.so.1.0
+	if ( -l $(TLE_PREFIX)/lib/libtle.so.1         ) rm -f $(TLE_PREFIX)/lib/libtle.so.1
+	if ( -l $(TLE_PREFIX)/lib/libtle.so           ) rm -f $(TLE_PREFIX)/lib/libtle.so
+	if ( -f $(TLE_PREFIX)/lib/libtle.1.dylib      ) rm -f $(TLE_PREFIX)/lib/libtle.1.dylib
+	if ( -l $(TLE_PREFIX)/lib/libtle.dylib        ) rm -f $(TLE_PREFIX)/lib/libtle.dylib
+	if ( -f $(TLE_PREFIX)/bin/tle_example_to_coo  ) rm -f $(TLE_PREFIX)/bin/tle_example_to_coo
+	if ( -f $(TLE_PREFIX)/bin/tle_example_to_azel ) rm -f $(TLE_PREFIX)/bin/tle_example_to_azel
+	if ( -f $(TLE_PREFIX)/bin/tle_dir_to_azel     ) rm -f $(TLE_PREFIX)/bin/tle_dir_to_azel
+	if ( -f $(TLE_PREFIX)/share/GPS43_22004.tle   ) rm -f $(TLE_PREFIX)/share/GPS43_22004.tle 
+
+clean:	
+	cd src;     make clean      >>& /dev/null; set  status = 0
+	cd example; make clean      >>& /dev/null; set  status = 0
+	if ( -f src/libtle.1.dylib  ) rm -f src/libtle.1.dylib   
+
+distclean:	clean
+	./reconfigure -d > /tmp/tle_last_configure.txt
+	@chmod 666 /tmp/tle_last_configure.txt
+	if ( -f $(CONF_LOG)                         ) rm -f $(CONF_LOG)                         
+	if ( -f $(BUILD_LOG)                        ) rm -f $(BUILD_LOG)
+	@support/rmfile     tle
+	@support/rmfile     export_tle_vars
+	@support/rmfile     Makefile
+	@support/rmfile     build.log
+	@support/rmfile     conf.log
+	@support/purge      temp
+	@support/purge      src
+	@support/purge      support
+	@support/purge      doc
+	@support/purge      include
+	@support/purge      ./
+
+tar:	distclean
+	@if ( -f Makefile                ) rm Makefile
+	@if ( -f temp/conf.log           ) rm -f temp/conf.log
+	@if ( -f support/tle_vars        ) rm -f support/tle_vars        
+	@if ( -f support/export_tle_vars ) rm -f support/export_tle_vars 
+	@if ( -f /tmp/tle-$(TLE_VERSION).tar.bz2 ) rm -f /tmp/tle-$(TLE_VERSION).tar.bz2 
+	cd ../; tar -cf -  tle_$(TLE_VERSION)  | \
+                lbzip2 -c > /tmp/tle-$(TLE_VERSION).tar.bz2 
+	@support/distribution_update.csh $(TLE_VERSION)
+	@echo "The tar-file /tmp/tle-$(TLE_VERSION).tar.bz2 is copied to the Web, documentation is updated"
+	sync

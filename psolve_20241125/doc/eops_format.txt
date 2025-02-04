@@ -1,0 +1,59 @@
+   EOPS file contains the series of the estimates the Earth orientation 
+parameters obtained from processing VLBI experiments.
+
+# Format:
+
+The first line presents the format label. This document describes format
+version 2.1  of 2007.08.30. The data file  which confirms this format
+description should have the first line 
+# GETPAR_EOP format version 2.1  of 2007.08.30
+
+
+The line which starts from # is considered as a comment
+
+Field Columns Format Units   Meaning
+
+  1   2-13    F12.6  days    Modified Julian date of the TDT time tag 
+  2   15-22   F8.6   arcsec  The estimate of X pole coordinate
+  3   24-31   F8.6   arcsec  The estimate of Y pole coordinate
+  4   33-42   F10.7  sec     The UT1-UTC function
+  5   44-51   F8.3   mas     Adjustment of the nutation in longitude angle with 
+                                        respect to IAU 1980 nutation expansion
+  6   53-60   F8.3   mas     Adjustment of the nutation in obliquity angle with 
+                                        respect to IAU 1980 theory
+  7   62-69   F8.6   arcsec  Formal uncertainty of X pole coordinate
+  8   71-78   F8.6   arcsec  Formal uncertainty of Y pole coordinate
+  9   80-88   F9.7   sec     Formal uncertainty of UT1-UTC function
+ 10   90-96   F7.3   mas     Formal uncertainty of nutation in longitude angle
+ 11   98-104  F7.3   mas     Formal uncertainty of nutation in obliquity angle
+ 12   106-112 F7.2   psec    Weighted root mean square of postfit residual of
+                                      the solution
+ 13   114-119 F6.4   --      Correlation between the estimates of X-pole 
+                                         positions and Y-pole position
+ 14   121-126 F6.4   --      Correlation between the estimates of X-pole 
+                                         positions and UT1-TAI angle
+ 15   128-133 F6.4   --      Correlation between the estimates of Y-pole 
+                                         positions and UT1-TAI angle
+ 16   135-140 F6.4   --      Correlation between the estimates of nutation in
+                                         longitude and nutation in obliquity
+ 17   142-147 I6     --      Number of used observations in the session
+ 18   149-154 A6     --      IVS session code
+ 19   156-160 F5.2   hours   Session duration
+ 20   162-170 F9.6   asc/day Estimate of rate change of X pole coordinate
+ 21   172-180 F9.6   asc/day Estimate of rate change of Y pole coordinate
+ 22   182-191 F10.7  sec     Length of day
+ 23   193-194 A2             Filler: -0  does not have any meaning
+ 24   196-197 A2             Filler: -0  does not have any meaning
+ 25   199-207 F9.6   asc/day Formal uncertainty of x pole coordinate rate
+ 26   209-217 F9.6   asc/day Formal uncertainty of y pole coordinate rate
+ 27   219-228 F10.7  sec     Formal uncertainty of length of day
+ 28   230-231 A2             Filler: -0  does not have any meaning
+ 29   233-234 A2             Filler: -0  does not have any meaning
+ 30   237-300 A64    --      Network ID. The alphabetically ordered sequecne
+                             of two-letter IVS station identifiers. Only those
+                             stations which provided obsrvations used in the 
+                             solution are listed. The station names are defined
+                             in the IVS document ivscontrol/ns-codes.txt
+
+If a given parameter was not estimated a filler, -0, is placed.
+ 

@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  NL-VLBA   NL
+LAST_UPDATE: NL-VLBA   2018.01.27
+COORD:       NL-VLBA   meters     -130872.256    -4762317.122     4226851.039   
+MOUNT:       NL-VLBA   char       ALTAZ
+SLEW_AZ:     NL-VLBA   deg/sec    1.37500
+SLEW_EL:     NL-VLBA   deg/sec    0.47833
+ACCL_AZ:     NL-VLBA   deg/sec^2  0.75
+ACCL_EL:     NL-VLBA   deg/sec^2  0.25
+TSETTLE_AZ:  NL-VLBA   sec        6.0
+TSETTLE_EL:  NL-VLBA   sec        6.0
+EL_MIN:      NL-VLBA   deg        2.0
+EL_MAX:      NL-VLBA   deg       90.0
+AZ_RANGE:    NL-VLBA   deg      -90.0 90.0 270.0 450.0
+RECORDER:    NL-VLBA   char      mark5c
+PREOB:       NL-VLBA   sec        0.0
+POSTOB:      NL-VLBA   sec        2.0

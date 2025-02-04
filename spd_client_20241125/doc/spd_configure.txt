@@ -1,0 +1,38 @@
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+
+  --debug                 prints debugging information during configurtation
+
+  --noopt                 disables all optimizations. May be useful for 
+                          debugging since more checks are imposed in
+                          non-optimized mode.
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$HOME]
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+Optional Packages:
+  --with-PACKAGE[=ARG]       use PACKAGE [ARG=yes]
+  --without-PACKAGE          do not use PACKAGE (same as --with-PACKAGE=no)
+
+  --with-petools=[dir name]  specifies directory names where package petools
+                             is installed (default $HOME/petools). 
+                             If --without-petools form is selected, then
+                             built-in routines from petools will be used.
+
+  --with-lapack=[dir name]   specifies directory names where package lapack
+                             is installed (default: $HOME )
+                             If --without-lapack form is selected, then
+                             built-in lapack routines will be used.

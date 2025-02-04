@@ -1,0 +1,519 @@
+                          MDLPL_PLUS
+                          같같같같같
+  1. Overview
+
+  MDLPL_PLUS is a utility which provides a graphic interface and displays
+plots of
+
+  a) station dependent clock function modeled by linear spline;
+  b) adjustments to atmosphere path delay;
+  c) plot of high-frequency variations of the EOP;
+  d) plot of postfit residuals for each baseline;
+  e) plot of a sum of clock function and postfit residuals for each baseline.
+
+  MDLPL_PLUS is integrated in SOLVE and is called from the main OPTIN menu by
+hitting / (slash).
+
+  It is assumed that a SOLVE solution has been computed and ADJST created 
+output files with adjustments of clock functions, atmosphere path delays, 
+segmented EOP; CRES created residual file.
+
+  MDLPL_PLUS uses graphic interface Multi_DiaGI which in turn is extension of
+DiaGI. MDLPL_PLUS displays from 0 to 25 plot boxes at the left part of a 
+graphic window and displays from 3 to 8 command buttons at the right part of 
+the window. A command can be executed either by positioning the cursor on a 
+command button and then hitting <Left/Mouse> or by hitting a letter code on 
+the keyboard. Hitting <Mouse/Right> or X on the keyboard always returns user 
+the previous menu level or quit MDLPL being used at the root level. 
+Hitting ? provides on-line help for the Multi_DiaGI interface. Positioning the
+cursor on a small plot box and consecutively hitting <Left/Mouse> causes 
+expansion of the small plot to the entire graphic window and the control is 
+passed to the DiaGI interface. Control is passed back to the Multi_DiaGI after 
+leaving the DiaGI by hitting <Right/Mouse> or X twice.
+
+  Hard-copy of the current window or a set of hardcopies of all plots may be 
+produced by hitting <CNTRL/P> or <CNTRL/W>, respectively.
+
+  The main menu of MDLPL_PLUS has the following command buttons:
+
+
+  2.1.  T -- Plot of atmosphere path delay.
+
+
+          Plots of evolution of atmosphere path delay for all stations are 
+        displayed. Argument is time in hours elapsed from the first 
+        observation of the session. Values are in picoseconds. Error bars are
+        shown by a colored area. Plots of path delay for deselected stations 
+        are not shown but the station names are displayed on the screen and the 
+        place where the plots should appear is empty. Frames of plots may be 
+        set up as "global" -- with the same values of miminal and maximal 
+        arguments and values for all stations or as "local" -- with minimal 
+        and maximal arguments and values set up for each station individually.
+   
+        Commands available:
+     
+        a) <Left/Mouse>  -- it the cursor is positioned at the small plot box 
+           then the plot is magnified to occupy entire window. Control is 
+           passed to the DiaGI. To leave the DiaGI mode hit twice 
+           <Mouse/Right> or X. Any changes made in DiaGI mode are saved while 
+           MDLPL is running.
+
+        b) C -- Change directory for Web plots. Hardcopies are written in the
+           some destination directory. The name of this directory is reset
+           when the database or superfile is read to the scratch area in 
+           according with system default whcih can be override by specifing an
+           envirnoment variable WEB_DIR. The current value can be changed. 
+           Eventual file name for hardcopy is a concatenation of the current
+           value of Web destination directory and a suffix assigned by 
+           MDLPL_PLUS.
+	   NB: Web destination directory is not merely a directory name but 
+           it is rather a prefix which is prepended before the name. If user 
+           desires to specify Web the destination directory as a directory 
+           name then trailing / must be put. Value of the Web destination 
+           directory is saved until a new database or superfile is loaded.
+
+        c) <CNTRL/P> -- Make a hardcopy of the screen. MDLPL_PLUS asks user 
+           to select the format and then creates a file with hardcopy. 
+           Hardcopy doesn't contain right part of the window with command
+           buttons. Filename is formed as 
+           WEB_DIR + "atm_all" + extension (".gif" or ".ps").
+           Examples: 
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_atm_all.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotatm_all.gif
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/atm_all.gif
+
+           NB: Postscripts plots can be printed right after theirs creation 
+           if environment variable DIAGI_PRICOM specifies a UNIX command
+           used for printing PostScript files.
+
+        d) <CNTRL/W> -- Make a set of hardcopies of the screen and of all
+           individual plots. Hardcopy of the entire window is made exactly 
+           as if using <CNTRL/P> command. Hardcopies of individual plots
+           are made in DiaGI format. The filename of the individual plot is 
+           formed as
+           Web_destination_directory + "station_name" + "_atm" + extension 
+           (".gif" or ".ps"). Station name is transformed in letters of lower 
+           case letters. If the station name contains blanks inside, blanks 
+           are replaced with underscores, while trailing blanks are truncated.
+
+           Examples for NRAO85 3, MEDICINA, NOTO
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_nrao85_3_atm.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotmedicina_atm.ps
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/noto_atm.gif
+
+	   All file names with hardcopies are printed in text screen.
+
+        e) L -- set up local frame.
+
+        f) G -- set up global frame.
+
+        g) H -- get on-line help.
+
+        h) X or <Right/Mouse> -- leave "Plot of atmosphere path delay" 
+           menu level.
+
+
+  2.2.  C -- Plot of clock function.
+
+
+          Plots of evolution of clock function for all stations are 
+        displayed. Only a component of clock function modeled by linear spline
+        is shown. Contribution to clock function due to clock breaks and
+        second order global polynomial are not shown. Argument is time in hours 
+        elapsed from the first observation of the session. Values are in 
+        picoseconds. Error bars are shown by a colored area. Plots of clock 
+        function for deselected stations are not shown but the station names 
+        are displayed and the place for plots is reserved. Clock function for
+        clock reference station(s) is shown as constant with zero value. Frames
+        of plots may be set up as "global" -- with the same values of miminal
+        and maximal arguments and values for all stations or as "local" -- 
+        with minimal and maximal arguments and values set up for each station 
+        individually.
+   
+        Commands available:
+     
+        a) Cursor positioned at the small plot box and <Left/Mouse> -- 
+           the plot is magnified to occupy entire window. Control is passed
+           to DiaGI. To leave DiaGI mode hit twice <Mouse/Right> or X. Any
+           changes made in DiaGI mode are saved while MDLPL is running.
+
+        b) C -- Change directory for Web plots. Hardcopies are written in the
+           directory kept in the variable WEB_DIR. The value of WEB_DIR is
+           reset when the database or superfile is read to the scratch area.
+           This value can be changed. Eventual file name for hardcopy is 
+           a concatenation of WEB_DIR plus a suffix assigned by MDLPL_PLUS.
+	   NB: WEB_DIR is not merely a directory name but it is rather 
+           a prefix which is prepended before the name. If user specifies
+           WEB_DIR as a directory name then trailing / must be put.
+           Value of WEB_DIR is saved until a new database or superfile
+           is loaded.
+
+        c) <CNTRL/P> -- Make a hardcopy of the screen. MDLPL_PLUS asks user 
+           to select the format and then creates a file with hardcopy. 
+           Hardcopy doesn't contain right part of the window with command
+           buttons. Filename is formed as 
+           WEB_DIR + "clo_all" + extension (".gif" or ".ps").
+           Examples: 
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_clo_all.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotclo_all.gif
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/clo_all.gif
+
+           NB: Postscripts plots can be printed right after theirs creation 
+           if environment variable DIAGI_PRICOM specifies a UNIX command
+           used for printing PostScript files.
+
+        d) <CNTRL/W> -- Make a set of hardcopies of the screen and of all
+           individual plots. Hardcopy of the entire window is made exactly 
+           as if using <CNTRL/P> command. Hardcopies of individual plots
+           are made in DiaGI format. The filename of the individual plot is 
+           formed as
+           Web_destination_directory + "station_name" + "_clo" + extension 
+           (".gif" or ".ps"). Station name is transformed in letters of lower 
+           case letters. If the station name contains blanks inside, blanks 
+           are replaced with underscores, while trailing blanks are truncated.
+
+           Examples for NRAO85 3, MEDICINA, NOTO
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_nrao85_3_clo.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotmedicina_clo.ps
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/noto_clo.gif
+
+	   All file names with hardcopies are printed in text screen.
+
+        e) L -- set up local frame.
+
+        f) G -- set up global frame.
+
+        g) H -- get on-line help.
+
+        h) X or <Right/Mouse> -- leave "Plot of clock function" menu level.
+
+
+  2.3.  E -- Plot of segmented EOP.
+
+
+          Plots of evolution of X pole coordinates, Y pole coordinates and
+        UT1 modeled by linear spline are displayed. Argument is time in hours 
+        elapsed from the first observation of the session. Values are in 
+        microarcseconds for pole coordinates and in microseconds of time for
+        UT1. Error bar is shown by a colored area. Lines with high frequency
+        EOP variations models used as a priori and as a comparison model may 
+        be shown unless this feature is switched off. Black line represents 
+        a high frequency model used for comparison, blue line represents 
+        a high frequency model used as a priori. A constant shift is added 
+        to both models in order to make a difference between modeled value 
+        and adjustments for the first time epoch zero.
+   
+        Commands available:
+     
+        a) Cursor positioned at the small plot box and <Left/Mouse> -- 
+           the plot is magnified to occupy entire window. Control is passed
+           to DiaGI. To leave DiaGI mode hit twice <Mouse/Right> or X. Any
+           changes made in DiaGI mode are saved while MDLPL is running.
+
+        b) C -- Change directory for Web plots. Hardcopies are written in the
+           directory kept in the variable WEB_DIR. The value of WEB_DIR is
+           reset when the database or superfile is read to the scratch area.
+           This value can be changed. Eventual file name for hardcopy is 
+           a concatenation of WEB_DIR plus a suffix assigned by MDLPL_PLUS.
+	   NB: WEB_DIR is not merely a directory name but it is rather 
+           a prefix which is prepended before the name. If user specifies
+           WEB_DIR as a directory name then trailing / must be put.
+           Value of WEB_DIR is saved until a new database or superfile
+           is loaded.
+
+        c) <CNTRL/P> -- Make a hardcopy of the screen. MDLPL_PLUS asks user 
+           to select the format and then creates a file with hardcopy. 
+           Hardcopy doesn't contain right part of the window with command
+           buttons. Filename is formed as 
+           WEB_DIR + "eop_all" + extension (".gif" or ".ps").
+           Examples: 
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_eop_all.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/ploteop_all.gif
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/eop_all.gif
+
+           NB: Postscripts plots can be printed right after theirs creation 
+           if environment variable DIAGI_PRICOM specifies a UNIX command
+           used for printing PostScript files.
+
+        d) <CNTRL/W> -- Make a set of hardcopies of the screen and of all
+           individual plots. Hardcopy of the entire window is made exactly 
+           as if using <CNTRL/P> command. Hardcopies of individual plots
+           are made in DiaGI format. The filename of the individual plot is 
+           formed as
+           Web_destination_directory + "station_name" + "parameter_name" + 
+           extension (".gif" or ".ps"). 
+	   Parameter name is one of "xpl", "ypl", "ut1"
+
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/eop_all.gif
+                                            /data2/plots/xpl.gif
+                                            /data2/plots/ypl.gif
+                                            /data2/plots/ut1.gif
+
+	   All file names with hardcopies are printed in text screen.
+
+        e) N -- Model on. Plots of high frequency EOP variations 
+                models used for a priori and for comparison will be shown.
+                Status of the model: on or off is defined by a global variable
+                MDLPL_FL_EOPMOD which is reset when a new database or 
+                superfile is read. Status of the model is saved after quitting
+                MDLPL.
+
+        f) F -- Model off. Plots of high frequency EOP variations models 
+                used for a priori and for comparison will not be shown.
+
+        g) H -- get on-line help.
+
+        h) X or <Right/Mouse> -- leave "Plot of segmented EOP" menu level.
+
+
+  2.4.  P -- Plot of postfit residuals.
+
+
+          Plots of postfit residuals for all selected baselines are displayed.
+        Argument is time in hours elapsed from the first observation of the 
+        session. Values are in picoseconds. Error bars represents one-sigma
+        a priori uncertainties used for solutions (with reweighting applied).
+        Observations which were used in solution are shown by green. 
+        Recoverable observations which were not used in the solution are shown
+        be read. Unrecoverable observations are not shown at all. Up to 25
+        plots are displayed at one page. If the session has more than 25 
+        selected baselines than the plot is displayed in several pages.
+        The number of the current page and the total number of pages is 
+        displayed at the common title in this case. User can move through pages
+        consecutively in forward or back direction.
+   
+        Commands available:
+     
+        a) Cursor positioned at the small plot box and <Left/Mouse> -- 
+           the plot is magnified to occupy entire window. Control is passed
+           to DiaGI. To leave DiaGI mode hit twice <Mouse/Right> or X. Any
+           changes made in DiaGI mode are saved while MDLPL is running.
+
+        b) C -- Change directory for Web plots. Hardcopies are written in the
+           directory kept in the variable WEB_DIR. The value of WEB_DIR is
+           reset when the database or superfile is read to the scratch area.
+           This value can be changed. Eventual file name for hardcopy is 
+           a concatenation of WEB_DIR plus a suffix assigned by MDLPL_PLUS.
+	   NB: WEB_DIR is not merely a directory name but it is rather 
+           a prefix which is prepended before the name. If user specifies
+           WEB_DIR as a directory name then trailing / must be put.
+           Value of WEB_DIR is saved until a new database or superfile
+           is loaded.
+
+        c) <CNTRL/P> -- Make a hardcopy of the screen. MDLPL_PLUS asks user 
+           to select the format and then creates a file with hardcopy. 
+           Hardcopy doesn't contain right part of the window with command
+           buttons. Filename is formed as 
+           WEB_DIR + "psf_all" + extension (".gif" or ".ps")
+           where WEB_DIR is a Web destination directory.
+           Examples: 
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_psf_all.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotpsf_all.gif
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/psf_all.gif
+
+           NB: Postscripts plots can be printed right after theirs creation 
+           if environment variable DIAGI_PRICOM specifies a UNIX command
+           used for printing PostScript files.
+
+        d) <CNTRL/W> -- Make a set of hardcopies for the screen and for all
+           individual plots. Hardcopy of the entire window is made exactly 
+           as by using <CNTRL/P> command. Hardcopies of individual plots
+           are made in DiaGI format. The filename of the individual plot is 
+           formed as
+           WEB_DIR + "psf_" "station_name1" + "." + "station_name1" +
+           extension (".gif" or ".ps").
+           Station name is transformed in letters of lower register. If the
+           station name contains blanks inside, blanks are replaced with 
+           underscores, while trailing blanks are truncated.
+
+           Examples for NRAO85 3, MEDICINA, NOTO
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_psf_nrao85_3.medicina.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotpsf_nrao85_3.noto.gof
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/psf_medicina.noto.gif
+
+	   All file names with hardcopies are printed in text screen.
+
+        e) N -- Next page (for multi-page plots) -- display the next page.
+                The number of the current page is kept in the global variable
+                MDLPL_IPS_PAG which is re-initialized when a new database or
+                superfile is read. The number of the current page is saved 
+                after leaving MDLPL.
+
+        f) P -- Previous page (for multi-page plots) -- display the previous
+                page. The number of the current page is kept in the global 
+                variable MDLPL_IPS_PAG which is re-initialized when 
+                a new database or superfile is read.
+
+        g) H -- get on-line help.
+
+        h) X or <Right/Mouse> -- leave "Plot of postfit residuals" menu level.
+
+
+  2.5.  R -- Plot of a sum of clock function and postfit residuals
+
+
+          Plots of postfit residuals plus a contribution to time delay due to
+        estimates of segmented clock function for all selected baselines are 
+        displayed. Argument is time in hours elapsed from the first observation 
+        of the session. Values are in picoseconds. Error bars represents 
+        one-sigma a priori uncertainties used for solutions (with reweighting 
+        applied). Observations which were used in solution are shown by green. 
+        Recoverable observations which were not used in the solution are shown
+        be read. Unrecoverable observations are not shown at all. Clock 
+        function with one sigma errors represented by a filled are is shown
+        by blue color unless this feature is switched off. Up to 25 plots 
+        are displayed at one page. If the session has more than 25 selected 
+        baselines than the plot is displayed in several pages. The number 
+        of the current page and the total number of pages is displayed at the 
+        common title in this case. User can move through pages consecutively
+        in forward or backward direction.
+         
+        Comments: 
+         
+          1) formal uncertainties of clock function are computed approximately,
+             they shown only for demonstration purposes and should not be used
+             for computations;
+          2) Only adjustments to clock function modeled by linear spline are
+             taken into account. Contribution to clock function due to
+             clock breaks and global polynomials of the second degree are
+             ignored.
+
+        Commands available:
+     
+        a) Cursor positioned at the small plot box and <Left/Mouse> -- 
+           the plot is magnified to occupy entire window. Control is passed
+           to DiaGI. To leave DiaGI mode hit twice <Mouse/Right> or X. Any
+           changes made in DiaGI mode are saved while MDLPL is running.
+
+        b) C -- Change directory for Web plots. Hardcopies are written in the
+           directory kept in the variable WEB_DIR. The value of WEB_DIR is
+           reset when the database or superfile is read to the scratch area.
+           This value can be changed. Eventual file name for hardcopy is 
+           a concatenation of WEB_DIR plus a suffix assigned by MDLPL_PLUS.
+	   NB: WEB_DIR is not merely a directory name but it is rather 
+           a prefix which is prepended before the name. If user specifies
+           WEB_DIR as a directory name then trailing / must be put.
+           Value of WEB_DIR is saved until a new database or superfile
+           is loaded.
+
+        c) <CNTRL/P> -- Make a hardcopy of the screen. MDLPL_PLUS asks user 
+           to select the format and then creates a file with hardcopy. 
+           Hardcopy doesn't contain right part of the window with command
+           buttons. Filename is formed as 
+           WEB_DIR + psc_all" + extension (".gif" or ".ps").
+           Examples: 
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_psc_all.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotpsc_all.gif
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/psc_all.gif
+
+           NB: Postscripts plots can be printed right after theirs creation 
+           if environment variable DIAGI_PRICOM specifies a UNIX command
+           used for printing PostScript files.
+
+        d) <CNTRL/W> -- Make a set of hardcopies for the screen and for all
+           individual plots. Hardcopy of the entire window is made exactly 
+           as by using <CNTRL/P> command. Hardcopies of individual plots
+           are made in DiaGI format. The filename of the individual plot is 
+           formed as
+           WEB_DIR + "psc_" "station_name1" + "." + "station_name1" +
+           extension (".gif" or ".ps").
+           Station name is transformed in letters of lower register. If the
+           station name contains blanks inside, blanks are replaced with 
+           underscores, while trailing blanks are truncated.
+
+           Examples for NRAO85 3, MEDICINA, NOTO
+              WEB_DIR = "/tmp/kk_"      ==> /tmp/kk_psc_nrao85_3.medicina.gif
+              WEB_DIR = "/data2/plot"   ==> /data2/plotpsc_nrao85_3.noto.gof
+              WEB_DIR = "/data2/plots/" ==> /data2/plots/psc_medicina.noto.gif
+
+	   All file names with hardcopies are printed in text screen.
+
+        e) N -- Next page (for multi-page plots) -- display the next page.
+                The number of the current page is kept in the global variable
+                MDLPL_IPC_PAG which is re-initialized when a new database or
+                superfile is read. THe number of the current page is saved
+                after quitting MDLPL.
+
+        f) P -- Previous page (for multi-page plots) -- display the previous
+                page. The number of the current page is kept in the global 
+                variable MDLPL_IPC_PAG which is re-initialized when 
+                a new database or superfile is read.
+
+
+        g) O -- Clock function on. Clock function will be shown by blue color.
+                Status of this option is defined by a global variable
+                MDLPL_FL_CLF which is reset when a new database or superfile 
+                is read. Status of this option is saved after quitting MDLPL.
+
+        h) F -- clock function off. Clock function will not be shown.
+
+        i) H -- get on-line help.
+
+        j) X or <Right/Mouse> -- leave "Plot of postfit residuals plus clock 
+                                 function" menu level.
+
+
+
+  2.6.  O -- Old (pre-JUL99) style MDLPL.
+
+
+        MDLPL_EXT is called. Refer to documentation for MDLPL_EXT.
+
+
+  2.7.  $ -- Oldest (pre-NOV97) style MDLPL.
+
+
+        Archaic MDLPL is called. Unfortunately, there is no documentation 
+        for that utility.
+
+
+  2.8.  H -- get on-line help.
+
+
+  2.9.  X or <Right/Mouse> -- quit MDLPL.
+
+
+  3. Customization.
+
+  Initial placement of the graphic window is determined in x-resource file.
+You should add the following line to the file ~/.Xdefaults
+
+pgxwin.Win.geometry:	1260x800+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+
+1260x800+0+90 means that the window will have 1260 pixels width, 800 in height,
+0 -- shift to the right respectively to the left edge of the screen, 90 pixels
+shift down respectively to the top edge of the screen. Parameters window width
+and window heights are ignored.
+"pgxwin.Win.iconize:     True" means that PGPLOT window will be iconize and
+go out from the screen after termination of DiaGI. This resource is MANDATORY,
+otherwise DiaGI will require confirmation from text screen when it terminates.
+
+The following command should be run before the first call of pgxwin_server:
+
+xrdb -merge ~/.Xdefault
+
+NB: if pgxwin_server is running xrdb will be ignored! To change initial 
+position of the graphic window pgxwin_server should be stopped before it.
+It is reasonable to put the command xrdb -merge ~/.Xdefault at your
+login script.
+
+  The following environment variable affects at PGPLOT behavior:
+
+  PGPLOT_DIR   -- directory where files pgwin_server and libpgplot.sl are kept;
+  HELP_DIR     -- directory name where help files are kept;
+  DIAGI_PRICOM -- contains the command for printing PostScript file. Example:
+                  "lp -onb -dlaser2" for printer which has built-in PostScript
+                  interpreter (don't use it if printer doesn't have such a
+                  capacity!)
+
+  WEB_DIR      -- Web destination directory. Initial Web destination directory
+                  is reset when a new database of superfile is loaded. If
+                  WEB_DIR environment variable is set then it becomes the
+                  Web destination directory, otherwise system default is used.
+                  
+
+MDLPL_PLUS  v 1.01  17-AUG-99 12:59:33
+Please send comments and bug reports to 
+Leonid Petrov ( sgdas@lists.nasa.gov )

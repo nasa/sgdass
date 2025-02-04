@@ -1,0 +1,280 @@
+I. Introduction
+---------------
+
+Utility sds_to_snap processes a control file for a single dish
+experiment schedule written in SDS language and translates it to 
+a pair of proc and snap schdule files. SDS language supports 
+a number of built-in commands, cycle structure, and macros expansion.
+The output proc and snap schedule files are used directly by 
+the VLBI Field System software.
+
+II. Usage:
+----------
+
+Usage: sds_to_snap.py [-h] [-v IVRB] [--version] [-t START_TIME_STR] [-c CATCHUP]
+                      input_sds_file output_snap_file output_proc_file
+
+There are three mandatory arguments:
+
+input_sds_file   -- input control file in SDS format
+output_snap_file -- output schedule file in snap format
+output_proc_file -- output procedure file
+
+Options:
+
+-v -- verbosity level:
+      0 -- silent
+      1 -- normal verbosity
+     >1 -- debugging mode
+
+-t START_TIME_STE -- this option changes the start time specified in the 
+                     sds control file. Format: YYYY.DD.MM_hh:mm:ss.ff, 
+                     time-tag: pseudo-time UTC.
+
+-c CATCHUP -- this options generates snap/proc in the so-called catch up 
+              mode in a case of the nominal start time specified in
+              the sds file is in the past. The argument specifies 
+              the amount of time in seconds for the antenna needs to 
+              catch up the schedule.
+
+
+III. SDS language syntax:
+-------------------------
+
+A valid file for single dish schedule in SDS language has the 
+following first line 
+
+# Single Dish VLBI schedule. Format version  1.00  of 2021.01.12
+
+called Unix magic that identifies the format. The parser checks
+this line.
+  
+  Lines that start with #, except the first line, are considered
+as comments and are not parsed.
+
+  A line in the SDS file can be treated as 1) a part of the 
+description block; 2) a part of the procedure block; 3) as a command; 
+4) as a macros. The parser checks the line in this order: if a line 
+is not a part of the description of procedure block, it checks the first 
+word against the list of supported commands and then checks against the
+list of defined macros. If nothing matches, it writes an error message
+and stops.
+
+Command list:
+
+antenna_off        -- sets the antenna in the idle state
+
+antenna_on            sets the antenna in the operational state
+
+cycle              -- this command requires three arguments: cycle
+                      variable, initial value and the and value of the 
+                      cycle variable. The cycle variable is an integer
+                      number. This command starts the cycle block. It
+                      requires a matching end cycle command with the
+                      same cycle variable name. The contents within the 
+                      cycle block will be executed m - n + 1 times, where m 
+                      is the start value and n is the end value of the 
+                      cycle variable j. 
+         
+                      The cycle variable in the cycle block can be used in 
+                      two ways:
+                      a) construction ${var} will be expanded and replaced
+                         with an ascii string that corresponds to the current
+                         value of the cycle variable
+                      b) construction $var can be used as an integer argument
+                         in a command or macros.  
+
+description_begin  -- starts the experiment description block. Starting 
+                      from the next line and till command description_end
+                      (and excluding it) is encountered, the text is considered
+                      as experiment description. sds_to_snap.py ignores the 
+                      contents of the experiment description block. The 
+                      experiment description block is filled to preserve
+                      information about the goals of the single dish experiment.
+
+description_end    -- terminates the experiment description block.
+
+duration           -- shows experiment duration for informative purposes
+
+dwell              -- tells the FS to track the source for the specified amount 
+                      of time. The commands requires an argument: dwell time 
+                      in seconds as a float number. Example: dwell 8.0
+
+end                -- If no argument follows then this command specifies the 
+                      schedule end. sds_to_snap will generate a comment in the
+                      output snap file. If the second argument is cycle, then
+                      this command terminates the cycle loop. In that case the 
+                      third argument, cycle variable, is required.
+
+exper              -- experiment name
+
+logoff             -- to turn full logging off
+
+logon              -- to turn full logging on
+
+macros             -- requires two arguments: macros name and macros definition.
+                      sds_to_snap.py expands macros definitions. Macros may
+                      have one more arguments. Arguments are specified as 
+                      {$1}, {$2} in the macros definition, where 1, 2 are
+                      the 1st and the 2nd argument. Nested macroses are allowed.
+                      Macroses can use built-in functions.
+
+move_azel          -- this command requires two arguments azimuth and elevation.
+                      It will request the FS to move antenna at the specified
+                      arc on azimuth and elevation. If the first argument is 
+                      positive, the motion will be clock-wise, if negative,
+                      the motion will be counter-clock-wise. If the second 
+                      argument is positive, the motion will in the up 
+                      direction, and if negative, then the motion will be in 
+                      down direction.
+
+pi_email           -- this command requires an argument: the principal
+                      investigator email address.
+
+pi_name            -- this command requires one or more arguments: principal
+                      investigator name.
+
+point_azel         -- this command points to the specified azimuth and elevation.
+                      If there is more than one way to reach a given azimuth,
+                      the motion less than 180 deg will be selected.
+
+proc               -- this command executes a FS command or procedure. The first
+                      argument is the FS command name or procedure. The rest 
+                      of the argument list is treated as argument list of that
+                      FS command.
+
+procedure_begin    -- starts the procedure block. Starting from the next line 
+                      and till command procedure_end is encountered (and excluding 
+                      it), the text is considered as the contents of the 
+                      procedure file. sds_to_snap.py extracts the contents enclosed 
+                      into the procedure_begin/procedure_end clause and writes it 
+                      into the output procedure file.
+
+procedure_end      -- terminates the procedure block
+
+require_sds_to_snap_version -- this commands requires an argument: minimum version
+                               of the sds_to_snap.py utility to process a given
+                               control file.
+
+require_stp_version  -- this command requires an argument: minimum version of 
+                        the station parameter file (stp)
+
+start              -- this command requires three arguments: start date in
+                      YYYY.MM.DD_HH:MM:SS.ff format in UTC pseudo-time scale,
+                      starting azimuth and starting elevation. The FS will point
+                      antenna to the specified direction and wait till the 
+                      specified moment of time. start is supposed to be the 
+                      first command in the SDS that generates a snap command
+                      after definitions.                      
+
+station            -- this command requires an argument: a 8-character long
+                      upper case IVS station name
+
+stow               -- this command points the antenna to the stow position
+                      with azimuth and elevation specified in the station parameter
+                      file.
+
+type               -- this command requires an argument: a string that specifies 
+                      the type of a single dish experiment. Supported types:
+
+                      AzTsys
+                      ElTsys
+                      FreqText
+                      Slewing
+                      ZenTsys
+
+
+IV. SDS built-in functions.
+---------------------------
+
+sds_to_snap supports a number of built-in functions. Built=in
+functions requires one or more arguments enclosed in {}.
+
+  @add    -- adds two argument.       Example:   @add{8,2} or  @add{{$1},${$2}}  
+  @sub    -- subtracts two arguments. Example:   @sub{6,2} or  @sub{{$2},${$1}}  
+  @mul    -- multiplies two arguments.
+  @div    -- divides argument 1 by argument 2.
+  @int    -- transforms an integer argument to a string using %d   printf specifier
+  @02dint -- transforms an integer argument to a string using %02d printf specifier
+  @03dint -- transforms an integer argument to a string using %03d printf specifier
+  @04dint -- transforms an integer argument to a string using %04d printf specifier
+
+
+V. Files.
+---------
+
+  sds_to_snap.py relies on station parameter files. It expects to
+find station parameter files in /cont/stp directory. Station file
+name is station.stp where station is a lower case IVS station name.
+
+Example of kokee1 station parameter file:
+
+# VLBI station parameters Format 2022.01.28
+# 
+# 2020.10.13  nh created
+# 2021.09.08  Updated slewing parameters for results of kk0001 slewing experiment
+#             Comment: acceleation elevation up: 0.2 deg/sec**2, down 0.3 deg/sec**2
+# 2021.11.06  Updated for results of gain cureve measurement on 2021.11.04
+# 2022.01.28  Added BACKEND definition
+# 
+SHORT_NAME:    KOKEE     char       Kk
+LAST_UPDATE:   KOKEE     char       2021.11.06_10:28:03
+COORD:         KOKEE     meters        -5543837.628   -2054567.859    2387851.939
+MOUNT:         KOKEE     char       ALTAZ   
+SLEW_AZ:       KOKEE     deg/sec       1.80
+SLEW_EL:       KOKEE     deg/sec       1.96
+ACCL_AZ:       KOKEE     deg/sec^2     0.80
+ACCL_EL:       KOKEE     deg/sec^2     0.20
+TSETTLE_AZ:    KOKEE     sec           6.60
+TSETTLE_EL:    KOKEE     sec           2.60
+EL_MIN:        KOKEE     deg           2.0
+EL_MAX:        KOKEE     deg          89.7
+AZ_RANGE:      KOKEE     deg         -90.0  90.0 270.0 270.0
+RECORDER:      KOKEE     char       mark5c  
+BACKEND:       KOKEE     char       mark4
+PREOB:         KOKEE     sec           0.2
+POSTOB:        KOKEE     sec           0.0
+HOR_AZIM:      KOKEE     deg           0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:      KOKEE     deg           5.0  10.0  12.0  18.0  15.0   5.0   2.0   0.1   0.1   3.0   3.0  30.0  20.0
+STOW_AZIM:     KOKEE     deg          50.0
+STOW_ELEV:     KOKEE     deg          85.0
+# 
+TSYS_DATES:    KOKEE     char       2016.07.06  2016.07.07
+TSYS_ELEVS:    KOKEE     deg           3.0     5.0    10.0    20.0    30.0    40.0    80.0    90.0
+TSYS_FREQS:    KOKEE     GHz           2.1   2.4
+TSYS_POLVALS:  KOKEE     K     R      46.336  45.216  42.175  36.285  33.864  32.672  31.814  31.452
+TSYS_FREQS:    KOKEE     GHz           7.9   9.1
+TSYS_POLVALS:  KOKEE     K     R      75.065  73.608  69.767  62.842  60.502  59.150  58.391  58.377
+#
+BPSS_DATES:    KOKEE     char       2000.01.01   2020.07.01
+BPSS_BWIDTH:   KOKEE     MHz          16
+BPSS_BETA:     KOKEE     d/l        1.00
+BPSS_BWIDTH:   KOKEE     MHz          32
+BPSS_BETA:     KOKEE     d/l        1.00
+#
+GAIN_DATES:    KOKEE     char       2004.12.31 2020.12.31
+GAIN_FREQS:    KOKEE     GHz            2.1   2.4
+GAIN_ELEVS:    KOKEE     deg            3.0   10.0   20.0   30.0   40.0   80.0   90.0
+GAIN_POLVALS:  KOKEE     K/Jy  R      0.053  0.053  0.053  0.053  0.053  0.053  0.053
+GAIN_POLVALS:  KOKEE     K/Jy  L      0.053  0.053  0.053  0.053  0.053  0.053  0.053
+GAIN_FREQS:    KOKEE     GHz            7.9   9.1
+GAIN_ELEVS:    KOKEE     deg            3.0   10.0   20.0   30.0   40.0   80.0   90.0
+GAIN_POLVALS:  KOKEE     K/Jy  R      0.040  0.040  0.040  0.040  0.040  0.040  0.040
+GAIN_POLVALS:  KOKEE     K/Jy  L      0.040  0.040  0.040  0.040  0.040  0.040  0.040
+#
+GAIN_DATES:    KOKEE     char       2021.01.01 2049.12.31
+GAIN_FREQS:    KOKEE     GHz          2.200  2.399
+GAIN_ELEVS:    KOKEE     deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE     K/Jy  R      0.059  0.059  0.058  0.058  0.058  0.058  0.058  0.058  0.059  0.059
+#
+GAIN_FREQS:    KOKEE     GHz          8.100    8.299
+GAIN_ELEVS:    KOKEE     deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE     K/Jy  R      0.045  0.046  0.046  0.046  0.047  0.047  0.048  0.048  0.047  0.046
+#
+GAIN_FREQS:    KOKEE     GHz          8.300    8.699
+GAIN_ELEVS:    KOKEE     deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE     K/Jy  R      0.044  0.043  0.044  0.043  0.043  0.043  0.043  0.044  0.044  0.044
+#
+GAIN_FREQS:    KOKEE     GHz          8.700    8.999
+GAIN_ELEVS:    KOKEE     deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE     K/Jy  R      0.039  0.039  0.040  0.040  0.040  0.040  0.040  0.039  0.039  0.039

@@ -1,0 +1,10 @@
+17:35:51 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "dat"
+17:35:51 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "met"
+17:35:51 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "tsys"
+17:35:51 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "sefd"
+17:35:51 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "phc"
+17:35:51 log2ant-0.1.2 (Lands Run Falls (rc2)): option "-t": added type of data: "fmt"
+17:35:51 log2ant-0.1.2 (Lands Run Falls (rc2)): starting
+17:35:51 Warning: SgStnLogCollector::readLogFile(): station SEJONG  : no proc record has been found in the log file
+17:35:51 Warning: SgStnLogReadings::createAntCalFile(): station SEJONG  : nothing to output
+17:35:51 Warning: log2ant-0.1.2 (Lands Run Falls (rc2)): data storing in an ANTCAL file has failed for station "SEJONG  "

@@ -1,0 +1,73 @@
+SITLIST Format  Version 2003.07.31
+#
+#  Created: 2015.11.07-08:04:54
+#
+#  Format description:
+#  1) File consists of records fixed length.
+#     Records can be one of three types:
+#     a) File format identification: the first record;
+#     b) Comment: the record which starts from # character;
+#     c) Data records.
+#
+#  2) Format of the data record:
+#     Field  1:8  -- Station name.
+#     Field 10:21 -- X coordinate of the site in meter.
+#     Field 23:34 -- X coordinate of the site in meter.
+#     Field 36:47 -- Z coordinate of the site in meter.
+#     Field 49:58 -- Date when the site produced first observation worth
+#                    analyzing in format YYYY.MM.DD
+#     Field 60:69 -- Date when the site produced last observation worth
+#                    analyzing in format YYYY.MM.DD or end for sites which
+#                    are deemed as active.
+#     Field 71:71 -- Technique code:
+#                    R for VLBI,
+#                    S for SLR,
+#                    G for GPS,
+#                    D for DORIS,
+#                    Technique code means that the site coordinate
+#                    are related to coordinates of the reference point
+#                    of the station of that technique.
+#     Field 73:81 -- Alternative station name.
+#     Field 83:92 -- Comment
+#     Field 95:98 -- CDP number of the station which defines coordinates
+#                    of the site.
+#     Field 100:  -- Long comment
+#
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP  D    Latitude    Longiutde Hei_or Place                   Conutry       H_ort H_ell
+#
+LAKHDARI  5118968.134   322591.964  3778731.572 begin      end        R                            32   36.563809    3.605951   135. Lakhdaria               Algeria        192.   239.
+ABOMEY    6332528.018   258907.954   714049.964 begin      end        R                            34    6.471075    2.341257    25. Abomey Calavi           Benin           59.    83.
+ZAMENGOE  6237092.484  1267132.103   431654.578 begin      end        R                            32    3.90605    11.483956  1075. Zamengoe                Cameroon       865.   880.
+BEPANDE   6270804.644  1074957.616   448669.451 begin      end        R                            32    4.060933    9.727246    27. Bepande                 Cameroon         1.    18.
+MOUNGOUN  6137793.732  1672921.224  -460622.244 begin      end        R                            34   -4.169119   15.246234   325. Moungouni               Congo          366.   366.
+CAIRO     4726525.644  2870896.707  3167275.463 begin      end        R                            32   29.967447   31.27454     40. Cairo                   Egypt           34.    50.
+SULULTA   4915041.819  3941777.974  1006595.490 begin      end        R                            30    9.137379   38.729006  2725. Sululta                 Ethiopia      2718.  2711.
+KUNTUNSE  6346258.431   -33795.472   634810.689 begin      end        R                            32    5.750405   -0.305112    70. Kuntunse                Ghana           77.   102.
+LONGONOT  5127880.463  3794002.599  -112611.010 begin      end        R                            34   -1.0182     36.4969    1720. Longonot                Kenya         1776.  1761.
+KERICHO   5208206.147  3685159.582   -40372.646 begin      end        R                             1   -0.365      35.282     2118. Kericho                 Kenya         2118.  2103.
+ARIVONIM  4102083.447  4424422.660 -2065853.139 begin      end        R                            32  -19.01944    47.165     1450. Arivonimamo             Madagascar    1382.  1381.
+KANJEDZA  5026618.851  3524400.867 -1728478.644 begin      end        R                            32  -15.82543    35.036119  1220. Kanjedza                Malawi        1199.  1190.
+SOUKARBA  5260356.538  -609768.057  3543244.522 begin      end        R                            30   33.964368   -6.612081    90. Souk el Arba des Sehou  Morocco         95.   141.
+KARMA     6195842.985   200235.550  1496645.356 begin      end        R                            33   13.661256    1.851025   210. Karma                   Niger          224.   247.
+LANLATE   6311118.188   380704.459   838517.318 begin      end        R                            32    7.60494     3.45206    160. Lanlate                 Nigeria        152.   178.
+KUJAMA    6218292.193   834328.335  1147752.339 begin      end        R                            32   10.43525     7.64192    670. Kujama                  Nigeria        730.   754.
+GANDOUL   5896521.819 -1817244.803  1610228.462 begin      end        R                            30   14.720496  -17.128737    50. Gandoul                 Senegal         61.    92.
+HARTRAO   5084080.456  2669107.964 -2770552.738 begin      end        R                            32  -25.90806    27.69917   1470. Hartebeesthoek          South Africa  1492.  1517.
+DKHILA    5035062.615   861961.494  3806526.267 begin      end        R                            32   36.8767      9.7144      75. Dkhila                  Tunisia         66.   109.
+MPOMA     5364082.268  3452508.238    47365.717 begin      end        R                            32    0.428287   32.766729  1175. Mpoma                   Uganda        1212.  1199.
+MWEMBESH  5436644.994  2882774.774 -1675875.629 begin      end        R                            34  -15.33222    27.93472   1125. Mwembeshi               Zambia        1122.  1123.
+MAZOWE    5217607.152  3134607.251 -1903285.733 begin      end        R                            32  -17.47389    30.99639   1210. Mazowe                  Zimbabwe      1192.  1194.
+GABORONE  5217725.298  2530152.995 -2649710.523 begin      end        R                            12  -24.70333    25.86944   1075. Gaborone                Botswana      1075.  1096.
+CASSIS    3220010.741  5050357.564 -2185008.421 begin      end        R                            16  -20.1664     57.4792      35. Cassis                  Mauritius       35.    31.
+BOANE     4849469.043  3065114.777 -2777949.159 begin      end        R                            18  -25.9886     32.295       33. Boane                   Mozambique      33.    52.
+ARVI      1665814.421  5793148.784  2079392.153 begin      end        R                            30   19.151423   73.957461   688. Arvi                    India          688.   619.
+DOIWALA   1137585.308  5400228.390  3187676.059 begin      end        R                            30   30.178064   78.10428    492. Doiwala                 India          492.   447.
+RIODEJAN  4319234.812 -3997309.073 -2450915.191 begin      end        R                            34  -22.746776  -42.78324     93. Rio de Janeiro          Brazil          93.    87.
+SAOPAULO  4025263.994 -4288294.995 -2461065.614 begin      end        R                            34  -22.843785  -46.812165   730. Sao Paulo               Brazil         730.   726.
+KAT7      5109965.691  2003703.706 -3239928.506 begin      end        R                            12  -30.721388   21.410983  1050. KAT7                    South Africa  1050.  1084.
+SUTHERLN  5041531.361  1916173.236 -3396695.893 begin      end        R                             1  -32.3760055  20.810677  1800. Sutherland              South Africa  1755.  1792.
+GAMSBERG  5627789.130  1637635.510 -2512887.855 begin      end        R                             1  -23.3460361  16.224516  2350. Gemsberg                Namibia       2142.  2174.
+NAMIBIA1  5543551.812  1786650.206 -2593890.993 begin      end        R                             1  -24.149275   17.863789  1230. Namibia-1               Namibia       1216.  1246.
+SANIPASS  4856859.897  2705391.485 -3122228.906 begin      end        R                             1  -29.4831944  29.118892  3225. SaniPass                Lesotho       3148.  3185.
+KILIMANJ  5063016.644  3871222.941  -341889.979 begin      end        R                             1   -3.0912333  37.401817  4525. Kilimanjaro             Tanzania      4407.  4392.
+ALMA-01   2225088.840 -5440144.982 -2481533.871 begin      end        R                             1  -23.027784  -67.754811  5059. Atacama                 Chili         4996.  5037.

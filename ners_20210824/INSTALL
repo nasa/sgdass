@@ -1,0 +1,137 @@
+Ners runs under Linux or MAC OS.
+Dependencies:
+                                           
+1) tcsh. Comment: tcsh should have symbolic link to csh.
+         Old bsd csh is not supported.
+2) gcc C compiler
+3) Fortran compiler: either gfortran or Intel
+4) wget ( https://www.gnu.org/software/wget )
+5) Optionally, python version 3.2 or newer.
+
+Ners can be configured in two modes: standalone and with dependency
+to petools library. If you do not know what petools library is, 
+probably, you should configure ners in the standalone mode,
+i.e. without specifying --with-petools= as argument for configure.
+Ners installs python module by default. If you do not want to use
+the python module, you can configure python without python support
+with specifying --without-python.
+
+  To configure ners, run ./configure with arguments.
+To see the list if arguments, run 
+
+./configure -h
+
+Script configure honors the following environment variables:
+
+  CC      -- full path to C compiler (gcc by default)
+  FC      -- full path to Fortran compiler (gfortran by default)
+  LDFLAGS -- additional commands appended to the linker
+
+When you configure ners with petools, you need to specify installation
+directory for petools.
+
+Example:
+
+./configure --prefix=/opt64 FC=/opt64/bin/gfortran  --python-dir=/opt64/script
+
+After you run configure, just execute
+
+make
+make example
+make install
+
+Installed files:
+
+1) library ${NERS_PREFIX}/lib/libners.a
+           ${NERS_PREFIX}/lib/libners.so    (Linux) or 
+           ${NERS_PREFIX}/lib/libners.dylib (MacOS)
+
+2) include files: 
+
+           ${NERS_PREFIX}/include/ners.i
+           ${NERS_PREFIX}/include/ners_local.i
+
+4) python module:
+
+           ${NERS_PYTHON}/ners.py
+
+   where NERS_PYTHON is /usr/lib/pythonVERS/site-packages directory
+   ( VERS is python version ) or the directory name specified by
+   --python-dir directory.
+
+
+3) executable:
+
+   ${NERS_PREFIX}/bin/ners_eop    -- Program that prints the EOP value(s) on the requested epoch
+   ${NERS_PREFIX}/bin/ners_eopser -- Program that prints the EOP time series on the requested 
+                                     time range with requested time step
+   ${NERS_PREFIX}/bin/ners_azel   -- Program that computes azimuth an elevation at a requested
+                                     epoch for a station with given positions obsering a source 
+                                     with given coordinates
+   ${NERS_PREFIX}/bin/utcmtai     -- Program that prints UTC minus TAI
+   ${NERS_PREFIX}/bin/ut1mtai     -- Program that prints UT1 minus TAI
+   ${NERS_PRYTHON}/ners_python_get_eop_example.py    -- python example for EOP
+   ${NERS_PRYTHON}/ners_python_azel_example.py       -- python example for azimuth and 
+                                                        elevation computation
+   ${NERS_PRYTHON}/ners_python_utc_to_tai_example.py -- python example for conversion UTC
+                                                        time argument to TAI time
+   ${NERS_PRYTHON}/ners_python_transform_example.py  -- python examples for various transformations
+
+4) examples: 
+   
+   ${NERS_ROOT}/bin/ners_fortran_example_01
+   ${NERS_ROOT}/bin/ners_fortran_example_02
+   ${NERS_ROOT}/bin/ners_fortran_example_03
+   ${NERS_ROOT}/bin/ners_fortran_example_04
+   ${NERS_ROOT}/bin/ners_fortran_example_05
+   ${NERS_ROOT}/bin/ners_c_example_01
+   ${NERS_ROOT}/bin/ners_c_example_02
+   ${NERS_ROOT}/bin/ners_c_example_03
+   ${NERS_ROOT}/bin/ners_c_example_04
+   ${NERS_ROOT}/bin/ners_c_example_05
+
+   NB: examples are not installed. They remain in the root ners directory.   
+
+5) data:
+
+   ${NERS_PREFIX}/share/ners.config  -- Configuration file
+   ${NERS_PREFIX}/share/ners.fcs     -- EOP forecast file. This file is frequently
+                                        overwritten by ners library.
+   ${NERS_PREFIX}/share/ners.leapsec -- Leap second file. This file is frequently
+                                        overwritten by ners library.
+6) documentation:
+
+   ${NERS_PREFIX}/doc/
+
+      ${NERS_PREFIX}/doc/ners_user_guide.html       User guide for ners library
+      ${NERS_PREFIX}/doc/ners_api.txt               Application user interface
+      ${NERS_PREFIX}/doc/ners_foreacst_message.txt  Contents of the EOP forecast message
+      ${NERS_PREFIX}/doc/ners_configure.txt         NERS configuration options
+      ${NERS_PREFIX}/doc/ners_eop.txt               User guide for program ners_eop
+      ${NERS_PREFIX}/doc/ners_eopser.txt            User guide for program ners_eopser
+      ${NERS_PREFIX}/doc/ut1mtai.txt                User guide for program ut1mtai
+      ${NERS_PREFIX}/doc/utcmtai.txt                User guide for program utcmtai
+
+In order to uninstall ners, just run
+
+make uninstall 
+
+Author: 
+
+   Leonid Petrov
+
+URL:
+
+   http://earthrotation.net/ners
+
+License:
+
+   GNU Public License
+
+Acknowledgment:
+
+  This project was supported by NASA Earth Surface Interior program, grant NNX15AC10G.
+
+Date of last modification:
+
+2018.06.15

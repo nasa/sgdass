@@ -1,0 +1,73 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2021.06.09  L. Petrov Created
+#
+# 2021.06.30  pet Updated for results of k20001
+# 2021.07.02  pet Added STOW_AZIM and STOW_ELEV fields
+# 2021.08.06  pet Updated for results of k20002
+# 2021.08.27  pet Updated stow position
+# 2022.01.28  pet Added BACKEND definition
+# 2022.04.03  pet Added peculiar clock offset
+# 2022.10.11  pet Updated STOW az/el acording to am ial cfrom Chrios Coughlin 2022.10.11_17:40
+# 
+SHORT_NAME:    KOKEE12M  char       K2
+LAST_UPDATE:   KOKEE12M  char       2022.04.03
+COORD:         KOKEE12M  meters     -5543831.582  -2054586.793   2387828.307
+MOUNT:         KOKEE12M  char       ALTAZ   
+#
+SLEW_AZ:       KOKEE12M  deg/sec      11.97
+SLEW_EL:       KOKEE12M  deg/sec       6.12
+ACCL_AZ:       KOKEE12M  deg/sec^2     3.05
+ACCL_EL:       KOKEE12M  deg/sec^2     2.33
+TSETTLE_AZ:    KOKEE12M  sec           5.43
+TSETTLE_EL:    KOKEE12M  sec           5.09
+#
+EL_MIN:        KOKEE12M  deg           2.0
+EL_MAX:        KOKEE12M  deg          88.2
+AZ_RANGE:      KOKEE12M  deg        -177.5   2.3   182.5  362.3
+RECORDER:      KOKEE12M  char       mark6
+BACKEND:       KOKEE12M  char       rdbe
+SETMODE:       KOKEE12M  sec           4.0
+PREOB:         KOKEE12M  sec           3.0
+POSTOB:        KOKEE12M  sec           2.0
+HOR_AZIM:      KOKEE12M  deg           0.0  260.0 280.0 295.0 300.0 305.0 310.0 325.0 330.0 335.0 340.0 350.0 360.0
+HOR_ELEV:      KOKEE12M  deg          10.0   10.0  10.0   5.0  10.0  25.0  35.0  40.0  45.0  40.0  35.0  30.0  10.0
+STOW_AZIM:     KOKEE12M  deg         230.0
+STOW_ELEV:     KOKEE12M  deg          60.0
+#
+CLOCK_DATES:   KOKEE12M  sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  KOKEE12M  sec        0.414E-6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

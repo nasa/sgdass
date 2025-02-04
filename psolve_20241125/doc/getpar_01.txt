@@ -1,0 +1,40 @@
+  Program  GETPAR  parses a spool file of the listing of Solve
+solution, find some fields and writes down the following files:
+                                                                      
+   1) .sta -file with global positions of the stations. The list is
+      sorted in alphabetic order. Stations before and after episodic
+      motions are treated as different stations. Correlations between
+      station positions and velocities are also written.
+   2) .vel -file with global velocities of the stations. The list is
+                 sorted in alphabetic order. Stations before and after
+                 episodic  motions are treated as the same stations.
+   3) .sou -file with global positions of the sources. The list is
+                 sorted in increasing right ascensions. Correlations
+                 between right ascension and declination are also
+                 written.
+   4) .eop -file with of EOP series : Xpole, Ypole, Ut1, Ut1_rate,
+                 Ut1_acceleration.
+   5) .nut -file with daily series of nutation angles.
+   6) .crl -file with series of covariances matrices between EOP of
+                 the same session.
+   7) .lso -file with series of positions of sources estimated as
+                 local parameters.
+   8) .lst -file with series of positions of stations estimated as
+                 local parameters.
+   9) .bas -file with series of baseline length.
+  10) .eob -file with EOP series in IERS EOP-B format.
+  11) .trp -file with adjustments of troposphere path delay.
+  12) .erm -file with adjustments of the B-spline Earth rotation
+                 model.
+  13) .heo -file with adjustments of the harmonic Earth rotation
+                 model.
+  14) .rms -file with weighted root mean squares of postfit residuals
+                 for each session sorted in decreasing rms.
+
+  Usage: getpar <spool_file> <prefix>
+
+      where spool_file is the name of Solve spool file of global
+   solution in either complete or back mode; prefix is the main
+   portion of the output filenames including path. The actual names of
+   the output files are results of concatenation of prefix with
+   extension.

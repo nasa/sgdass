@@ -1,0 +1,737 @@
+Author:      Leonid Petrov
+Last update: 2018.01.10_16:27:00
+
+Program SUR_SKED is for scheduling VLBI experiment of astrometry 
+survey type, when the goal of experiment is to observe many sources 
+(say, >20) and get their positions, or in a geodesy mode.
+
+Usage: 
+======
+
+   sur_sked control_file [verbosity_level]
+
+Control file specifies parameters of the schedule
+
+verbosity_level argument specifies how verbose the output should be:
+0 -- silent mode
+1 -- minimal verbosity
+2 -- normal verbosity (recommended)
+3-6 -- more and more verbose mode.
+
+
+Overview
+========
+
+  Generation of the schedule for VLBI observations is not a simple
+task. First, each candidate source has to be checked against 
+constraints: it should be in a given range of elevations and azimuths
+each antenna of the array or sub-array is able to point. Second, slewing
+time to the next source should be calculated. A good schedule tries
+to minimize losses for slewing. The losses are zero if a given source
+is observed continuously. Usually, this scenario is not desired by 
+an astronomer. We usually want to observe a pool of sources in N scans
+each separated by a gap at least G seconds. This constraint increases 
+losses. Some sources are up for a long period of time and are easy 
+to insert in the schedule. Other sources are up only for a short period
+of time and are more difficult to insert into the schedule.
+
+  The automatic scheduling algorithm first calculates the visibility
+zone for each source. If at a given time and at a predicted scan end time
+a source does not satisfy visibility constraint, i.e. it is not within
+elevation and azimuthal range for the specified minimum number of 
+sources, that source is obviously excluded from consideration.
+If a source is visible, a score is assigned to its in accordance to 
+a number of criteria. Slewing time is one of them. History of observations
+is another criteria. If a source has been observed the allowed maximum scans,
+the score is assigned to zero, and the source is excluded from the 
+consideration. A factor whether the source will be up in a near future is
+also taken into consideration. A source that will set off soon is given
+a priority with respect to a source that will be visible for a long period
+of time.  If a source was observed less than G seconds ago, its score is
+also set to zero. Several other factors are taken into account. Then the
+sources are sorted in decreasing their scores, and the source with the 
+highest score is inserted in the schedule, and the process is repeated.
+
+  In a addition to target sources, amplitude and/or troposphere calibrators
+are automatically inserted into the schedule every T seconds.
+
+  When the sequence of sources and their scan time are defined output
+schedule file in several formats are generated. The control file has 
+a number of parameters that can be tuned. Preparation of the schedule
+involves making trial runs, examining the generated schedule, and changing
+schedule parameters.
+  
+
+Control file description
+=========================
+
+Control file specifies many parameters in the form:
+keyword:  value 
+
+All keywords must be defined. No defaults is allowed.
+A line that starts with # is considered as a comment 
+and is ignored. Keywords may follow in an arbitrary order.
+A keyword must be defined only once.
+
+
+1)  Header group
+
+EXPERIMENT_CODE:          Experiment code. Usually in small letters.
+
+EXPERIMENT_DESCR:         An arbitrary line with experiment description
+
+SCHEDULER_NAME:           Name of the person who ran the schedule
+
+SCHEDULER_EMAIL:          Email of the person who made the schedule
+
+SCHEDULER_PHONE:          The telephone of the person who made the schedule
+
+OBSERVER_PHONE:           Name of the person whom to call during the experiment
+                          if something goes wrong
+
+CORR_SPECTRAL_RESOLUTION: Spectral resolution for correlation in Hz
+
+CORR_TIME_RESOLUTION:     Time resoluion for correlation in sec
+
+2) Template group
+
+HEADER_KEY_TEMPLATE_FILE: Template of the header for the schedule in key format.
+                          This header contains general fields, the PI name,
+                          correlator comments and the frequency setup. 
+                          Sur_sked generates only the source catalogue and 
+                          the sequence of scans. It takes this header fills 
+                          some fields and prepends it to the output key file.
+
+HEADER_VEX_TEMPLATE_FILE: Template of the header for the schedule in vex format
+                          Sur_sked generates only the source catalogue and 
+                          the sequence of scans. It takes this header fills 
+                          some fields and prepends it to the output key file.
+
+HARDWARE_SETUP_NAME:      Name of the VLBI hardware setup. That name is put into 
+                          the schedule file in ast format.
+
+3) Group of apriori data
+
+
+DE_FILE:                  The planetary ephemerides in the format that 
+                          is supported by the VTD package. This file 
+                          is supplied with the VTD package.
+
+SUN_DIST_MIN:             The minimal allowed distance to the Sun in degrees. 
+                          Sources that are closer to the Sun, will not
+                          be scheduled.
+
+STATIONS:                 Comma separated list of stations. Station name 
+                          should be in upper case. The name may have 
+                          one or more qualifiers separated by colon:
+                 
+                          r -- sets that this stations is reference.
+       :                       The concept of reference station is used 
+                               in modes 
+
+                               ASTROMET_11
+                               ASTROMET_12
+                               ASTROMET_13
+
+                               In these modes the preference is given to 
+                               sources that are close to the upper 
+                               culmination at the reference sources.
+
+                          s -- sets this station "sticky". That means it is 
+                               required that the sticky station participate
+                               in each scan of target sources. More than
+                               one sticky stations can be specified.
+
+                          t -- set this stations is tag alone. That means 
+                               sur_sked does not schedule this station during
+                               the main run. When the schedule is made it tries
+                               to insert it in any scan. If the source is up
+                               at the tag alone station and slewing time is 
+                               sufficient to observe 67% of the scan, the 
+                               station is scheduled for a given scan.
+
+4) Algorithm name
+
+ALGORITHM:                Specifies the algorithm name
+
+         FRINGE_SEARCH_01 -- A mode suitable for a simple fringe search survey.
+                             Each source is observed only once in a given
+                             sessions. No sub-arraying is allowed, i.e. the
+                             source is observed at all stations of the network.
+                             Sources with declinations < +20 deg gain an 
+                             additional, otherwise for an array located
+                             in the northern hemisphere southern sources
+                             have less chance to be observed.
+                          
+                             Every CALIB_INTERVAL seconds, an amplitude 
+                             calibrator is observed.
+                             
+         FRINGE_SEARCH_02 -- The same as FRINGE_SEARCH_01, but low-elevation
+                             sources are given less addition weight.
+
+         ASTROMET_03         A mode suitable for absolute astrometry 
+                             experiments. The goal is to schedule target 
+                             sources in N scans each separated by a gap 
+                             G seconds long. Both parameters N and G are 
+                             allowed to be float, i.e. the actual number 
+                             of scans per scan and the actual gap between 
+                             sources is allowed to be flexible.
+
+         ASTROMET_11      -- A mode for observations of sources near
+                             meridian of the reference station. Only
+                             one scan per source is allowed. Sources that
+                             have an upper culmination at low elevations
+                             have priority.
+
+         ASTROMET_12      -- A mode for observing sources near meridian
+                             of the reference station.
+
+         GEODETIC_01      -- A mode suitable for geodesy observations.
+                             It selects sources that optimize coverage
+                             over the sky. It strongly downweights 
+                             potential sources at distances less than 
+                             0.66 rad from the previously observed object
+                             within time interval equal twice the interval
+                             between observations of troposphere calibrators.
+
+
+5) Schedule parameters
+
+SOURCE_FILE:              Name of the primary source file in SPIND format
+
+SECONDARY_SOURCE_FILE:    Name of the secondary source file in SPIND format
+                          If at a given moment of time sur_sked cannot 
+                          find a source from the primary source file that 
+                          satisfies the specified constraints, sur_sked
+                          will pick up the first source from the secondary
+                          source file that is up.
+
+OBSERVED_SOURCE_FILE:     The list of observed sources in extended 
+                          source-name format. In the columns 89-90
+                          a counter of observations of a given source is
+                          specified. This counter sets the initial
+                          number of observations. If that counter is equal
+                          or exceeds SCAN_PER_SOURCE_MIN, then a given
+                          source is considered ineligible for scheduling.
+
+CALIB_SOURCE_FILE:        The list of sources in source-name format that
+                          forms a pool of calibrators.
+
+PAIR_SOURCE_FILE:         a list of source pairs in extended source-name
+                          format that defines a set of pairs for dual-beam
+                          VERA observations. Usually points to an empty file.
+
+START_TIME:               Schedule start time in UTC in format 
+                          YYYY.MM.DD_hh:mm:ss.s
+
+STOP_TIME:                Schedule stop  time in UTC in format 
+                          YYYY.MM.DD_hh:mm:ss.s
+
+SCAN_LENGTH:              Default scan length of target sources in seconds. 
+                          This parameter for a given source may be 
+                          overwritten in the source file.
+
+AVERAGE_SLEW_TIME:        Average slew time in seconds for target sources. 
+                          This parameter helps sur_sked to optimize the 
+                          schedule by using this parameter as a prediction 
+                          of the actual slew time.
+
+AVERAGE_SLEW_TROPO_TIME:  Average slew time in seconds for calibrators. 
+                          This parameter helps sur_sked to optimize the 
+                          schedule by using this parameter as a prediction 
+                          of the actual slew time .
+
+
+PRESES_INTERVAL:          Interval of time between the nominal experiment
+                          start time and recording the first scan in 
+                          seconds.
+
+POSTSES_INTERVAL:         Interval of time between the end of the last
+                          scan and the nominal experiment stop time 
+                          in seconds.
+
+PREOBS_SHORT:             Interval of time that is inserted after the 
+                          antenna reached the source and before it 
+                          started recording in seconds. This time is inserted
+                          for running the so-call PREOBS_SHORT procedure.
+                          Set 0 if unsure.
+
+PREOBS_LONG:              Interval of time that is inserted after the 
+                          antenna reached the source and before it 
+                          started recording in seconds. This time is inserted
+                          for running the so-call PREOBS_LONG procedure.
+                          Procedure PREOBS_LONG may be different than
+                          PREOBS_SHORT  or may be the same. Stations that
+                          records Tsys continuously needs PREOBS_LONG.
+                          Stations that fire noise diode before a scan
+                          usually needs 10 s. It is recommended to set
+                          PREOBS_LONG to the longest preobs time among
+                          the stations that participate in the experiment.
+                          If preobs time for a given station is specified for
+                          a shorter duration, that station will just start
+                          recording earlier. NB: PREOBS_LONG time is counted 
+                          in the scan length. Thus, if scan time 60 sec is 
+                          specified and PREOB: 10 s is specified in the station 
+                          parameter file, the stations will spend 10 s for preobs
+                          procedure and 50 sec for recording.
+
+SKIP_PREOBS_LONG:         Parameter that specifies how often PEROBS_LONG
+                          procedure may be replaced with PREOBS_SHORT.
+                          sur_sked supports the scheme that PREOBS_SHORT
+                          executed every SKIP_PREOBS_LONG times and then
+                          PREOBS_LONG it executed unless the elevation 
+                          is less than EL_CHANGE_TSYS degree. 
+                          Set 0 if unsure.
+
+CALIB_INTERVAL:           Time between inserting an amplitude calibrator 
+                          source in modes FRINGE_SEARCH_01 or 
+                          FRINGE_SEARCH_02. This parameter is ignored in
+                          other modes.
+
+EL_CHANGE_TSYS:           Minimum elevation angle in degrees that prohibits
+                          skipping PREOBS_LONG interval. 
+                          Set 0 if unsure.
+
+TAPE_LENGTH:              Time interval in seconds between running procedure
+                          TAPE_CHANGE. It should be noted that any procedure
+                          with this name can be run that does not necessarily
+                          change tape. sur_sked only marks a scan that 
+                          a procedure specified in the vex header file 
+                          should be run before that scan and reserves time
+                          for that procedure (TAPE_CHANGE_TIME)
+                          
+
+TAPE_CHANGE_TIME:         Duration of the procedure TAPE_CHANGE in seconds.
+                          If you do not want to run TAPE_CHANGE procedure,
+                          set TAPE_LENGTH to 999999.0 and TAPE_CHANGE_TIME 
+                          to zero.
+
+START_ROUNDING:           sur_sked rounds start time of each scan to
+                          START_ROUNDING seconds. Some telescopes require
+                          rounding start scan time.
+                          Set 1.0 if unsure.
+
+RECORDING_PAUSE:          This option controls insertion of commands 
+                          minpause and  prestart commands in key-file.
+                          These commands are later interpreted by SCHED.
+                          This is a legacy of tape-based system.
+                          Mark-5A/5B does not allow continuous recording
+                          for a long time. Therefore a break in recording
+                          between scans is inserted. This is done by 
+                          reserving time for procedures PREOBS_SHORT, 
+                          PREOBS_LONG. If the schedule is processed with 
+                          ast_to_snap without sched and/or drudge, than
+                          recording pause should be set to zero.
+
+                          The following options are supported:
+                          10.0 -- minpause 10.0 seconds is defined. That
+                                  means that the array will be idle for
+                                  10 seconds after all antennas slew to 
+                                  the source and the n recording starts
+                                  synchronously. This is used for VLBA.
+                            
+                          -N ( where N > 1.0 but does not exceeds 
+                               PREOBS_LONG ) means that the at least
+                               N seconds pause in recording will be made 
+                               between the last scan and the next scan. 
+                               After the recording pause is made, every
+                               antenna will start recording as soon at it
+                               arrives on source. Antennas start asynchronously.
+                               This mode is useful when there are fast and 
+                               slow antennas in the array. Fast antennas
+                               starts recording while slow antennas are still
+                               slewing, thus effectively lengthening the scan
+                               length.
+
+                          0.0 -- no additional pause is inserted. This option
+                                 is used when the output schedule in ast format
+                                 is processed to convert them to snap directly
+                                 without using sched and drudge. NB: it to set 
+                                 RECORDING_PAUSE: 0.0 and then process it with
+                                 sched, Tsys measurements may be missed.
+                              
+                               
+RECORDING_RATE:           Recording rate in Mbit/sec. Used for generating
+                          statistics and for counting disk space for each stations.
+
+TROPO_RANGE:              Parameter that defines the way how a set of 
+                          tropospheric calibrators is selected from the 
+                          source list specified in CALIB_SOURCE_FILE:
+
+                          1 -- 4 sources with elevation angle ranges
+                               [15, 40], [30, 60], [50, 90], [15, 40] degrees;
+
+                          2 -- 4 sources with elevation angle ranges
+                               [12, 40], [32, 65], [45, 84], [12, 45] degrees;
+
+                          3 -- 4 sources with elevation angle ranges
+                               [12, 45], [30, 85], [12, 45], [30, 85] degrees;
+
+                          4 -- 4 sources with elevation angle ranges
+                               [10, 40], [40, 65], [55, 90], [10, 40] degrees;
+                               The second and 4th scan are twice longer than
+                               TROPO_SCAN_LENGTH;
+
+                          5 -- 4 sources with elevation angle ranges
+                               [45, 90], [13, 35], [45, 90], [13, 35] degrees;
+                               The first and 3rd scan are twice longer than
+                               TROPO_SCAN_LENGTH;
+
+                          6 -- 4 sources with elevation angle ranges
+                               [45, 90], [14, 35], [45, 90], [13, 35] degrees;
+
+                          7 -- 5 sources with elevation angle ranges
+                               [45, 90], [14, 35], [45, 90], [13, 35], [30, 90] degrees;
+                               The fifth source is selected among those that 
+                               are visible at all stations of the array.
+
+                          8 -- 1 source with elevation angle ranges [30, 90] deg
+
+                          9 -- 4 sources with elevation angle ranges 
+                               [30, 60], [60, 90], [30, 60], [60, 90] degrees.
+
+                          10 -- 1 source with elevation angle in a range of 
+                                [10, 90] deg
+
+                          11 -- 2 sources with elevation angle in a range of 
+                                [12, 30], [50, 90], [12, 30], [50, 90] deg.
+
+                          12 -- 2 sources with elevation angle in a range of 
+                                [30, 90];
+
+                          13 -- 1 source with elevation angle in a range of 
+                                [15, 90];
+
+                          14 -- 4 sources with elevation angle ranges
+                                [45, 84], [12, 45], [45, 84], [12, 45] degrees;
+
+                          15 -- 4 sources with elevation angle ranges
+                                [10, 40], [30, 60], [10, 40], [30, 60] degrees;
+
+                          16 -- 3 sources with elevation angles in the range
+                                [10, 60] degrees.
+
+                          17 -- 2 sources with elevation angles in the range
+                                [20, 90] degrees. Suitable as fringe finders.
+
+                          21 -- [45, 84], [12, 45], [45, 84], [12, 45] degrees
+                                and then run a geodetic block for 20 minutes.
+
+
+TROPO_BURST_INTERVAL:     Time interval between including a small set of
+                          troposphere calibrator sources in seconds. 
+
+TROPO_SCAN_LENGTH:        Scan duration of troposphere calibrator sources
+                          in seconds.
+
+TROPO_MIN_STA:            The minimum number of stations that observe 
+                          troposphere calibrator sources simultaneously.
+                          For small networks TROP_MIN_STA is usually
+                          equal to the total number of stations, i.e.
+                          all the stations participate in troposphere 
+                          calibrator scans. For networks with size 
+                          comparable with Earth's radius, TROPO_MIN_STA
+                          may need to be reduced, because it may happen
+                          no calibrator source will be visible every stations
+                          considering elevation angle constraints.
+
+POCAL_STYLE:              Some big telescopes, like Green Bank Telescope (GBT),
+                          require frequent pointing adjustment. sur_sked
+                          has an ability to insert a scan of a strong source
+                          that is used by a special procedure for 
+                          pointing adjustment.
+                          POCAL_GBT_4HR -- causes the GBT to interrupt
+                                           normal observations every 4 hours
+                                           and observe one of the strong 
+                                           sources specified in file
+                                           /vlbi/cats/1jy.sou
+                                           At that time other stations observe
+                                           calibrator sources.
+                          NO -- no special pointing observations are made.
+                          If unsure, set NO.
+
+SCAN_PER_SOURCE_NORM:     Normal number of scans per source. This parameter
+                          specifies the desired number of sources per scan.
+                          This is the floating parameter. sur_sked will try
+                          to generate the schedule that will have the majority
+                          of sources to have SCAN_PER_SOURCE_NORM scans, 
+                          but this is not guaranteed.
+
+SCAN_PER_SOURCE_MIN:      Minimal number of scans per source.
+                          This is the floating parameter. sur_sked will try
+                          to generate the schedule that will have the majority
+                          of sources to have at least SCAN_PER_SOURCE_MIN 
+                          scans, but this is not guaranteed.
+
+
+SCAN_PER_SOURCE_MAX:      Maximal number of scans per source. A given source
+                          will not be considered for further scheduling 
+                          if the number of scans exceeded SCAN_PER_SOURCE_MAX.
+
+
+SCAN_GAP_SOURCE_MIN:      Minimum gap between scheduling the same source
+                          in minutes. The source is considered ineligible
+                          for scheduling if it was already inserted in the 
+                          schedule until the gap between the previous
+                          observation reached SCAN_GAP_SOURCE_MIN.
+
+SCAN_GAP_SOURCE_NORM:     Normal gap between scheduling the same source
+                          in minutes. This is the floating parameter. 
+                          sur_sked will try to generate the schedule with
+                          average gap between sources close to 
+                          SCAN_GAP_SOURCE_NORM.
+
+
+NOBS_MIN:                 Minimum number of target sources. This is the 
+                          floating parameter. sur_sked will try to generate 
+                          the schedule that will have the majority
+                          of sources to have at least SCAN_PER_SOURCE_MIN 
+                          scans, but this is not guaranteed.
+
+NOBS_MAX:                 Maximum number of target sources. sur_sked will not 
+                          schedule more than NOBS_MAX target sources.
+
+
+
+6) Output files groups
+
+KEY_FILE_TYPE:            Type of time stamps in the generated key file.
+                          TIME_ABS   -- absolute time in UTC scale of scan
+                                        start time and scan dwell time is 
+                                        put in the output key file. Each
+                                        station is guaranteed to observe
+                                        at least scan duration time.
+                                        If RECORDING_PAUSE parameter is
+                                        negative, stations start recording
+                                        as soon as it is on source and
+                                        -RECORDING_PAUSE time has elapsed
+                                        from the previous scan. Therefore,
+                                        actual scan duration may be longer.
+
+                          START_STOP -- absolute time in UTC scale for start
+                                        and stop time for each scan is
+                                        given.
+
+                          LST_PT     -- key file will have local sidereal time
+                                        for experiment start for station 
+                                        PIETOWN. For each scan dwell time
+                                        and optionally prestart time
+                                        (If RECORDING_PAUSE parameter is
+                                        negative) is specified.
+
+                          LST_PA     -- the same as LST_PT, but the local
+                                        sidereal time to station PARKES 
+                                        will be put in the key file.
+
+
+OUT_PLAN:                 Name of the output schedule file in plan-format
+
+OUT_VEX:                  Name of the output schedule file in vex-format
+
+OUT_AST:                  Name of the output schedule file in ast-format 
+
+OUT_KEY:                  Name of the output schedule file in key-format
+                          for program SCHED
+
+OUT_STAT:                 Name of the output file with statistics. 
+                          Statistics is not generated when mode 
+                          FRINGE_SEARCH_01 or FRINGE_SEARCH_02 is used.
+
+OUT_SOU_LIST:             Output list of target sources that has been 
+                          scheduled.
+
+
+--------------------------------------------------------------
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+A. # Station slew format of 2017.12.26
+
+
+   A station file contains lines in ASCII format. The first 
+line identifies the format:
+
+# Station slew format of 2018.01.20
+
+Lines that starts with "#" are considered as comments and are 
+ignored by the parser.
+
+General format:
+
+Keyword:  Long_station_name units var1 [var2 var3]
+
+The long station name should present at every line
+
+Keyword description 
+
+SHORT_NAME:   unit is char
+              var1 defines a 2-character short station name.
+
+LAST_UPDATE:  Date of the last update of station information file in 
+              YYYY.MM.DD format.
+
+COORD:        unit is meters
+              var2 is the Cartesian X component of the the position vector
+              var3 is the Cartesian Y component of the the position vector
+              var4 is the Cartesian Z component of the the position vector
+
+MOUNT:        unit is char
+              var1 defines the mounting type. One of ALTAZ, EQUAT, XY_E, XY_N
+              for alt-azimuthal, equatorial, XY east, and XY north mounting 
+              type.
+
+SLEW_AZ:      unit is deg/sec
+              var1 defines the slewing rate along the first axis: 
+              either azimuthal or hour angle, or X axis depending on 
+              the mounting  type.
+
+SLEW_EL:      unit is deg/sec
+              var1 defines the slewing rate along the second axis: 
+              either elevation or declination, or Y axis depending on 
+              the mounting  type.
+
+ACCL_AZ:      unit deg/sec^2
+              var1 defines the slewing acceleration along the first axis: 
+              either azimuthal or hour angle, or X axis depending on 
+              the mounting  type.
+
+ACCL_EL:      unit deg/sec^2
+              var1 defines the slewing acceleration along the second axis: 
+              either elevation or declination, or Y axis depending on 
+              the mounting  type.
+
+TSETTLE_AZ:   unit sec
+              var1 defines the amount of time that is needed for antenna
+              to settle over azimuth axis after it reached the pointing 
+              direction before it can starts source tracking.
+
+TSETTLE_EL:   unit sec
+              var1 defines the amount of time that is needed for antenna
+              to settle over elevation axis after it reached the pointing 
+              direction before it can starts source tracking.
+
+AZ_RANGE:     unit deg
+              var1 defines the minimum angle at the first axis: 
+              either azimuth or hour angle declination, or X axis 
+              depending on the mounting  type. This angle accounts for 
+              a possible cable wrap.
+
+              var2 defines the transition from the clock-counter-wise (ccw)
+              to the neutral azimuth sector.
+
+              var3 defines the transition from the neutral sector to the 
+              clock wise (cw) azimuth sector.
+
+              var4 defines the minimum angle at the first axis: 
+              either azimuth or hour angle declination, or X axis 
+              depending on the mounting  type. This angle accounts for 
+              a possible cable wrap.
+
+EL_MIN:       unit deg
+              var1 defines the minimum angle at the second axis: 
+              either elevation or declination, or Y axis depending on 
+              the mounting  type.
+
+EL_MAX:       unit deg
+              var1 defines the maximum angle at the second axis: 
+              either elevation or declination, or Y axis depending on 
+              the mounting  type.
+
+RECORDER:     Recorder type.
+              Supported recorder types: mark5, mark5b, mark5c, flexbuf.
+
+PREOB:        unut sec
+              Length of the preob procedure that runs before every scan.
+              sur_set reserves time for this procedure
+
+POSTOB:       unut sec
+              Length of the postob procedure that runs after recording.
+              sur_sked reserves time for this procedure.
+
+
+--------------------------------------------------------------
+
+B. SPIND source file format 
+
+  SPIND source file format provides information about source 
+name, source coordinates, source flux, spectral index, a flag
+whether a source was previously observed, scan duration in seconds,
+priority, minimal number of stations to observe, relative priority, 
+minimal elevation angle, minimum and maximum number of scans.
+
+  SPIND file consists of ascii lines of variable lengths.
+The first and second lines must be the following:
+
+# CATRES Flux and Spectral index file. Format version of 2004.12.18
+# DURATION, PRIORITY AND NOBS
+
+
+Lines that have "#" in the first column are considered comments and 
+are ignored by the interpreter.
+
+# Format:
+#
+#    1:10   A10    J2000-name.
+#   13:23   A11    Right ascension
+#   26:36   A11    Declination
+#   39:48   F10.1  Extrapolated flux density at 8.6 GHz (mJy)
+#   51:56   F6.2   Spectral index
+#   59:62   I4     Number of different frequencies used in computation
+                   of the spectral index
+#   65:68   F4.1   Distance to the closest calibrator (in deg)
+#   71:75   F5.1   Galactic latitude (in deg)
+#   78:78   A1     Whether the source has been observed with VLBI. 
+                   If yes, then @, if not, that field is blank.
+                   NB: @ in this fields tells sur_sked not to schedule 
+                       this source!
+#   81:88   A8     B1950 name
+#   91:96   F6.1   Scan duration in sec
+#   98:104  F7.1   Priority. The higher priority, the more chance sur_sked
+                   will pick up the source.
+#  106:107  I3     Min number of stations for this source to be observed.
+                   sur_sked will not schedule the source if the number
+                   of stations that can observe this source and this
+                   time is less than this number. Tag alone stations are
+                   not counted.
+#  109:112  F4.1   min elevation angle in deg. Sur_sked will not schedule
+                   a sources with elevation below that limit at scan start.
+#  114:115  I2     min number of scans. Affects sur_sked algorithm for picking
+                   up the source.
+#  117:118  I2     max number of scans. Sur_sked will not schedule more than
+                   this number of scans as the primary source. However,
+                   if at a given moment of time there is no primary sources up,
+                   and this source is also in the secondary list, sur_sked
+                   allows to exceed this limit.
+#  121:123  I3     minimum time inteval between scans of the same sources in minutes
+#  125:127  I3     normal  time inteval between scans of the same sources in minutes
+
+
+--------------------------------------------------------------
+
+C. SOURCE_NAME source file format 
+
+   A file in SOURCE_NAME format contains source names and its 
+aliases. A file in SOURCE_NAME format consists of ascii lines of 
+variable lengths.The first line must be the following:
+
+# SOURCE-NAMES  v 2.0 2005.09.06
+
+Lines that have "#" in the first column are considered comments and 
+are ignored by the interpreter.
+
+# Format description
+#
+#  1:8   A8   IVS-name
+# 11:20  A10  J2000-name
+# 23:30  A8   B1950-name
+# 33:40  A8   AIPS-name
+# 43:43  A1   class:
+#                    C   calibrator
+#                    N   non-calibrator, reliable positions
+#                    U   non-calibrator, unreliable positions
+#                    -   non-detection
+#                    E   excluded
+#                    G   ghosts (duplicates)
+# 46:58  I2,A1,I2,A1,F7.4   Right ascension
+# 60:72  I3,A1,I2,A1,F6.3   Declination
+# 75:80  F6.2 Semi-major error ellipse in mas
+#

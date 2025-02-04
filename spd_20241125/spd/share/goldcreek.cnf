@@ -1,0 +1,17 @@
+SPD_3D_CONF   Format version of 2015.01.06
+#
+#  Last updated 2019.06.09_09:58:46
+#
+REFR_EXPR:   Radio_Aparicio_2011
+SPD_ALG:     y_nonloc
+FIL_STA:     /progs/spd_20161117/spd/share/goldcreek.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      geosfpit_height_above_geoid.heb
+FIL_LEAPSEC: /progs/spd_20161117/data/leapsec.dat
+FIL_DESC:    spd_desc.txt
+FIL_FMT:     /progs/spd_20161117/spd/doc/spd_3d_format.txt
+TIM_INTRV:   10800.0D0
+N_EL:        1
+N_AZ:        1
+SOB_ALG:     rte_bent
+N_FRQ:       0

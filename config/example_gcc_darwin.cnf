@@ -1,0 +1,162 @@
+# sgdass_config  Version 1.4   of 2021.12.13
+#
+# Configuration file for compiling gcc/g++/gfortran at MACOS (Darwin)
+# Tested under (Darwin) OS 13.5.2 and xcode 14.2
+#
+# Last update: 2024.01.28_21:59:22
+#
+[Directories]
+  /opt64
+
+[SubDirectories]:
+  /opt64/include
+  /opt64/lib
+  /opt64/lib64
+  /opt64/bin
+
+[Compilers]
+  gcc           /usr/bin/gcc 
+  gcx           /usr/bin/g++
+  gfortran      none
+  cla           /usr/bin/clang
+  clap          /usr/bin/clang++
+  cmake         none
+
+[Where]
+  tarball       /progs/sgdass       # directory with unpacked sgdass tarballs
+  build         /progs              # build directory the primary packages
+  build_aux     /dist               # build directory for axilliary third party packages
+  prefix        /opt64              # installation directory
+  sdk           /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk  # Mac OS software development kit
+
+[Misc]
+  num_proc      64
+  center_abr    AG
+  center_name  "NASA GSFC"
+  install_log   /logs/sgdass/sgdass_@DATE@_install.log
+  build_log     /logs/sgdass/sgdass_@DATE@_build.log
+
+[Tests]
+
+[AuxPackages]
+  package: gmp
+  version: 6.3.0
+           options:     --prefix=${prefix} \
+                        --enable-cxx       \
+                        CC=${gcc}
+           build:       make clean
+           build:       make -j ${num_proc}
+           build:       make install
+
+#
+  package: mpfr
+  version: 4.2.1
+           options:     --prefix=${prefix}   \
+                        --with-gmp=${prefix} \
+                        --enable-shared      \
+                        --enable-thread-safe \
+                        CC=${gcc}
+           build:       make clean
+           build:       make -j ${num_proc}
+           build:       make install
+
+#
+  package: mpc
+  version: 1.3.1
+           options:     --prefix=${prefix}   \
+                        --with-gmp=${prefix} \
+                        --enable-shared      \
+                        CC=${gcc}
+           build:       make clean
+           build:       make -j ${num_proc}
+           build:       make install
+
+#
+  package: isl
+  version: 0.18
+           options:     --prefix=${prefix}   \
+                        --with-gmp=${prefix} \
+                        CC=${gcc}            \
+                        CFLAGS="-I ${prefix}/include" \
+                        LDFLAGS="-L${prefix}/lib"
+           build:       make clean
+           build:       make -j ${num_proc}
+           build:       make install
+
+#
+  package: zstd
+  version: 1.5.2
+           patch:       zstd-01.patch
+           build:       make clean
+           build:       make -j ${num_proc}
+           build:       make install DESTDIR=${prefix}
+
+#
+  package: gcc
+  version: 14.1.0
+           pre_config:   if ( -d build ) rm -fR build
+           pre_config:   mkdir -p build/gcc
+           pre_config:   cp ${sdk}/usr/include/AvailabilityInternalLegacy.h build/gcc/
+           pre_config:   mkdir -p ${prefix}/x86_64-apple-darwin22.6.0/include/
+           pre_config:   cp ${sdk}/usr/include/AvailabilityInternalLegacy.h ${prefix}/x86_64-apple-darwin22.6.0/include/
+           pre_config:   cp ${tarball}/ecj-4.9.jar build/
+           with_config:  cd build
+           with_config:  cp ../configure  ./
+           options:      --prefix=${prefix}     \
+                         --with-gmp=${prefix}   \
+                         --with-mpc=${prefix}   \
+                         --with-mpfr=${prefix}  \
+               	         --without-isl          \
+                         --with-sysroot=${sdk}  \
+                         --disable-nls          \
+                         --disable-multilib     \
+                         --enable-shared        \
+                         --enable-threads=posix \
+                         --enable-lto           \
+                         --enable-languages=c,c++,fortran,objc,obj-c++ \
+                         CC=${cla}              \
+			 CXX=${clap}
+
+            build:      make -j ${num_proc}
+            build:      make install
+            build:      if ( -f ${prefix}/bin/cc ) rm ${prefix}/bin/cc 
+            build:      ln -s ${prefix}/bin/gcc ${prefix}/bin/cc 
+
+#
+#  2024.01.28_18:56:11
+#
+#  Building failed. Workaround to continue
+#
+#  // cp ${sdk}/usr/include/AvailabilityInternalLegacy.h build/prev-gcc/include-fixed/
+#
+#  cd /dist/13.1.0/build/
+#  cp /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternalLegacy.h prev-gcc/include-fixed/
+#  make -j 8    >& make_log_try2.txt
+#  make install >& install.log
+#
+  package: cmake
+  version: 3.23.1
+           pre_config:  sed -i -e 's@"lib64"@"lib"@g' Modules/GNUInstallDirs.cmake
+           options:     noconfigure
+           build:       ./bootstrap                   \
+                        --prefix=/opt64               \
+                        --no-system-libs              \
+                        --parallel=8                  \
+                        --datadir=/share/cmake        \
+                        --docdir=/share/doc/cmake     \
+                        --mandir=/share/man           \
+                         CC=${cla}                    \
+                         CXX=${clap}                  \
+                        --                            \
+                        -DCMAKE_INSTALL_PREFIX=/opt64 \
+                        -DCMAKE_INSTALL_LIBDIR=lib    \
+                        -DCMAKE_BUILD_TYPE=Release    \
+                        -DCMAKE_FIND_FRAMEWORK=LAST   \
+                        -DCMAKE_VERBOSE_MAKEFILE=ON   \
+                        -Wno-dev                      \
+                        -DBUILD_TESTING=OFF           \
+                        -DCMAKE_OSX_SYSROOT=${sdk}    \
+                        -DCMake_BUILD_LTO=ON
+
+           build:       make -j ${num_proc} V=1
+           build:       make install

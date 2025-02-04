@@ -1,0 +1,879 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML lang="en">
+<HEAD>
+     <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+     <META NAME="GENERATOR" CONTENT="redoc" >
+    <TITLE> Sinex output implementation in the VLBI Analysis software system Calc/Solve </TITLE>
+</HEAD>
+<BODY>
+    <CENTER><B><BIG> Sinex output implementation in the VLBI Analysis software system Calc/Solve </BIG></B></CENTER>
+<HR SIZE="6">
+    <CENTER><I>   </I></CENTER>
+    <CENTER><I> Leonid Petrov </I></CENTER>
+    <CENTER><I>   </I></CENTER>
+<P>
+<CENTER><I><BIG> Abstract: </CENTER></I></BIG>
+ 
+<P><I><UL><FONT SIZE=2>
+ 
+ 
+   This document describes the way how Calc/Solve writes down a listing
+of a VLBI solution in Sinex format.
+ 
+ 
+</FONT></I></UL><P>
+ 
+<CENTER><BIG><I> Table of contents: </CENTER></BIG></I>
+ 
+<DL>
+<P><DD> 1 &nbsp; <A HREF="#section1"> Overview </A> </DD><P>
+<P><DD> 2 &nbsp; <A HREF="#section2"> Deviations from the SINEX 1.00 standard </A> </DD><P>
+<DD> <DL><DD> 2.1 &nbsp; <A HREF="#section2.1"> New block SOLUTION/CONSTRAINT_EQUATION_INFO </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.2 &nbsp; <A HREF="#section2.2"> New block SOLUTION/CONSTRAINT_EQUATION_MATRIX </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.3 &nbsp; <A HREF="#section2.3"> New block SOLUTION/CONSTRAINT_EQUATION_VECTOR </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.4 &nbsp; <A HREF="#section2.4"> New block SOLUTION/CONSTRAINT_WEIGHT_MATRIX </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.5 &nbsp; <A HREF="#section2.5"> New block SOLUTION/DECOMPOSED_NORMAL_MATRIX BLOCK </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.6 &nbsp; <A HREF="#section2.6"> New block SOLUTION/DECOMPOSED_NORMAL_VECTOR BLOCK </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.7 &nbsp; <A HREF="#section2.7"> New block NUTATION/DATA </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.8 &nbsp; <A HREF="#section2.8"> New block PRECESSION/DATA </A> </DD> </DL><DD>
+<DD> <DL><DD> 2.9 &nbsp; <A HREF="#section2.9"> New block SOURCE/ID </A> </DD> </DL><DD>
+<P><DD> 3 &nbsp; <A HREF="#section3"> Deviations from the SINEX 2.10 standard </A> </DD><P>
+<P><DD> 4 &nbsp; <A HREF="#section4"> Implementation in Solve </A> </DD><P>
+<DD> <DL><DD> 4.1 &nbsp; <A HREF="#section4.1"> Syntax of INCLUDE_PARAM and EXCLUDE_PARAM lists </A> </DD> </DL><DD>
+<DD> <DL><DD> 4.2 &nbsp; <A HREF="#section4.2"> Examples of INCLUDE_PARAM and EXCLUDE_PARAM lists </A> </DD> </DL><DD>
+<DD> <DL><DD> 4.3 &nbsp; <A HREF="#section4.3"> Treatment of station with discontinuous motion </A> </DD> </DL><DD>
+<DD> <DL><DD> 4.4 &nbsp; <A HREF="#section4.4"> Restrictions </A> </DD> </DL><DD>
+</DL>
+ 
+<HR SIZE="2">
+ 
+<LISTING>
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section1"> </A> 1 &nbsp; Overview
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+  SINEX stands for "Solution INdependent EXchange format". This format was
+developed by Blewitt et al. (1994)
+http://www.dgfi.badw-muenchen.de/gps/sinex.html and
+http://alpha.fesg.tu-muenchen.de/iers/sinex/sinex_v2_appendix1.pdf
+for facilitating the task of combining several GPS solutions. Original
+design of Sinex format was made for solving this specific task. However,
+later this format evolved towards to a common machine-readable form of
+solution listings for other space geodesy techniques, VLBI and SLR, and
+attempts were made for overcoming flaws of the original design. This
+process of evolution is not yet completed, therefore, different software
+systems implement a little bit different flavors of Sinex format.
+ 
+  Listings in Sinex format produced by Solve contain information about
+stations, sources, estimates of the parameters, their covariance matrix,
+constraint equation, right-hand side of constraint equations and weight
+matrix of constraint equations. In addition to these results, a portion of
+the decomposed normal matrix and normal vector can be included in the
+listing as well. A user has control which blocks should be included in the
+listing. The current implementation of the Sinex format does not allow
+to include in the listing any parameter which was solved for. Only
+some type of parameters, like station position, EOP, etc can be included.
+However, a user has total control which parameters among the parameters
+of the supported type are to be included or not included in the listing.
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2"> </A> 2 &nbsp; Deviations from the SINEX 1.00 standard
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+ 
+   Solve currently writes listing either in Sinex 2.10 format or in
+Sinex 2.20 format. Deviations from the Sinex 1.00 standard are as follows:
+ 
+1)  Eight new blocks were added:
+ 
+   SOLUTION/CONSTRAINT_EQUATION_INFO
+   SOLUTION/CONSTRAINT_EQUATION_MATRIX
+   SOLUTION/CONSTRAINT_EQUATION_VECTOR
+   SOLUTION/CONSTRAINT_WEIGHT_MATRIX
+ 
+   The purpose of these four blocks is to overcome the flaw of original
+design of Sinex format and provide complete information about all
+constraints used in the solution.
+ 
+   SOLUTION/DECOMPOSED_NORMAL_MATRIX
+   SOLUTION/DECOMPOSED_NORMAL_VECTOR
+ 
+   The purpose of these blocks is to provide information about transformed
+normal equations before applying constraints. NB: one of the three items:
+covariance matrix, constraint equations and decomposed normal equations is
+redundant: having two of them one can derive the third one.
+ 
+   NUTATION/DATA
+   PRECESSION/DATA
+ 
+   The purpose of this section is to provide information about used
+nutation/precession model and to define parameter "estimates of nutation
+angles".
+ 
+2) SOLUTION/STATISTICS block has new items:
+ 
+   WEIGHTED SQUARE SUM OF O-C    sum { y(T) * w * y }
+ 
+   WRMS OF POSTFIT RESIDUALS     sum { (A*e - y)(T) * w * (A*e - y) )/Sp ( w )
+ 
+   where y -- the difference between the observed time delay and theoretical;
+         A -- matrix of equations of conditions;
+         e -- vector of the parameter adjustments;
+         w -- weight matrix;
+         Sp   -- stands for the mathematical operation of computing trace of
+                 a matrix: the sum of diagonal elements.
+ 
+   Summing is done over all observations used in parameter estimation.
+ 
+   Comment: field WEIGHTED SQUARE SUM OF O-C is not computed in global mode.
+ 
+   Meaning of other parameters:
+ 
+   NUMBER OF OBSERVATIONS          total number of used observables
+ 
+   NUMBER OF UNKNOWNS              total number of unknowns, including those,
+                                   which are not shown in the Sinex listing
+ 
+   SQUARE SUM OF RESIDUALS (VTPV)  sum { (A*e - y)(T) * w * (A*e - y) )
+ 
+   VARIANCE FACTOR                 sum { (A*e - y)(T) * w * (A*e - y) )}/
+                                       ( N - M - Sp( Cov(A) * B(T) * z * B ) )
+ 
+   where Cov(A) -- covariance matrix of the entire solution
+                   (NB: Sinex listing may have only a portion of the solution)
+         B -- matrix of equations of constraints;
+         z -- weight matrix of constraints;
+         N -- total number of equations of conditions (observables);
+         M -- total number of unknowns.
+ 
+ 
+3) The blocks which keep element of matrices do not have fields
+   "Second Matrix Element" and  "Third Matrix Element".
+ 
+   The purpose of this change is to facilitate the process of creation of
+the listing and to reduce significantly the probability of errors.
+ 
+4) SOLUTION/MATRIX_APRIORI is not provided. The reason is that Solve does not
+operate the notion of apriori covariance matrix. And it also uses singular
+constraints which cannot be reduced to the form of apriori covariance matrix.
+Since full information about constraints is provided in other blocks,
+SOLUTION/MATRIX_APRIORI is considered as an obsolete block.
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.1"> </A> 2.1 &nbsp; New block SOLUTION/CONSTRAINT_EQUATION_INFO
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+         ___________________________________________________________________
+        |S_O_L_U_T_I_O_N__C_O_N_S_T_R_A_I_T__I_N_F_O__B_L_O_C_K_____________|
+        |                |                                   |              |
+        |__Field_________|______Description__________________|___Format_____|
+        |                |                                   |              |
+        | Constraint     | Row index for the constraint      |  1X,I5       |
+        | Equation Row   | equation matrix. It must match    |              |
+        | Index          | the index of the constraint       |              |
+        |                | equation.                         |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Constraint     | Identifier of the constraint      |  1X,A8       |
+        | Equation       |                                   |              |
+        | Identifier     |                                   |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Constraint     | Index of vector constraint.       |  1X,I5       |
+        | Equation       | 1 for scalar constraint.          |              |
+        | Sub-index      |                                   |              |
+        |                |                                   |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Constraint     | Description of the constraint     |  1X,A40      |
+        | Equation       |                                   |              |
+        | Description    |                                   |              |
+        |________________|___________________________________|______________|
+ 
+  This block provides description of constraint equations. Matrix of
+constraint equations has dimension N_cns * N_par, where N_cns -- the number
+of constraint equations, N_par -- number of estimated parameters. The first
+field of the CONSTRAINT_EQUATION_INFO keeps the index of the constraint,
+the second field keeps constraint identifier. Currently, the following
+constraint identifiers are supported:
+ 
+   NNT_POS  -- net rotation on station position. This vector constraint defines
+               three equations:
+               1:  sum { Delta_X } = const
+               2:  sum { Delta_Y } = const
+               3:  sum { Delta_Y } = const
+               where Delta_X, Delta_Y, Delta_Z are X, Y and Z component of
+               the adjustment to station position.
+ 
+   NNR_POS  -- net rotation on station position. This vector constraint defines
+               three equations:
+               1:  sum { Phi_X } = const
+               2:  sum { Phi_Y } = const
+               3:  sum { Phi_Y } = const
+               where Phi_X, Phi_Y and Phi_Z are the components of the vector
+               of a small rotation defined as
+               Phi = ( r x Delta r )/ |r|^2 * R_e
+                   here
+                     r       -- vector of station coordinate;
+                     Delta r -- vector of adjustments to station position
+                     R_e     -- Earth's equatorial radius.
+               Units: dimensionless
+ 
+   NNT_VEL  -- net rotation on station velocity. This vector constraint defines
+               three equations:
+               1:  sum { Delta_X } = const
+               2:  sum { Delta_Y } = const
+               3:  sum { Delta_Y } = const
+               where Delta_X, Delta_Y, Delta_Z are X, Y and Z component of
+               the adjustment to station position.
+ 
+   NNR_VEL  -- net rotation on station velocity This vector constraint defines
+               three equations:
+               1:  sum { Phi_X } = const
+               2:  sum { Phi_Y } = const
+               3:  sum { Phi_Y } = const
+               where Phi_X, Phi_Y and Phi_Z are the components of the vector
+               of a small rotation defined as
+               Phi = ( r x Delta v )/ |r|^2 * R_e
+                   here
+                     r       -- vector of station coordinates;
+                     Delta r -- vector of adjustments to station velocity;
+                     R_e     -- Earth's equatorial radius.
+ 
+               Units: 1/yr
+ 
+   NNR_SRC  -- net rotation on source coordinates
+               1:  sum { Phi_X } = const
+               2:  sum { Phi_Y } = const
+               3:  sum { Phi_Y } = const
+               where Phi_X, Phi_Y and Phi_Z are the components of the vector
+               of a small rotation
+ 
+   EOP_XPL  -- constraint on X pole coordinate
+   EOP_YPL  -- constraint on Y pole coordinate
+   EOP_UT1  -- constraint on UT1 angle
+   EOR_XPL  -- constraint on X pole rate
+   EOR_YPL  -- constraint on Y pole rate
+   EOR_UT1  -- constraint on UT1 rate
+ 
+   VEL_U    -- constraint on Up    topocentric coordinate of station velocity
+   VEL_E    -- constraint on East  topocentric coordinate of station velocity
+   VEL_N    -- constraint on North topocentric coordinate of station velocity
+   VEL_X    -- constraint on X  coordinate of station velocity
+   VEL_Y    -- constraint on Y  coordinate of station velocity
+   VEL_Z    -- constraint on Z  coordinate of station velocity
+ 
+   STA_U    -- constraint on Up    topocentric coordinate of station position
+   STA_E    -- constraint on East  topocentric coordinate of station position
+   STA_N    -- constraint on North topocentric coordinate of station position
+   STA_X    -- constraint on X  coordinate of station position
+   STA_Y    -- constraint on Y  coordinate of station position
+   STA_Z    -- constraint on Z  coordinate of station position
+ 
+ 
+   BLC_VAL  -- constraint on baseline clocks
+   DCL_ORG  -- constraint on declination of the set of certain sources
+   GRD_OFF  -- constraint on atmosphere path delay gradient offset
+   NUT_OFF  -- constraint on offset of nutation in longitude and nutation in
+                             obliquity
+   OAT_RAT  -- constraint on rate of changes of atmosphere path delay
+   OCL_RAT  -- constraint on clock drift
+   RAS_ORG  -- constraint on right ascension of the set of certain sources
+   SRC_COO  -- constraint on source right ascension and declination
+   STA_ORG  -- constraint on position of certain stations
+   STA_TIE  -- constraint on differences in position of several sites
+   VEL_DIR  -- constraint on horizontal projection of the differences
+               in velocities of two stations
+   VEL_ORG  -- constraint on velocities of certain stations
+   VEL_SET  -- constraint on linear combination of velocity components
+   VEL_TIE  -- constraint on differences in velocities of several sites
+   VEL_VER  -- constraint on vertical component of station velocity
+ 
+   Constraints on segmented parameters
+ 
+   STA_PWC  -- constraint on site velocity in the the case when site position
+               is modeled by linear spline
+   GRD_RAT  -- constraint on atmosphere path delay gradient rate
+   ATM_RAT  -- constraint on atmosphere path delay rate between segments
+   CLO_RAT  -- constraint on clock rate between segments
+   UT1_RAT  -- constraint on UT1 rate in the case of linear spline
+                             EOP parametrization
+   XPL_RAT  -- constraint on X pole coordinate in the case of linear spline
+                             EOP parametrization
+   YPL_RAT  -- constraint on Y pole coordinate in the case of linear spline
+                             EOP parametrization
+ 
+ 
+   Constraint equation sub-index is 1 for scalar constraint, like EOP_XPL and
+   runs over components of vector constraints, like NNT_POS (1,2,3 in this
+   example).
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.2"> </A> 2.2 &nbsp; New block SOLUTION/CONSTRAINT_EQUATION_MATRIX
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+ 
+   This block keep matrix of constraint equations. Equations are organized by
+   rows. Zero elements are omitted.
+ 
+       _____________________________________________________________________
+      |__S_O_L_U_T_I_O_N__C_O_N_S_T_R_A_I_T__E_Q_U_A_T_I_O_N__B_L_O_C_K_____|
+      |                  |                                   |              |
+      |__Field___________|______Description__________________|___Format_____|
+      |                  |                                   |              |
+      | Constraint       | Row index for the constraint      |  1X,I5       |
+      | equation row     | equation matrix. It must match    |              |
+      | Index            | the index of the constraint       |              |
+      |                  | equation.                         |              |
+      |__________________|___________________________________|______________|
+      |                  |                                   |              |
+      | Constraint       | Column index for the Constraint   |   1X,I5      |
+      | equation         | Equation. It must match the       |              |
+      | column index     | parameter index in the            |              |
+      |                  | SOLUTION/ESTIMATE block for the   |              |
+      |                  | same parameter.                   |              |
+      |__________________|___________________________________|______________|
+      |                  |                                   |              |
+      | Constraint       | Matrix element at the location    |   1X,E21.14  |
+      | matrix element   | (row index, column index).        |              |
+      |__________________|___________________________________|______________|
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.3"> </A> 2.3 &nbsp; New block SOLUTION/CONSTRAINT_EQUATION_VECTOR
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+    This block keeps the right-hand side of constraint equations.
+ 
+         ___________________________________________________________________
+        |__S_O_L_U_T_I_O_N__C_O_N_S_T_R_A_I_T__V_A_L_U_E__B_L_O_C_K_________|
+        |                |                                   |              |
+        |__Field_________|______Description__________________|___Format_____|
+        |                |                                   |              |
+        | Constraint     | Row index for the constraint      |  1X,I5       |
+        | Equation Row   | equation vector. It must match    |              |
+        |                | the index of the constraint       |              |
+        |                | equation.                         |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Right hand     | Value of right hand part of the   |
+        | side value     | constraint equation.              |   1X,E21.15  |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Sigma          | Reciprocal weight which is        |              |
+        |                | ascribed to this constraint       |   1X,E21.15  |
+        |                | equation.                         |              |
+        |________________|___________________________________|______________|
+                                                             |              |
+                                                             |     48       |
+                                                             |______________|
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.4"> </A> 2.4 &nbsp; New block SOLUTION/CONSTRAINT_WEIGHT_MATRIX
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+    This block contains the elements of the weight matrix of constraint
+    equations. Zero elements are omitted.
+ 
+      ______________________________________________________________________
+     |_____________C_O_N_S_T_R_A_I_N_T___W_E_I_G_H_T___M_A_T_R_I_X__________|
+     |                                                                      |
+     |__Field__________________Description_______________________Format_____|
+     |                   |                                   |              |
+     | Row index of the  | Row index for the weight          |   1X,I5      |
+     | weight matrix     | constraint matrix. It matches     |              |
+     | of constraint     | the index of the constraint       |              |
+     | equations         | equation.                         |              |
+     |___________________|___________________________________|______________|
+     |                   |                                   |              |
+     | Column index of   | Column index for the weight       |   1X,I5      |
+     | the weight matrix | constraint matrix. It matches the |              |
+     | of constraint     | index of the constraint equation  |              |
+     | equations         |                                   |              |
+     |___________________|___________________________________|______________|
+     |                   |                                   |              |
+     | Weight matrix of  | Matrix element at the location    |   1X,E21.14  |
+     | constraint        | (row index, column index).        |              |
+     | equations element |                                   |              |
+     |___________________|___________________________________|______________|
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.5"> </A> 2.5 &nbsp; New block SOLUTION/DECOMPOSED_NORMAL_MATRIX BLOCK
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+  This block contains decomposed normal equations for the subset of
+  parameters described in the SOLUTION/ESTIMATE block. In the case if the
+  SOLUTION/ESTIMATE block described all parameters adjusted in the solution,
+  decomposed normal matrix is equivalent to the full normal matrix. In the
+  case if the SOLUTION/ESTIMATE block describes only a subset of parameters,
+  then the decomposed normal matrix D_ii is defined as
+ 
+  D_ii = N_ii - N_ei(T) * (C_ee + N_ee){-1} * N_ei    where
+ 
+        N_ii -- the block of normal matrix which corresponds to the
+                equations included in the SOLUTION/ESTIMATE list;
+        N_ee -- the block of normal matrix which corresponds to omitted
+                parameters;
+        N_ei -- the block of normal matrix which corresponds to the product
+                of equations of conditions of the omitted parameters and
+                parameters included in the SOLUTION/ESTIMATE list.
+        C_ee -- the block of normal matrix of constraints which corresponds
+                to omitted parameters;
+ 
+  Solve computes  D_ii as   D_ii = (V_ii){-1} - C_ii      where
+ 
+        V_ii -- covariance matrix of the parameters mentioned in
+                SOLUTION/ESTIMATE list;
+        C_ii -- the block of normal matrix of constraints which corresponds
+                to the parameters in SOLUTION/ESTIMATE list.
+ 
+        It is assumed that C_ei = 0
+ 
+        C_ei -- the block of normal matrix of constraints which corresponds
+                to the product of equations of constraints of the omitted
+                parameters and parameters from the SOLUTION/ESTIMATE list.
+ 
+ 
+         ___________________________________________________________________
+        |__S_O_L_U_T_I_O_N__D_E_C_O_M_P_O_S_E_D__N_O_R_M_A_L__M_A_T_R_I_X___|
+        |                |                                   |              |
+        |__Field_________|______Description__________________|___Format_____|
+        |                |                                   |              |
+        | Decomposed     | Row index for the normal matrix.  |   1X,I5      |
+        | normal matrix  | It must match the parameter index |              |
+        | row index      | in the SOLUTION/ESTIMATE block    |              |
+        |                | for the same parameter.           |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Decomposed     | Column index for the normal matrix|   1X,I5      |
+        | normal matrix  | It must match the parameter index |              |
+        | column index   | in the SOLUTION/ESTIMATE block    |              |
+        |                | for the same parameter.           |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Decomposed     | Matrix element at the location    |   1X,E21.14  |
+        | normal matrix  | (row index, column index).        |              |
+        | element        |                                   |              |
+        |________________|___________________________________|______________|
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.6"> </A> 2.6 &nbsp; New block SOLUTION/DECOMPOSED_NORMAL_VECTOR BLOCK
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+  This block contains decomposed right hand parts of normal equations for
+  the subset of parameters described in the SOLUTION/ESTIMATE block. In the
+  case if the SOLUTION/ESTIMATE block describes all parameters adjusted in
+  the solution, the decomposed normal vector is equivalent to the full
+  normal vector. In the case if the SOLUTION/ESTIMATE block describes only
+  a subset of parameters, then the decomposed normal vector d_i is defined as
+ 
+  d_i = n_i - N_ei(T) * (C_ee + N_ee){-1} * n_e where
+ 
+        n_i  -- the block of normal vector which corresponds to the equations
+                listed in the SOLUTION/ESTIMATE;
+        n_e  -- the block of the normal vector which corresponds to the
+                omitted parameters;
+        N_ee -- the block of normal matrix which corresponds to omitted
+                parameters;
+        N_ei -- the block of normal matrix which corresponds to the product
+                of equations of conditions of the omitted parameters and
+                parameters from the SOLUTION/ESTIMATE list.
+        C_ee -- the block of normal matrix of constraints which corresponds
+                to omitted parameters;
+ 
+  Solve computes  d_i  as   d_i = D_i * e_i   where
+ 
+        e_i  -- vector of the estimates of the parameters from the
+                SOLUTION/ESTIMATE list.
+ 
+         ___________________________________________________________________
+        |__S_O_L_U_T_I_O_N__D_E_C_O_M_P_O_S_E_D__N_O_R_M_A_L__V_E_C_T_O_R___|
+        |                |                                   |              |
+        |__Field_________|______Description__________________|___Format_____|
+        |                |                                   |              |
+        | Estimated      | Index of the estimated parameter. |   1X,I5      |
+        | Parameter      |                                   |              |
+        | Index          |                                   |              |
+        |                |                                   |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Element of   	 | Element of the decomposed normal  |   1X,E21.14  |
+        | decomposed     | ( Row Number , Column Number ).   |              |
+        | normal vector  | ( Row Number , Column Number ).   |              |
+        |________________|___________________________________|______________|
+                                                             |              |
+                                                             |     28       |
+                                                             |______________|
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.7"> </A> 2.7 &nbsp; New block NUTATION/DATA
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+  This block describes which apriori nutation model is used and what is the
+reference model to which the nutation angles are referred.
+ 
+         ___________________________________________________________________
+        |_________________N_U_T_A_T_I_O_N___D_A_T_A___L_I_N_E_______________|
+        |                |                                   |              |
+        |__Field_________|______Description__________________|___Format_____|
+        |                |                                   |              |
+        | [Nutat. Code]  | Code for nutation reference       |   1X,A8      |
+        |                | NONE                              |              |
+        |                | REN2000                           |              |
+        |                | IAU1980                           |              |
+        |                | IERS1996                          |              |
+        |                | IAU2000a                          |              |
+        |                | IAU2000b                          |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        |  [Nut. Usage]  | Usage flag: APR or REF            |    1X,A3     |
+        |                | APR means that the previous       |              |
+        |                |     field kept the nutation model |              |
+        |                |     used for apriori.             |              |
+        |                | REF means that the previous       |              |
+        |                |     field kept the nutation model |              |
+        |                |     used as a reference.          |              |
+        |                |     NONE means that the total     |              |
+        |                |     nutation angles are presented |              |
+        |________________|___________________________________|______________|
+        |                |                                   |              |
+        | Comments       |                                   |   1X,A66     |
+        |________________|___________________________________|______________|
+                                                             |              |
+                                                             |     80       |
+                                                             |______________|
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.8"> </A> 2.8 &nbsp; New block PRECESSION/DATA
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+  This block describes the apriori precession constant which was used.
+ 
+        ___________________________________________________________________
+       |_________________N_U_T_A_T_I_O_N___D_A_T_A___L_I_N_E_______________|
+       |                |                                   |              |
+       |__Field_________|______Description__________________|___Format_____|
+       |                |                                   |              |
+       | [Prec. Code]   | Code for nutation reference       |   1X,A8      |
+       |                | NONE                              |              |
+       |                | IAU1980                           |              |
+       |                | IAU2000                           |              |
+       |________________|___________________________________|______________|
+       |                |                                   |              |
+       | Comments       |                                   |   1X,A70     |
+       |________________|___________________________________|______________|
+                                                            |              |
+                                                            |     80       |
+                                                            |______________|
+ 
+   Nutation angles can be presented either as nutation in obliquity and
+   nutation in longitude in accordance to Newcomb-Andoyer formalism or
+   as nutation X, nutation Y in accordance to Ginot-Capitaine formalism.
+   Contrary to claims of Dr. Capitaine, both approaches are equivalent.
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2.9"> </A> 2.9 &nbsp; New block SOURCE/ID
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+       ___________________________________________________________________
+      |_____________R_A_D_I_O___S_O_U_R_C_E___D_A_T_A___L_I_N_E___________|
+      |                |                                   |              |
+      |__Field_________|______Description__________________|___Format_____|
+      |                |                                   |              |
+      | Source Code    | Call sign for a source            |   1X,A4      |
+      |________________|___________________________________|______________|
+      |                |                                   |              |
+      | IERS name      | IERS name of the radio source     |   1X,A8      |
+      |________________|___________________________________|______________|
+      |                |                                   |              |
+      | ICRF name      | ICRF name of the radio source     |   1X,A16     |
+      |________________|___________________________________|______________|
+      |                |                                   |              |
+      | IAU name       | IAU J2000.0 name of the radio     |   1X,A10     |
+      |                | source                            |              |
+      |________________|___________________________________|______________|
+      |                |                                   |              |
+      | IVS name       | IVS name of the radio source      |   1X,A8      |
+      |________________|___________________________________|______________|
+      |                |                                   |              |
+      | Comments       | Comments or other names of the    |   1X,A29     |
+      |                | radio source                      |              |
+      |________________|___________________________________|______________|
+                                                           |              |
+                                                           |     80       |
+                                                           |______________|
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3"> </A> 3 &nbsp; Deviations from the SINEX 2.10 standard
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+ 
+   Sinex listing in 2.20 format has different names for parameters
+in accordance to an anonymous document circulated in 2008 known as
+"Proposal 2".
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section4"> </A> 4 &nbsp; Implementation in Solve
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+   Solve normally produces the listing in its own so-called "spool-format".
+In addition to the spool listing, Solve has a limited ability to generate
+listings in Sinex format. It can write the listing in Sinex format when it
+runs in batch mode. Description of the keyword Sinex in the control language
+can be found in
+http://gemini.gsfc.nasa.gov/solve_root/help/solve_guide_03.html#section3.13
+ 
+   When a user requests to apply specific constraints, Solve does not modify
+normal matrix immediately. Procedures of imposing constraints collect all
+constraint equation coefficients, weights, right hand part equations as well
+as constraint description in an intermediate data structure. After collecting
+all information about constraints Solve "applies" constraints by modifying
+normal matrix and normal matrix. If a Sinex output option is specified, then
+Solve passes this intermediate data structure to the routine which writes
+listing down and, thus, this subroutine has access to full information about
+the constraints.
+ 
+   Solve allows a user to specify which items among ESTIMATES, COVARIANCES,
+CONSTRAINTS, DECOMPOSED_NORMAL_EQUATIONS or all of them are to be included
+in the listing together with mandatory blocks. Solve allows a user to
+specify which parameters are to be included in the output. Currently, Solve
+does not allow to include any parameter in the listing, but only one from
+the pre-defined list of supported parameter.
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section4.1"> </A> 4.1 &nbsp; Syntax of INCLUDE_PARAM and EXCLUDE_PARAM lists
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+INCLUDE_PARAM and EXCLIDE_PARAM files contain the parameter lists.
+List consists of one or more lines with Solve intrinsic 20-characters
+long parameter names. The lines which starts from # are considered as
+comments. Wild-card symbols * and ? can be included.
+ 
+  Solve check the name of each estimated parameter against INCLUDE_PARAM
+list. If the name matches with at least one line (except comment) then
+the name is flagged as "included". After that Solve check each parameter
+against EXCLUDE_PARM list. If it matches with at least one line (except
+comment) then it is flagged as "excluded". All parameters which are
+flagged as "included" and are not flagged as "excluded" will be included
+in the Sinex output.
+ 
+The list of intrinsic parameter names:
+ 
+Parameters which can be put in the listing in Sinex format:
+ 
+ssssssss X COMPONENT   X-coordinate of station position at reference epoch
+ssssssss Y COMPONENT   Y-coordinate of station position at reference epoch
+ssssssss Z COMPONENT   Z-coordinate of station position at reference epoch
+ssssssss X VELOCITY    X-coordinate of station velocity
+ssssssss Y VELOCITY    Y-coordinate of station velocity
+ssssssss Z VELOCITY    Z-coordinate of station velocity
+ssssssss Xyymmdd-COO   X-coordinate of station position at epoch yymmdd
+ssssssss Yyymmdd-COO   Y-coordinate of station position at epoch yymmdd
+ssssssss Zyymmdd-COO   Z-coordinate of station position at epoch yymmdd
+ssssssss Xyymmdd-POS   X-coordinate of station position at epoch yymmdd
+ssssssss Yyymmdd-POS   Y-coordinate of station position at epoch yymmdd
+ssssssss Zyymmdd-POS   Z-coordinate of station position at epoch yymmdd
+ssssssss AXIS OFFSET   axis offset of the ssssssss station
+X WOBBLE 0yymmddhhmm   X-coordinate of pole position at epoch  yymmddhhmm
+X WOBBLE 1yymmddhhmm   Time derivative of X pole coordinate at yymmddhhmm
+Y WOBBLE 0yymmddhhmm   Y-coordinate of pole position at epoch  yymmddhhmm
+Y WOBBLE 1yymmddhhmm   Time derivative of Y pole coordinate at yymmddhhmm
+UT1-TAI  0yymmddhhmm   UT1 angle at epoch yymmddhhmm
+UT1-TAI  1yymmddhhmm   First time derivative of UT1 angle at epoch yymmddhhmm
+LONGITUDE NUTATION     Nutation in longitude
+OBLIQUITY NUTATION     Nutation in obliquity
+qqqqqqqq RIGHT ASCEN   Right ascension at J2000.0 epoch
+qqqqqqqq DECLINATION   Declination at J2000.0 epoch
+qqqqqqqq RIGHT ASC V   Proper motion in right ascension
+qqqqqqqq DEC VELO      Proper motion in declination
+ 
+Other parameters which the current version of Solve cannot put in the
+listing in Sinex format:
+ 
+ssssssssA0yymmddhhmm   Atmosphere path delay at epoch  yymmddhhmm
+ssssssssa0yymmddhhmm   Atmosphere path delay at epoch  yymmddhhmm
+ssssssssC0yymmddhhmm   Global clock offset at epoch  yymmddhhmm
+ssssssssC1yymmddhhmm   Global clock rate at epoch  yymmddhhmm
+ssssssssC2yymmddhhmm   Global clock rate drift at epoch  yymmddhhmm
+ssssssss--ssssssss C   baseline dependent clocks
+ssssssssNGyymmddhhmm   Atmosphere gradient in north direction
+ssssssssEGyymmddhhmm   Atmosphere gradient in east  direction
+X WOBBLE 2yymmddhhmm   Second time derivative of X pole coordinate at yymmddhhmm
+Y WOBBLE 2yymmddhhmm   Second time derivative of Y pole coordinate at yymmddhhmm
+UT1-TAI  2yymmddhhmm   Second time derivative of UT1 angle at epoch yymmddhhmm
+Gamma                  Relativistic PPN parameter gamma
+ 
+ 
+where
+"ssssssss"    stands for the IVS station name
+"qqqqqqqq"    stands for the IVS source name
+"yyddmmhhss"  stands for time epoch like 980729113459 -- July 29, 1998 11 hours
+              34 minutes 59 seconds.
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section4.2"> </A> 4.2 &nbsp; Examples of INCLUDE_PARAM and EXCLUDE_PARAM lists
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+1. daily_inc.bsc
+ 
+#
+# -- Include parameters which will be put in Sinex listing
+#
+#    The following parameters are to be included in the Sinex listing:
+#
+#    1) Station coordinates
+#    2) pole coordinates
+#    3) UT1
+#    4) rate of change of pole coordinates
+#    5) rate of change of UT1
+#    6) daily nutation angles
+#
+?????????X COMPONENT
+?????????Y COMPONENT
+?????????Z COMPONENT
+?????????X??????-COO
+?????????Y??????-COO
+?????????Z??????-COO
+?????????X??????-POS
+?????????Y??????-POS
+?????????Z??????-POS
+X WOBBLE 0*
+X WOBBLE 1*
+Y WOBBLE 0*
+Y WOBBLE 1*
+UT1-TAI  0*
+UT1-TAI  1*
+LONGITUDE NUTATION
+OBLIQUITY NUTATION
+ 
+2. daily_exc.bsc
+#
+# -- Exclude parameters which will be put in Sinex listing
+#
+#    Nothing to exclude
+#
+ 
+3. daily_esc_notigo.bsc
+ 
+#
+# -- Exclude parameters which will be put in Sinex listing
+#
+#    All parameters related to station TIGOCONC are excluded
+#
+#    (NB: no common constraint equations with other stations can be
+#         imposed if computation of the decomposed normal matrix is required )
+#
+TIGOCONC*
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section4.3"> </A> 4.3 &nbsp; Treatment of station with discontinuous motion
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+   It is an empirical fact that some stations has a quasi-instant motion
+due to seismic events, rails repair and other reasons of instability of
+VLBI site positions.
+ 
+  It is an analyst who determines the appropriate model for handing such
+stations. In the case if an analyst trusts to results of the measurements
+of such a motion by an independent technique, f.e. results of local survey
+before and after rails repairing, then position of the station is modeled
+by one parameter, and the motion of the station is described by the
+set of eccentricity values at the epochs before and after the motion.
+ 
+  If an analyst does not trust to independent measurements, or such
+measurements are unavailable, f.e. in the case of seismic motion, then
+coordinates of such station are described by a model
+ 
+X = a1*B0(t0,t1) + a2*B0(t1,t2) + ... + b*(t-tref)
+ 
+where B0 -- a basis spline of the 0-th order on the range t0, t1
+            ( it is 1 at the range [t0, t1], and 0 otherwise )
+      tref -- reference epoch;
+      t0   -- epoch of the first observations;
+      t1, t2 ... -- epoch of discontinuities.
+ 
+  Parameters a1, a2 ... have the same parameter name STAX, STAY, STAZ,
+but they are distinguished by sub-index 1,2... in the field SBIN
+(former name SOLN). This field is used in sections
+SITE/EPOCHS, SITE/APRIORI, SITE/ESTIMATES. If the station did not have
+discontinuity in the motion than SBIN always has the value 1.
+ 
+  The modern approach is to model non-liner site position with B-spline
+or order 0,1,2,3. Sinex format does not allow to put in the listing
+estimates of B-spline of order higher than 0.
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section4.4"> </A> 4.4 &nbsp; Restrictions
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+  The current implementation (2002.10.04) cannot write the listing in
+     Sinex format in several cases:
+ 
+  1) Constraint NO_NET_TRANSLATION  is not supported. Use
+     NO_NET_TRANSLATION_POSITION instead of that.
+ 
+  2) Suppressions
+ 
+     VELOCITIES         NO
+     STATIONS           NO
+     SOURCES            NO
+     PROPER_MOTIONS     NO
+ 
+  3) Solve cannot put in the listing site position modeled by linear spline.
+ 
+  4) Currently, Solve can include in Sinex listing global parameters if it
+     runs in global mode and local parameters if it runs in independent mode.
+     It cannot include local parameters if it runs in global mode. This
+     restriction may be lifted in the future.
+ 
+  5) Solve cannot include in the listing in Sinex format second and higher
+     order UT1 and polar motion time derivatives.
+ 
+  6) Solve cannot include user parameters in the listing in Sinex format,
+     but can include user constraints.
+ 
+  7) No common constraints between included and not included parameters can
+     be imposed if computation of decomposed normal matrix is required.
+     Solve will issue a warning if a constraint equation has non-zero
+     elements for the parameters from both groups of included and not
+     included parameters in the case if computation of a decomposed normal
+     matrix is required, and will issue an error message and stop if the
+     decomposed normal matrix is to be included in the sinex listing.
+</FONT></LISTING>
+<P>
+<HR SIZE="6">
+  <BR>
+Questions and comments about this guide should be sent to: <BR>
+  <BR>
+Leonid Petrov ( sgdass@lists.nasa.gov ) <BR>
+  <BR>
+<EM>
+     Last update: 2008.04.29
+</EM>
+ 
+</BODY>
+</HTML>

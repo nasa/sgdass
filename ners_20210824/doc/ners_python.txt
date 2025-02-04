@@ -1,0 +1,193 @@
+A python wrapper to NERS is provided. The wrapper is written in 
+python3 and will not work under python2. Installation directory
+for the wrapper ners.py is specified during installation. 
+The main program should have these lines (or equivalent) at the 
+beginning:
+
+import sys, datetime      
+sys.path.append(NERS_PYTHON_DIRECTORY)
+import ners
+
+  where NERS_PYTHON_DIRECTORY is the directory specified during 
+installation. The wrapper provides three main functions and
+six auxiliary functions.
+
+There are four example python programs:
+
+  ners_python_get_eop_example.py        
+  ners_python_azel_example.py        
+  ners_python_utc_to_tai_example.py        
+  ners_python_transform_example.py      
+
+They are installed in python directory specified during installation.
+
+I. Main functions:
+==================
+
+get_eop ( time_tag, par_name, time_scale=NERS__UTC ):
+-----------------------------------------------------
+    get_eop computes the specified Earth Orientation Parameter(s) on the 
+    moment of time defined in the python time object. Argument time_tag 
+    can be either in UTC or in TAI. The third optional argument specifies
+    the time argument: either NERS__UTC or NERS__TAI. If omitted, the
+    time stamp is interpreted as UTC. The parameter that will be computed
+    is defined by the 2nd argument. Look documentation to ners_eop program
+    for the list of supported parameter names.
+
+    Input:
+
+         time_tag -- Python time tag. Timezone attribute should be set 
+                     to None.
+
+         par_name -- string with parameter name
+
+     [time_scale] -- time scale for interpretation of the time argument.
+                     Supported time scale:
+                     ners.NERS__UTC
+                     ners.NERS__TAI
+    Output:
+
+       list of requested parameter(s) as float numbers.
+
+
+get_azel ( time_tag, coo_trs, ra, dec, refr_mode, time_scale=NERS__UTC ):
+-------------------------------------------------------------------------
+    get_azel computes azimuth and elevation of an object beyond the Solar
+    system with right ascension ra and declination dec in the inertial 
+    barycentric celestial coordinate system for a station with coordinates 
+    coo_trs in the crust-fixed coordinate system on the moment of time 
+    defined in the python time object. Argument time_tag can be either in 
+    UTC or in TAI. The sixth optional argument specifies the time argument: 
+    either NERS__UTC or NERS__TAI. If omitted, the time stamp is interpreted 
+    as UTC. Reduction for Earth rotation, annual and diurnal aberration, and
+    ( optionally ) for refraction is made. No reduction for relativistic 
+    light deflection is made
+
+    Input:
+
+       time_tag   -- python time object with the time tag either in UTC 
+                     or TAI. Attribute tzino should be NONE.
+
+       coo_trs    -- a list of three real values of station coordinates in the 
+                     crust fixed coordinate system (f.e. ITRF) in meters.
+
+       ra         -- right ascension of the observed object that is beyond
+                     the Solar system in the inertial celestial barycentric 
+                     coordinate system in radians.
+
+       dec        -- declination of the observed object that is beyond
+                     the Solar system in the inertial celestial barycentric 
+                     coordinate system in radians.
+
+       refr_mode  -- refraction mode as a character string. Accepted modes:
+                     none  -- no reduction for refraction 
+                     radio -- refraction is computed for radio frequencies
+                     optic -- refraction is computed for optic frequencies
+
+       time_scale -- interpretation of the time argument. Supported scales:
+                     NERS_UTC ( default ) -- the time argument is interpreted
+                                             as UTC.
+                     NERS_TAI -- the time argument is interpreted as TAI.
+
+    Output: ( az, el )
+
+       az         -- azimuth in radians.
+       el         -- elevation in radians.
+
+
+def utc_to_tai ( utc_time_tag ):
+--------------------------------
+    utc_to_tai converts the python time object utc_time_tag from UTC to TAI
+    and returns python time object. The time tag should be in a range from 
+    1970.01.01 through 6 months in the future. Attribute tzinfo should be None.
+
+
+hlp_to_cart ( hei, long, lat_gdt ):
+-----------------------------------
+    Auxiliary routine hlp_to_cart transforms height above the reference
+    ellipsod hei, longitude long, and geodetic latitude lat_gdt to
+    Cartesian coordinates at the Earth's surface.
+   
+    Input:
+  
+           hei_ell -- height above the reference ellipsoid in meters, 
+           long    -- east longitude in radians
+           lat_gdt -- geodetic latitude in radians.
+
+    Output:
+ 
+           coo_trs -- real array of 3 elements of Cartesian coordinates
+                      in a crust-fixed coordinate system.
+
+II. Auxiliary functions:
+==========================
+
+hlp_to_cart ( hei, long, lat_gdt ):
+-----------------------------------
+    Auxiliary routine hlp_to_cart transforms height above the reference
+    ellipsoid hei, longitude long, and geodetic latitude lat_gdt to
+    Cartesian coordinates at the Earth's surface.
+   
+    Input:
+  
+           hei_ell -- height above the reference ellipsoid in meters, 
+           long    -- east longitude in radians
+           lat_gdt -- geodetic latitude in radians.
+
+    Output:
+ 
+           coo_trs -- real array of 3 elements of Cartesian coordinates
+                      in a crust-fixed coordinate system.
+
+cart_to_hlp ( coo_trs ):
+------------------------
+    Auxiliary routine cart_to_hlp transforms vector of Cartesian 
+    coordinates at the Earth's surface to height above the reference
+    ellipsoid hei, longitude long, and geodetic latitude lat_gdt.
+    
+    Input:
+
+           coo_trs -- real array of 3 elements of Cartesian coordinates
+                      in a crust-fixed coordinate system.
+
+    Output:
+ 
+          ( hei_ell, long, lat_gdt ) -- tulip of the height above the 
+                      reference ellipsoid in meters, east longitude
+                      in radians in [-pi,pi] range, geodetic latitude 
+                      in radians.
+
+rad_to_dms ( ang, num_dig=6 ):
+------------------------------
+    Auxiliary routine rad_to_dms transforms angle from radians to 
+    degree, minutes, seconds, and second fraction. The 2nd optional
+    arguments controls how many digits of second fraction is 
+    to keep. Default is 6. Degrees, minutes, and seconds are separated
+    by colon character (:).
+
+def dms_to_rad ( dms ):
+-----------------------
+    Auxiliary routine dms_to_rad transforms angle from degree, minutes, 
+    seconds, and second fraction to radians. Degrees, minutes, and
+    seconds are separated either by : or by _ or by d, m, and s.
+
+rad_to_hms ( ang, num_dig=6 ):
+------------------------------
+    Auxiliary routine rad_to_hms transforms angle from radians to 
+    hours, minutes, seconds, and second fraction. The 2nd optional
+    arguments controls how many digits of second fraction is 
+    to keep. Default is 6. Hours, minutes, and seconds are separated
+    by colon character (:).
+
+hms_to_rad ( hms ):
+-------------------
+    Auxiliary routine hms_to_rad transforms angle from hours, minutes, 
+    seconds, and second fraction to radians. Degrees, minutes, and
+    seconds are separated either by : or by _ or by h, m, and s.
+
+ydhms_to_time ( ydhms ):
+-------------------
+    Auxiliary routine ydhms_to_time transforms date in format like
+    "2017y256d18h01m02s.123456", or "2017y256d18:01:02.123456"  or
+    "2017y256d18h01m02",  "2017y256d" to python time.
+    """

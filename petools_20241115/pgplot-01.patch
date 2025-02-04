@@ -1,0 +1,1185 @@
+diff -bur pgplot_orig/applications/curvefit/curvefit.f pgplot/applications/curvefit/curvefit.f
+--- pgplot_orig/applications/curvefit/curvefit.f	1993-04-08 17:31:05.000000000 -0400
++++ pgplot/applications/curvefit/curvefit.f	2003-11-02 23:36:58.000000000 -0500
+@@ -748,7 +748,7 @@
+         ENDIF
+       ELSE
+         WRITE (*,*)
+-        WRITE (*,'(2A1,(A))') 7,7,'Confirm exit from CurveFit - enter'//
++        WRITE (*,'(2A1,(A))') 7,7,'Confirm exit ( 0 ) from CurveFit - enter'//
+      *            ' a capital `C'': '
+         READ (*,97) ans
+ c
+diff -bur pgplot_orig/applications/gmfplot.f pgplot/applications/gmfplot.f
+--- pgplot_orig/applications/gmfplot.f	1993-05-02 15:41:06.000000000 -0400
++++ pgplot/applications/gmfplot.f	2003-11-02 23:37:00.000000000 -0500
+@@ -15,7 +15,7 @@
+ C
+ 	IER = LIB$GET_FOREIGN(FILE,'Input file: ',L)
+ 	IF (IER.NE.1) CALL EXIT(IER)
+-	IF (L.LT.1) CALL EXIT
++	IF (L.LT.1) CALL EXIT ( 0 )
+ 	I = 1
+ 	DO WHILE (I.LE.L .AND. FILE(I:I).LE.' ')
+ 		I = I+1
+Only in pgplot: bin
+Only in pgplot: doc
+diff -bur pgplot_orig/drivers/gidriv.f pgplot/drivers/gidriv.f
+--- pgplot_orig/drivers/gidriv.f	1998-05-13 21:05:05.000000000 -0400
++++ pgplot/drivers/gidriv.f	2011-09-20 00:28:49.000000000 -0400
+@@ -78,7 +78,11 @@
+ C Note: for 64-bit operating systems, change the following 
+ C declaration to INTEGER*8:
+ C
++#ifdef ADR_32BIT
+       INTEGER PIXMAP, WORK
++#else
++      INTEGER*8 PIXMAP, WORK
++#endif
+ C
+       SAVE UNIT, IC, CTABLE, NPICT, MAXIDX, BX, BY, PIXMAP, FILENM
+       SAVE CDEFLT, STATE
+diff -bur pgplot_orig/drivers/old/ardriv.f pgplot/drivers/old/ardriv.f
+--- pgplot_orig/drivers/old/ardriv.f	1994-09-02 17:10:15.000000000 -0400
++++ pgplot/drivers/old/ardriv.f	2003-11-02 23:36:54.000000000 -0500
+@@ -370,7 +370,7 @@
+         GRAR00=1
+         RETURN
+ C---
+-C- Error exit
++C- Error exit ( 0 )
+ C---
+ 900     CALL GRWARN('Cannot open graphics device '//CHR(:LCHR))
+         CALL GRGMSG(IER)
+diff -bur pgplot_orig/drivers/old/ikdriv.f pgplot/drivers/old/ikdriv.f
+--- pgplot_orig/drivers/old/ikdriv.f	1994-09-02 18:13:37.000000000 -0400
++++ pgplot/drivers/old/ikdriv.f	2003-11-02 23:36:54.000000000 -0500
+@@ -338,7 +338,7 @@
+ 	GRIK00 = 1
+ 	RETURN
+ C---
+-C- Error exit
++C- Error exit ( 0 )
+ C---
+   800	CALL GRWARN('Cannot open graphics device '//CHR(:LCHR))
+ 	CALL GRGMSG(IER)
+diff -bur pgplot_orig/drivers/xwdriv.c pgplot/drivers/xwdriv.c
+--- pgplot_orig/drivers/xwdriv.c	2000-12-12 20:30:18.000000000 -0500
++++ pgplot/drivers/xwdriv.c	2024-01-27 13:12:40.335827702 -0500
+@@ -33,6 +33,73 @@
+  *                            14. Support for multiple open devices.
+  *                            15. The cursor can now be moved with the
+  *                                keyboard arrow keys.
++ * Version 3.1 - 2002.08.03 -- L. Petrov ( pet@leo.gsfc.nasa.gov)
++ *
++ *                             Extended handling key/mouse events.
++ *
++ *                             1. Added support of F1-F16 functional keys.
++ *                                The key code returned on hitting a
++ *                                functional key is the lower byte of the key
++ *                                code defined in <X11>keysymdef.h with
++ *                             2. Added support of <Mod1> modifier and
++ *                                combination <Control> and <Shift> modifiers
++ *                                when a character key is hit.
++ *                                <Control> subtracts 64 from the code
++ *                                          regardless of <Shift> status;
++ *                                <Shift>   subtracts 32;
++ *                                <Mod1>    adds 128.
++ *                             3. Added support of <Mod1>, <Control> and
++ *                                <Shift> modifiers when a mouse button is hit.
++ *                                 Without modifiers Mouse returns A, D, X.
++ *                                <Control> subtracts 64 from the code
++ *                                          regardless of <Shift> status;
++ *                                <Shift>   subtracts 32
++ *                                <Mod1>    adds 128
++ *                             4. Added support of environment variable
++ *                                PGPLOT_XW_NOEXTENSION. If set, it causes
++ *                                XW to ignore modifiers, except <Control>
++ *                                in conjunction with a keyboard key.
++ *
++ * Version 3.2 - 2003.04.21 -- L. Petrov ( pet@leo.gsfc.nasa.gov )
++ *
++ *                             Extended again handling keys:
++ *                             1. Added support other non-ascii character keys;
++ *                             2. Fixed problems with some ALT-key combination:
++ *                                cleared the 24-th bit if it was set.
++ * Version 3.3 - 2003.05.14  -- L. Petrov ( pet@leo.gsfc.nasa.gov )
++ *
++ *                             Added support of environment variable
++ *                             PGPLOT_XW_MARGIN. If set, it defines value
++ *                             of margins of plotting area in mm. Default is
++ *                             6.35 mm
++ * Version 3.31 - 2003.07.02 -- L. Petrov ( pet@leo.gsfc.nasa.gov )
++ *                              Corrected syntax error in 3.3 version which
++ *                              crashed when compiled with gcc 3.2
++ *
++ * Version 3.32 - 2004.01.23 -- L. Petrov ( Leonid.Petrov@lpetrov.net)
++ *                              Fixed a bug: the previous version did not
++ *                              returned cursor position when PgUp, PgDn
++ *                              key has been pressed.
++ *
++ * Version 3.4  - 2004.12.14 -- L. Petrov ( Leonid.Petrov@lpetrov.net)
++ *                              Added support of Alt (MOD1) modifier.
++ *                              When the key was pressed with the modifier
++ *                              Alt, the code of the key is incremented by 128
++ * Version 3.41 - 2006.02.03 -- L. Petrov ( Leonid.Petrov@lpetrov.net)
++ *                              Fixed a minor bug: modifiers were applied
++ *                              twice in text entering mode which prevented
++ *                              entering Upper case letters
++ * Version 3.5  - 2010.02.06 -- L. Petrov ( Leonid.Petrov@lpetrov.net)
++ *                              Redefined return values of keys F1-F12 in 
++ *                              order to avoid conflict with modifier+mouse_button
++ *                              Now F1-F12 are mapped to 231-242
++ *
++ * Version 3.6  - 2024.01.27 -- L. Petrov 
++ *                              Added support of pgplot_local.h that defines
++ *                              string pgplot_dir. Made xwdriv search for the 
++ *                              path to pgxwin_server first in directory $PGPLOT_DIR,
++ *                              then in $PATH, then in pgplot_dir. It is assumed that
++ *                              pgplot_local.h is generated by the installation process.
+  *
+  *  Scope: This driver should work with all unix workstations running
+  *         X Windows (Version 11). It also works on VMS and OpenVMS
+@@ -150,9 +217,11 @@
+ #ifndef PGXWIN_SERVER
+ #define PGXWIN_SERVER "pgxwin_server"
+ #endif
++#include <pgplot_local.h>
++
+ 
+ #define NCOLORS 16            /* Number of pre-defined PGPLOT colors */
+-#define XW_IMAGE_LEN 1280     /* Length of the line-of-pixels buffer */
++#define XW_IMAGE_LEN 4096     /* Length of the line-of-pixels buffer. Increased from 1280 to 4096 by L. Petrov on 2016.08.15 */
+ #define COLORMULT 65535       /* Normalized color intensity multiplier */
+ 
+ #define XW_IDENT "PGPLOT /xw"      /* Name to prefix messages to user */
+@@ -197,6 +266,12 @@
+ #define ARROW_KEY_VELOCITY 10
+ 
+ /*
++ *   Define flags whetehr XW should be extended or not
++ */
++#define XW_NOEXTENDED 0
++#define XW_EXTENDED   1
++
++/*
+  * The following macro must enclose all function prototype arguments.
+  * This allows pre-ANSI compilers to compile this code, by discarding
+  * the prototype arguments if __STDC__ is not set.
+@@ -314,6 +389,12 @@
+   struct XWdev *next;/* Pointer to next /xw device in list */
+ } XWdev;
+ 
++char  flag_extended;
++float xmargin, ymargin;
++long  val, len;
++char  str[32];
++char  name[32];
++
+ /* Create an alias for the standard X error handling function type */
+ 
+ typedef int (*Xerrorfn) ARGS((Display *, XErrorEvent *));
+@@ -400,6 +481,10 @@
+ static char *find_exe ARGS((char *path, char *program));
+ static int xw_nint ARGS((float f));
+ 
++extern long grgenv ARGS(( char *name_arg, char *str_arg, long *len_arg,
++			  int size_of_name, int size_of_str ));
++
++
+ /*.......................................................................
+  * This is the only external entry point to the /xw device driver.
+  * It is called by PGPLOT to open, perform operations on, return
+@@ -1500,14 +1585,32 @@
+  */
+   xw->geom.xpix_per_inch = 25.4 * ((double)d_pix_width / (double)d_mm_width);
+   xw->geom.ypix_per_inch = 25.4 * ((double)d_pix_height / (double)d_mm_height);
++
+ /*
+- * Determine the number of pixels needed to form a 1/4" margin around the
++ *  xw->geom.xpix_per_inch = 1.64 * xw->geom.xpix_per_inch ;
++ *  xw->geom.ypix_per_inch = 1.64 * xw->geom.ypix_per_inch ;
++ * Determine the number of pixels needed to form a margin around the
+  * the plot area.
+  */
+-  xw->geom.xmargin = (int) (0.25 * xw->geom.xpix_per_inch + 0.5);
+-  xw->geom.ymargin = (int) (0.25 * xw->geom.ypix_per_inch + 0.5);
++
++  strcpy ( name, "XW_MARGIN " );
++  strcpy ( str, " " );
++
++  val = grgenv ( name, str, &len, sizeof(name), sizeof(str) );
++  if ( len > 0 )
++       {
++          sscanf ( str, "%f", &xmargin ) ;
++          ymargin  = xmargin ;
++       }
++    else
++       {
++	  xmargin = 6.35 ;  /*  default values */
++          ymargin = 6.35 ;
++       };
++  xw->geom.xmargin = (int) (xmargin * xw->geom.xpix_per_inch / 25.4 + 0.5);
++  xw->geom.ymargin = (int) (ymargin * xw->geom.ypix_per_inch / 25.4 + 0.5);
+ /*
+- * Determine the pixel indexes that enclose an area bounded by 1/4" margins.
++ * Determine the pixel indexes that enclose an area bounded by margins.
+  */
+   xw->geom.xmin = xw->geom.xmargin;
+   xw->geom.xmax = xw->geom.width - xw->geom.xmargin;
+@@ -2127,6 +2230,7 @@
+   XPoint last;            /* Last recorded position of cursor */
+   Band *bc=NULL;          /* Band-cursor descriptor */
+   int warped=0;           /* Zero until the cursor has been positioned */
++
+ /*
+  * Device error?
+  */
+@@ -2182,12 +2286,27 @@
+   if(xw->bad_device)
+     return xw_end_cursor(xw, bc, 1);
+ /*
+- * Loop for cursor events.
++ * Handle the next selected event.
+  */
+-  while(!finished) {
++
++  flag_extended = XW_EXTENDED;
++
+ /*
+- * Handle the next selected event.
++ * Check environment variable PGPLOT_XW_NOEXTENDED
++ */
++
++  strcpy ( name, "XW_NOEXTENDED " );
++  strcpy ( str,  " " );
++
++  val = grgenv ( name, str, &len, sizeof(name), sizeof(str) );
++  if ( len > 0 ) flag_extended = XW_NOEXTENDED;
++
++/*
++ * Loop for cursor events.
+  */
++
++  while(!finished) {
++
+     if(xw_next_event(xw, &event))
+       return xw_end_cursor(xw, bc, 1);
+     switch(event.type) {
+@@ -2204,7 +2323,8 @@
+ /*
+  * Return the key alias of the button that selected the cursor.
+  */
+-      if(key) {
++      if ( key )
++         {
+ 	switch(event.xbutton.button) {
+ 	case Button1:
+ 	  *key = 'A';
+@@ -2216,6 +2336,19 @@
+ 	  *key = 'X';
+ 	  break;
+ 	};
++            if ( flag_extended == XW_EXTENDED )
++/*
++ * ------------ In the case if xw is called in extended mode, take into
++ * ------------ account modifiers
++ */
++	       {
++                 if ( event.xkey.state & ShiftMask )
++	              *key = *key +32;
++                 if ( event.xkey.state & ControlMask )
++	              *key = *key -64;
++                 if ( event.xkey.state & Mod1Mask )
++	              *key = *key +128;
++               };
+       };
+       finished = 1;
+       break;
+@@ -2229,18 +2362,32 @@
+  */
+ 	nret = XLookupString((XKeyEvent *)&event, buffer,
+ 			   (int) (sizeof(buffer)/sizeof(char)), &keysym, NULL);
++
++	/* printf ( " keysym= %d, nret= %d, key0= %d, key1= %d \n", keysym, nret, buffer[0], buffer[1] ) ; */
++
+ 	if(xw->bad_device)
+ 	  return xw_end_cursor(xw, bc, 1);
+ /*
+  * Ignore modifier keys and all but single character keys.
+  */
+-	if(nret==1 && (keysym < XK_Shift_L || keysym > XK_Hyper_R)) {
++	if ( nret==1 && (keysym < XK_Shift_L || keysym > XK_Hyper_R) )
++           {
+ 	  pos->x = event.xkey.x;
+ 	  pos->y = event.xkey.y;
+-	  if(key)
++	     if ( key ){
+ 	    *key = buffer[0];
+-	  finished = 1;
++	                               /* printf ( " key  %d \n", *key ); */
++                  if ( flag_extended == XW_EXTENDED )
++/*
++ * ------------------ Take into account modifiers since we are in externed mode
++ */
++	              {
++                         if ( event.xkey.state & Mod1Mask )
++	                      *key = *key +128;
+ 	};
++	          finished = 1;
++             }
++           }
+ /*
+  * Check for arrow keys.
+  */
+@@ -2264,6 +2411,212 @@
+ 	  if(xw_shift_cursor(xw, keysym, event.xkey.state))
+ 	    return xw_end_cursor(xw, bc, 1);
+ 	  break;
++/*
++ * ---- Check for function key
++ */
++        #ifdef XK_Prior
++	  case XK_Prior:
++            if ( flag_extended == XW_EXTENDED ){
++	         *key = 220 ;
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++	         finished = 1;
++	       }
++            break;
++        #endif
++        #ifdef XK_Next
++	  case XK_Next:
++	    if ( flag_extended == XW_EXTENDED ){
++                 *key = 221 ;
++   	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++	         finished = 1;
++	       }
++            break;
++        #endif
++        #ifdef XK_Home
++	  case XK_Home:
++	    if ( flag_extended == XW_EXTENDED ){
++                 *key = 222 ;
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++	         finished = 1;
++	       }
++            break;
++        #endif
++        #ifdef XK_End
++	  case XK_End:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 223 ;
++	         finished = 1;
++	       }
++            break;
++        #endif
++        #ifdef XK_Break
++	  case XK_Break:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 224 ;
++	         finished = 1;
++	       }
++            break;
++        #endif
++        #ifdef XK_Insert
++	  case XK_Insert:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 225 ;
++	         finished = 1;
++	       }
++            break;
++        #endif
++        #ifdef XK_Num_Lock
++	  case XK_Num_Lock:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 226 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F1
++	  case XK_F1:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 231 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F2
++	  case XK_F2:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 232 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F3
++	  case XK_F3:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 233 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F4
++	  case XK_F4:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 234 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F5
++	  case XK_F5:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 235 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F6
++	  case XK_F6:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 236 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F7
++	  case XK_F7:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 237 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F8
++	  case XK_F8:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 238 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F9
++	  case XK_F9:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 239 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F10
++	  case XK_F10:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 240 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F11
++	  case XK_F11:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 241 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++        #ifdef XK_F12
++	  case XK_F12:
++	    if ( flag_extended == XW_EXTENDED ){
++	         pos->x = event.xkey.x;
++	         pos->y = event.xkey.y;
++                 *key = 242 ;
++	         finished = 1;
++	        }
++            break;
++        #endif
++	  default:
++/*
++ * -------- Now default case. Get rid from 8-32 th bits of the key symbol
++ */
++      	    if ( nret==0 && keysym > 256 &&
++                 (keysym < XK_Shift_L || keysym > XK_Hyper_R) &&
++                 flag_extended == XW_EXTENDED )
++	       {
++	          pos->x = event.xkey.x ;
++	          pos->y = event.xkey.y ;
++	          *key = keysym - keysym/256 ;
++	          finished = 1;
++	       }
+ 	};
+       };
+       break;
+@@ -3344,7 +3697,8 @@
+     };
+ #else
+     if((exe=find_exe(getenv("PGPLOT_DIR"), PGXWIN_SERVER))==NULL &&
+-       (exe=find_exe(getenv("PATH"), PGXWIN_SERVER))==NULL) {
++       (exe=find_exe(getenv("PATH"), PGXWIN_SERVER))==NULL       &&
++       (exe=find_exe((char *)pgplot_dir, PGXWIN_SERVER))==NULL)   {
+       fprintf(stderr,
+ 	  "%s: Couldn't find program \"%s\" in the directory named\n",
+ 	  XW_IDENT, PGXWIN_SERVER);
+@@ -3355,6 +3709,9 @@
+ 	      "%s: listed in your PATH environment variable.\n",XW_IDENT);
+       return None;
+     };
++//       (exe=find_exe(getenv("PATH"), PGXWIN_SERVER))==NULL) {
++//        exe=(char *)pgplot_dir;
++//    };
+ #endif
+ /*
+  * Make it possible to determine which server is being started.
+@@ -4156,7 +4513,7 @@
+ 	fprintf(stderr, "%s: Insufficient memory to locate program: %s\n",
+ 		XW_IDENT, program);
+ 	free(buf);
+-	return buf;
++	return NULL;
+       };
+       buf = new_buf;
+     };
+Only in pgplot/drivers: xwdriv.c~
+Only in pgplot: include
+Only in pgplot: pgplot_mods.txt
+diff -bur pgplot_orig/src/grgfil.f pgplot/src/grgfil.f
+--- pgplot_orig/src/grgfil.f	1995-06-13 21:23:31.000000000 -0400
++++ pgplot/src/grgfil.f	2024-01-27 11:53:59.237138289 -0500
+@@ -10,13 +10,13 @@
+ C     file specified by PGPLOT_FONT
+ C     file "grfont.dat" in directory specified by PGPLOT_DIR
+ C                       (with or without '/' appended)
+-C     file "grfont.dat" in directory /usr/local/pgplot/
++C     file "grfont.dat" directory PGPLOT_SHARE_DEF defined in pgplot_local.i
+ C
+ C 2. The color-name database: try the following in order:
+ C     file specified by PGPLOT_RGB
+ C     file "rgb.txt" in directory specified by PGPLOT_DIR
+ C                       (with or without '/' appended)
+-C     file "rgb.txt" in directory /usr/local/pgplot/
++C     file "rgb.txt" in directory PGPLOT_SHARE_DEF defined in pgplot_local.i
+ C
+ C Arguments:
+ C  TYPE (input)  : either 'FONT' or 'RGB' to request the corresponding
+@@ -24,9 +24,12 @@
+ C  NAME (output) : receives the file name.
+ C--
+ C  2-Dec-1994 - new routine [TJP].
++C  27-JAN-2024 - Added support of pgplot_local.i where the share directory is defined
++C                That file is created by the installation process
+ C-----------------------------------------------------------------------
++      INCLUDE    'pgplot_local.i'
+       CHARACTER*(*) DEFDIR, DEFFNT, DEFRGB
+-      PARAMETER  (DEFDIR='/usr/local/pgplot/')
++      PARAMETER  (DEFDIR=PGPLOT_SHARE_DEF)
+       PARAMETER  (DEFFNT='grfont.dat')
+       PARAMETER  (DEFRGB='rgb.txt')
+       CHARACTER*255 FF
+diff -bur pgplot_orig/src/grimg2.f pgplot/src/grimg2.f
+--- pgplot_orig/src/grimg2.f	1997-06-09 17:58:28.000000000 -0400
++++ pgplot/src/grimg2.f	2016-08-15 21:38:03.000000000 -0400
+@@ -10,12 +10,14 @@
+ C (This routine is called by GRIMG0.)
+ C--
+ C 7-Sep-1994  New routine [TJP].
++C 2016.08.15  Increased buffer size from 1028 to 8200
+ C-----------------------------------------------------------------------
+       INCLUDE 'grpckg1.inc'
+       INTEGER  I,IV,IX,IX1,IX2,IY,IY1,IY2,J, NPIX, LCHR
+       REAL     DEN, AV, SFAC, SFACL
+       REAL     XXAA,XXBB,YYAA,YYBB,XYAA,XYBB,YXAA,YXBB,XYAAIY,YXAAIY
+-      REAL     BUFFER(1026)
++!!      REAL     BUFFER(1028)
++      REAL     BUFFER(8200)
+       CHARACTER*1 CHR
+       INTRINSIC NINT, LOG
+       PARAMETER (SFAC=65000.0)
+@@ -79,8 +81,7 @@
+                 IV = MININD
+             END IF
+ C
+-            IF (NPIX.LE.1024) THEN
+-C               -- drop pixels if buffer too small (to be fixed!)
++            IF (NPIX.LE.8192) THEN
+                 NPIX = NPIX+1
+                 IF (NPIX.EQ.1) BUFFER(1) = IX
+                 BUFFER(NPIX+2) = IV
+diff -bur pgplot_orig/src/grpixl.f pgplot/src/grpixl.f
+--- pgplot_orig/src/grpixl.f	1996-01-24 14:21:23.000000000 -0500
++++ pgplot/src/grpixl.f	2012-11-15 16:51:15.000000000 -0500
+@@ -95,6 +95,10 @@
+          JT = J2 - (YMAX - GRYMAX(GRCIDE)) * (J2 - J1 + 1) / YPIX + 1
+          YMAX = YMIN + (YPIX * (JT - J1 + 1)) /
+      1                 (J2 - J1 + 1)
++C
++C ------ Added by L. Petrov on 2011.09.13 fo fix an old bug
++C
++         IF ( JT > JDIM ) JT = JDIM
+       ELSE
+          JT = J2
+       ENDIF
+diff -bur pgplot_orig/src/pgbox.f pgplot/src/pgbox.f
+--- pgplot_orig/src/pgbox.f	1997-03-18 18:41:22.000000000 -0500
++++ pgplot/src/pgbox.f	2015-05-13 14:08:29.000000000 -0400
+@@ -85,6 +85,7 @@
+ C 20-Apr-1995 - adjust position of labels slightly, and move out
+ C               when ticks are inverted [TJP].
+ C 26-Feb-1997 - use new routine pgclp [TJP].
++C 13-May-2015 - Fixed a bug related to the overflow [PET]
+ C-----------------------------------------------------------------------
+       INCLUDE  'pgplot.inc'
+       CHARACTER*20  CLBL
+@@ -318,7 +319,8 @@
+               IF (XOPTL) THEN
+                   CALL PGNUMB(1,NINT(I*XINT),XNFORM,CLBL,NC)
+               ELSE
+-                  CALL PGNUMB(I*NV,NP,XNFORM,CLBL,NC)
++                  CALL PGNUMB_I8 ( INT8(I)*INT8(NV), NP, XNFORM, 
++     &                              CLBL, NC )
+               END IF
+               IF (XOPTN) CALL PGMTXT('B', XNDSP, XC, 0.5, CLBL(1:NC))
+               IF (XOPTM) CALL PGMTXT('T', XMDSP, XC, 0.5, CLBL(1:NC))
+@@ -459,7 +461,8 @@
+               IF (YOPTL) THEN
+                   CALL PGNUMB(1,NINT(I*YINT),YNFORM,CLBL,NC)
+               ELSE
+-                  CALL PGNUMB(I*NV,NP,YNFORM,CLBL,NC)
++                  CALL PGNUMB_I8 ( INT8(I)*INT8(NV), NP, YNFORM,
++     &                             CLBL, NC )
+               END IF
+               IF (YOPTV) THEN
+                   IF (YOPTN) CALL PGMTXT('LV',YNVDSP,YC,1.0,CLBL(1:NC))
+diff -bur pgplot_orig/src/pgnumb.f pgplot/src/pgnumb.f
+--- pgplot_orig/src/pgnumb.f	1994-06-23 15:01:09.000000000 -0400
++++ pgplot/src/pgnumb.f	2015-05-12 23:51:41.000000000 -0400
+@@ -62,10 +62,11 @@
+ C 15-Dec-1988 [TJP] - More corrections of the same sort.
+ C 27-Nov-1991 [TJP] - Change code for multiplication sign.
+ C 23-Jun-1994 [TJP] - Partial implementation of FORM=1 and 2.
++C 18-FEB-2011 [PET] - Increased wise of array WORK, WEXP, TEMP from 20 to 24 
+ C-----------------------------------------------------------------------
+       CHARACTER*1 BSLASH
+       CHARACTER*2 TIMES, UP, DOWN
+-      CHARACTER*20 WORK, WEXP, TEMP
++      CHARACTER*24 WORK, WEXP, TEMP
+       INTEGER M, P, ND, I, J, K, NBP
+       LOGICAL MINUS
+ C
+@@ -117,6 +118,216 @@
+       END IF
+       NBP = ND+MIN(P,0)
+ C
++C Integral numbers of 4 or less digits are formatted as such.
++C
++      IF ((P.GE.0) .AND. ((FORM.EQ.0 .AND. P+ND.LE.4) .OR.
++     :                    (FORM.EQ.1 .AND. P+ND.LE.10))) THEN
++          DO 30 I=1,P
++              ND = ND+1
++              WORK(ND:ND) = '0'
++   30     CONTINUE
++          P = 0
++C
++C If NBP is 4 or less, simply insert a decimal point in the right place.
++C
++      ELSE IF (FORM.NE.2.AND.NBP.GE.1.AND.NBP.LE.4.AND.NBP.LT.ND) THEN
++          TEMP = WORK(NBP+1:ND)
++          WORK(NBP+2:ND+1) = TEMP
++          WORK(NBP+1:NBP+1) = '.'
++          ND = ND+1
++          P = 0
++C
++C Otherwise insert a decimal point after the first digit, and adjust P.
++C
++      ELSE
++          P = P + ND - 1
++          IF (FORM.NE.2 .AND. P.EQ.-1) THEN
++              TEMP = WORK
++              WORK = '0'//TEMP
++              ND = ND+1
++              P = 0
++          ELSE IF (FORM.NE.2 .AND. P.EQ.-2) THEN
++              TEMP = WORK
++              WORK = '00'//TEMP
++              ND = ND+2
++              P = 0
++          END IF
++          IF (ND.GT.1) THEN
++              TEMP = WORK(2:ND)
++              WORK(3:ND+1) = TEMP
++              WORK(2:2) = '.'
++              ND = ND + 1
++          END IF
++      END IF
++C
++C Add exponent if necessary.
++C
++      IF (P.NE.0) THEN
++          WORK(ND+1:ND+6) = TIMES//'10'//UP
++          ND = ND+6
++          IF (P.LT.0) THEN
++              P = -P
++              ND = ND+1
++              WORK(ND:ND) = '-'
++          END IF
++          J = 10
++   40     IF (P.NE.0) THEN
++              K = MOD(P,10)
++              P = P/10
++              WEXP(J:J) = CHAR(ICHAR('0')+K)
++              J = J-1
++           GOTO 40
++          END IF
++          WORK(ND+1:) = WEXP(J+1:10)
++          ND = ND+10-J
++          IF (WORK(1:3).EQ.'1'//TIMES) THEN
++              TEMP = WORK(4:)
++              WORK = TEMP
++              ND = ND-3
++          END IF
++          WORK(ND+1:ND+2) = DOWN
++          ND = ND+2
++      END IF
++C
++C Add minus sign if necessary and move result to output.
++C
++      IF (MINUS) THEN
++         TEMP = WORK(1:ND)
++         STRING = '-'//TEMP
++         NC = ND+1
++      ELSE
++         STRING = WORK(1:ND)
++         NC = ND
++      END IF
++C
++C Check result fits.
++C
++      IF (NC.GT.LEN(STRING)) THEN
++          STRING = '*'
++          NC = 1
++      END IF
++      END
++C
++C ------------------------------------------------------------------------
++C
++      SUBROUTINE PGNUMB_I8 ( MM, PP, FORM, STRING, NC)
++      INTEGER    PP, FORM
++      INTEGER*8  MM
++      CHARACTER*(*) STRING
++      INTEGER NC
++C
++C This routine converts a number into a decimal character
++C representation. To avoid problems of floating-point roundoff, the
++C number must be provided as an integer (MM) multiplied by a power of 10
++C (10**PP).  The output string retains only significant digits of MM,
++C and will be in either integer format (123), decimal format (0.0123),
++C or exponential format (1.23x10**5). Standard escape sequences \u, \d 
++C raise the exponent and \x is used for the multiplication sign.
++C This routine is used by PGBOX to create numeric labels for a plot.
++C
++C Formatting rules:
++C   (a) Decimal notation (FORM=1):
++C       - Trailing zeros to the right of the decimal sign are
++C         omitted
++C       - The decimal sign is omitted if there are no digits
++C         to the right of it
++C       - When the decimal sign is placed before the first digit
++C         of the number, a zero is placed before the decimal sign
++C       - The decimal sign is a period (.)
++C       - No spaces are placed between digits (ie digits are not
++C         grouped in threes as they should be)
++C       - A leading minus (-) is added if the number is negative
++C   (b) Exponential notation (FORM=2):
++C       - The exponent is adjusted to put just one (non-zero)
++C         digit before the decimal sign
++C       - The mantissa is formatted as in (a), unless its value is
++C         1 in which case it and the multiplication sign are omitted
++C       - If the power of 10 is not zero and the mantissa is not
++C         zero, an exponent of the form \x10\u[-]nnn is appended,
++C         where \x is a multiplication sign (cross), \u is an escape
++C         sequence to raise the exponent, and as many digits nnn
++C         are used as needed
++C   (c) Automatic choice (FORM=0):
++C         Decimal notation is used if the absolute value of the
++C         number is less than 10000 or greater than or equal to
++C         0.01. Otherwise exponential notation is used.
++C
++C Arguments:
++C  MM     (input)
++C  PP     (input)  : the value to be formatted is MM*10**PP.
++C  FORM   (input)  : controls how the number is formatted:
++C                    FORM = 0 -- use either decimal or exponential
++C                    FORM = 1 -- use decimal notation
++C                    FORM = 2 -- use exponential notation
++C  STRING (output) : the formatted character string, left justified.
++C                    If the length of STRING is insufficient, a single
++C                    asterisk is returned, and NC=1.
++C  NC     (output) : the number of characters used in STRING:
++C                    the string to be printed is STRING(1:NC).
++C--
++C 23-Nov-1983
++C  9-Feb-1988 [TJP] - Use temporary variable to avoid illegal character
++C                     assignments; remove non-standard DO loops.
++C 15-Dec-1988 [TJP] - More corrections of the same sort.
++C 27-Nov-1991 [TJP] - Change code for multiplication sign.
++C 23-Jun-1994 [TJP] - Partial implementation of FORM=1 and 2.
++C 18-FEB-2011 [PET] - Increased wise of array WORK, WEXP, TEMP from 20 to 24 
++C-----------------------------------------------------------------------
++      CHARACTER*1 BSLASH
++      CHARACTER*2 TIMES, UP, DOWN
++      CHARACTER*24 WORK, WEXP, TEMP
++      INTEGER P, ND, I, J, K, NBP
++      INTEGER*8  M
++      LOGICAL MINUS
++C
++C Define backslash (escape) character and escape sequences.
++C
++      BSLASH = CHAR(92)
++      TIMES  = BSLASH//'x'
++      UP     = BSLASH//'u'
++      DOWN   = BSLASH//'d'
++C
++C Zero is always printed as "0".
++C
++      IF (MM.EQ.0) THEN
++          STRING = '0'
++          NC = 1
++          RETURN
++      END IF
++C
++C If negative, make a note of that fact.
++C
++      MINUS = MM.LT.0
++      M = ABS(MM)
++      P = PP
++C
++C Convert M to a left-justified digit string in WORK. As M is a
++C positive integer, it cannot use more than 10 digits (2147483647).
++C
++      J = 20
++   10 IF (M.NE.0) THEN
++          K = MOD(M,10)
++          M = M/10
++          WORK(J:J) = CHAR(ICHAR('0')+K)
++          J = J-1
++          IF ( J > 0 ) GOTO 10
++      END IF
++      TEMP = WORK(J+1:)
++      WORK = TEMP
++      ND = 20-J
++C
++C Remove right-hand zeros, and increment P for each one removed.
++C ND is the final number of significant digits in WORK, and P the
++C power of 10 to be applied. Number of digits before decimal point
++C is NBP.
++C
++   20 IF (WORK(ND:ND).EQ.'0') THEN
++          ND = ND-1
++          P = P+1
++          IF ( ND > 0 ) GOTO 20
++      END IF
++      NBP = ND+MIN(P,0)
++C
+ C Integral numbers of 4 or less digits are formatted as such.
+ C
+       IF ((P.GE.0) .AND. ((FORM.EQ.0 .AND. P+ND.LE.4) .OR.
+diff -bur pgplot_orig/src/pgpoint.f pgplot/src/pgpoint.f
+--- pgplot_orig/src/pgpoint.f	1995-09-26 13:59:54.000000000 -0400
++++ pgplot/src/pgpoint.f	2024-01-27 13:19:31.763995359 -0500
+@@ -9,3 +9,85 @@
+ C--
+       CALL PGPT (N, XPTS, YPTS, SYMBOL)
+       END
++C
++C --------------------------------------------------------------------
++C
++C*PFGPOINT -- draw one or more graph markers
++C+
++C New routine to handle multiple symbols with one call -- fgg 10/30/90
++C
++      SUBROUTINE PGFPOINT (N, XPTS, YPTS, SYMARR)
++      INTEGER*4  N, INDX, NUMPTS
++      REAL*4     XPTS(*), YPTS(*)
++      REAL*4     XTMP(32768), YTMP(32768)
++      INTEGER*4  SYMARR(*)
++      INTEGER*4  PGOPEN
++C
++C Primitive routine to draw Graph Markers (polymarker). The markers
++C are drawn using the current values of attributes color-index,
++C line-width, and character-height (character-font applies if the symbol
++C number is >31).  If the point to be marked lies outside the window,
++C no marker is drawn.  The "pen position" is changed to
++C (XPTS(N),YPTS(N)) in world coordinates (if N > 0).
++C
++C Arguments:
++C  N      (input)  : number of points to mark.
++C  XPTS   (input)  : world x-coordinates of the points.
++C  YPTS   (input)  : world y-coordinates of the points.
++C  SYMARR (input)  : array of code numbers of the symbol to be plotted 
++C                    at each point; if it is negative, a single dot is 
++C                    plotted. Standard marker symbol numbers are 0 to 31; 
++C                    higher numbers (32 to 127) represent ASCII charac-
++C                    ters; e.g. to use letter F as a marker, let
++C                    SYMBOL = ICHAR('F'). If the number is greater
++C                    than 127, it is assumed to be a Hershey symbol
++C                    number.
++C
++C Note: the dimension of arrays X and Y must be greater than or equal
++C to N. If N is 1, X and Y may be scalars (constants or variables). If
++C N is less than 1, nothing is drawn.
++C--
++C 27-Nov-1986
++C pet  10-JUL-99  Modifed for PGPLOT 5.2
++C-----------------------------------------------------------------------
++      INCLUDE  'pgplot.inc'
++C
++      IF ( N.LT.1 ) RETURN
++!@      IF ( PGOPEN() .EQ. 0 ) RETURN
++      CALL PGBBUF
++C
++C  initialize temporary arrays
++C
++      DO 10 INDX=1,N
++         XTMP(INDX)=0
++         YTMP(INDX)=0
++   10 CONTINUE
++C
++      XTMP(1)=XPTS(1)
++      YTMP(1)=YPTS(1)
++      NUMPTS=1
++      DO 20 INDX=2,N
++           IF (SYMARR(INDX).NE.SYMARR(INDX-1)) THEN
++             IF (SYMARR(INDX-1).GE.0) THEN
++                 CALL GRMKER(SYMARR(INDX-1),.FALSE.,NUMPTS,XTMP,YTMP)
++c                write(6,*) 'grmarker'
++             ELSE
++                 CALL GRVCT0(3,.FALSE.,NUMPTS,XTMP,YTMP)
++             END IF
++             CALL GRMOVA(XTMP(NUMPTS),YPTS(NUMPTS))
++             NUMPTS=1
++             XTMP(NUMPTS)=XPTS(INDX)
++             YTMP(NUMPTS)=YPTS(INDX)
++           ELSE
++             NUMPTS=NUMPTS+1
++             XTMP(NUMPTS)=XPTS(INDX)
++             YTMP(NUMPTS)=YPTS(INDX)
++           END IF
++   20 CONTINUE
++      IF ( SYMARR(N) .GE. 0 ) THEN
++           CALL GRMKER ( SYMARR(N), .FALSE., NUMPTS, XTMP, YTMP )
++        ELSE
++           CALL GRVCT0 ( 3, .FALSE., NUMPTS, XTMP, YTMP )
++      END IF 
++      CALL PGEBUF
++      END  !#!  PGFPOINT  #!#
+Only in pgplot/src: pgpoint.f~
+diff -bur pgplot_orig/src/pgpoly.f pgplot/src/pgpoly.f
+--- pgplot_orig/src/pgpoly.f	1997-02-26 21:38:07.000000000 -0500
++++ pgplot/src/pgpoly.f	2007-02-08 16:52:07.000000000 -0500
+@@ -34,7 +34,7 @@
+ C 12-Sep-1995 - fix another bug in clipping [TJP].
+ C-----------------------------------------------------------------------
+       INTEGER MAXOUT
+-      PARAMETER (MAXOUT=1000)
++      PARAMETER (MAXOUT=32768)
+       LOGICAL CLIP
+       INTEGER I, N1, N2, N3, N4
+       REAL    QX(MAXOUT), QY(MAXOUT), RX(MAXOUT), RY(MAXOUT)
+diff -bur pgplot_orig/sys/grgcom.f pgplot/sys/grgcom.f
+--- pgplot_orig/sys/grgcom.f	1994-11-07 23:12:38.000000000 -0500
++++ pgplot/sys/grgcom.f	2011-09-20 00:31:41.000000000 -0400
+@@ -18,6 +18,7 @@
+ C 9-Feb-1988
+ C 10-Feb-1990 revised to always read from stdin (unit 5), but issue a
+ C             prompt only when device is a terminal.
++C 05-APR-2011 Fixed a bug to avoid schecing STRING(0:0)
+ C-----------------------------------------------------------------------
+       INTEGER IER
+ C
+@@ -28,7 +29,9 @@
+       IF (IER.EQ.0) READ (*, '(A)', IOSTAT=IER) STRING
+       IF (IER.EQ.0) GRGCOM = 1
+       L = LEN(STRING)
+-   10 IF (STRING(L:L).NE.' ') GOTO 20
++  10  CONTINUE 
++      IF ( L == 0 ) GOTO 20 ! Added by L. Petrov on 2011.04.05_23:32:01
++      IF (STRING(L:L).NE.' ') GOTO 20
+           L = L-1
+           GOTO 10
+    20 CONTINUE
+diff -bur pgplot_orig/sys/grgenv.f pgplot/sys/grgenv.f
+--- pgplot_orig/sys/grgenv.f	1988-11-25 18:58:19.000000000 -0500
++++ pgplot/sys/grgenv.f	2024-01-27 14:04:21.652473885 -0500
+@@ -20,14 +20,15 @@
+ C           returned.
+ C--
+ C 19-Jan-1988
++C Modified by L. Petrov: 2002.08.08
+ C-----------------------------------------------------------------------
+       INTEGER I, LIN
+       CHARACTER*32 TEST
+ C
+       TEST = 'PGPLOT_'//NAME
+-      LIN = INDEX(TEST, ' ')-1
+-      CALL GETENV(TEST(:LIN), VALUE)
+-      IF (VALUE.EQ.' ') THEN
++      LIN = INDEX ( TEST, ' ' ) - 1
++      CALL PGPLOT_GETENVAR ( TEST(:LIN), VALUE )
++      IF ( VALUE.EQ.' ') THEN
+           L = 0
+       ELSE
+           DO 10 I=LEN(VALUE),1,-1
+@@ -38,3 +39,19 @@
+    20     CONTINUE
+       END IF
+       END
++C
++C ------------------------------------------------------------------------
++C
++      SUBROUTINE PGPLOT_GETENVAR ( NAME, VALUE ) 
++      IMPLICIT   NONE 
++      CHARACTER  NAME*(*), VALUE*(*)
++#ifdef GNU
++      INTRINSIC  GETENV
++#endif
++#if defined (INTEL) || defined (SUN)
++      CALL GETENV_ ( NAME, VALUE ) 
++#else
++      CALL GETENV ( NAME, VALUE ) 
++#endif      
++      RETURN
++      END  SUBROUTINE PGPLOT_GETENVAR 
+diff -bur pgplot_orig/sys_dos/grquit.f pgplot/sys_dos/grquit.f
+--- pgplot_orig/sys_dos/grquit.f	1995-03-30 18:07:01.000000000 -0500
++++ pgplot/sys_dos/grquit.f	2003-11-02 23:36:58.000000000 -0500
+@@ -4,7 +4,7 @@
+       SUBROUTINE GRQUIT (CTEXT)
+       CHARACTER CTEXT*(*)
+ C
+-C Report a fatal error (via GRWARN) and exit with fatal status; a
++C Report a fatal error (via GRWARN) and exit ( 0 ) with fatal status; a
+ C traceback is generated unless the program is linked /NOTRACE.
+ C
+ C Argument:
+Only in pgplot/sys_linux/f77_src: #grsy00.f#
+Only in pgplot/sys_linux/f77_src: .#grsy00.f
+Only in pgplot/sys_linux: gfortran_f95_src
+diff -bur pgplot_orig/sys_mac/gropen.f pgplot/sys_mac/gropen.f
+--- pgplot_orig/sys_mac/gropen.f	1996-01-15 14:46:53.000000000 -0500
++++ pgplot/sys_mac/gropen.f	2003-11-02 23:37:00.000000000 -0500
+@@ -31,7 +31,7 @@
+ C 29-Jan-1985 - add HP2648 device [KS/TJP].
+ C  5-Aug-1986 - add GREXEC support [AFT].
+ C 12-Oct-1986 - fix bug causing GREXEC to erase screen [AFT].
+-C  3-Jun-1987 - remove declaration of exit handler [TJP].
++C  3-Jun-1987 - remove declaration of exit ( 0 ) handler [TJP].
+ C 15-Dec-1988 - standardize [TJP].
+ C 25-Jun-1989 - remove code that removes spaces from the device name 
+ C               [TJP].
+diff -bur pgplot_orig/sys_mac/hgdriv.f pgplot/sys_mac/hgdriv.f
+--- pgplot_orig/sys_mac/hgdriv.f	1995-07-05 13:45:26.000000000 -0400
++++ pgplot/sys_mac/hgdriv.f	2003-11-02 23:37:00.000000000 -0500
+@@ -22,7 +22,7 @@
+ C around this by periodically inserting an absolute positioning command
+ C revealed a second problem, namely that the "=" absolute positioning
+ C flag in PE mode does not work.  It was thus necessary to periodically
+-C exit from PE mode, do absolute positioning in normal mode, then return
++C exit ( 0 ) from PE mode, do absolute positioning in normal mode, then return
+ C to PE mode.  The file size overhead of this workaround is miminal (maybe
+ C 5%).  The printer rounding errors were ignored in the polygon fill
+ C opcode, because in general the vectors will be of pseudo-random length
+@@ -329,7 +329,7 @@
+               START = .FALSE.
+               LASTI = I0
+               LASTJ = J0
+-C last point, exit PE mode, polygon mode, and issue polygon fill.  Then
++C last point, exit ( 0 ) PE mode, polygon mode, and issue polygon fill.  Then
+ C reset the position to be safe.
+           ELSE IF (NPTS.EQ.0) THEN
+               CALL GRHGEC((I0-LASTI),(J0-LASTJ),DUMMY1,L1)
+diff -bur pgplot_orig/sys_msdos/grms2m.f pgplot/sys_msdos/grms2m.f
+--- pgplot_orig/sys_msdos/grms2m.f	1996-05-12 02:28:54.000000000 -0400
++++ pgplot/sys_msdos/grms2m.f	2003-11-02 23:37:00.000000000 -0500
+@@ -13,7 +13,7 @@
+       INTEGER*2 IX, IY
+       CHARACTER*(*) CHR
+       ICHR = 0
+-c move mouse cursor, exit if key other than Function or Cursor is
++c move mouse cursor, exit ( 0 ) if key other than Function or Cursor is
+ c pressed
+       DO WHILE(ICHR .EQ. 0)
+          call setptrpos(int4(ix),int4(iy))
+diff -bur pgplot_orig/sys_msdos/msdriv.f pgplot/sys_msdos/msdriv.f
+--- pgplot_orig/sys_msdos/msdriv.f	1996-05-12 02:33:58.000000000 -0400
++++ pgplot/sys_msdos/msdriv.f	2003-11-02 23:37:00.000000000 -0500
+@@ -404,7 +404,7 @@
+       INTEGER*4 ip,ICHR
+       ICHR = 0
+       ip=0
+-c move mouse cursor, exit if button is pressed
++c move mouse cursor, exit ( 0 ) if button is pressed
+       DO WHILE(ICHR .EQ. 0)
+          call setptrpos(int4(ix),int4(iy))
+          call setptrvis(1)
+Only in pgplot_orig/sys_next/pgview: Makefile
+Only in pgplot_orig/sys_openstep/pgview: Makefile
+--- pgplot/drivers/pndriv.c~	1999-03-26 21:06:23.000000000 -0500
++++ pgplot/drivers/pndriv.c	2024-10-12 20:34:01.457331833 -0400
+@@ -222,15 +222,15 @@
+ 	return;
+   }
+ 
+-  if (setjmp(png_ptr->jmpbuf)) { /* not really sure what I'm doing here... */
+-	fprintf(stderr,"%s: error in libpng while writing file %s, plotting disabled\n", png_ident, filename);
+-	png_destroy_write_struct(&png_ptr,&info_ptr);
+-	dev->error = true;
+-	if (fp != stdout)
+-	  fclose(fp);
+-	free(filename);
+-	return;
+-  }
++//  if (setjmp(png_ptr->jmpbuf)) { /* not really sure what I'm doing here... */
++//	fprintf(stderr,"%s: error in libpng while writing file %s, plotting disabled\n", png_ident, filename);
++//	png_destroy_write_struct(&png_ptr,&info_ptr);
++//	dev->error = true;
++//	if (fp != stdout)
++//	  fclose(fp);
++//	free(filename);
++//	return;
++//  }
+ 
+   png_init_io(png_ptr, fp);

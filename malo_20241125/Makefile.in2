@@ -1,0 +1,392 @@
+all: 	static shared
+
+static:	
+	cd  src;     source $(MALO_ROOT)/support/malo_vars; make -j $(NUM_PROC) $(MALO_PROG) malo_lib
+	cd  src;     source $(MALO_ROOT)/support/malo_vars; make -j $(NUM_PROC) $(MALO_PROG) static
+	@echo "=== Compilation of static malo is completed. Now, please run make install ==="
+	@exit 0
+
+shared:	
+	cd  src;     source $(MALO_ROOT)/support/malo_vars; make -j $(NUM_PROC) $(MALO_PROG) malo_lib
+	cd  src;     source $(MALO_ROOT)/support/malo_vars; make -j $(NUM_PROC) $(MALO_PROG) shared
+	@echo "=== Compilation of shared malo is completed. Now, please run make install ==="
+	@exit 0
+
+.PHONY: install
+install:
+	if ( -d $(MALO_PREFIX)/bin == 0                   ) mkdir -p $(MALO_PREFIX)/bin 
+	if ( -d $(MALO_PREFIX)/share == 0                 ) mkdir -p $(MALO_PREFIX)/share
+	if ( -d $(MALO_PREFIX)/script == 0                ) mkdir -p $(MALO_PREFIX)/script
+	if ( -d $(MALO_PREFIX)/share/malo == 0            ) mkdir -p $(MALO_PREFIX)/share/malo
+	cp -f $(MALO_ROOT)/lib/libmalo.a                  $(MALO_PREFIX)/lib/libmalo.a
+	cp -f $(MALO_ROOT)/include/heb.i                  $(MALO_PREFIX)/include/heb.i
+	cp -f $(MALO_ROOT)/include/heb.h                  $(MALO_PREFIX)/include/heb.h
+	cp -f $(MALO_ROOT)/include/heb_c.inc              $(MALO_PREFIX)/include/heb_c.inc
+	cp -f $(MALO_ROOT)/include/malo.i                 $(MALO_PREFIX)/include/malo.i
+	cp -f $(MALO_ROOT)/include/malo_local.i           $(MALO_PREFIX)/include/malo_local.i
+	cp -f $(MALO_ROOT)/include/bindisp.i              $(MALO_PREFIX)/include/bindisp.i            
+	cp -f $(MALO_ROOT)/support/malo_service_update.sh $(MALO_PREFIX)/script
+#
+	cp -f $(MALO_ROOT)/bin/malo 		          $(MALO_PREFIX)/bin/malo
+	cp -f $(MALO_ROOT)/bin/gtopo30_assemble           $(MALO_PREFIX)/bin/gtopo30_assemble
+	cp -f $(MALO_ROOT)/bin/gtopo30_regrid             $(MALO_PREFIX)/bin/gtopo30_regrid
+	cp -f $(MALO_ROOT)/bin/transform_ls_pgm           $(MALO_PREFIX)/bin/transform_ls_pgm
+	cp -f $(MALO_ROOT)/bin/spr_from_reanal            $(MALO_PREFIX)/bin/spr_from_reanal
+	cp -f $(MALO_ROOT)/bin/malo_spr_mod               $(MALO_PREFIX)/bin/malo_spr_mod
+	cp -f $(MALO_ROOT)/bin/malo_regrid                $(MALO_PREFIX)/bin/malo_regrid
+	cp -f $(MALO_ROOT)/bin/malo_spr_zero              $(MALO_PREFIX)/bin/malo_spr_zero
+	cp -f $(MALO_ROOT)/bin/malo_test                  $(MALO_PREFIX)/bin/malo_test
+	cp -f $(MALO_ROOT)/bin/malo_load_dif              $(MALO_PREFIX)/bin/malo_load_dif
+	cp -f $(MALO_ROOT)/bin/geos57nv_to_dgqtuv         $(MALO_PREFIX)/bin/geos57nv_to_dgqtuv
+	cp -f $(MALO_ROOT)/bin/geos_flx_to_heb            $(MALO_PREFIX)/bin/geos_flx_to_heb
+	cp -f $(MALO_ROOT)/bin/geos_rad_to_heb            $(MALO_PREFIX)/bin/geos_rad_to_heb
+	cp -f $(MALO_ROOT)/bin/merranv_to_dqtuv           $(MALO_PREFIX)/bin/merranv_to_dqtuv
+	cp -f $(MALO_ROOT)/bin/geos_gen_eh                $(MALO_PREFIX)/bin/geos_gen_eh
+	cp -f $(MALO_ROOT)/bin/gen_spr                    $(MALO_PREFIX)/bin/gen_spr
+	cp -f $(MALO_ROOT)/bin/spr_model                  $(MALO_PREFIX)/bin/spr_model
+	cp -f $(MALO_ROOT)/bin/heb_read_example           $(MALO_PREFIX)/bin/heb_read_example
+	cp -f $(MALO_ROOT)/bin/load_map_view              $(MALO_PREFIX)/bin/load_map_view
+	cp -f $(MALO_ROOT)/bin/malo_loading_model         $(MALO_PREFIX)/bin/malo_loading_model
+	cp -f $(MALO_ROOT)/bin/gen_dewt                   $(MALO_PREFIX)/bin/gen_dewt
+	cp -f $(MALO_ROOT)/bin/grib1_to_heb               $(MALO_PREFIX)/bin/grib1_to_heb
+	cp -f $(MALO_ROOT)/bin/lws_gen_ls_mask            $(MALO_PREFIX)/bin/lws_gen_ls_mask
+	cp -f $(MALO_ROOT)/bin/geos_lnd_to_heb            $(MALO_PREFIX)/bin/geos_lnd_to_heb
+	cp -f $(MALO_ROOT)/bin/gen_acp                    $(MALO_PREFIX)/bin/gen_acp
+	cp -f $(MALO_ROOT)/bin/geos_slv_to_heb            $(MALO_PREFIX)/bin/geos_slv_to_heb
+	cp -f $(MALO_ROOT)/bin/malo_ondemand              $(MALO_PREFIX)/bin/malo_ondemand
+	cp -f $(MALO_ROOT)/bin/heb_view                   $(MALO_PREFIX)/bin/heb_view
+	cp -f $(MALO_ROOT)/bin/loading_model_to_nc        $(MALO_PREFIX)/bin/loading_model_to_nc
+	cp -f $(MALO_ROOT)/bin/loading_model_to_harpos    $(MALO_PREFIX)/bin/loading_model_to_harpos
+	cp -f $(MALO_ROOT)/bin/fnl_to_heb                 $(MALO_PREFIX)/bin/fnl_to_heb         
+	cp -f $(MALO_ROOT)/bin/gen_egm2008_geoid          $(MALO_PREFIX)/bin/gen_egm2008_geoid
+	cp -f $(MALO_ROOT)/bin/fnl_to_heb                 $(MALO_PREFIX)/bin/fnl_to_heb
+	cp -f $(MALO_ROOT)/bin/heb_to_heb                 $(MALO_PREFIX)/bin/heb_to_heb
+	cp -f $(MALO_ROOT)/bin/malo_inq                   $(MALO_PREFIX)/bin/malo_inq
+	cp -f $(MALO_ROOT)/bin/malo_eph_to_monthly        $(MALO_PREFIX)/bin/malo_eph_to_monthly
+	cp -f $(MALO_ROOT)/bin/geosfpit_to_dgqtuv         $(MALO_PREFIX)/bin/geosfpit_to_dgqtuv
+	cp -f $(MALO_ROOT)/bin/heb_diff                   $(MALO_PREFIX)/bin/heb_diff
+	cp -f $(MALO_ROOT)/bin/ephedisp_to_bin            $(MALO_PREFIX)/bin/ephedisp_to_bin
+	cp -f $(MALO_ROOT)/bin/malo_upgrid                $(MALO_PREFIX)/bin/malo_upgrid
+	cp -f $(MALO_ROOT)/bin/ls_regrid                  $(MALO_PREFIX)/bin/ls_regrid
+	cp -f $(MALO_ROOT)/bin/pres_nc_to_heb             $(MALO_PREFIX)/bin/pres_nc_to_heb
+	cp -f $(MALO_ROOT)/bin/sta_acp                    $(MALO_PREFIX)/bin/sta_acp
+	cp -f $(MALO_ROOT)/bin/heb_2d_sta                 $(MALO_PREFIX)/bin/heb_2d_sta
+	cp -f $(MALO_ROOT)/bin/plot_sta_table             $(MALO_PREFIX)/bin/plot_sta_table
+	cp -f $(MALO_ROOT)/bin/gen_otide                  $(MALO_PREFIX)/bin/gen_otide
+	cp -f $(MALO_ROOT)/bin/equilibrium_tide_loading   $(MALO_PREFIX)/bin/equilibrium_tide_loading
+	cp -f $(MALO_ROOT)/bin/gen_toc_equil              $(MALO_PREFIX)/bin/gen_toc_equil
+	cp -f $(MALO_ROOT)/bin/bds_add                    $(MALO_PREFIX)/bin/bds_add
+	cp -f $(MALO_ROOT)/bin/bds_util                   $(MALO_PREFIX)/bin/bds_util
+	cp -f $(MALO_ROOT)/bin/malo_latency_plot          $(MALO_PREFIX)/bin/malo_latency_plot
+	cp -f $(MALO_ROOT)/bin/proc_stafil                $(MALO_PREFIX)/bin/proc_stafil
+	cp -f $(MALO_ROOT)/bin/gen_surface_meteo          $(MALO_PREFIX)/bin/gen_surface_meteo
+	cp -f $(MALO_ROOT)/bin/loading_integral           $(MALO_PREFIX)/bin/loading_integral
+	cp -f $(MALO_ROOT)/bin/average_loading            $(MALO_PREFIX)/bin/average_loading
+	cp -f $(MALO_ROOT)/bin/bds_plot                   $(MALO_PREFIX)/bin/bds_plot
+	cp -f $(MALO_ROOT)/bin/loading_int_time_series    $(MALO_PREFIX)/bin/loading_int_time_series
+	cp -f $(MALO_ROOT)/bin/check_sta_list             $(MALO_PREFIX)/bin/check_sta_list
+	cp -f $(MALO_ROOT)/bin/meph_to_bdsp               $(MALO_PREFIX)/bin/meph_to_bdsp
+	cp -f $(MALO_ROOT)/bin/gen_aam                    $(MALO_PREFIX)/bin/gen_aam
+	cp -f $(MALO_ROOT)/bin/aam_ser                    $(MALO_PREFIX)/bin/aam_ser
+	cp -f $(MALO_ROOT)/bin/aam_fcs_intrp              $(MALO_PREFIX)/bin/aam_fcs_intrp
+	cp -f $(MALO_ROOT)/bin/hei_gd_to_ell              $(MALO_PREFIX)/bin/hei_gd_to_ell
+	cp -f $(MALO_ROOT)/bin/modis_lw_gen               $(MALO_PREFIX)/bin/modis_lw_gen
+	cp -f $(MALO_ROOT)/bin/lw_transform               $(MALO_PREFIX)/bin/lw_transform
+	cp -f $(MALO_ROOT)/bin/gen_mask                   $(MALO_PREFIX)/bin/gen_mask
+	cp -f $(MALO_ROOT)/bin/mask_diff                  $(MALO_PREFIX)/bin/mask_diff
+	cp -f $(MALO_ROOT)/bin/toc_big                    $(MALO_PREFIX)/bin/toc_big
+	cp -f $(MALO_ROOT)/bin/sc_gen                     $(MALO_PREFIX)/bin/sc_gen
+	cp -f $(MALO_ROOT)/bin/ls_dist                    $(MALO_PREFIX)/bin/ls_dist
+	cp -f $(MALO_ROOT)/bin/sc_transform               $(MALO_PREFIX)/bin/sc_transform
+	cp -f $(MALO_ROOT)/bin/sc_apply                   $(MALO_PREFIX)/bin/sc_apply
+	cp -f $(MALO_ROOT)/bin/eop_fcs                    $(MALO_PREFIX)/bin/eop_fcs
+	cp -f $(MALO_ROOT)/bin/show_eop_fcs               $(MALO_PREFIX)/bin/show_eop_fcs
+	cp -f $(MALO_ROOT)/bin/eop_fcs_test               $(MALO_PREFIX)/bin/eop_fcs_test
+	cp -f $(MALO_ROOT)/bin/loading_heb_to_nc          $(MALO_PREFIX)/bin/loading_heb_to_nc
+	cp -f $(MALO_ROOT)/bin/loading_nc_to_heb          $(MALO_PREFIX)/bin/loading_nc_to_heb
+	cp -f $(MALO_ROOT)/bin/loading_nc_to_eph          $(MALO_PREFIX)/bin/loading_nc_to_eph
+	cp -f $(MALO_ROOT)/bin/loading_nc_to_spl_heb      $(MALO_PREFIX)/bin/loading_nc_to_spl_heb
+	cp -f $(MALO_ROOT)/bin/loading_spl_heb_to_sta     $(MALO_PREFIX)/bin/loading_spl_heb_to_sta
+	cp -f $(MALO_ROOT)/bin/loading_heb_to_spl_heb     $(MALO_PREFIX)/bin/loading_heb_to_spl_heb
+	cp -f $(MALO_ROOT)/bin/check_listing_gaps         $(MALO_PREFIX)/bin/check_listing_gaps
+	cp $(MALO_ROOT)/script/malo_fftw_plan_create.csh  $(MALO_PREFIX)/bin/malo_fftw_plan_create.csh
+
+	cp -f $(MALO_ROOT)/support/s1_hps_filter.py     $(MALO_PREFIX)/bin/s1_hps_filter.py    
+        ifeq ($(MALO_OS),Linux)
+	      cp -f $(MALO_ROOT)/lib/libmalo.so.1.0           $(MALO_PREFIX)/lib/libmalo.so.1.0
+	      cd    $(MALO_PREFIX)/lib; ln -sf libmalo.so.1.0 $(MALO_PREFIX)/lib/libmalo.so.1
+	      cd    $(MALO_PREFIX)/lib; ln -sf libmalo.so.1.0 $(MALO_PREFIX)/lib/libmalo.so
+        endif
+        ifeq ($(MALO_OS),Darwin)
+	      cp    $(MALO_ROOT)/lib/libmalo.1.dylib    $(MALO_PREFIX)/lib/libmalo.1.dylib
+	      if ( -l $(MALO_PREFIX)/lib/libmalo.dylib   ) rm $(MALO_PREFIX)/lib/libmalo.dylib   
+	      ln -s $(MALO_PREFIX)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib
+	      install_name_tool -id $(MALO_PREFIX)/lib/libmalo.dylib   $(MALO_PREFIX)/lib/libmalo.1.dylib   
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gtopo30_assemble
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gtopo30_regrid
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/transform_ls_pgm
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/spr_from_reanal
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_spr_mod
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_regrid
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_spr_zero
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_test
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_load_dif
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/geos57nv_to_dgqtuv
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/geos_flx_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/geos_rad_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/merranv_to_dqtuv
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/geos_gen_eh
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_spr
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/spr_model
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/heb_read_example
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/load_map_view
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_loading_model
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_dewt
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/grib1_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/lws_gen_ls_mask
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/geos_lnd_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_acp
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/geos_slv_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_ondemand
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/heb_view
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_model_to_nc
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_model_to_harpos
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/fnl_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/fnl_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_egm2008_geoid
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/heb_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_inq
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_eph_to_monthly
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/geosfpit_to_dgqtuv
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/heb_diff
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/ephedisp_to_bin
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_upgrid
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/ls_regrid
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/pres_nc_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/sta_acp
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/heb_2d_sta
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/plot_sta_table
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_otide
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/equilibrium_tide_loading
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_toc_equil
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/bds_add
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/bds_util
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/malo_latency_plot
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/proc_stafil
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_surface_meteo
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_integral
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/average_loading
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/bds_plot
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_int_time_series
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/check_sta_list
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/meph_to_bdsp
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_aam
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/aam_ser
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/aam_fcs_intrp
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/hei_gd_to_ell
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/modis_lw_gen
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/lw_transform
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/gen_mask
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/mask_diff
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/toc_big
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/sc_gen
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/ls_dist
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/sc_transform
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/sc_apply
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/eop_fcs
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/show_eop_fcs
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/eop_fcs_test
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_heb_to_nc
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_nc_to_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_nc_to_eph
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_nc_to_spl_heb
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_spl_heb_to_sta
+	      install_name_tool -change $(MALO_ROOT)/lib/libmalo.1.dylib $(MALO_PREFIX)/lib/libmalo.dylib $(MALO_PREFIX)/bin/loading_heb_to_spl_heb
+        endif
+	if (  $(MALO_SCRIPT) != $(MALO_ROOT)/script ) mkdir  -p $(MALO_SCRIPT)
+	if (  $(MALO_SCRIPT) != $(MALO_ROOT)/script ) cp -v $(MALO_ROOT)/script/*.py  $(MALO_SCRIPT)/
+	if (  $(MALO_SCRIPT) != $(MALO_ROOT)/script ) cp -v $(MALO_ROOT)/script/*.csh $(MALO_SCRIPT)/
+	if (  $(MALO_SCRIPT) != $(MALO_ROOT)/script ) cp -v $(MALO_ROOT)/script/*.sh  $(MALO_SCRIPT)/
+	cp support/malo_vars 			             $(MALO_PREFIX)/bin/
+	@echo "=== Installation of malo is completed ==="
+
+install_data:
+	if (  $(MALO_SHARE)  != $(MALO_ROOT)/share  ) mkdir -p $(MALO_SHARE)
+	if (  $(MALO_SHARE)  != $(MALO_ROOT)/share  ) rsync -av --exclude="$(MALO_ROOT)/share/*.wis" $(MALO_ROOT)/share/* $(MALO_SHARE)/
+	if ( -d $(MALO_MODEL) == 0                  ) mkdir -p $(MALO_MODEL)
+
+uninstall_include: 
+	@if ( -f $(MALO_PREFIX)/include/heb.i           ) rm -f $(MALO_PREFIX)/include/heb.i
+	@if ( -f $(MALO_PREFIX)/include/heb.h           ) rm -f $(MALO_PREFIX)/include/heb.h
+	@if ( -f $(MALO_PREFIX)/include/malo.i          ) rm -f $(MALO_PREFIX)/include/malo.i
+	@if ( -f $(MALO_PREFIX)/include/malo_local.i    ) rm -f $(MALO_PREFIX)/include/malo_local.i
+	@if ( -f $(MALO_PREFIX)/include/bindisp.i       ) rm -f $(MALO_PREFIX)/include/bindisp.i
+	@echo "=== Stale include files has been removed ==="
+
+uninstall: uninstall_include
+	if ( -f $(MALO_PREFIX)/lib/libmalo.a           ) rm -f $(MALO_PREFIX)/lib/libmalo.a              
+	if ( -f $(MALO_PREFIX)/lib/libmalo.so          ) rm -f $(MALO_PREFIX)/lib/libmalo.so
+	if ( -f $(MALO_PREFIX)/lib/libmalo.so.1        ) rm -f $(MALO_PREFIX)/lib/libmalo.so.1
+	if ( -f $(MALO_PREFIX)/lib/libmalo.so.1.0      ) rm -f $(MALO_PREFIX)/lib/libmalo.so.1.0
+	if ( -f $(MALO_PREFIX)/lib/libmalo.dylib       ) rm -f $(MALO_PREFIX)/lib/libmalo.dylib
+	if ( -f $(MALO_PREFIX)/lib/libmalo.1.dylib     ) rm -f $(MALO_PREFIX)/lib/libmalo.1.dylib
+	if ( -f $(MALO_PREFIX)/include/heb.i           ) rm -f $(MALO_PREFIX)/include/heb.i
+	if ( -f $(MALO_PREFIX)/include/heb.h           ) rm -f $(MALO_PREFIX)/include/heb.h
+	if ( -f $(MALO_PREFIX)/include/heb_c.inc       ) rm -f $(MALO_PREFIX)/include/heb_c.inc
+	if ( -f $(MALO_PREFIX)/include/malo.i          ) rm -f $(MALO_PREFIX)/include/malo.i
+	if ( -f $(MALO_PREFIX)/include/malo_local.i    ) rm -f $(MALO_PREFIX)/include/malo_local.i
+	if ( -f $(MALO_PREFIX)/script/malo_service_update.sh  ) rm -f $(MALO_PREFIX)/script/malo_service_update.sh
+	if ( -f $(MALO_PREFIX)/bin/malo                       ) rm -f $(MALO_PREFIX)/bin/malo
+	if ( -f $(MALO_PREFIX)/bin/gtopo30_assemble           ) rm -f $(MALO_PREFIX)/bin/gtopo30_assemble
+	if ( -f $(MALO_PREFIX)/bin/gtopo30_regrid             ) rm -f $(MALO_PREFIX)/bin/gtopo30_regrid
+	if ( -f $(MALO_PREFIX)/bin/transform_ls_pgm           ) rm -f $(MALO_PREFIX)/bin/transform_ls_pgm
+	if ( -f $(MALO_PREFIX)/bin/spr_from_reanal            ) rm -f $(MALO_PREFIX)/bin/spr_from_reanal
+	if ( -f $(MALO_PREFIX)/bin/malo_spr_mod               ) rm -f $(MALO_PREFIX)/bin/malo_spr_mod
+	if ( -f $(MALO_PREFIX)/bin/malo_regrid                ) rm -f $(MALO_PREFIX)/bin/malo_regrid
+	if ( -f $(MALO_PREFIX)/bin/malo_spr_zero              ) rm -f $(MALO_PREFIX)/bin/malo_spr_zero
+	if ( -f $(MALO_PREFIX)/bin/malo_test                  ) rm -f $(MALO_PREFIX)/bin/malo_test
+	if ( -f $(MALO_PREFIX)/bin/malo_load_dif              ) rm -f $(MALO_PREFIX)/bin/malo_load_dif
+	if ( -f $(MALO_PREFIX)/bin/geos57nv_to_dgqtuv         ) rm -f $(MALO_PREFIX)/bin/geos57nv_to_dgqtuv
+	if ( -f $(MALO_PREFIX)/bin/geos_flx_to_heb            ) rm -f $(MALO_PREFIX)/bin/geos_flx_to_heb
+	if ( -f $(MALO_PREFIX)/bin/geos_rad_to_heb            ) rm -f $(MALO_PREFIX)/bin/geos_rad_to_heb
+	if ( -f $(MALO_PREFIX)/bin/merranv_to_dqtuv           ) rm -f $(MALO_PREFIX)/bin/merranv_to_dqtuv
+	if ( -f $(MALO_PREFIX)/bin/geos_gen_eh                ) rm -f $(MALO_PREFIX)/bin/geos_gen_eh
+	if ( -f $(MALO_PREFIX)/bin/gen_spr                    ) rm -f $(MALO_PREFIX)/bin/gen_spr
+	if ( -f $(MALO_PREFIX)/bin/spr_model                  ) rm -f $(MALO_PREFIX)/bin/spr_model
+	if ( -f $(MALO_PREFIX)/bin/heb_read_example           ) rm -f $(MALO_PREFIX)/bin/heb_read_example
+	if ( -f $(MALO_PREFIX)/bin/load_map_view              ) rm -f $(MALO_PREFIX)/bin/load_map_view
+	if ( -f $(MALO_PREFIX)/bin/malo_loading_model         ) rm -f $(MALO_PREFIX)/bin/malo_loading_model
+	if ( -f $(MALO_PREFIX)/bin/gen_dewt                   ) rm -f $(MALO_PREFIX)/bin/gen_dewt
+	if ( -f $(MALO_PREFIX)/bin/grib1_to_heb               ) rm -f $(MALO_PREFIX)/bin/grib1_to_heb
+	if ( -f $(MALO_PREFIX)/bin/lws_gen_ls_mask            ) rm -f $(MALO_PREFIX)/bin/lws_gen_ls_mask
+	if ( -f $(MALO_PREFIX)/bin/geos_lnd_to_heb            ) rm -f $(MALO_PREFIX)/bin/geos_lnd_to_heb
+	if ( -f $(MALO_PREFIX)/bin/gen_acp                    ) rm -f $(MALO_PREFIX)/bin/gen_acp
+	if ( -f $(MALO_PREFIX)/bin/geos_slv_to_heb            ) rm -f $(MALO_PREFIX)/bin/geos_slv_to_heb
+	if ( -f $(MALO_PREFIX)/bin/malo_ondemand              ) rm -f $(MALO_PREFIX)/bin/malo_ondemand
+	if ( -f $(MALO_PREFIX)/bin/heb_view                   ) rm -f $(MALO_PREFIX)/bin/heb_view
+	if ( -f $(MALO_PREFIX)/bin/loading_model_to_nc        ) rm -f $(MALO_PREFIX)/bin/loading_model_to_nc
+	if ( -f $(MALO_PREFIX)/bin/loading_model_to_harpos    ) rm -f $(MALO_PREFIX)/bin/loading_model_to_harpos
+	if ( -f $(MALO_PREFIX)/bin/fnl_to_heb                 ) rm -f $(MALO_PREFIX)/bin/fnl_to_heb
+	if ( -f $(MALO_PREFIX)/bin/gen_egm2008_geoid          ) rm -f $(MALO_PREFIX)/bin/gen_egm2008_geoid
+	if ( -f $(MALO_PREFIX)/bin/fnl_to_heb                 ) rm -f $(MALO_PREFIX)/bin/fnl_to_heb
+	if ( -f $(MALO_PREFIX)/bin/heb_to_heb                 ) rm -f $(MALO_PREFIX)/bin/heb_to_heb
+	if ( -f $(MALO_PREFIX)/bin/malo_inq                   ) rm -f $(MALO_PREFIX)/bin/malo_inq
+	if ( -f $(MALO_PREFIX)/bin/malo_eph_to_monthly        ) rm -f $(MALO_PREFIX)/bin/malo_eph_to_monthly
+	if ( -f $(MALO_PREFIX)/bin/geosfpit_to_dgqtuv         ) rm -f $(MALO_PREFIX)/bin/geosfpit_to_dgqtuv
+	if ( -f $(MALO_PREFIX)/bin/heb_diff                   ) rm -f $(MALO_PREFIX)/bin/heb_diff
+	if ( -f $(MALO_PREFIX)/bin/ephedisp_to_bin            ) rm -f $(MALO_PREFIX)/bin/ephedisp_to_bin
+	if ( -f $(MALO_PREFIX)/bin/malo_upgrid                ) rm -f $(MALO_PREFIX)/bin/malo_upgrid
+	if ( -f $(MALO_PREFIX)/bin/ls_regrid                  ) rm -f $(MALO_PREFIX)/bin/ls_regrid
+	if ( -f $(MALO_PREFIX)/bin/pres_nc_to_heb             ) rm -f $(MALO_PREFIX)/bin/pres_nc_to_heb
+	if ( -f $(MALO_PREFIX)/bin/sta_acp                    ) rm -f $(MALO_PREFIX)/bin/sta_acp
+	if ( -f $(MALO_PREFIX)/bin/heb_2d_sta                 ) rm -f $(MALO_PREFIX)/bin/heb_2d_sta
+	if ( -f $(MALO_PREFIX)/bin/plot_sta_table             ) rm -f $(MALO_PREFIX)/bin/plot_sta_table
+	if ( -f $(MALO_PREFIX)/bin/gen_otide                  ) rm -f $(MALO_PREFIX)/bin/gen_otide
+	if ( -f $(MALO_PREFIX)/bin/equilibrium_tide_loading   ) rm -f $(MALO_PREFIX)/bin/equilibrium_tide_loading
+	if ( -f $(MALO_PREFIX)/bin/gen_toc_equil              ) rm -f $(MALO_PREFIX)/bin/gen_toc_equil
+	if ( -f $(MALO_PREFIX)/bin/bds_add                    ) rm -f $(MALO_PREFIX)/bin/bds_add
+	if ( -f $(MALO_PREFIX)/bin/bds_util                   ) rm -f $(MALO_PREFIX)/bin/bds_util
+	if ( -f $(MALO_PREFIX)/bin/malo_latency_plot          ) rm -f $(MALO_PREFIX)/bin/malo_latency_plot
+	if ( -f $(MALO_PREFIX)/bin/proc_stafil                ) rm -f $(MALO_PREFIX)/bin/proc_stafil
+	if ( -f $(MALO_PREFIX)/bin/gen_surface_meteo          ) rm -f $(MALO_PREFIX)/bin/gen_surface_meteo
+	if ( -f $(MALO_PREFIX)/bin/loading_integral           ) rm -f $(MALO_PREFIX)/bin/loading_integral
+	if ( -f $(MALO_PREFIX)/bin/average_loading            ) rm -f $(MALO_PREFIX)/bin/average_loading
+	if ( -f $(MALO_PREFIX)/bin/bds_plot                   ) rm -f $(MALO_PREFIX)/bin/bds_plot
+	if ( -f $(MALO_PREFIX)/bin/loading_int_time_series    ) rm -f $(MALO_PREFIX)/bin/loading_int_time_series
+	if ( -f $(MALO_PREFIX)/bin/check_sta_list             ) rm -f $(MALO_PREFIX)/bin/check_sta_list
+	if ( -f $(MALO_PREFIX)/bin/meph_to_bdsp               ) rm -f $(MALO_PREFIX)/bin/meph_to_bdsp
+	if ( -f $(MALO_PREFIX)/bin/gen_aam                    ) rm -f $(MALO_PREFIX)/bin/gen_aam
+	if ( -f $(MALO_PREFIX)/bin/aam_ser                    ) rm -f $(MALO_PREFIX)/bin/aam_ser
+	if ( -f $(MALO_PREFIX)/bin/aam_fcs_intrp              ) rm -f $(MALO_PREFIX)/bin/aam_fcs_intrp
+	if ( -f $(MALO_PREFIX)/bin/hei_gd_to_ell              ) rm -f $(MALO_PREFIX)/bin/hei_gd_to_ell
+	if ( -f $(MALO_PREFIX)/bin/modis_lw_gen               ) rm -f $(MALO_PREFIX)/bin/modis_lw_gen
+	if ( -f $(MALO_PREFIX)/bin/lw_transform               ) rm -f $(MALO_PREFIX)/bin/lw_transform
+	if ( -f $(MALO_PREFIX)/bin/gen_mask                   ) rm -f $(MALO_PREFIX)/bin/gen_mask
+	if ( -f $(MALO_PREFIX)/bin/mask_diff                  ) rm -f $(MALO_PREFIX)/bin/mask_diff
+	if ( -f $(MALO_PREFIX)/bin/toc_big                    ) rm -f $(MALO_PREFIX)/bin/toc_big
+	if ( -f $(MALO_PREFIX)/bin/sc_gen                     ) rm -f $(MALO_PREFIX)/bin/sc_gen
+	if ( -f $(MALO_PREFIX)/bin/ls_dist                    ) rm -f $(MALO_PREFIX)/bin/ls_dist
+	if ( -f $(MALO_PREFIX)/bin/sc_transform               ) rm -f $(MALO_PREFIX)/bin/sc_transform
+	if ( -f $(MALO_PREFIX)/bin/sc_apply                   ) rm -f $(MALO_PREFIX)/bin/sc_apply
+	if ( -f $(MALO_PREFIX)/bin/eop_fcs                    ) rm -f $(MALO_PREFIX)/bin/eop_fcs
+	if ( -f $(MALO_PREFIX)/bin/show_eop_fcs               ) rm -f $(MALO_PREFIX)/bin/show_eop_fcs
+	if ( -f $(MALO_PREFIX)/bin/eop_fcs_test               ) rm -f $(MALO_PREFIX)/bin/eop_fcs_test
+	if ( -f $(MALO_PREFIX)/bin/loading_heb_to_nc          ) rm -f $(MALO_PREFIX)/bin/loading_heb_to_nc
+	if ( -f $(MALO_PREFIX)/bin/loading_nc_to_heb          ) rm -f $(MALO_PREFIX)/bin/loading_nc_to_heb
+	if ( -f $(MALO_PREFIX)/bin/loading_nc_to_eph          ) rm -f $(MALO_PREFIX)/bin/loading_nc_to_eph
+	if ( -f $(MALO_PREFIX)/bin/loading_nc_to_spl_heb      ) rm -f $(MALO_PREFIX)/bin/loading_nc_to_spl_heb
+	if ( -f $(MALO_PREFIX)/bin/loading_spl_heb_to_sta     ) rm -f $(MALO_PREFIX)/bin/loading_spl_heb_to_sta
+	if ( -f $(MALO_PREFIX)/bin/loading_heb_to_spl_heb     ) rm -f $(MALO_PREFIX)/bin/loading_heb_to_spl_heb   
+	if ( -f $(MALO_PREFIX)/bin/check_listing_gaps         ) rm -f $(MALO_PREFIX)/bin/check_listing_gaps
+	if ( -f $(MALO_PREFIX)/bin/s1_hps_filter.py           ) rm -f $(MALO_PREFIX)/bin/s1_hps_filter.py    
+	if ( -f $(MALO_PREFIX)/bin/malo_vars                  ) rm -f $(MALO_PREFIX)/bin/malo_vars
+	if ( -f $(MALO_PREFIX)/bin/malo_fftw_plan_create.csh  ) $(MALO_PREFIX)/bin/malo_fftw_plan_create.csh  
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_leapsec.dat         ) rm -f $(MALO_SHARE)/malo_leapsec.dat
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_fftw_plan_1thr.wis  ) rm -f $(MALO_SHARE)/malo_fftw_plan_1thr.wis
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_fftw_plan_2thr.wis  ) rm -f $(MALO_SHARE)/malo_fftw_plan_2thr.wis
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_fftw_plan_4thr.wis  ) rm -f $(MALO_SHARE)/malo_fftw_plan_4thr.wis
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_fftw_plan_8thr.wis  ) rm -f $(MALO_SHARE)/malo_fftw_plan_8thr.wis
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_fftw_plan_16thr.wis ) rm -f $(MALO_SHARE)/malo_fftw_plan_16thr.wis
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_fftw_plan_32thr.wis ) rm -f $(MALO_SHARE)/malo_fftw_plan_32thr.wis
+	if (  $(MALO_SHARE) != $(MALO_ROOT)/share && -f $(MALO_SHARE)/malo_fftw_plan_64thr.wis ) rm -f $(MALO_SHARE)/malo_fftw_plan_64thr.wis
+
+	@echo "malo is uninstalled"
+
+clean_static:	
+	cd  src;     source $(MALO_ROOT)/support/malo_vars; make clean_static
+
+clean_shared:	
+	cd  src;     source $(MALO_ROOT)/support/malo_vars; make clean_shared
+
+clean:	clean_static clean_shared
+
+distclean:	clean
+	@./reconfigure -d > /tmp/malo_configure.txt
+	@-chmod 666 /tmp/malo_configure.txt
+	@find src/ -name "*.o*" -exec rm {} \;
+	@if ( -f $(MALO_ROOT)/include/maloy_local.i ) rm -f $(MALO_ROOT)/include/malo_local.i
+	@if ( -f $(MALO_ROOT)/support/malo_vars    ) rm -f $(MALO_ROOT)/support/malo_vars
+	@if ( -f $(MALO_ROOT)/support/malo_service_update.sh ) rm -f $(MALO_ROOT)/support/malo_service_update.sh 
+	@if ( -f $(MALO_ROOT)/temp/conf.log        ) rm -f $(MALO_ROOT)/temp/conf.log
+	@if ( -f $(MALO_ROOT)/bin/s1_hps_filter.py ) rm -f $(MALO_ROOT)/bin/s1_hps_filter.py 
+	@support/purge bin
+	@support/purge data
+	@support/purge doc
+	@support/purge include        
+	@support/purge obsolete
+	@support/purge script
+	@support/purge share
+	@support/purge src
+	@support/purge support
+	@support/purge temp
+	@support/purge web_script
+	@support/purge ./
+	@echo "malo distribution tree is cleaned"
+#	rm -f examples/* >& /dev/null
+
+MALO_BASENAME = `basename $(MALO_ROOT)`
+tar:	distclean
+	@rm Makefile
+	@support/copy_to_web_script.csh $(MALO_WEB_EXE) $(MALO_ROOT) 
+	@echo "Copied web scripts"
+	@if ( -f temp/conf.log                     ) rm -f temp/conf.log
+	@if ( -f $(MALO_ROOT)/support/malo_vars    ) rm -f $(MALO_ROOT)/support/malo_vars
+	@if ( -f /tmp/malo-$(MALO_VERSION).tar.bz2 ) rm -f /tmp/malo-$(MALO_VERSION).tar.bz2 
+	@if ( -d $(MALO_ROOT)/script/__pycache__   ) rm -fR $(MALO_ROOT)/script/__pycache__
+	@cd ../; tar --exclude="*obj_noopt*" --exclude="*obsolete*" --exclude="*bin_noopt*" --exclude="*/share/*" -cf - malo_$(MALO_VERSION) | \
+                lbzip2 -c > /tmp/malo-$(MALO_VERSION).tar.bz2 
+	@cd ../; tar -cf - malo_$(MALO_VERSION)/share | lbzip2 -c > $(MALO_BACKUP_DIR)/malo_share-$(MALO_VERSION).tar.bz2 
+	@cp -p INSTALL /astrogeo.org/malo/Install.txt
+	@cp -p README  /astrogeo.org/malo/Readme.txt
+	@cp -p /tmp/malo-$(MALO_VERSION).tar.bz2 $(MALO_WEB_DIR)
+	@cp -p $(MALO_ROOT)/share/loading_*.sta  $(MALO_WEB_DIR)
+	@echo "Tar-file /tmp/malo-$(MALO_VERSION).tar.bz2 is created and copied to $(MALO_WEB_DIR)" 
+	@echo "Tar-file $(MALO_BACKUP_DIR)/malo_share-$(MALO_VERSION).tar.bz2 is created" 
+	@echo "Copied tar-ball, INSTALL, and README"
+	@sync
+
+oper_tar:	
+	@cd $(MALO_MODEL); cd ../; tar -cf - oper_model > $(MALO_BACKUP_DIR)/malo_oper_model-$(MALO_VERSION).tar
+	@echo "Tar-file $(MALO_BACKUP_DIR)/malo__oper_model-$(MALO_VERSION).tar is created" 
+	@sync

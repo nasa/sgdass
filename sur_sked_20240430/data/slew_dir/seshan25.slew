@@ -1,0 +1,22 @@
+# Station slew format of  2018.02.02
+#
+# Slewing rate and settle time is adjusted according to epa001 experiment on 2018.01.24
+# rms over azimith:   2.3 s
+# rms over elevation: 1.9 s
+#
+SHORT_NAME:  SESHAN25  Sh
+LAST_UPDATE: SESHAN25  2018.02.02
+COORD:       SESHAN25  meters    -2831686.913  4675733.666  3275327.690   
+MOUNT:       SESHAN25  char       ALTAZ
+SLEW_AZ:     SESHAN25  deg/sec    0.91
+SLEW_EL:     SESHAN25  deg/sec    0.52
+ACCL_AZ:     SESHAN25  deg/sec^2  0.5
+ACCL_EL:     SESHAN25  deg/sec^2  0.28
+TSETTLE_AZ:  SESHAN25  sec        1.0
+TSETTLE_EL:  SESHAN25  sec        1.0
+EL_MIN:      SESHAN25  deg        5.0
+EL_MAX:      SESHAN25  deg       88.5
+AZ_RANGE:    SESHAN25  deg      -70.0 60.0 290.0 420.0
+RECORDER:    SESHAN25  char      mark5
+PREOB:       SESHAN25  sec       10.0
+POSTOB:      SESHAN25  sec        2.0

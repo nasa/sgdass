@@ -1,0 +1,5 @@
+#!/bin/csh
+setenv NERS_PREFIX    /opt64
+setenv NERS_LIB      "-L/opt64/lib -lners -L/opt64/lib -lpetools"
+setenv NERS_INCLUDE   /opt64/include
+setenv NERS_VERSION   20210824

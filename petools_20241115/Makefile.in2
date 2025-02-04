@@ -1,0 +1,325 @@
+build:
+	@if ( -f $(PETOOLS_PREFIX)/include/lspline.i           ) rm -f $(PETOOLS_PREFIX)/include/lspline.i
+	@if ( -f $(PETOOLS_PREFIX)/include/diagi.i             ) rm -f $(PETOOLS_PREFIX)/include/diagi.i
+	@if ( -f $(PETOOLS_PREFIX)/include/solve_paths.i       ) rm -f $(PETOOLS_PREFIX)/include/solve_paths.i
+	@if ( -f $(PETOOLS_PREFIX)/include/diagi_local.i       ) rm -f $(PETOOLS_PREFIX)/include/diagi_local.i
+	@if ( -f $(PETOOLS_PREFIX)/include/matvec.i            ) rm -f $(PETOOLS_PREFIX)/include/matvec.i
+	@if ( -f $(PETOOLS_PREFIX)/include/mk5_preprocessor_directives.inc ) rm -f $(PETOOLS_PREFIX)/include/mk5_preprocessor_directives.inc 
+	@if ( -f $(PETOOLS_PREFIX)/module/pet_util.mod ) rm -f $(PETOOLS_PREFIX)/module/pet_util.mod
+	@if ( -f $(PETOOLS_PREFIX)/module/matvec.mod   ) rm -f $(PETOOLS_PREFIX)/module/matvec.mod
+	@echo "Building petools started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"` |& tee   > $(BUILD_LOG)
+	@echo " "                                                                              |& tee  -a $(BUILD_LOG)
+        ifeq ($(PETOOLS_BLAS_USE),NO)
+	     @echo "---  blas_stub is being compiled and linked now ---"        | & tee  -a $(BUILD_LOG)
+	     @cd blas_stub;    source ../support/petools_vars; umask 0002; make | & tee  -a $(BUILD_LOG)
+        endif
+	@echo "---  pet_utils is being compiled now ---"                              |& tee  -a $(BUILD_LOG)
+	@cd pet_util; source ../support/petools_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+	@echo "---  matvec is being compiled now ---"                                 |& tee  -a $(BUILD_LOG)
+	@cd matvec;   source ../support/petools_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+        ifeq ($(PETOOLS_PGPLOT),YES)
+	     @echo "---  diagi is being compiled now ---"                                   |& tee  -a $(BUILD_LOG)
+	     @cd diagi;    source ../support/petools_vars; umask 0002; make  -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+	     @echo "---  pgplot is being compiled and linked now ---"                       |& tee  -a $(BUILD_LOG)
+	     @source support/petools_vars; support/make_pgplot522.csh ${PETOOLS_PREFIX} $(BUILD_LOG)
+             ifeq ($(PETOOLS_BLAS_USE),YES)
+	           @echo "---  test suite is being compiled and linked now ---"         |& tee  -a $(BUILD_LOG)
+	           @cd testware; source ../support/petools_vars; umask 0002; make  -j 1 |& tee  -a $(BUILD_LOG)
+             endif
+	     @echo "---  shared library is being created now"                           |& tee  -a $(BUILD_LOG)
+             ifeq ($(PETOOLS_OS),Linux)
+	           $(MK5_C_LINK) -shared -Wl,-soname,libpetools.so.1 -o lib/libpetools.so.1.0 \
+                            diagi/*.o diagi/*.opt_o \
+                            matvec/*.o matvec/*.opt_o matvec/*.Opt_o \
+                            pet_util/*.o pet_util/*.opt_o pet_util/*.Opt_o \
+                            lib/libpgplot.a \
+                            $(SOLVE_LIB_X11) $(SOLVE_LIB_BLAS) $(SOLVE_EXTRA_LIB) $(READLINE_LIB) $(CURSES_LIB)
+             endif
+             ifeq ($(PETOOLS_OS),Darwin)
+		   $(MK5_C_LINK) -dynamiclib -install_name $(PETOOLS_ROOT)/lib/libpetools.1.dylib -o lib/libpetools.1.dylib  \
+                                 diagi/*.o diagi/*.opt_o \
+                                 matvec/*.o matvec/*.opt_o matvec/*.Opt_o \
+                                 pet_util/*.o pet_util/*.opt_o pet_util/*.Opt_o \
+                                 lib/libpgplot.a \
+                                 $(SOLVE_LIB_X11) $(SOLVE_LIB_BLAS) $(SOLVE_EXTRA_LIB) $(READLINE_LIB) $(CURSES_LIB)
+             endif
+        else 
+             ifeq ($(PETOOLS_BLAS_USE),YES)
+		   @echo "---  testware is being compiled and linked now ---"     |& tee  -a $(BUILD_LOG)
+		   @cd testware; source ../support/petools_vars; umask 0002; make matvec >>& $(BUILD_LOG)
+                   ifeq ($(PETOOLS_OS),Linux)
+	                 $(MK5_C_LINK) -shared -Wl,-soname,libpetools.so.1 -o lib/libpetools.so.1.0 \
+                                   matvec/*.o matvec/*.opt_o matvec/*.Opt_o \
+                                   pet_util/*.o pet_util/*.opt_o pet_util/*.Opt_o
+                   endif
+                   ifeq ($(PETOOLS_OS),Darwin)
+		         $(MK5_C_LINK) -dynamiclib -install_name $(PETOOLS_ROOT)/lib/libpetools.1.dylib -o lib/libpetools.1.dylib  \
+                                    diagi/*.o diagi/*.opt_o \
+                                    matvec/*.o matvec/*.opt_o matvec/*.Opt_o \
+                                    pet_util/*.o pet_util/*.opt_o pet_util/*.Opt_o \
+                                    $(PETOOLS_LIB) $(SOLVE_LIB_BLAS) $(SOLVE_EXTRA_LIB) $(READLINE_LIB) $(CURSES_LIB)
+                   endif
+                else
+                   ifeq ($(PETOOLS_OS),Linux)
+	                 $(MK5_C_LINK) -shared -Wl,-soname,libpetools.so.1 -o lib/libpetools.so.1.0 \
+                                   matvec/*.o matvec/*.opt_o matvec/*.Opt_o \
+                                   pet_util/*.o pet_util/*.opt_o pet_util/*.Opt_o \
+                                   blas_stub/*.o
+                   endif
+                   ifeq ($(PETOOLS_OS),Darwin)
+		         $(MK5_C_LINK) -dynamiclib -install_name $(PETOOLS_ROOT)/lib/libpetools.1.dylib -o lib/libpetools.1.dylib  \
+                                    matvec/*.o matvec/*.opt_o matvec/*.Opt_o \
+                                    pet_util/*.o pet_util/*.opt_o pet_util/*.Opt_o \
+                                    blas_stub/*.o \
+                                    $(PETOOLS_LIB) $(SOLVE_EXTRA_LIB) $(READLINE_LIB) $(CURSES_LIB)
+                   endif
+             endif
+        endif
+        ifeq ($(PETOOLS_BLAS_USE),YES)
+	      @cd $(PETOOLS_ROOT)/lib; \
+                  ar x $(PETOOLS_ROOT)/pet_util/pet_util.a ; \
+                  ar x $(PETOOLS_ROOT)/diagi/diagi.a; \
+                  ar x $(PETOOLS_ROOT)/matvec/matvec.a; \
+                  ar x $(PETOOLS_ROOT)/lib/libpgplot.a; \
+		  rm $(PETOOLS_ROOT)/lib/*.gen_o; \
+		  ar cr $(PETOOLS_ROOT)/lib/libpetools.a *.o *.opt_o *.Opt_o; \
+		  rm $(PETOOLS_ROOT)/lib/*.o $(PETOOLS_ROOT)/lib/*.opt_o $(PETOOLS_ROOT)/lib/*.Opt_o
+           else
+	      @cd $(PETOOLS_ROOT)/lib; \
+                  ar x $(PETOOLS_ROOT)/pet_util/pet_util.a ; \
+                  ar x $(PETOOLS_ROOT)/matvec/matvec.a; \
+		  rm $(PETOOLS_ROOT)/lib/*.gen_o; \
+		  ar cr $(PETOOLS_ROOT)/lib/libpetools.a *.o *.opt_o *.Opt_o; \
+		  rm $(PETOOLS_ROOT)/lib/*.o $(PETOOLS_ROOT)/lib/*.opt_o $(PETOOLS_ROOT)/lib/*.Opt_o
+        endif
+	@echo " "                                                                              |& tee  -a $(BUILD_LOG)
+	@echo "Building petools finished at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"` |& tee  -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+.PHONY: short-test
+short-test:
+	@if ( `tail -1 $(CONF_LOG)` != "ok" ) "Failure in configuration. Please exampine file $(CONF_LOG)"
+	@if ( `tail -1 $(CONF_LOG)` != "ok" ) exit 1
+	@if ( -d $(PETOOLS_PREFIX)            == 0 ) mkdir $(PETOOLS_PREFIX)
+	@if ( -d $(PETOOLS_PREFIX)/bin        == 0 ) mkdir $(PETOOLS_PREFIX)/bin
+	cp support/petools_vars $(PETOOLS_PREFIX)/bin
+	@uname -a
+        ifeq ($(PETOOLS_OS),Linux)
+	      @if ( -f /etc/system-release ) cat /etc/system-release 
+	      @cat /proc/cpuinfo | sort -u | grep "model name\|vendor"
+	      @cat /proc/meminfo | grep MemTotal
+        endif
+	@/usr/bin/df -h ; set status = 0
+	@echo "Number of cores: " $(NUM_PROC)
+	@echo "Environment variables:"
+	@echo " "
+	@setenv
+	@exit 0
+
+.PHONY: install
+install:
+	@echo "=== Installation is in progress... "
+	@killall -9 pgxwin_server >>& /dev/null; set  status = 0
+	@if ( -d $(PETOOLS_PREFIX)            == 0 ) mkdir $(PETOOLS_PREFIX)
+	@if ( -d $(PETOOLS_PREFIX)/bin        == 0 ) mkdir $(PETOOLS_PREFIX)/bin
+	@if ( -d $(PETOOLS_PREFIX)/include    == 0 ) mkdir $(PETOOLS_PREFIX)/include
+	@if ( -d $(PETOOLS_PREFIX)/lib        == 0 ) mkdir $(PETOOLS_PREFIX)/lib
+	@if ( -d $(PETOOLS_PREFIX)/lib/libsys == 0 ) mkdir $(PETOOLS_PREFIX)/lib/libsys
+	@if ( -d $(PETOOLS_PREFIX)/module     == 0 ) mkdir $(PETOOLS_PREFIX)/module
+	@if ( -d $(PETOOLS_PREFIX)/doc        == 0 ) mkdir $(PETOOLS_PREFIX)/doc
+	@if ( -d $(PETOOLS_PREFIX)/share      == 0 ) mkdir $(PETOOLS_PREFIX)/share
+	cp lib/libpetools.a                                $(PETOOLS_PREFIX)/lib/
+        ifeq ($(PETOOLS_PGPLOT),YES)
+	     cp lib/libpgplot.a                            $(PETOOLS_PREFIX)/lib/
+             ifeq ($(PETOOLS_OS),Linux)
+	           cp lib/libpetools.so.1.0       $(PETOOLS_PREFIX)/lib/
+	           ln -sf libpetools.so.1.0       $(PETOOLS_PREFIX)/lib/libpetools.so.1
+	           ln -sf libpetools.so.1.0       $(PETOOLS_PREFIX)/lib/libpetools.so
+	           cp lib/libpgplot.so.5.2        $(PETOOLS_PREFIX)/lib/
+	           ln -sf libpgplot.so.5.2        $(PETOOLS_PREFIX)/lib/libpgplot.so.5
+	           ln -sf libpgplot.so.5.2        $(PETOOLS_PREFIX)/lib/libpgplot.so
+             endif
+             ifeq ($(PETOOLS_OS),Darwin)
+	           cp lib/libpgplot.1.dylib      $(PETOOLS_PREFIX)/lib/
+	      	   if ( -l $(PETOOLS_PREFIX)/lib/libpgplot.dylib ) rm $(PETOOLS_PREFIX)/lib/libpgplot.dylib
+	           cd $(PETOOLS_PREFIX)/lib; ln -sf libpgplot.1.dylib $(PETOOLS_PREFIX)/lib/libpgplot.dylib 
+	           install_name_tool -id $(PETOOLS_PREFIX)/lib/libpgplot.1.dylib $(PETOOLS_PREFIX)/lib/libpgplot.dylib
+             endif
+        endif
+        ifeq ($(PETOOLS_OS),Darwin)
+	      cp lib/libpetools.1.dylib    $(PETOOLS_PREFIX)/lib/
+	      if ( -l $(PETOOLS_PREFIX)/lib/libpetools.dylib ) rm $(PETOOLS_PREFIX)/lib/libpetools.dylib
+	      cd  $(PETOOLS_PREFIX)/lib ; ln -sf libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib
+	      install_name_tool -id $(PETOOLS_PREFIX)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib
+        endif
+	if ( -f module/pet_util.mod )  cp module/pet_util.mod $(PETOOLS_PREFIX)/module
+	if ( -f module/matvec.mod   )  cp module/matvec.mod   $(PETOOLS_PREFIX)/module
+	cp pet_util/trend_ite.i        $(PETOOLS_PREFIX)/include/
+	cp include/solve_paths.i       $(PETOOLS_PREFIX)/include/
+	cp include/diagi_local.i       $(PETOOLS_PREFIX)/include/
+	cp include/matvec.i            $(PETOOLS_PREFIX)/include/
+	cp include/lspline.i           $(PETOOLS_PREFIX)/include/
+	cp include/mk5_preprocessor_directives.inc $(PETOOLS_PREFIX)/include/
+        ifeq ($(PETOOLS_BLAS_USE),YES)
+	      cp bin/matvec_test             $(PETOOLS_PREFIX)/bin/
+	      cp support/matvec_test.csh     $(PETOOLS_PREFIX)/bin/
+              ifeq ($(PETOOLS_OS),Darwin)
+	     	    install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/matvec_test
+              endif
+        endif
+	if ( "$(SOLVE_LIB_VEC)"   != "" ) cp lib/libsys/libvec_HP10.20.a     $(PETOOLS_PREFIX)/lib/libsys
+	if ( "$(SOLVE_EXTRA_LIB)" != "" ) cp lib/libsys/cl_patch_for_HP11.a  $(PETOOLS_PREFIX)/lib/libsys
+        ifeq ($(PETOOLS_PGPLOT),YES)
+	     cp include/diagi.i             $(PETOOLS_PREFIX)/include/
+	     cp bin/grfont.dat              $(PETOOLS_PREFIX)/share/
+	     cp bin/rgb.txt                 $(PETOOLS_PREFIX)/share/
+	     cp bin/pgxwin_server           $(PETOOLS_PREFIX)/bin/
+	     cp bin/diagi_color_demo        $(PETOOLS_PREFIX)/bin/
+	     cp bin/diagi_demo              $(PETOOLS_PREFIX)/bin/
+	     cp bin/diagi_dec               $(PETOOLS_PREFIX)/bin/
+	     cp bin/diagi_rst               $(PETOOLS_PREFIX)/bin/
+	     cp bin/diagi_key               $(PETOOLS_PREFIX)/bin/
+	     cp bin/diagi_user              $(PETOOLS_PREFIX)/bin/
+	     cp bin/md_demo                 $(PETOOLS_PREFIX)/bin/
+	     cp bin/diagi_batch             $(PETOOLS_PREFIX)/bin/
+             ifeq ($(PETOOLS_OS),Darwin)
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/diagi_batch
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/diagi_color_demo
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/diagi_dec
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/diagi_demo
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/diagi_key
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/diagi_rst
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/diagi_user
+	     	 install_name_tool -change $(PETOOLS_ROOT)/lib/libpetools.1.dylib $(PETOOLS_PREFIX)/lib/libpetools.dylib $(PETOOLS_PREFIX)/bin/md_demo
+             endif
+        endif
+        ifeq ($(PETOOLS_BLAS_USE),NO)
+	     cp blas_stub/libblas_stub.a    $(PETOOLS_PREFIX)/lib/
+        endif
+	cp $(PETOOLS_ROOT)/support/sgdass_color_default.txt $(PETOOLS_PREFIX)/share/sgdass_color_default.txt
+	cp $(PETOOLS_ROOT)/support/sgdass_color_cividis.txt $(PETOOLS_PREFIX)/share/sgdass_color_cividis.txt
+	cp $(PETOOLS_ROOT)/support/sgdass_color_grey.txt    $(PETOOLS_PREFIX)/share/sgdass_color_grey.txt
+	cp $(PETOOLS_ROOT)/doc/diagi_0.hlp $(PETOOLS_PREFIX)/doc/diagi_0.hlp
+	cp $(PETOOLS_ROOT)/doc/diagi_1.hlp $(PETOOLS_PREFIX)/doc/diagi_1.hlp
+	cp $(PETOOLS_ROOT)/doc/diagi_2.hlp $(PETOOLS_PREFIX)/doc/diagi_2.hlp
+	cp $(PETOOLS_ROOT)/doc/diagi_3.hlp $(PETOOLS_PREFIX)/doc/diagi_3.hlp
+	cp $(PETOOLS_ROOT)/doc/diagi_4.hlp $(PETOOLS_PREFIX)/doc/diagi_4.hlp
+	cp $(PETOOLS_ROOT)/doc/diagi_5.hlp $(PETOOLS_PREFIX)/doc/diagi_5.hlp
+	@cat support/petools_vars support/petools_postinstall_vars | \
+            sed s@$(PETOOLS_ROOT)@$(PETOOLS_PREFIX)@g > \
+            $(PETOOLS_PREFIX)/bin/petools_vars
+	@echo "=== Installation of petools is completed ==="
+
+uninstall_include:
+	if ( -f $(PETOOLS_PREFIX)/include/diagi.i             ) rm -f $(PETOOLS_PREFIX)/include/diagi.i
+	if ( -f $(PETOOLS_PREFIX)/include/lspline.i           ) rm -f $(PETOOLS_PREFIX)/include/lspline.i
+	if ( -f $(PETOOLS_PREFIX)/include/solve_paths.i       ) rm -f $(PETOOLS_PREFIX)/include/solve_paths.i
+	if ( -f $(PETOOLS_PREFIX)/include/pgplot_local.i      ) rm -f $(PETOOLS_PREFIX)/include/pgplot_local.i
+	if ( -f $(PETOOLS_PREFIX)/include/pgplot_local.h      ) rm -f $(PETOOLS_PREFIX)/include/pgplot_local.h
+	if ( -f $(PETOOLS_PREFIX)/include/diagi_local.i       ) rm -f $(PETOOLS_PREFIX)/include/diagi_local.i
+	if ( -f $(PETOOLS_PREFIX)/include/matvec.i            ) rm -f $(PETOOLS_PREFIX)/include/matvec.i
+	if ( -f $(PETOOLS_PREFIX)/include/trend_ite.i         ) rm -f $(PETOOLS_PREFIX)/include/trend_ite.i
+	if ( -f $(PETOOLS_PREFIX)/include/mk5_preprocessor_directives.inc ) rm -f $(PETOOLS_PREFIX)/include/mk5_preprocessor_directives.inc
+
+uninstall: uninstall_include
+	if ( -f $(PETOOLS_PREFIX)/lib/libblas_stub.a     ) rm -f $(PETOOLS_PREFIX)/lib/libblas_stub.a
+	if ( -f $(PETOOLS_PREFIX)/lib/libpetools.a       ) rm -f $(PETOOLS_PREFIX)/lib/libpetools.a
+	if ( -f $(PETOOLS_PREFIX)/lib/libpetools.so.1.0  ) rm -f $(PETOOLS_PREFIX)/lib/libpetools.so.1.0
+	if ( -l $(PETOOLS_PREFIX)/lib/libpetools.so.1    ) rm -f $(PETOOLS_PREFIX)/lib/libpetools.so.1
+	if ( -l $(PETOOLS_PREFIX)/lib/libpetools.so      ) rm -f $(PETOOLS_PREFIX)/lib/libpetools.so
+	if ( -f $(PETOOLS_PREFIX)/lib/libpetools.1.dylib ) rm -f $(PETOOLS_PREFIX)/lib/libpetools.1.dylib  
+	if ( -l $(PETOOLS_PREFIX)/lib/libpetools.dylib   ) rm -f $(PETOOLS_PREFIX)/lib/libpetools.dylib  
+	if ( -f $(PETOOLS_PREFIX)/lib/libpgplot.a        ) rm -f $(PETOOLS_PREFIX)/lib/libpgplot.a
+	if ( -f $(PETOOLS_PREFIX)/lib/libpgplot.so.5.2   ) rm -f $(PETOOLS_PREFIX)/lib/libpgplot.so.5.2 
+	if ( -l $(PETOOLS_PREFIX)/lib/libpgplot.so.5     ) rm -f $(PETOOLS_PREFIX)/lib/libpgplot.so.5
+	if ( -l $(PETOOLS_PREFIX)/lib/libpgplot.so       ) rm -f $(PETOOLS_PREFIX)/lib/libpgplot.so
+	if ( -f $(PETOOLS_PREFIX)/lib/libpgplot.1.dylib  ) rm -f $(PETOOLS_PREFIX)/lib/libpgplot.1.dylib
+	if ( -l $(PETOOLS_PREFIX)/lib/libpgplot.dylib    ) rm -f $(PETOOLS_PREFIX)/lib/libpgplot.dylib
+	if ( -f $(PETOOLS_PREFIX)/lib/libpgplot.a        ) rm -f $(PETOOLS_PREFIX)/lib/libpgplot.a
+	if ( -f $(PETOOLS_PREFIX)/lib/libsys/libvec_HP10.20.a    ) rm -f $(PETOOLS_PREFIX)/lib/libsys/libvec_HP10.20.a
+	if ( -f $(PETOOLS_PREFIX)/lib/libsys/cl_patch_for_HP11.a ) rm -f $(PETOOLS_PREFIX)/lib/libsys/cl_patch_for_HP11.a
+	if ( -d $(PETOOLS_PREFIX)/lib/libsys           ) rmdir $(PETOOLS_PREFIX)/lib/libsys
+	if ( -f $(PETOOLS_PREFIX)/bin/pgxwin_server    ) rm -f $(PETOOLS_PREFIX)/bin/pgxwin_server
+	if ( -f $(PETOOLS_PREFIX)/bin/diagi_batch      ) rm -f $(PETOOLS_PREFIX)/bin/diagi_batch
+	if ( -f $(PETOOLS_PREFIX)/bin/diagi_color_demo ) rm -f $(PETOOLS_PREFIX)/bin/diagi_color_demo
+	if ( -f $(PETOOLS_PREFIX)/bin/diagi_dec        ) rm -f $(PETOOLS_PREFIX)/bin/diagi_dec
+	if ( -f $(PETOOLS_PREFIX)/bin/diagi_demo       ) rm -f $(PETOOLS_PREFIX)/bin/diagi_demo
+	if ( -f $(PETOOLS_PREFIX)/bin/diagi_key        ) rm -f $(PETOOLS_PREFIX)/bin/diagi_key
+	if ( -f $(PETOOLS_PREFIX)/bin/diagi_rst        ) rm -f $(PETOOLS_PREFIX)/bin/diagi_rst
+	if ( -f $(PETOOLS_PREFIX)/bin/diagi_user       ) rm -f $(PETOOLS_PREFIX)/bin/diagi_user
+	if ( -f $(PETOOLS_PREFIX)/bin/md_demo          ) rm -f $(PETOOLS_PREFIX)/bin/md_demo
+	if ( -f $(PETOOLS_PREFIX)/bin/matvec_test      ) rm -f $(PETOOLS_PREFIX)/bin/matvec_test
+	if ( -f $(PETOOLS_PREFIX)/bin/matvec_test.csh  ) rm -f $(PETOOLS_PREFIX)/bin/matvec_test.csh
+	if ( -f $(PETOOLS_PREFIX)/bin/petools_vars     ) rm -f $(PETOOLS_PREFIX)/bin/petools_vars
+	if ( -f $(PETOOLS_PREFIX)/bin/grfont.dat       ) rm -f $(PETOOLS_PREFIX)/bin/grfont.dat
+	if ( -f $(PETOOLS_PREFIX)/bin/rgb.txt          ) rm -f $(PETOOLS_PREFIX)/bin/rgb.txt
+	if ( -f $(PETOOLS_PREFIX)/share/grfont.dat     ) rm -f $(PETOOLS_PREFIX)/share/grfont.dat
+	if ( -f $(PETOOLS_PREFIX)/share/rgb.txt        ) rm -f $(PETOOLS_PREFIX)/share/rgb.txt
+	if ( -f $(PETOOLS_PREFIX)/module/pet_util.mod  ) rm -f $(PETOOLS_PREFIX)/module/pet_util.mod
+	if ( -f $(PETOOLS_PREFIX)/module/matvec.mod    ) rm -f $(PETOOLS_PREFIX)/module/matvec.mod
+	if ( -f $(PETOOLS_PREFIX)/doc/diagi_0.hlp      ) rm -f $(PETOOLS_PREFIX)/doc/diagi_0.hlp
+	if ( -f $(PETOOLS_PREFIX)/doc/diagi_1.hlp      ) rm -f $(PETOOLS_PREFIX)/doc/diagi_1.hlp
+	if ( -f $(PETOOLS_PREFIX)/doc/diagi_2.hlp      ) rm -f $(PETOOLS_PREFIX)/doc/diagi_2.hlp
+	if ( -f $(PETOOLS_PREFIX)/doc/diagi_3.hlp      ) rm -f $(PETOOLS_PREFIX)/doc/diagi_3.hlp
+	if ( -f $(PETOOLS_PREFIX)/doc/diagi_4.hlp      ) rm -f $(PETOOLS_PREFIX)/doc/diagi_4.hlp
+	if ( -f $(PETOOLS_PREFIX)/doc/diagi_5.hlp      ) rm -f $(PETOOLS_PREFIX)/doc/diagi_5.hlp
+	if ( -f $(PETOOLS_PREFIX)/share/sgdass_color_default.txt $(PETOOLS_PREFIX)/share/sgdass_color_default.txt
+	if ( -f $(PETOOLS_PREFIX)/share/sgdass_color_civitis.txt $(PETOOLS_PREFIX)/share/sgdass_color_civitis.txt
+	if ( -f $(PETOOLS_PREFIX)/share/sgdass_color_grey.txt    $(PETOOLS_PREFIX)/share/sgdass_color_grey.txt
+
+clean:	
+	@cd pet_util;  make clean      >>& /dev/null; set  status = 0
+	@cd matvec;    make clean      >>& /dev/null; set  status = 0
+	@cd diagi;     make clean      >>& /dev/null; set  status = 0
+	@cd testware;  make clean      >>& /dev/null; set  status = 0
+	@cd blas_stub; make clean      >>& /dev/null; set  status = 0
+	@if ( -f lib/libpetools.a                 ) rm -f lib/libpetools.a
+	@if ( -f lib/libpgplot.a                  ) rm -f lib/libpgplot.a
+	@if ( -f lib/libpgplot.sl                 ) rm -f lib/libpgplot.sl
+	@if ( -f lib/libpetools.so.1.0            ) rm -f lib/libpetools.so.1.0
+	@if ( -f lib/libpgplot.so.5.2             ) rm -f lib/libpgplot.so.5.2
+	@if ( -d pgplot/bin/ ) find  pgplot/bin/ -name "*" -exec  rm -f {} \; >>& /dev/null; 
+	@find  bin/        -name "*" -exec  rm -f {} \; >>& /dev/null; 
+	@support/rmfile     build    
+	@find   module/    -name "*mod" -exec  rm -f {} \;
+
+distclean:	clean
+	./reconfigure -d > /tmp/petools_last_configure.txt ; chmod 666 /tmp/petools_last_configure.txt
+
+	@if ( -f $(PETOOLS_ROOT)/include/diagi.i        ) rm -f $(PETOOLS_ROOT)/include/diagi.i
+	@if ( -f $(PETOOLS_ROOT)/include/diagi_local.i  ) rm -f $(PETOOLS_ROOT)/include/diagi_local.i
+	@if ( -f $(PETOOLS_ROOT)/include/solve_paths.i  ) rm -f $(PETOOLS_ROOT)/include/solve_paths.i
+	@if ( -f $(PETOOLS_ROOT)/include/matvec.i       ) rm -f $(PETOOLS_ROOT)/include/matvec.i
+	@if ( -f $(PETOOLS_ROOT)/include/pgplot_local.i ) rm -f $(PETOOLS_ROOT)/include/pgplot_local.i
+	@if ( -f $(PETOOLS_ROOT)/include/pgplot_local.h ) rm -f $(PETOOLS_ROOT)/include/pgplot_local.h
+	@if ( -f temp/conf.log ) rm $(CONF_LOG)
+	@if ( -f temp/conf.log ) rm $(BUILD_LOG)
+	@cd matvec;   make distclean  >>& /dev/null; set  status = 0
+	@find  temp/       -name "*" -exec  rm -f {} \; >>& /dev/null; 
+	@if ( -f support/petools_vars             ) rm -f support/petools_vars 
+	@if ( -f support/petools_postinstall_vars ) rm -f support/petools_postinstall_vars
+	@if ( -f include/mk5_preprocessor_directives.inc ) rm -f include/mk5_preprocessor_directives.inc
+	@if ( -d pgplot ) rm -fR pgplot 
+	@support/rmfile     build
+	@support/rmfile     Makefile        
+	@support/purge      support
+	@support/purge      pet_utls
+	@support/purge      diagi
+	@support/purge      blas_stub
+	@support/purge      include
+	@support/purge      doc
+	@support/purge      pgplot_plus
+	@support/purge      example
+	@support/purge      ./
+
+tar:	distclean
+	@if ( -f /tmp/petools_${PETOOLS_VERSION} ) rm -f /tmp/petools_${PETOOLS_VERSION}
+	cd ../; tar -cf - petools_${PETOOLS_VERSION} | \
+                bzip2 -c > /tmp/petools-$(PETOOLS_VERSION).tar.bz2 
+	@cp /tmp/petools-$(PETOOLS_VERSION).tar.bz2  /astrogeo.org/petools/
+	@cp INSTALL                                  /astrogeo.org/petools/INSTALL.txt
+	@cp README                                   /astrogeo.org/petools/README.txt
+	@sync
+	@ls -lrt /astrogeo.org/petools/petools-${PETOOLS_VERSION}.tar.bz2
+	@echo "tar-ball has been copied to the web page"
+	@echo "========================================"

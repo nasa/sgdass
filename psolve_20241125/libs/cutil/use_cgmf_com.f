@@ -1,0 +1,48 @@
+      SUBROUTINE USE_CGMF_COM(STRING)
+      IMPLICIT NONE
+!
+! 1.  USE_CGMF_COM PROGRAM SPECIFICATION
+!
+! 1.1 Access a CGM's commons.
+!
+! 1.2 REFERENCES:
+!
+! 2.  USE_CGMF_COM INTERFACE
+!
+! 2.1 Parameter File
+      INCLUDE 'solve.i'
+!
+! 2.2 INPUT Variables:
+!
+      CHARACTER*(*) STRING
+!
+! STRING - Requested access type ('R'=read; 'W'=write)
+!
+! 2.3 OUTPUT Variables: None
+!
+! 2.4 COMMON BLOCKS USED
+      INCLUDE 'socom.i'
+      INCLUDE 'prfil.i'
+      CHARACTER*(NAME_SIZE) SAVNAM
+      INTEGER*4 FILDES
+      INTEGER*2 IDIRECT(BLOCK_WORDS)
+      COMMON/SAVCGM/FILDES,IDIRECT
+      COMMON/NAMCGM/SAVNAM
+      SAVE /SAVCGM/,/NAMCGM/
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES:
+!       CALLED SUBROUTINES: cgm_com
+!
+! 3.  LOCAL VARIABLES
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!
+! 5.  USE_CGMF_COM PROGRAM STRUCTURE
+!
+      CALL CGM_COM(IDIRECT,SAVNAM,FILDES,STRING)
+!
+      RETURN
+      END

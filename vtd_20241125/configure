@@ -1,0 +1,159 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of vtd. It creates the           *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ### 18-MAY-2004    configure   v1.8 (c)  L. Petrov 27-OCT-2017 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv VTD_VERSION            "20241125"
+setenv NERS_VERSION_MIN       "20200501" 
+setenv SPD_CLIENT_VERSION_MIN "20241125"
+setenv PETOOLS_VERSION_MIN    "20241115" 
+setenv VTD_PREFIX          $HOME
+setenv VTD_DATA            $VTD_PREFIX/share/vtd
+setenv VTD_ROOT           `dirname $0`
+if ( $VTD_ROOT == '.' )    setenv VTD_ROOT `pwd`
+setenv PETOOLS_DIR         $HOME
+setenv VTD_CFITSIO_DIR     $HOME
+setenv VTD_CURL_DIR        /usr/include
+setenv VTD_SPD_CLIENT_DIR  $HOME
+setenv VTD_NERS_DIR        $HOME
+setenv VTD_NOOPT           "NO"
+setenv VTD_OS              `uname`
+setenv VTD_DEBUG           NO
+setenv CONF_LOG            ${VTD_ROOT}/temp/conf.log
+setenv BUILD_LOG           ${VTD_ROOT}/temp/build.log
+#
+set find_vtd_data = 0
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_DIR "$str"
+          set find_option = 1
+     endif
+#
+     set match_debug = `echo $arg | awk '{print index($1,"--debug")}'`
+     if ( $match_debug > 0 ) then
+	  setenv VTD_DEBUG YES
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv VTD_NOOPT "YES"
+          set find_option = 1
+     endif
+#
+     set match_data=`echo $arg | awk '{print index ($1,"--with-cfitsio")}'`
+     if ( $match_data > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv VTD_CFITSIO_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_data=`echo $arg | awk '{print index ($1,"--without-cfitsio")}'`
+     if ( $match_data > 0 ) then
+	  setenv VTD_CFITSIO_DIR ""
+          set find_option  = 1
+     endif
+#
+     set match_difmap_dir=`echo $arg | awk '{print index ($1,"--with-curl")}'`
+     if ( $match_difmap_dir > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv VTD_CURL_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_difmap_dir=`echo $arg | awk '{print index ($1,"--without-curl")}'`
+     if ( $match_difmap_dir > 0 ) then
+	  setenv VTD_CURL_DIR ""
+          set find_option  = 1
+     endif
+#
+     set match_data=`echo $arg | awk '{print index ($1,"--with-spd_client")}'`
+     if ( $match_data > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,19)}'`
+	  setenv VTD_SPD_CLIENT_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_data=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_data > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv VTD_NERS_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv VTD_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+	  if ( $find_vtd_data == 0 ) then
+               setenv VTD_DATA $VTD_PREFIX/share/vtd
+          endif
+          set find_option = 1
+     endif
+#
+     set match_data=`echo $arg | awk '{print index ($1,"--data")}'`
+     if ( $match_data > 0 ) then
+          setenv VTD_DATA `echo $arg | awk '{printf substr($1,8)}'`
+	  set find_vtd_data = 1
+          set find_option = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $VTD_ROOT/doc/vtd_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "vtd: "$VTD_VERSION
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set DATE_LONG = `date "+%d-%h-%Y %H:%M:%S" | tr "[a-z]" "[A-Z]"`
+echo  "Configuration of vtd $VTD_VERSION on $DATE_LONG " >! $CONF_LOG
+echo  $0 $argv >>! $CONF_LOG
+#
+if ( $VTD_DEBUG == "NO" ) then
+     support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+  else
+     csh -x support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run gmake"
+     exit 0
+  else
+     echo "Error in configuration."
+     exit $config_status
+endif

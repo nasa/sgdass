@@ -1,0 +1,111 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of atpr. It creates the          *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ###  27-JUL-2022  configure    v1.0 (c) L. Petrov  27-JUL-2022  ### *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv ATP_VERSION         "20240507"
+setenv PETOOLS_VERSION_MIN "20240515"
+setenv NERS_VERSION_MIN    "20210824"
+setenv ATP_PREFIX     /opt
+setenv ATP_ROOT       `dirname $0`
+if  ( $ATP_ROOT == '.' ) setenv ATP_ROOT `pwd`
+setenv PETOOLS_DIR         $HOME
+setenv NERS_PREFIX         $HOME
+setenv CONF_LOG            ${ATP_ROOT}/temp/conf.log
+setenv BUILD_LOG           ${ATP_ROOT}/temp/build.log
+setenv ATP_NOOPT    NO
+setenv ATP_debug    0
+#
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_prefix > 0 ) then
+          setenv ATP_debug 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv ATP_NOOPT YES
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv ATP_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_DIR "$str"
+          set find_option = 1
+     endif
+#
+     set match_ners=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_ners > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv NERS_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $ATP_ROOT/doc/atp_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "ATP: $ATP_VERSION"
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+echo "ATP config  $date_stamp  on  $host_name" >! $CONF_LOG
+echo $0 $argv >> $CONF_LOG
+if ( $ATP_debug == 1 ) then
+     csh -x support/config.csh | tee -a $CONF_LOG   
+   else
+     support/config.csh | tee -a $CONF_LOG   
+endif 
+if ( `grep Error $CONF_LOG` == "" ) then
+     set config_status = 0
+  else 
+     set config_status = 1
+endif 
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run gmake"
+     exit $config_status 
+  else
+     exit $config_status 
+endif

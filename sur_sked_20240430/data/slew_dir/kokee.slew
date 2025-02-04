@@ -1,0 +1,15 @@
+# Station slew format of 2017.12.26
+#
+SHORT_NAME: KOKEE     Kk
+COORD:      KOKEE     meters     -5543837.628    -2054567.859     2387851.939
+MOUNT:      KOKEE     char       ALTAZ
+SLEW_AZ:    KOKEE     deg/sec    2.11
+SLEW_EL:    KOKEE     deg/sec    2.25
+ACCL_AZ:    KOKEE     deg/sec^2  0.75
+ACCL_EL:    KOKEE     deg/sec^2  0.25
+TSETTLE:    KOKEE     sec        2.0
+EL_MIN:     KOKEE     deg        2.0
+EL_MAX:     KOKEE     deg       89.7
+AZ_RANGE:   KOKEE     deg      -90.0 90.0 270.0 450.0
+RECORDER:   KOKEE     char      mark5c
+PREOB:      KOKEE     sec       10.0

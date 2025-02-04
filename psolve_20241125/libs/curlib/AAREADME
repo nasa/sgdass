@@ -1,0 +1,7 @@
+#
+#  curlib is the CURSES compatibility library.  These interface
+#  calls from Fortran to the standard UNIX curses calls.
+#
+#  Note that the backslash character has been used at the end of each line
+#  to indicate continuation.
+#

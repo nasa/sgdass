@@ -1,0 +1,645 @@
+                              DiaGI user guide.
+                              같같같같같같같같�
+  I. Introduction.
+  ~~~~~~~~~~~~~~~~
+
+  DiaGI (Dialogue Graphic Interface) is a library of subroutines which allows
+to draw the plot of one or several one-dimension functions BY USING ONLY ONE
+CALL OPERATOR, then interactively change if necessary boundaries of the 
+plotting area, point style, line style, line width, error bar style, to make 
+hardcopy in PostScript or GIF format with or without sending it at the printing
+device and eventually to return to execution of the calling program. DiaGI 
+makes work with graphic as easy as possible and frees user from cumbersome 
+graphic programming. You can put at any place of your program the operator
+
+         CALL DIAGI_1 ( N, X, Y, IUER ) 
+ 
+   look at the plot, transform it, print it, to include the plot in your 
+article and then continue execution of your program.
+
+   DiaGI uses popular software package PGPLOT 
+( http://astro.caltech.edu/~tjp/pgplot/ ) developed by Tim Pearson, California 
+Institute of Technology, tjp@astro.caltech.edu and colleagues. It uses driver
+XSERV ( http://astro.caltech.edu/~tjp/pgplot/xwdriv.html ) for X-window 
+developed by A. Fey, M. C. Shepherd and slightly modified by L. Petrov.
+
+
+  II. Calling DiaGI.
+  ~~~~~~~~~~~~~~~~~~
+
+  DiaGI may be called by two ways: using simplified interface and using verbose 
+interface. Usage of verbose interface assumes filling fields of the data 
+structure declaring initial parameters of the plotting and addresses of the 
+arrays of the arguments, values and errors of the functions to be plotted. This 
+way is not recommended for routine work unless special effects are needed. 
+Simplified interface assumes specifying only the number of points and arrays 
+of the arguments, values (and maybe errors) of the function to be plotted. 
+Initial values of boundaries of the plotting area, point style, line style, 
+line width, error bar style will be set up automatically in accordance with 
+defaults which can be changed by specifying environment variables. If necessary
+user can easily change plotting parameters interactively.
+
+  Simplified interface:
+
+  DIAGI_1    ( M1, T1, X1, IUER ) 
+  DIAGI_1E   ( M1, T1, X1, E1, IUER ) 
+  DIAGI_2    ( M1, T1, X1, M2, T2, X2, IUER ) 
+  DIAGI_2E   ( M1, T1, X1, E1, M2, T2, X2, E2, IUER ) 
+  DIAGI_3    ( M1, T1, X1, M2, T2, X2, M3, T3, X3, IUER ) 
+  DIAGI_3E   ( M1, T1, X1, E1, M2, T2, X2, E2, M3, T3, X3, E3, IUER ) 
+  DIAGI_MUL  ( M1, M2, N1_TAB, N2, MES, T, X, IUER )
+  DIAGI_EMUL ( M1, M2, N1_TAB, N2, MES, T, X, E, IUER )
+  DIAGI_SETDEF  ( IUER, ENV_NAME, ENV_VALUE )
+
+  DIAGI_1, DIAGI_2, DIAGI_3 draw at the graphic window the plot of one, two or 
+three functions without error bars. Mk (where k is 1,2,3) is the number of 
+points of the k-th function, Tk is the array of arguments of the k-th function, 
+Xk is the array of values of the k-th function. IUER is the error handler 
+parameter. Output value 0 means normal termination, positive values means that
+some error occurred during DiaGI work. If the input value of IUER is -1 then in 
+the case of error the error message will be printed at the text window. All 
+others input values will suppress printing error messages. 
+
+  DIAGI_1E, DIAGI_2E, DIAGI_3E are extensions of DIAGI_1, DIAGI_2, DIAGI_3 
+which require specifying the arrays of errors of the values of the functions.
+Error bar will be drawn for each point. Arrays Ek specify the arrays of errors 
+of the k-th function.
+
+  DIAGI_MUL and DIAGI_EMUL (the latter prints error bars) provide a simplified
+interface for plotting up to 32 functions.
+
+  DIAGI_SETDEF  changes value of environment variable during execution. 
+                This routine can be called before the first call of a routine
+                of short interface to DIAGI.
+      The following environment variable can be changed by calling DIAGI_SETDEF:
+
+      DIAGI_IBST -- error bar style in range [0,4]:
+                    0 -- no error bar,
+                    1 -- error bar with markers,
+                    2 -- error bar without markers,
+                    3 -- connected error bars,
+                    4 -- filled area;
+      DIAGI_ILST -- line style in range  [1,3];
+                    1 -- points are not connected;
+                    2 -- adjacent points are connected by a strait line,
+                    3 -- adjacent points are connected by a cubic spline;
+      DIAGI_IOST -- overplot style in range [0,1];
+                    0 -- no information about points beyond the plotting area;
+                    1 -- the points which are beyond the plotting area are 
+                         shown a little bit beyond the boundary which they
+                         exceed.
+      DIAGI_IPST -- point style in range [1,5];
+                    1 -- small dot,
+                    2 -- small circle,
+                    3 -- large circle,
+                    4 -- small disk,
+                    5 -- large disk;
+      DIAGI_IWST -- line width in range  [1,3];
+	            1 -- thin line,
+                    2 -- medium width line,
+                    3 -- thick width line;
+      DIAGI_ICL1 -- first  colour index in range  [1,32];
+      DIAGI_ICL2 -- second colour index in range  [1,32];
+      DIAGI_ICL3 -- third  colour index in range  [1,32];
+                    in order to learn which colour correspond to a given
+                    colour index, use demonstration program diagi_dec;
+      DIAGI_CTIT -- Plot title as a character string;
+      DIAGI_UNIT -- Plot units for argument as a character string;
+
+    For example: 
+        CALL DIAGI_SETDEF ( IUER, 'DIAGI_ILST', 1 ) ! set a point-like style
+        CALL DIAGI_SETDEF ( IUER, 'DIAGI_CTIT', 'X pole coordinate' ) 
+
+    
+
+  All real arrays ( T1, X1, E1, T2, X2, E2, T3, X3, E3 ) have type REAL*8,
+all other formal parameters ( M1, M2, M3, IUER ) have type INTEGER*4
+
+  Meaning of the parameters is the following:
+
+  M1 -- the number of points of the first function to be plotted.
+  T1 -- array (REAL*8) of the arguments of the first function to be plotted. 
+        Dimensions of the array is M1.
+  X1 -- array (REAL*8) of the values of the first function to be plotted. 
+        Dimensions of the array is M1.
+  E1 -- array (REAL*8) of the uncertainties of the first function to be 
+        plotted. Dimensions of the array is M1.
+ 
+  Parameters M2, T2, X2, E2 are related to the second function and 
+  parameters M2, T2, X2, E2 are related to the third function.
+
+  Full (verbose) interface:
+
+  DIAGI    ( DIAGI_S, IUER )
+
+  DIAGI_S is the data structure specified in diagi.i . Fields of DIAGI_S should 
+be initialized before calling DIAGI.
+
+  Fields which have to be defined in using long interfaces are marked in
+  diagi.i as "external (user-defined)".
+
+  DiaGI plot may be saved in intermediary file (this action is bound with key
+  "S"). Then it may be read from this file using routine DIAGI_RES
+
+  CALL DIAGI_RES ( FINAM, DIAGI_S, IUER )
+
+  where FINAM is file name with saved plot. Then it may be drawn again by call
+  DIAGI.
+
+
+  IIb. Calling Multi_DiaGI.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  MULTI_DIAGI  is an extension of DiaGI and this routine provides a convenient 
+interface to DiaGI for the case when more than one plot is to be displayed and 
+some actions should activated by hitting a button.
+
+   CALL MULTI_DIAGI ( COMMON_TITLE, MPL, NC, NR, TITS, MPB, 
+     #  BUTTON_NAME, BUTTON_LET, PREF_NAME, DIAGI_S, ICODE, IUER )
+
+   Multi_DiaGI  displays MPL plots and MPB buttons at one graphic
+   PGPLOT screen. MPL or MPB or both can be zero and then Multi_DiaGI
+   works in a special mode.
+
+   Common title is displayed at the top of the screen.
+
+   MPL plots are displayed in small boxes at the left part of the
+   screen. User can point a cursor to a box with a small plot and
+   click the left or middle mouse button. Then the plot will be
+   magnified to entire screen and user is able to manipulate with a
+   plot by using DiaGI commands. After leaving DiaGI level, by
+   hitting X or double clicking the right button, control is passed
+   back to a Multi_DiaGI level and the set of small boxes is
+   displayed again. Changes which user has done in DiaGI level are
+   stored and displayed at Multi_DiaGI level.
+
+   MPB buttons are displayed at the right part of the screen. User
+   can activate a button by a) pointing a cursor to a box and
+   clicking a left or middle mouse button; b) hitting a letter-code.
+   Multi_DiaGI returns a button index upon activating a button.
+
+   The following commands are available in Multi_DiaGI level:
+     1) ? -- get on-line help information;
+     2) X or <right_mouse_button> -- quit Multi_DiaGI;
+     3) <left_mouse_button> or <middle_mouse_button> -- magnify the box
+        or activate a button (if a cursor points to a small box with
+        plot or to a button).
+     4) <CNTRL/P> make a hardcopy of the current window in PS or GIF format;
+     5) <CNTRL/W> make a hardcopy of the current window and all plots
+        in PS or GIF format.
+
+   If  MPB=0  then plots occupies entire screen.
+   If  MPL=0  then command buttons occupies entire screen.
+   If  MPL=0  and  MPB=0  then only a common title is displayed.
+
+   Thus, MULTI_DIAGI may be used 
+   a) for displaying only a set of boxes with plots;
+   b) as a menu-maker -- only action buttons are displayed;
+   b) as both menu-maker and for displaying a set of boxes with plots.
+   
+
+   It is assumed that plotting information and arrays to be displayed
+   are put in the array of data structures DIAGI_S.
+
+   For more details see external comments to source code.
+
+  III. Using DiaGI.
+  ~~~~~~~~~~~~~~~~~
+
+  When DiaGI is called the first time in session it creates graphic window.
+Graphic window takes 100% screen in width and about 85% in height. Initial 
+coordinates of the graphic window can be customized. Window can be resized
+but its content will not be resized and will be clipped out near the edges.
+Window contains plotting axis box, title at the top, DiaGI label at the bottom
+and the plot itself within plotting area. If graphic window was iconified 
+before it will be expanded in the beginning of the work. But window
+is not become active automatically. To activate it user should make one of the
+action in dependence of the current setting of window manager: either to click
+the frame of the window (not the frame of the plot) using mouse or to focus 
+the cursor at the graphic window. DiaGI can show up to 32 functions displayed
+by different colours. One of the functions is a current function. Operation
+of changes of plotting attributes are applied to the current function (colour).
+
+  DiaGI provides capacity to
+  -- change plotting boundaries using mouse;
+  -- change plotting boundaries automatically to include all points leaving
+     small fields;
+  -- change title;
+  -- change main function (or current colour) when more than one function is 
+     displayed;
+  -- change point style for the current function (colour);
+  -- change line style for the current function (colour);
+  -- change line width for the current function (colour);
+  -- change error bar representation style for the current function (colour);
+  -- change overdraft style;
+  -- make graphic output in GIF or PostScipt format, to write it on disk and
+     to send it at the printer if necessary;
+  -- to return to initial plotting parameters;
+  -- to get information about the point of the current function (colour) to be 
+     nearest to the cursor: argument, value, error, index of the current point 
+     in the arrays, index of the current function (colour);
+  -- to show on-line help information;
+  -- to terminate displaying graphic and to pass control to the calling routine;
+  -- to save the plot in intermediary file and then to draw it again.
+
+ Detailed description of commands usage is in file diagi_2.hlp
+
+ If these capacities seem insufficient, the set of commands may be expanded
+by defining user DiaGI functions.
+
+  IV. Installing DiaGI.
+  ~~~~~~~~~~~~~~~~~~~~~
+
+  Firstly PGPLOT should be installed. See http://astro.caltech.edu/~tjp/pgplot/
+for details. Xwindow server (part of PGPLOT package) should be installed 
+properly. Directory name where executable pgxwin_server is located should be
+either mentioned in your PATH or in environment variable PGPLOT_DIR.
+
+  Your make for linking your program with diagi library should contain the 
+following libraries in the list of libraries (NB: the order is important)
+
+        $(MK4_ROOT)/diagi/diagi.a           	\
+        $(MK4_ROOT)/pet_util/pet_util.a		\
+	$(MK4_ROOT)/libs/matvec/matvec.a      	\
+        $(MK4_ROOT)/libpgplot.sl      		\
+	$(SOLVE_LIB_X11)			\
+	$(SOLVE_LIB_XT)				\
+	$(SOLVE_LIB_X11)			\
+	$(SOLVE_LIB_XHP11)			\
+        $(SOLVE_LIB_VEC)			\
+        $(SOLVE_LIB_BLAS)			\
+        -libU77.a
+
+  where variables PGPLOT_DIR should point at the directory with PGPLOT 
+libraries, and SOLVE_PATH should point to the directory where trees with
+libraries diagi.a and pet_util.a libraries are located.
+
+
+  V. Customizing DiaGI.
+  ~~~~~~~~~~~~~~~~~~~~~
+
+  Initial placement of the graphic window is determined in x-resource file.
+You should add the following line to the file ~/.Xdefaults in the case if you
+use a big screen: 340x280mm
+
+pgxwin.Win.geometry:	1260x800+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+
+and 
+
+pgxwin.Win.geometry:	1000x680+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+
+if use a small screen: 300x230mm
+
+1260x800+0+90 means that the window will have 1260 pixels width, 800 in height,
+0 -- shift to the right respectively to the left edge of the screen, 90 pixels
+shift down respectively to the top edge of the screen. Parameters window width
+and window heights are ignored.
+"pgxwin.Win.iconize:     True" means that PGPLOT window will be iconize and
+go out from the screen after termination of DiaGI. This resource is MANDATORY,
+otherwise DiaGI will require confirmation from text screen when it terminates.
+
+  Diagi supports two screens: big screen -- 340x280mm and 
+small screen -- 300x230mm. Default value is set during compilation. 
+
+  The following command should be run before the first call of pgxwin_server:
+
+xrdb -merge ~/.Xdefault
+
+  NB: if pgxwin_server is running xrdb will be ignored! To change initial 
+position of the graphic window pgxwin_server should be stopped before it.
+It is reasonable to put the command xrdb -merge ~/.Xdefault at your
+login script.
+
+  The following environment variable affects at DIAGI behavior:
+
+  PGPLOT_DIR   -- directory where files pgwin_server and libpgplot.sl are kept
+  HELP_DIR     -- directory name where help files: diagi_0.hlp, diagi_0.hlp, 
+                  diagi_2.hlp are kept;
+  DIAGI_PRICOM -- contains the command for printing PostScript file. Example:
+                  "lp -onb -dlaser2" for printer which has built-in PostScript
+                  interpreter (don't use it if printer doesn't have such a
+                  capacity!)
+  DIAGI_SCREEN -- diagi can be used for big screen: 340x280mm and 
+                  for small screen: 300x230mm. Default value is set during
+                  compilation. Environment variable DIAGI_SCREEN overrides
+                  default settings. Supported values in the increasing screen
+                  size:
+
+                  "TINY"  or "1"
+                  "SMALL" or "2"
+                  "BIG"   or "3"
+                  "HUGE"  or "4"
+                  "VAST"  or "5"
+
+  DIAGI_IBST   -- Default error bar style: integer in range [0,4]
+  DIAGI_ILST   -- Default line style: integer in range [1,3]
+  DIAGI_IOST   -- Default overplot style: integer in range [0,1]
+  DIAGI_IPST   -- Default point style: integer in range [1,5]
+  DIAGI_IWST   -- Default line width: integer in range [1,3]
+  DIAGI_CTIT   -- Default title: arbitrary line up to 128 symbols long
+  DIAGI_UNIT   -- Default title: arbitrary line up to 128 symbols long
+  DIAGI_ICL1   -- Default colour index for the first  function: range [0-32]
+  DIAGI_ICL2   -- Default colour index for the second function: range [0-32]
+  DIAGI_ICL3   -- Default colour index for the third  function: range [0-32]
+ 
+ Mentioned above defaults are ignored when verbose interface is used.
+
+
+  VI. Restrictions.
+  ~~~~~~~~~~~~~~~~~
+
+  1) No more than 32 functions can be displayed at the same time.
+  2) Arrays of function arguments should be ordered in increasing order. 
+     Otherwise spline interpolation cannot be applied to that function (error
+     message will be issued at the text window and interpolation mode will be 
+     changed from spline to linear automatically.)
+  3) Plotting boundary cannot be set up closer than 10^-4 part of the maximal
+     value of the boundaries. For example, if the left vertical boundary
+     has value 65 then the right vertical boundary should be no less than
+     65.0065 (65 + 10**-4*65). Such a restriction stems from the reason that 
+     internal data structures of PGPLOT has REAL*4 type.
+  4) Internal DiaGI subroutines has names like DIAGI_XXX. It is desirable to
+     avoid such names in user programs which are linked with diagi.a library.
+
+
+  VII. Demonstration programs.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     There are two demonstration programs:
+
+     diagi_demo  -- draws plot of three functions with error bars.
+     diagi_dec   -- displays all DiaGI predefined colours.
+     diagi_rst   -- reads saved file of DiaGI plot and draws it.
+     md_demo     -- draws a set of plots in Multi_DiaGI mode.
+     diagi_batch -- example of the procedure which calls DiaGI in batch mode
+     diagi_user  -- example of using DiaGI user defined functions.
+
+
+  VIII. Troubleshooting.
+  ~~~~~~~~~~~~~~~~~~~~~~
+
+  1) Error message during linking. Check library to be linked and the order of
+     libraries. Check is there common routine names.
+
+  2) Error message during execution of DiaGI: Couldn't find program 
+     "pgxwin_server". Check path to it or the value of PGPLOT_DIR.
+
+  3) Colours at all window are changed when DiaGI starts graphic. It is the 
+     problem connected with work X-applications. Tim Pearson gives the 
+     following explanation ( http://astro.caltech.edu/~tjp/pgplot/faq.html ):
+
+     Colors are a limited resource on X displays: most are 8-bit devices that 
+     can display only 256 different colors simultaneously. Different client 
+     programs have to divide the available colors between them. If no colors 
+     are available for a new window, it either has to make do by sharing colors
+     that are already in use by other windows (in which case it shouldn't 
+     change them), or it has to allocate a ``private color map'' which will 
+     display the correct colors, but only while the cursor is in that window: 
+     colors of other windows will be incorrect. The problem is much less severe
+     for 24-bit displays which have many more colors available.
+
+     Netscape is particularly bad: it appears to grab all the available colors, 
+     forcing PGPLOT to use a private color map, which produces the result you 
+     see. You can tell Netscape to use less colors (see its documentation, 
+     under Help:Frequently Asked Questions:Netscape Navigator for X: item 14). 
+     Or you can open the PGPLOT window before the Netscape window: this forces 
+     Netscape to use less colors (create an /XSERVE window and keep it around 
+     for your PGPLOT programs). You can also tell PGPLOT to allocate less 
+     colors for each window (using X resources: see xwdriv), which may reduce 
+     conflicts with other applications, but not with greedy ones like Netscape.
+
+     You can restrict the number of colours when pgxwin_server stars by adding
+     the following line in your ~/.Xdefaults file:
+
+     pgxwin.Win.maxColors:   C
+     where C -- the number of colours. DiaGI uses 5 + 2*<number_of_functions>
+     colours.
+
+     And then activate them by the command  xrdb -merge ~/.Xdefaults
+     NB! pgxwin_server should be stopped beforehand.
+
+  4) Some colours are black despite you expected something else. You should 
+     specify the maximal number of colours for pgxwin_server (not for DiaGI!)
+     directly. See above.
+
+  5) There is an extra white space around the hard-copy of plot in Postscript 
+     mode. It is not a bug. If you need remove white space by setting 
+     appropriate Bounding box. You can do it by epstool or manually using
+     Ghostview. Moving a mouse in the plot displayed by Ghostview you see 
+     pixel coordinates of the current cursor position. Find pixel coordinates 
+     of the desirable left, low, right and up edge of the  plot. Edit the 
+     postscript file. The 6-th line of the file should be  %%BoundingBox: 
+     (atend). Put a blank-serarated list of pixel coordinates of the left, low, 
+     right and up edge instead of words "(attend)", for example, 
+     %%BoundingBox: 75 85 510 357 . That is enough. Don't forget to switch on 
+     clipping on when the file becomes a part of LaTeX document. The command 
+     \epsfclipoff defined in epsf.sty will force LaTeX to apply the bounding 
+     box in according with Postscript directive %%BoundingBox.
+     
+
+  IX. History:
+  ~~~~~~~~~~~~
+
+     13-OCT-97       Beginning of the development of DiaGI
+
+     23-OCT-97  1.0  First working version.
+
+     03-NOV-97  1.1  Minor bug in DIAGI_1E fixed. Capacity to suppress
+                     final farwell message was added.
+
+     05-NOV-97  1.2  Bug in DIAGI_SPL fixed.
+
+     13-NOV-97  1.3  Minor change in diagi_inq.f: previous version didn't 
+                     show information about an error when the error bar style 
+                     was 0 regardless whether that information was available or 
+                     not. New version shows error information always if it
+                     is available.
+
+     11-DEC-97  1.4  Action "view plotting values" added and bound with key V.
+                     Hitting V displays in MATView mode arguments, values and 
+                     errors (if specified) of the current colour at the text 
+                     window from which DiaGI was activated.
+
+     18-MAY-97  1.5  Changed behavior: action "Terminate plot" is bound with
+                     double click of <Right_Mouse>. Recourse 
+                     pgxwin.Win.iconize is added. Now DiaGI plot is iconified
+                     automatically when it terminated.
+
+     21-MAY-98  1.6  Action "S" (save plot) is added. diagi_rst program is 
+                     added.
+     03-JUN-98  1.61 Corrected coding error in DIAGI_2
+
+     10-JUL-98  1.7  Added writing the table of values, arguments [,errors] of
+                     the current color when "V" (View plotting values for the 
+                     current color) option is used.
+
+     24-DEC-98  1.8  Added support of "not-a-number", -INF, +INF values for
+                     arguments, values and error bars. "not-a-number" is
+                     treated as 0, -INF as -1.D30, +INF as 1.D30 to prevent
+                     floating exception.
+
+     25-JAN-99  1.9  Added support of additional printing mode: small graphic 
+                     output in GIF format with size 75x45mm.
+
+     22-JUL-99  1.10 Added routine Multi_DiaGI. Added a field NAME in DiaGI
+                     data sgtructure.
+
+     28-SEP-99  1.11 Added support of two sizes of screens: big 340x280mm and
+                     small: 300x230mm. Added support of environment variable
+                     DIAGI_SCREEN which overrides the compilation default.
+
+                     Added a possibility to display a label of units of 
+                     arguments. Added a new command "U" -- change of label of
+                     unit arguments.
+
+     01-NOV-99  1.12 Adjusted sizes for postscritpt "device", added new 
+                     plotting mode: postscript 75x50mm
+
+   2001.06.05   1.13 Made an improvement in the procedure of spline 
+                     interpolation: the previous version computed spline for 
+                     512 points of the input function in the range of its 
+                     definition and as a result resolution was poor if the 
+                     window took a relatively small portion of the range of 
+                     definition of the finction. The new version computes 
+                     spline for 512 points in the window what eliminated the 
+                     problem of poor resolution. Fixed several bugs related 
+                     to traps of floating exceptions.
+
+   2001.05.30   1.14 Added support of environment variable DIAGI_UNIT.
+                     Added routine DIAGI_SETDEF which allows to change defaults
+                     for short interface of DIAGI in execution time.
+
+   2002.08.08   2.0  Massive update.
+                     1) Added support of "overplot" style. If OVST=1 then
+                        DiaGI will display the points which are beyond the 
+                        plotting area. They will be shown several pixels beyond
+                        the boundary which they exceed. If OVST=0, then such
+                        points will not be displayed.
+
+                     2) Added support of batch mode. If DIAGI_S.IBATCH = 1 and
+                        DIAIG_S.IDEV corresponds to a non-interactive device
+                        ( DIAGI_S(1).IBATCH, DIAIG_S(1).IDEV  in Multi_DiaGI )
+                        then DiaGI will make a hard-copy of the plot and 
+                        return to the main program without a request for 
+                        a user input.
+                        
+                     3) Added support of DiaGI user functions. Address of the
+                        entry point, argument list and binding keys may be
+                        specified in DIAIG_S when DiaGI is called with full 
+                        interface. DiaGI will execute a user-defined function
+                        when a binding user-key will be hit. Up to 32 user
+                        functions can be defined. User functions greatly expand 
+                        DiaGI functionality.
+
+                     4) Added support for two additional termination modes:
+                        DIAGI__ERASE and DIAGI__KEEP. 
+
+                     5) Changed the logic of diagi
+                        and multi_diagi: the new version does not destroy and
+                        immediately resurrect the window when a small plot in 
+                        the multi_diagi window is expanded to the large plot 
+                        and/or when the large plots shrinks to the set of 
+                        small plots.
+
+                     6) Added two new examples: diagi_batch and 
+                        diagi_user (demonsrtation of using DiaGI user 
+                        functions).
+
+   23-MAR-2003  2.1  1) Increased parameter MUSA (maximal number of user 
+                        functions from 16 to 32. 
+
+                     2) Added new feature: user init and user quit
+                        function. A user function may be declared as 
+                        "initializing" function. It will be executed 
+                        automatically at the very beginning after defining 
+                        pgplot window, but before actual plotting. A user 
+                        function may be defined as "quitting" function. 
+                        It will be executing automatically just before 
+                        erasing and closing graphic window. In order to 
+                        declare a user function as init and quit function, 
+                        the index of the user function should be put in 
+                        the fields INIT_USER_FUNC and/or QUIT_USER_FUNC    
+                        of DIAGI data structure respectively.
+
+                     3) User fiction now can return two codes: DIAGI__CONT and 
+                        DIAGI__QUIT. Code DIAGI__CONT  means successful 
+                        completion, and DiaGI will wait for a new user 
+                        command. Code DIAGI__QUIT means successful 
+                        completion, forces DiaGI to quit plotting after 
+                        execution of the user function. The quitting user 
+                        function will be called if it is defined. Return 
+                        code DIAGI__QUIT does not force DiaGI to make any 
+                        additional action if it was returned from the user 
+                        quitting function.
+
+                     4) An additional variable MD_IN in DIAGI_S were added for
+                        enhancement of the interface between DiaGI and
+                        MultiDiaGI. The field MD_IN in the *FIRST* element of
+                        DIAGI array, if not zero, forces Multi_DiaGI to
+                        skip plotting the MultiDiaGI plot. Instead of that
+                        Multi_DiaGI calls DiaGI plots which plots the 
+                        MD_IN -th plot. If after that a user quits DiaGI
+                        plots, and control is passed to MultiDiaGI, then
+                        MultiDiaGI will make large plot as in normal mode.
+
+                     5) An additional variable MD_OUT in DIAGI_S were added 
+                        for enhancement of the interface between DiaGI and
+                        MultiDiaGI. If a user goes to the level of DiaGI
+                        inside MultiDiaGI -- and plots the K-th plot and
+                        DIAGI(K).MD_OUT == DIAGI__QUIT, then upon quitting
+                        DiaGI, Multi_DiaGI passes control to the calling
+                        program without making multi-plot and waiting for
+                        the user command.
+                   
+   21-APR-2003  2.2  1) Updated handling non-letter/digit keys in XS/XS driver.
+                        According to the new logic the functional key
+                        Pg_up (Prior) has code 220;
+                        Pg_Dn (Next)  has code 221;
+                        Home          has code 222;
+                        End           has code 223;
+                        Break         has code 224;
+                        Insert        has code 225;
+                        Num_Lock      has code 226.
+
+                        Code of other keys is obtained by using bits 0-7 of
+                        the key code. 
+
+                        NB: actual keycode may be re-defined by a user.
+                        You can learn the key codes by running xmodmap -pk
+                        Program diagi_key returns the actial codes returned
+                        by pgplot.
+
+                      2) Fixed a bug in mutli_diagi: the previous version
+                         died if MPL = 0 .
+                      3) Fixed a bug in diagi_inq: the previous version may
+                         crash when point size was 1 due to initialization
+                         error.
+
+   14-MAY-2003   2.21 1) Fixed a bug: the previous version of multi_DiaGI did 
+                         not close internal PGPLOT save buffers when it 
+                         worked plot bypass mode.
+                      2) Set flag PLOT_UPDATE to .FALSE. upon execution of
+                         DiaGI user initilaization function. It means that
+                         now user initialization function is responsible
+                         for proper plot initialization.
+                      3) Added support of kludge environment variables
+                         DIAGI_MULTI_TITLE_HEIGHT and DIAGI_MULTI_TITLE_WIDTH.
+                         They set font height and font width for the title
+                         of the multi-DiaGI plpot.
+
+   31-DEC-2003    2.22   1) Fixed a minor bug: the previous version of 
+                            multi_DiaGI assigned incorrect output filename 
+                            in batch mode when gif output device was used.
+                         2) Slightly changed logic in diagi_setdef in order to
+                            circumvent possible bug in Intel Fortran95 
+                            compiler 8.0
+
+------------------------------------------------
+Comments, bugs report please send to the author: 
+          Leonid Petrov Leonid.Petrov@lpetrov.net
+
+31-DEC-2003 11:09:35

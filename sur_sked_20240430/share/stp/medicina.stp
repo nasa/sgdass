@@ -1,0 +1,54 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2020.10.13 nh created
+# 2022.04.03 pet Added peculiar clock offset
+# 
+SHORT_NAME:    MEDICINA  char       Mc
+LAST_UPDATE:   MEDICINA  char       2022.04.03
+COORD:         MEDICINA  meters         4461369.985     919596.819    4449559.208
+MOUNT:         MEDICINA  char       ALTAZ   
+SLEW_AZ:       MEDICINA  deg/sec       0.8
+SLEW_EL:       MEDICINA  deg/sec       0.5
+ACCL_AZ:       MEDICINA  deg/sec^2     0.8
+ACCL_EL:       MEDICINA  deg/sec^2     0.3
+TSETTLE_AZ:    MEDICINA  sec           0.1
+TSETTLE_EL:    MEDICINA  sec           0.1
+EL_MIN:        MEDICINA  deg          15.0
+EL_MAX:        MEDICINA  deg          88.5
+AZ_RANGE:      MEDICINA  deg         -90.0  90.0 270.0 270.0
+RECORDER:      MEDICINA  char        mark5   
+BACKEND:       MEDICINA  char        mark4
+SETMODE:       MEDICINA  sec         4.0
+PREOB:         MEDICINA  sec           0.2
+POSTOB:        MEDICINA  sec           0.0
+HOR_AZIM:      MEDICINA  deg           0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:      MEDICINA  deg           5.0  10.0  12.0  18.0  15.0   5.0   2.0   0.1   0.1   3.0   3.0  30.0  20.0
+STOW_AZIM:     MEDICINA  deg       80.0
+STOW_ELEV:     MEDICINA  deg       80.0
+#
+CLOCK_DATES:   MEDICINA  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  MEDICINA  sec        0.0E-6
+# 
+TSYS_DATES:    MEDICINA  char       2017.08.01  2017.08.02
+TSYS_ELEVS:    MEDICINA  deg           3.0   5.0  10.0  20.0  30.0  40.0  80.0  90.0
+TSYS_FREQS:    MEDICINA  GHz           2.1   2.4
+TSYS_POLVALS:  MEDICINA  K     R      75.039  74.315  72.000  65.897  63.307  61.565  63.967  62.657
+TSYS_FREQS:    MEDICINA  GHz           7.9   9.1
+TSYS_POLVALS:  MEDICINA  K     R      47.299  46.118  42.930  36.686  33.981  32.315  29.570  28.033
+#
+BPSS_DATES:    MEDICINA  char       2000.01.01   2020.07.01
+BPSS_BWIDTH:   MEDICINA  MHz          16
+BPSS_BETA:     MEDICINA  d/l        1.00
+BPSS_BWIDTH:   MEDICINA  MHz          32
+BPSS_BETA:     MEDICINA  d/l        1.00
+#
+GAIN_DATES:    MEDICINA  char       2004.12.31 2025.01.01
+GAIN_FREQS:    MEDICINA  GHz           2.1   2.4
+GAIN_ELEVS:    MEDICINA  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  MEDICINA  K/Jy  R     0.057 0.069 0.085 0.097 0.106 0.112 0.106
+GAIN_POLVALS:  MEDICINA  K/Jy  L     0.058 0.071 0.087 0.100 0.109 0.116 0.109
+GAIN_DATES:    MEDICINA  char       2004.12.31 2025.01.01
+GAIN_FREQS:    MEDICINA  GHz           7.9   9.1
+GAIN_ELEVS:    MEDICINA  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  MEDICINA  K/Jy  R     0.071 0.079 0.088 0.096 0.102 0.111 0.109
+GAIN_POLVALS:  MEDICINA  K/Jy  L     0.071 0.079 0.088 0.096 0.102 0.111 0.109

@@ -1,0 +1,31 @@
+# VLBI station parameters Format 2022.04.03 #
+#
+# 2023.11.28  L. Petrov  Created
+#
+SHORT_NAME:    KASHI12   char       Kh
+LAST_UPDATE:   KASHI12   char       2024.02.01
+COORD:         KASHI12   meters       1190830.462  4786201.485  4032514.380
+MOUNT:         KASHI12   char       ALTAZ  
+SLEW_AZ:       KASHI12   deg/sec      12.0
+SLEW_EL:       KASHI12   deg/sec       6.0
+ACCL_AZ:       KASHI12   deg/sec^2     1.0
+ACCL_EL:       KASHI12   deg/sec^2     1.0
+TSETTLE_AZ:    KASHI12   sec           3.0
+TSETTLE_EL:    KASHI12   sec           3.0
+EL_MIN:        KASHI12   deg           2.0
+EL_MAX:        KASHI12   deg          89.0
+AZ_RANGE:      KASHI12   deg         0.0   60.0  300.0  420.0
+BACKEND:       KASHI12   char        cdas
+RECORDER:      KASHI12   char        mark5b
+SETMODE:       KASHI12   sec           4.0
+PREOB:         KASHI12   sec           3.0
+POSTOB:        KASHI12   sec           2.0
+HOR_AZIM:      KASHI12   deg           0   360
+HOR_ELEV:      KASHI12   deg           6     6
+STOW_AZIM:     KASHI12   deg          225.0
+STOW_ELEV:     KASHI12   deg           90.0
+HOR_AZIM:      KASHI12   deg           0   360
+HOR_ELEV:      KASHI12   deg           7     7
+#
+CLOCK_DATES:   KASHI12   sec        2020.11.22   2049.12.31
+CLOCK_OFFSET:  KASHI12   sec        0.0E-6

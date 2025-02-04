@@ -1,0 +1,47 @@
+#!/bin/csh
+# ************************************************************************
+# *                                                                      *
+# *   C-Shell program db_submit provides a short interface to dclient    *
+# *   for submitting a database to the IVS Data Center.                  *
+# *                                                                      *
+# *   It uses customisation file for dclient. This file is sought in     *
+# *   the $MK5_ROOT/local directory under name dbs.lcl                   *
+# *   Environment variable DBS_CONFIG overrides this name.               *
+# *                                                                      *
+# *   Usage: db_submit <database_name>                                   *
+# *                                                                      *
+# *  ###  01-OCT-99    db_submit   v2.0  (c) L. Petrov  11-JUL-2000 ###  *
+# *                                                                      *
+# ************************************************************************
+if ($#argv == 0) then 
+    echo "Usage: db_submit <database_name>"
+    exit -1
+endif
+#
+# --- Determine center code
+#
+if ( $?MK5_ROOT == 0 ) then
+    echo "---  db_sumbit:  environment variable MK5_ROOT was not defined  ---"
+    exit ( 1 )
+endif
+#
+# --- Setting site specific environment variables unless environment variable
+# --- DBS_CONFIG has not been defined earlier
+#
+if ( $?DBS_CONFIG == 0 ) then
+     set DBS_CONFIG = ${MK5_ROOT}/local/dbs.lcl
+endif
+if (-r $DBS_CONFIG ) then
+   else
+     echo "File $DBS_CONFIG has not been found. You should have file "
+     echo "$DBS_CONFIG whcih contains local customisation of dclient"
+     echo "for sending databases to the IVS data center. Refer to "
+     echo "CALC/SOLVE installation instruction for details"
+     exit ( -2 )
+endif
+#
+cd $MK5_ROOT/bin
+#
+# --- Call dclient for submitting database
+#
+${MK5_ROOT}/bin/dclient -t DBH -c $DBS_CONFIG -f $1

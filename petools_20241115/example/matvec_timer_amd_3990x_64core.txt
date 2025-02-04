@@ -1,0 +1,748 @@
+=== matvec test at astrogeo on 26-APR-2023 22:37:59 ===
+ 
+model name	: AMD Ryzen Threadripper 3990X 64-Core Processor
+cpu MHz		: 2056.133
+cpu MHz		: 2070.848
+cpu MHz		: 2188.877
+cpu MHz		: 2190.914
+cpu MHz		: 2191.698
+cpu MHz		: 2193.246
+cpu MHz		: 2194.762
+cpu MHz		: 2195.756
+cpu MHz		: 2196.039
+cpu MHz		: 2197.119
+cpu MHz		: 2197.196
+cpu MHz		: 2198.749
+cpu MHz		: 2198.853
+cpu MHz		: 2199.390
+cpu MHz		: 2199.561
+cpu MHz		: 2199.788
+cpu MHz		: 2199.844
+cpu MHz		: 2199.981
+cpu MHz		: 2199.998
+cpu MHz		: 2200.000
+cpu MHz		: 2200.003
+cpu MHz		: 2200.568
+cpu MHz		: 2200.898
+cpu MHz		: 2201.562
+cpu MHz		: 2900.000
+cpu MHz		: 3640.089
+cpu MHz		: 4347.147
+cache size	: 512 KB
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd amd_ppin arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca sev sev_es
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca sev sev_es
+ 
+Speed of function iv_v    
+ 
+Func      Results            Int.
+iv_v      dims: 2048,    1  speed:    921.8 Mflops
+iv_v      dims: 2048,    2  speed:   1676.1 Mflops
+iv_v      dims: 2048,    3  speed:   2288.4 Mflops
+iv_v      dims: 2048,    4  speed:   2791.5 Mflops
+iv_v      dims: 2048,    5  speed:   4127.2 Mflops
+iv_v      dims: 2048,    6  speed:  19359.4 Mflops
+iv_v      dims: 2048,    7  speed:  17376.4 Mflops
+iv_v      dims: 2048,    8  speed:  21576.1 Mflops
+iv_v      dims:    2, 2048  speed:   7832.4 Mflops
+iv_v      dims:    3, 2048  speed:   7429.5 Mflops
+iv_v      dims:    4, 2048  speed:   6454.0 Mflops
+iv_v      dims:    5, 2048  speed:   5507.0 Mflops
+iv_v      dims:    6, 2048  speed:   2769.5 Mflops
+iv_v      dims:    7, 2048  speed:   2827.8 Mflops
+iv_v      dims:    8, 2048  speed:   8731.2 Mflops
+iv_v      dims:   32, 2048  speed:  17171.3 Mflops
+iv_v      dims: 2048,   32  speed:  22196.9 Mflops
+iv_v      dims:    2,    2  speed:     92.9 Mflops
+iv_v      dims:    3,    3  speed:    199.9 Mflops
+iv_v      dims:    4,    4  speed:    343.6 Mflops
+iv_v      dims:    5,    5  speed:    536.7 Mflops
+iv_v      dims:    6,    6  speed:    500.5 Mflops
+iv_v      dims:    7,    7  speed:    630.5 Mflops
+iv_v      dims:    8,    8  speed:    995.2 Mflops
+iv_v      dims:    9,    9  speed:   1060.0 Mflops
+iv_v      dims:   10,   10  speed:   1242.2 Mflops
+iv_v      dims:   11,   11  speed:   1367.9 Mflops
+iv_v      dims:   12,   12  speed:   2015.0 Mflops
+iv_v      dims:   13,   13  speed:   1875.7 Mflops
+iv_v      dims:   14,   14  speed:   2130.5 Mflops
+iv_v      dims:   15,   15  speed:   2198.8 Mflops
+iv_v      dims:   16,   16  speed:   3465.5 Mflops
+iv_v      dims:   24,   24  speed:   6552.9 Mflops
+iv_v      dims:   32,   32  speed:   9904.4 Mflops
+iv_v      dims:   48,   48  speed:  14786.6 Mflops
+iv_v      dims:   64,   64  speed:  18685.9 Mflops
+iv_v      dims:   96,   96  speed:  22463.7 Mflops
+iv_v      dims:  128,  128  speed:  22890.6 Mflops
+iv_v      dims:  129,  129  speed:  18501.7 Mflops
+iv_v      dims:  192,  192  speed:  26161.6 Mflops
+iv_v      dims:  256,  256  speed:  23560.5 Mflops
+iv_v      dims:  384,  384  speed:  21843.8 Mflops
+iv_v      dims:  512,  512  speed:  22810.9 Mflops
+iv_v      dims:  513,  513  speed:  20759.8 Mflops
+iv_v      dims:  768,  768  speed:  23310.3 Mflops
+iv_v      dims: 1024, 1024  speed:  23010.9 Mflops
+iv_v      dims: 1536, 1536  speed:   8264.3 Mflops
+iv_v      dims: 2048, 2048  speed:   6326.6 Mflops
+iv_v      dims: 4096, 4096  speed:   5829.6 Mflops
+ 
+Speed of function tv_v    
+ 
+Func      Results            Int.
+tv_v      dims:    1, 2048  speed:   7634.9 Mflops
+tv_v      dims:    2, 2048  speed:   9464.8 Mflops
+tv_v      dims:    3, 2048  speed:   9837.8 Mflops
+tv_v      dims:    4, 2048  speed:  21355.3 Mflops
+tv_v      dims:    5, 2048  speed:  17870.9 Mflops
+tv_v      dims:    6, 2048  speed:  16139.5 Mflops
+tv_v      dims:    7, 2048  speed:  15182.9 Mflops
+tv_v      dims:    8, 2048  speed:  23661.7 Mflops
+tv_v      dims: 2048,    2  speed:   2492.2 Mflops
+tv_v      dims: 2048,    3  speed:   3051.4 Mflops
+tv_v      dims: 2048,    4  speed:   4043.7 Mflops
+tv_v      dims: 2048,    5  speed:   3070.1 Mflops
+tv_v      dims: 2048,    6  speed:   3225.6 Mflops
+tv_v      dims: 2048,    7  speed:   3341.8 Mflops
+tv_v      dims: 2048,    8  speed:   7603.3 Mflops
+tv_v      dims: 2048,   32  speed:  16065.8 Mflops
+tv_v      dims:   32, 2048  speed:  21772.5 Mflops
+tv_v      dims:    2,    2  speed:     69.5 Mflops
+tv_v      dims:    3,    3  speed:    151.9 Mflops
+tv_v      dims:    4,    4  speed:    254.6 Mflops
+tv_v      dims:    5,    5  speed:    359.1 Mflops
+tv_v      dims:    6,    6  speed:    464.2 Mflops
+tv_v      dims:    7,    7  speed:    630.2 Mflops
+tv_v      dims:    8,    8  speed:    956.5 Mflops
+tv_v      dims:    9,    9  speed:   1056.0 Mflops
+tv_v      dims:   10,   10  speed:   1111.9 Mflops
+tv_v      dims:   11,   11  speed:   1322.7 Mflops
+tv_v      dims:   12,   12  speed:   1939.5 Mflops
+tv_v      dims:   13,   13  speed:   1945.4 Mflops
+tv_v      dims:   14,   14  speed:   1937.2 Mflops
+tv_v      dims:   15,   15  speed:   2173.7 Mflops
+tv_v      dims:   16,   16  speed:   3327.9 Mflops
+tv_v      dims:   24,   24  speed:   6474.9 Mflops
+tv_v      dims:   32,   32  speed:   9808.8 Mflops
+tv_v      dims:   48,   48  speed:  14252.6 Mflops
+tv_v      dims:   64,   64  speed:  16916.4 Mflops
+tv_v      dims:   96,   96  speed:  20608.1 Mflops
+tv_v      dims:  128,  128  speed:  24061.7 Mflops
+tv_v      dims:  129,  129  speed:  21015.8 Mflops
+tv_v      dims:  192,  192  speed:  25010.4 Mflops
+tv_v      dims:  256,  256  speed:  25173.8 Mflops
+tv_v      dims:  384,  384  speed:  24040.7 Mflops
+tv_v      dims:  512,  512  speed:  24087.4 Mflops
+tv_v      dims:  513,  513  speed:  22577.7 Mflops
+tv_v      dims:  768,  768  speed:  23630.9 Mflops
+tv_v      dims: 1024, 1024  speed:  22366.2 Mflops
+tv_v      dims: 1536, 1536  speed:   9168.6 Mflops
+tv_v      dims: 2048, 2048  speed:   6584.4 Mflops
+tv_v      dims: 4096, 4096  speed:   6150.7 Mflops
+ 
+Speed of function sv_v    
+ 
+Func      Results            Int.
+sv_v      dims:    2,    2,    2  speed:     99.2 Mflops
+sv_v      dims:    3,    3,    3  speed:    220.4 Mflops
+sv_v      dims:    4,    4,    4  speed:    393.8 Mflops
+sv_v      dims:    5,    5,    5  speed:    603.5 Mflops
+sv_v      dims:    6,    6,    6  speed:    850.9 Mflops
+sv_v      dims:    7,    7,    7  speed:    885.8 Mflops
+sv_v      dims:    8,    8,    8  speed:   1087.7 Mflops
+sv_v      dims:    9,    9,    9  speed:   1287.1 Mflops
+sv_v      dims:   10,   10,   10  speed:   1489.1 Mflops
+sv_v      dims:   11,   11,   11  speed:   1699.4 Mflops
+sv_v      dims:   12,   12,   12  speed:   1841.5 Mflops
+sv_v      dims:   13,   13,   13  speed:   1985.2 Mflops
+sv_v      dims:   14,   14,   14  speed:   2119.1 Mflops
+sv_v      dims:   15,   15,   15  speed:   2205.2 Mflops
+sv_v      dims:   16,   16,   16  speed:   2327.2 Mflops
+sv_v      dims:   24,   24,   24  speed:   2434.1 Mflops
+sv_v      dims:   32,   32,   32  speed:   1212.2 Mflops
+sv_v      dims:   48,   48,   48  speed:   1743.0 Mflops
+sv_v      dims:   64,   64,   64  speed:   2259.7 Mflops
+sv_v      dims:   96,   96,   96  speed:   3166.3 Mflops
+sv_v      dims:  128,  128,  128  speed:   3950.8 Mflops
+sv_v      dims:  129,  129,  129  speed:   3988.1 Mflops
+sv_v      dims:  192,  192,  192  speed:   5368.2 Mflops
+sv_v      dims:  256,  256,  256  speed:   6558.7 Mflops
+sv_v      dims:  384,  384,  384  speed:   8336.4 Mflops
+sv_v      dims:  512,  512,  512  speed:   9636.4 Mflops
+sv_v      dims:  513,  513,  513  speed:   9645.7 Mflops
+sv_v      dims:  768,  768,  768  speed:  11183.0 Mflops
+sv_v      dims: 1024, 1024, 1024  speed:  11939.8 Mflops
+sv_v      dims: 1536, 1536, 1536  speed:  12796.0 Mflops
+sv_v      dims: 2048, 2048, 2048  speed:   9071.5 Mflops
+sv_v      dims: 4096, 4096, 4096  speed:   7257.4 Mflops
+ 
+Speed of function invs    
+ 
+Func      Dimension           Speed
+INVS  dims:    2  speed:    192.6 Mflops
+INVS  dims:    3  speed:    517.0 Mflops
+INVS  dims:    4  speed:    939.7 Mflops
+INVS  dims:    5  speed:    128.6 Mflops
+INVS  dims:    6  speed:    211.6 Mflops
+INVS  dims:    7  speed:    316.2 Mflops
+INVS  dims:    8  speed:    450.7 Mflops
+INVS  dims:    9  speed:    614.3 Mflops
+INVS  dims:   10  speed:    777.3 Mflops
+INVS  dims:   11  speed:    940.6 Mflops
+INVS  dims:   12  speed:   1100.4 Mflops
+INVS  dims:   13  speed:   1280.5 Mflops
+INVS  dims:   14  speed:   1454.1 Mflops
+INVS  dims:   15  speed:   1452.4 Mflops
+INVS  dims:   16  speed:   1665.1 Mflops
+INVS  dims:   24  speed:   1767.7 Mflops
+INVS  dims:   32  speed:   2242.4 Mflops
+INVS  dims:   48  speed:    334.5 Mflops
+INVS  dims:   64  speed:    751.8 Mflops
+INVS  dims:   96  speed:   1713.2 Mflops
+INVS  dims:  128  speed:   2907.0 Mflops
+INVS  dims:  129  speed:   2920.7 Mflops
+INVS  dims:  192  speed:   5061.8 Mflops
+INVS  dims:  256  speed:   7023.3 Mflops
+INVS  dims:  384  speed:  10562.6 Mflops
+INVS  dims:  512  speed:  11840.0 Mflops
+INVS  dims:  513  speed:  11719.1 Mflops
+INVS  dims:  768  speed:  17538.6 Mflops
+INVS  dims: 1024  speed:  16353.7 Mflops
+INVS  dims: 1536  speed:  24517.7 Mflops
+INVS  dims: 2048  speed:  23514.4 Mflops
+INVS  dims: 4096  speed:  31272.4 Mflops
+ 
+Speed of function ii_i    
+ 
+Func      Results            Int.
+ii_i      dims: 2048, 2048,    1  speed:   1286.5 Mflops
+ii_i      dims: 2048, 2048,    2  speed:   1947.5 Mflops
+ii_i      dims: 2048, 2048,    3  speed:   2424.3 Mflops
+ii_i      dims: 2048, 2048,    4  speed:   2905.7 Mflops
+ii_i      dims: 2048, 2048,    5  speed:   5737.8 Mflops
+ii_i      dims: 2048, 2048,    6  speed:   8383.0 Mflops
+ii_i      dims: 2048, 2048,    7  speed:   9533.7 Mflops
+ii_i      dims: 2048, 2048,    8  speed:   9838.6 Mflops
+ii_i      dims:    2,    2, 2048  speed:   8211.0 Mflops
+ii_i      dims:    3,    3, 2048  speed:   7780.4 Mflops
+ii_i      dims:    4,    4, 2048  speed:   6568.5 Mflops
+ii_i      dims:    5,    5, 2048  speed:   4180.5 Mflops
+ii_i      dims:    6,    6, 2048  speed:   5170.3 Mflops
+ii_i      dims:    7,    7, 2048  speed:   4766.3 Mflops
+ii_i      dims:    8,    8, 2048  speed:   9061.8 Mflops
+ii_i      dims:   32,   32, 2048  speed:  24851.2 Mflops
+ii_i      dims: 2048, 2048,   32  speed:  25619.9 Mflops
+ii_i      dims:    2,    2,    2  speed:    190.0 Mflops
+ii_i      dims:    3,    3,    3  speed:    616.2 Mflops
+ii_i      dims:    4,    4,    4  speed:   1433.2 Mflops
+ii_i      dims:    5,    5,    5  speed:   1065.0 Mflops
+ii_i      dims:    6,    6,    6  speed:   1575.7 Mflops
+ii_i      dims:    7,    7,    7  speed:   2100.7 Mflops
+ii_i      dims:    8,    8,    8  speed:   3402.1 Mflops
+ii_i      dims:    9,    9,    9  speed:   3879.0 Mflops
+ii_i      dims:   10,   10,   10  speed:   4724.5 Mflops
+ii_i      dims:   11,   11,   11  speed:   5133.9 Mflops
+ii_i      dims:   12,   12,   12  speed:   6687.9 Mflops
+ii_i      dims:   13,   13,   13  speed:   6839.2 Mflops
+ii_i      dims:   14,   14,   14  speed:   7596.1 Mflops
+ii_i      dims:   15,   15,   15  speed:   7675.5 Mflops
+ii_i      dims:   16,   16,   16  speed:  10567.9 Mflops
+ii_i      dims:   24,   24,   24  speed:  16495.4 Mflops
+ii_i      dims:   32,   32,   32  speed:  20837.1 Mflops
+ii_i      dims:   48,   48,   48  speed:  28504.8 Mflops
+ii_i      dims:   64,   64,   64  speed:  32715.6 Mflops
+ii_i      dims:   96,   96,   96  speed:  40406.6 Mflops
+ii_i      dims:  128,  128,  128  speed:  44100.5 Mflops
+ii_i      dims:  129,  129,  129  speed:  43044.5 Mflops
+ii_i      dims:  192,  192,  192  speed:  49265.4 Mflops
+ii_i      dims:  256,  256,  256  speed:  51393.1 Mflops
+ii_i      dims:  384,  384,  384  speed:  55054.7 Mflops
+ii_i      dims:  512,  512,  512  speed:  53024.9 Mflops
+ii_i      dims:  513,  513,  513  speed:  52577.5 Mflops
+ii_i      dims:  768,  768,  768  speed:  58044.7 Mflops
+ii_i      dims: 1024, 1024, 1024  speed:  54041.0 Mflops
+ii_i      dims: 1536, 1536, 1536  speed:  54915.0 Mflops
+ii_i      dims: 2048, 2048, 2048  speed:  55656.3 Mflops
+ii_i      dims: 4096, 4096, 4096  speed:  55486.2 Mflops
+ 
+Speed of function it_i    
+ 
+Func      Results            Int.
+it_i      dims: 2048, 2048,    1  speed:   2590.0 Mflops
+it_i      dims: 2048, 2048,    2  speed:   4675.9 Mflops
+it_i      dims: 2048, 2048,    3  speed:   5707.1 Mflops
+it_i      dims: 2048, 2048,    4  speed:   6592.7 Mflops
+it_i      dims: 2048, 2048,    5  speed:   5704.1 Mflops
+it_i      dims: 2048, 2048,    6  speed:   7916.8 Mflops
+it_i      dims: 2048, 2048,    7  speed:   9445.9 Mflops
+it_i      dims: 2048, 2048,    8  speed:   9743.7 Mflops
+it_i      dims:    2,    2, 2048  speed:   1512.7 Mflops
+it_i      dims:    3,    3, 2048  speed:   1828.9 Mflops
+it_i      dims:    4,    4, 2048  speed:   4073.0 Mflops
+it_i      dims:    5,    5, 2048  speed:   4225.6 Mflops
+it_i      dims:    6,    6, 2048  speed:   5096.6 Mflops
+it_i      dims:    7,    7, 2048  speed:   4865.8 Mflops
+it_i      dims:    8,    8, 2048  speed:   8717.3 Mflops
+it_i      dims:   32,   32, 2048  speed:  24520.2 Mflops
+it_i      dims: 2048, 2048,   32  speed:  25358.7 Mflops
+it_i      dims:    2,    2,    2  speed:    181.3 Mflops
+it_i      dims:    3,    3,    3  speed:    567.1 Mflops
+it_i      dims:    4,    4,    4  speed:   1211.1 Mflops
+it_i      dims:    5,    5,    5  speed:   1053.9 Mflops
+it_i      dims:    6,    6,    6  speed:   1571.7 Mflops
+it_i      dims:    7,    7,    7  speed:   2094.7 Mflops
+it_i      dims:    8,    8,    8  speed:   3431.3 Mflops
+it_i      dims:    9,    9,    9  speed:   3744.6 Mflops
+it_i      dims:   10,   10,   10  speed:   4584.8 Mflops
+it_i      dims:   11,   11,   11  speed:   5054.2 Mflops
+it_i      dims:   12,   12,   12  speed:   6537.0 Mflops
+it_i      dims:   13,   13,   13  speed:   6733.6 Mflops
+it_i      dims:   14,   14,   14  speed:   7462.3 Mflops
+it_i      dims:   15,   15,   15  speed:   7635.1 Mflops
+it_i      dims:   16,   16,   16  speed:  10216.1 Mflops
+it_i      dims:   24,   24,   24  speed:  16415.5 Mflops
+it_i      dims:   32,   32,   32  speed:  20551.4 Mflops
+it_i      dims:   48,   48,   48  speed:  28289.4 Mflops
+it_i      dims:   64,   64,   64  speed:  32215.4 Mflops
+it_i      dims:   96,   96,   96  speed:  39847.2 Mflops
+it_i      dims:  128,  128,  128  speed:  43512.4 Mflops
+it_i      dims:  129,  129,  129  speed:  42157.0 Mflops
+it_i      dims:  192,  192,  192  speed:  48935.9 Mflops
+it_i      dims:  256,  256,  256  speed:  50696.7 Mflops
+it_i      dims:  384,  384,  384  speed:  54797.0 Mflops
+it_i      dims:  512,  512,  512  speed:  52159.9 Mflops
+it_i      dims:  513,  513,  513  speed:  51862.1 Mflops
+it_i      dims:  768,  768,  768  speed:  55937.8 Mflops
+it_i      dims: 1024, 1024, 1024  speed:  52407.5 Mflops
+it_i      dims: 1536, 1536, 1536  speed:  53653.5 Mflops
+it_i      dims: 2048, 2048, 2048  speed:  54404.5 Mflops
+it_i      dims: 4096, 4096, 4096  speed:  54502.4 Mflops
+ 
+Speed of function ti_i    
+ 
+Func      Results            Int.
+ti_i      dims:    1, 2048, 2048  speed:   5045.8 Mflops
+ti_i      dims:    2, 2048, 2048  speed:   6779.1 Mflops
+ti_i      dims:    3, 2048, 2048  speed:   7746.6 Mflops
+ti_i      dims:    4, 2048, 2048  speed:   8422.0 Mflops
+ti_i      dims:    5, 2048, 2048  speed:   8040.0 Mflops
+ti_i      dims:    6, 2048, 2048  speed:   9625.3 Mflops
+ti_i      dims:    7, 2048, 2048  speed:  10181.2 Mflops
+ti_i      dims:    8, 2048, 2048  speed:  12937.9 Mflops
+ti_i      dims: 2048,    2,    2  speed:   2261.5 Mflops
+ti_i      dims: 2048,    3,    3  speed:   3358.9 Mflops
+ti_i      dims: 2048,    4,    4  speed:   5683.4 Mflops
+ti_i      dims: 2048,    5,    5  speed:   5802.5 Mflops
+ti_i      dims: 2048,    6,    6  speed:   7566.2 Mflops
+ti_i      dims: 2048,    7,    7  speed:   8098.0 Mflops
+ti_i      dims: 2048,    8,    8  speed:  10520.9 Mflops
+ti_i      dims: 2048,   32,   32  speed:  23598.5 Mflops
+ti_i      dims:   32, 2048, 2048  speed:  32058.6 Mflops
+ti_i      dims:    2,    2,    2  speed:    189.2 Mflops
+ti_i      dims:    3,    3,    3  speed:    612.5 Mflops
+ti_i      dims:    4,    4,    4  speed:   1408.9 Mflops
+ti_i      dims:    5,    5,    5  speed:   1053.9 Mflops
+ti_i      dims:    6,    6,    6  speed:   1575.6 Mflops
+ti_i      dims:    7,    7,    7  speed:   2038.7 Mflops
+ti_i      dims:    8,    8,    8  speed:   3453.7 Mflops
+ti_i      dims:    9,    9,    9  speed:   3728.1 Mflops
+ti_i      dims:   10,   10,   10  speed:   4708.6 Mflops
+ti_i      dims:   11,   11,   11  speed:   4955.8 Mflops
+ti_i      dims:   12,   12,   12  speed:   6646.8 Mflops
+ti_i      dims:   13,   13,   13  speed:   6848.8 Mflops
+ti_i      dims:   14,   14,   14  speed:   7517.6 Mflops
+ti_i      dims:   15,   15,   15  speed:   7415.2 Mflops
+ti_i      dims:   16,   16,   16  speed:  10465.8 Mflops
+ti_i      dims:   24,   24,   24  speed:  16439.0 Mflops
+ti_i      dims:   32,   32,   32  speed:  20763.1 Mflops
+ti_i      dims:   48,   48,   48  speed:  28501.1 Mflops
+ti_i      dims:   64,   64,   64  speed:  32662.1 Mflops
+ti_i      dims:   96,   96,   96  speed:  40499.3 Mflops
+ti_i      dims:  128,  128,  128  speed:  44008.4 Mflops
+ti_i      dims:  129,  129,  129  speed:  42919.4 Mflops
+ti_i      dims:  192,  192,  192  speed:  49092.1 Mflops
+ti_i      dims:  256,  256,  256  speed:  50535.4 Mflops
+ti_i      dims:  384,  384,  384  speed:  54860.1 Mflops
+ti_i      dims:  512,  512,  512  speed:  52534.8 Mflops
+ti_i      dims:  513,  513,  513  speed:  51905.2 Mflops
+ti_i      dims:  768,  768,  768  speed:  56888.8 Mflops
+ti_i      dims: 1024, 1024, 1024  speed:  52711.6 Mflops
+ti_i      dims: 1536, 1536, 1536  speed:  53339.8 Mflops
+ti_i      dims: 2048, 2048, 2048  speed:  54373.8 Mflops
+ti_i      dims: 4096, 4096, 4096  speed:  55750.0 Mflops
+ 
+Speed of function is_i    
+ 
+Func      Results            Int.
+is_i      dims:    2,    2,    2  speed:    180.0 Mflops
+is_i      dims:    3,    3,    3  speed:    589.0 Mflops
+is_i      dims:    4,    4,    4  speed:   1412.1 Mflops
+is_i      dims:    5,    5,    5  speed:   2508.1 Mflops
+is_i      dims:    6,    6,    6  speed:   3670.7 Mflops
+is_i      dims:    7,    7,    7  speed:   4979.0 Mflops
+is_i      dims:    8,    8,    8  speed:   2360.7 Mflops
+is_i      dims:    9,    9,    9  speed:   2823.8 Mflops
+is_i      dims:   10,   10,   10  speed:   3273.7 Mflops
+is_i      dims:   11,   11,   11  speed:   3615.2 Mflops
+is_i      dims:   12,   12,   12  speed:   4086.6 Mflops
+is_i      dims:   13,   13,   13  speed:   4545.1 Mflops
+is_i      dims:   14,   14,   14  speed:   4873.1 Mflops
+is_i      dims:   15,   15,   15  speed:   5235.3 Mflops
+is_i      dims:   16,   16,   16  speed:   5715.5 Mflops
+is_i      dims:   24,   24,   24  speed:   8662.1 Mflops
+is_i      dims:   32,   32,   32  speed:  10546.9 Mflops
+is_i      dims:   48,   48,   48  speed:  25256.1 Mflops
+is_i      dims:   64,   64,   64  speed:  29737.5 Mflops
+is_i      dims:   96,   96,   96  speed:  37860.9 Mflops
+is_i      dims:  128,  128,  128  speed:  39510.2 Mflops
+is_i      dims:  129,  129,  129  speed:  40606.4 Mflops
+is_i      dims:  192,  192,  192  speed:  46294.5 Mflops
+is_i      dims:  256,  256,  256  speed:  42679.0 Mflops
+is_i      dims:  384,  384,  384  speed:  51868.7 Mflops
+is_i      dims:  512,  512,  512  speed:  42816.6 Mflops
+is_i      dims:  513,  513,  513  speed:  30312.1 Mflops
+is_i      dims:  768,  768,  768  speed:  39180.4 Mflops
+is_i      dims: 1024, 1024, 1024  speed:  38943.4 Mflops
+is_i      dims: 1536, 1536, 1536  speed:  38877.9 Mflops
+is_i      dims: 2048, 2048, 2048  speed:  39290.4 Mflops
+is_i      dims: 4096, 4096, 4096  speed:  39353.1 Mflops
+ 
+Speed of function ts_i    
+ 
+Func      Results            Int.
+ts_i      dims:    2,    2,    2  speed:    181.8 Mflops
+ts_i      dims:    3,    3,    3  speed:    617.9 Mflops
+ts_i      dims:    4,    4,    4  speed:   1371.5 Mflops
+ts_i      dims:    5,    5,    5  speed:   2419.7 Mflops
+ts_i      dims:    6,    6,    6  speed:   3595.4 Mflops
+ts_i      dims:    7,    7,    7  speed:   5016.3 Mflops
+ts_i      dims:    8,    8,    8  speed:   2757.8 Mflops
+ts_i      dims:    9,    9,    9  speed:   3089.2 Mflops
+ts_i      dims:   10,   10,   10  speed:   3678.3 Mflops
+ts_i      dims:   11,   11,   11  speed:   4064.7 Mflops
+ts_i      dims:   12,   12,   12  speed:   4470.1 Mflops
+ts_i      dims:   13,   13,   13  speed:   4994.6 Mflops
+ts_i      dims:   14,   14,   14  speed:   5252.8 Mflops
+ts_i      dims:   15,   15,   15  speed:   5657.1 Mflops
+ts_i      dims:   16,   16,   16  speed:   5999.1 Mflops
+ts_i      dims:   24,   24,   24  speed:   9282.3 Mflops
+ts_i      dims:   32,   32,   32  speed:  17379.7 Mflops
+ts_i      dims:   48,   48,   48  speed:  25290.8 Mflops
+ts_i      dims:   64,   64,   64  speed:  29845.7 Mflops
+ts_i      dims:   96,   96,   96  speed:  37937.6 Mflops
+ts_i      dims:  128,  128,  128  speed:  39638.1 Mflops
+ts_i      dims:  129,  129,  129  speed:  40921.9 Mflops
+ts_i      dims:  192,  192,  192  speed:  46580.3 Mflops
+ts_i      dims:  256,  256,  256  speed:  42764.1 Mflops
+ts_i      dims:  384,  384,  384  speed:  51530.1 Mflops
+ts_i      dims:  512,  512,  512  speed:  42760.8 Mflops
+ts_i      dims:  513,  513,  513  speed:  51684.1 Mflops
+ts_i      dims:  768,  768,  768  speed:  49936.8 Mflops
+ts_i      dims: 1024, 1024, 1024  speed:  45215.9 Mflops
+ts_i      dims: 1536, 1536, 1536  speed:  47601.4 Mflops
+ts_i      dims: 2048, 2048, 2048  speed:  46351.2 Mflops
+ts_i      dims: 4096, 4096, 4096  speed:  50548.3 Mflops
+ 
+Speed of function ss_i    
+ 
+Func      Results            Int.
+ss_i      dims:    2,    2,    2  speed:    185.2 Mflops
+ss_i      dims:    3,    3,    3  speed:    610.5 Mflops
+ss_i      dims:    4,    4,    4  speed:   1431.2 Mflops
+ss_i      dims:    5,    5,    5  speed:   2243.0 Mflops
+ss_i      dims:    6,    6,    6  speed:   3907.8 Mflops
+ss_i      dims:    7,    7,    7  speed:   4840.2 Mflops
+ss_i      dims:    8,    8,    8  speed:   8071.4 Mflops
+ss_i      dims:    9,    9,    9  speed:   7402.6 Mflops
+ss_i      dims:   10,   10,   10  speed:   7876.0 Mflops
+ss_i      dims:   11,   11,   11  speed:   7945.3 Mflops
+ss_i      dims:   12,   12,   12  speed:  10522.6 Mflops
+ss_i      dims:   13,   13,   13  speed:   9186.3 Mflops
+ss_i      dims:   14,   14,   14  speed:  11265.9 Mflops
+ss_i      dims:   15,   15,   15  speed:  10734.6 Mflops
+ss_i      dims:   16,   16,   16  speed:  13941.1 Mflops
+ss_i      dims:   24,   24,   24  speed:  10868.0 Mflops
+ss_i      dims:   32,   32,   32  speed:  15041.5 Mflops
+ss_i      dims:   48,   48,   48  speed:  22505.2 Mflops
+ss_i      dims:   64,   64,   64  speed:  27004.3 Mflops
+ss_i      dims:   96,   96,   96  speed:  30096.0 Mflops
+ss_i      dims:  128,  128,  128  speed:  27622.8 Mflops
+ss_i      dims:  129,  129,  129  speed:  38769.8 Mflops
+ss_i      dims:  192,  192,  192  speed:  32811.1 Mflops
+ss_i      dims:  256,  256,  256  speed:  29398.8 Mflops
+ss_i      dims:  384,  384,  384  speed:  40019.6 Mflops
+ss_i      dims:  512,  512,  512  speed:  31682.3 Mflops
+ss_i      dims:  513,  513,  513  speed:  41906.3 Mflops
+ss_i      dims:  768,  768,  768  speed:  39618.5 Mflops
+ss_i      dims: 1024, 1024, 1024  speed:  37969.1 Mflops
+ss_i      dims: 1536, 1536, 1536  speed:  42546.4 Mflops
+ss_i      dims: 2048, 2048, 2048  speed:  47765.7 Mflops
+ss_i      dims: 4096, 4096, 4096  speed:  48359.8 Mflops
+ 
+Speed of function si_i    
+ 
+Func      Results            Int.
+si_i      dims:    2,    2,    2  speed:    181.0 Mflops
+si_i      dims:    3,    3,    3  speed:    598.5 Mflops
+si_i      dims:    4,    4,    4  speed:   1348.0 Mflops
+si_i      dims:    5,    5,    5  speed:   2285.0 Mflops
+si_i      dims:    6,    6,    6  speed:   3756.1 Mflops
+si_i      dims:    7,    7,    7  speed:   3886.8 Mflops
+si_i      dims:    8,    8,    8  speed:   3016.6 Mflops
+si_i      dims:    9,    9,    9  speed:   3634.2 Mflops
+si_i      dims:   10,   10,   10  speed:   4136.4 Mflops
+si_i      dims:   11,   11,   11  speed:   3704.1 Mflops
+si_i      dims:   12,   12,   12  speed:   4578.2 Mflops
+si_i      dims:   13,   13,   13  speed:   4922.8 Mflops
+si_i      dims:   14,   14,   14  speed:   5552.7 Mflops
+si_i      dims:   15,   15,   15  speed:   5742.6 Mflops
+si_i      dims:   16,   16,   16  speed:   7646.4 Mflops
+si_i      dims:   24,   24,   24  speed:  12990.0 Mflops
+si_i      dims:   32,   32,   32  speed:  17345.5 Mflops
+si_i      dims:   48,   48,   48  speed:  25166.7 Mflops
+si_i      dims:   64,   64,   64  speed:  29545.0 Mflops
+si_i      dims:   96,   96,   96  speed:  37945.0 Mflops
+si_i      dims:  128,  128,  128  speed:  39791.0 Mflops
+si_i      dims:  129,  129,  129  speed:  40986.8 Mflops
+si_i      dims:  192,  192,  192  speed:  46410.2 Mflops
+si_i      dims:  256,  256,  256  speed:  41827.5 Mflops
+si_i      dims:  384,  384,  384  speed:  51690.9 Mflops
+si_i      dims:  512,  512,  512  speed:  42764.3 Mflops
+si_i      dims:  513,  513,  513  speed:  51627.2 Mflops
+si_i      dims:  768,  768,  768  speed:  49931.3 Mflops
+si_i      dims: 1024, 1024, 1024  speed:  45319.9 Mflops
+si_i      dims: 1536, 1536, 1536  speed:  47738.8 Mflops
+si_i      dims: 2048, 2048, 2048  speed:  51303.2 Mflops
+si_i      dims: 4096, 4096, 4096  speed:  50209.5 Mflops
+ 
+Speed of function st_i    
+ 
+Func      Results            Int.
+st_i      dims:    2,    2,    2  speed:   1277.7 Mflops
+st_i      dims:    3,    3,    3  speed:   4760.7 Mflops
+st_i      dims:    4,    4,    4  speed:   9480.6 Mflops
+st_i      dims:    5,    5,    5  speed:   7815.9 Mflops
+st_i      dims:    6,    6,    6  speed:  10262.0 Mflops
+st_i      dims:    7,    7,    7  speed:  15290.2 Mflops
+st_i      dims:    8,    8,    8  speed:   3477.7 Mflops
+st_i      dims:    9,    9,    9  speed:   3949.4 Mflops
+st_i      dims:   10,   10,   10  speed:   4317.6 Mflops
+st_i      dims:   11,   11,   11  speed:   4724.5 Mflops
+st_i      dims:   12,   12,   12  speed:   5125.7 Mflops
+st_i      dims:   13,   13,   13  speed:   5539.1 Mflops
+st_i      dims:   14,   14,   14  speed:   6023.7 Mflops
+st_i      dims:   15,   15,   15  speed:   6173.1 Mflops
+st_i      dims:   16,   16,   16  speed:   8022.5 Mflops
+st_i      dims:   24,   24,   24  speed:  13345.8 Mflops
+st_i      dims:   32,   32,   32  speed:  17554.1 Mflops
+st_i      dims:   48,   48,   48  speed:  25191.7 Mflops
+st_i      dims:   64,   64,   64  speed:  29521.4 Mflops
+st_i      dims:   96,   96,   96  speed:  37812.6 Mflops
+st_i      dims:  128,  128,  128  speed:  39675.8 Mflops
+st_i      dims:  129,  129,  129  speed:  40464.1 Mflops
+st_i      dims:  192,  192,  192  speed:  46063.7 Mflops
+st_i      dims:  256,  256,  256  speed:  41841.1 Mflops
+st_i      dims:  384,  384,  384  speed:  51535.0 Mflops
+st_i      dims:  512,  512,  512  speed:  42643.9 Mflops
+st_i      dims:  513,  513,  513  speed:  51306.7 Mflops
+st_i      dims:  768,  768,  768  speed:  48636.2 Mflops
+st_i      dims: 1024, 1024, 1024  speed:  44565.4 Mflops
+st_i      dims: 1536, 1536, 1536  speed:  47131.1 Mflops
+st_i      dims: 2048, 2048, 2048  speed:  50764.3 Mflops
+st_i      dims: 4096, 4096, 4096  speed:  50084.0 Mflops
+ 
+Speed of function ss_s    
+ 
+Func      Results            Int.
+ss_s      dims:    2,    2,    2  speed:      8.5 Mflops
+ss_s      dims:    3,    3,    3  speed:     28.4 Mflops
+ss_s      dims:    4,    4,    4  speed:     67.5 Mflops
+ss_s      dims:    5,    5,    5  speed:    129.3 Mflops
+ss_s      dims:    6,    6,    6  speed:    222.8 Mflops
+ss_s      dims:    7,    7,    7  speed:    347.2 Mflops
+ss_s      dims:    8,    8,    8  speed:    510.9 Mflops
+ss_s      dims:    9,    9,    9  speed:    712.2 Mflops
+ss_s      dims:   10,   10,   10  speed:    940.1 Mflops
+ss_s      dims:   11,   11,   11  speed:   1175.9 Mflops
+ss_s      dims:   12,   12,   12  speed:   1413.3 Mflops
+ss_s      dims:   13,   13,   13  speed:   1824.3 Mflops
+ss_s      dims:   14,   14,   14  speed:   2104.9 Mflops
+ss_s      dims:   15,   15,   15  speed:   2108.2 Mflops
+ss_s      dims:   16,   16,   16  speed:   2726.4 Mflops
+ss_s      dims:   24,   24,   24  speed:   3764.0 Mflops
+ss_s      dims:   32,   32,   32  speed:   5296.3 Mflops
+ss_s      dims:   48,   48,   48  speed:   7187.9 Mflops
+ss_s      dims:   64,   64,   64  speed:  12442.4 Mflops
+ss_s      dims:   96,   96,   96  speed:  11349.6 Mflops
+ss_s      dims:  128,  128,  128  speed:  11502.4 Mflops
+ss_s      dims:  129,  129,  129  speed:  11940.3 Mflops
+ss_s      dims:  192,  192,  192  speed:  14058.0 Mflops
+ss_s      dims:  256,  256,  256  speed:  13316.1 Mflops
+ss_s      dims:  384,  384,  384  speed:  18206.7 Mflops
+ss_s      dims:  512,  512,  512  speed:  26744.0 Mflops
+ss_s      dims:  513,  513,  513  speed:  28231.7 Mflops
+ss_s      dims:  768,  768,  768  speed:  32103.8 Mflops
+ss_s      dims: 1024, 1024, 1024  speed:  32218.6 Mflops
+ss_s      dims: 1536, 1536, 1536  speed:  36393.3 Mflops
+ss_s      dims: 2048, 2048, 2048  speed:  37372.8 Mflops
+ss_s      dims: 4096, 4096, 4096  speed:  40763.3 Mflops
+ 
+Speed of function ii_s    
+ 
+Func      Results            Int.
+ii_s      dims: 2048, 2048,    1  speed:    610.4 Mflops
+ii_s      dims: 2048, 2048,    2  speed:   1421.9 Mflops
+ii_s      dims: 2048, 2048,    3  speed:   2138.4 Mflops
+ii_s      dims: 2048, 2048,    4  speed:   2919.3 Mflops
+ii_s      dims: 2048, 2048,    5  speed:   3792.6 Mflops
+ii_s      dims: 2048, 2048,    6  speed:   5403.7 Mflops
+ii_s      dims: 2048, 2048,    7  speed:   6166.9 Mflops
+ii_s      dims: 2048, 2048,    8  speed:   6421.6 Mflops
+ii_s      dims:    2,    2, 2048  speed:    861.6 Mflops
+ii_s      dims:    3,    3, 2048  speed:    975.7 Mflops
+ii_s      dims:    4,    4, 2048  speed:   1044.3 Mflops
+ii_s      dims:    5,    5, 2048  speed:   1089.3 Mflops
+ii_s      dims:    6,    6, 2048  speed:   1119.9 Mflops
+ii_s      dims:    7,    7, 2048  speed:   1142.0 Mflops
+ii_s      dims:    8,    8, 2048  speed:   5997.6 Mflops
+ii_s      dims:   32,   32, 2048  speed:   8822.4 Mflops
+ii_s      dims: 2048, 2048,   32  speed:  17241.8 Mflops
+ii_s      dims:    2,    2,    2  speed:     58.3 Mflops
+ii_s      dims:    3,    3,    3  speed:    128.2 Mflops
+ii_s      dims:    4,    4,    4  speed:    222.8 Mflops
+ii_s      dims:    5,    5,    5  speed:    301.6 Mflops
+ii_s      dims:    6,    6,    6  speed:    363.3 Mflops
+ii_s      dims:    7,    7,    7  speed:    408.3 Mflops
+ii_s      dims:    8,    8,    8  speed:   1938.1 Mflops
+ii_s      dims:    9,    9,    9  speed:   2363.1 Mflops
+ii_s      dims:   10,   10,   10  speed:   2595.9 Mflops
+ii_s      dims:   11,   11,   11  speed:   2998.6 Mflops
+ii_s      dims:   12,   12,   12  speed:   3806.6 Mflops
+ii_s      dims:   13,   13,   13  speed:   4143.0 Mflops
+ii_s      dims:   14,   14,   14  speed:   4259.3 Mflops
+ii_s      dims:   15,   15,   15  speed:   4620.5 Mflops
+ii_s      dims:   16,   16,   16  speed:   5763.7 Mflops
+ii_s      dims:   24,   24,   24  speed:   9272.9 Mflops
+ii_s      dims:   32,   32,   32  speed:  12245.3 Mflops
+ii_s      dims:   48,   48,   48  speed:  13413.0 Mflops
+ii_s      dims:   64,   64,   64  speed:  15584.7 Mflops
+ii_s      dims:   96,   96,   96  speed:  19602.5 Mflops
+ii_s      dims:  128,  128,  128  speed:  21480.9 Mflops
+ii_s      dims:  129,  129,  129  speed:  20975.9 Mflops
+ii_s      dims:  192,  192,  192  speed:  24370.3 Mflops
+ii_s      dims:  256,  256,  256  speed:  25464.7 Mflops
+ii_s      dims:  384,  384,  384  speed:  27482.2 Mflops
+ii_s      dims:  512,  512,  512  speed:  26257.4 Mflops
+ii_s      dims:  513,  513,  513  speed:  26202.9 Mflops
+ii_s      dims:  768,  768,  768  speed:  28633.5 Mflops
+ii_s      dims: 1024, 1024, 1024  speed:  31684.6 Mflops
+ii_s      dims: 1536, 1536, 1536  speed:  35364.6 Mflops
+ii_s      dims: 2048, 2048, 2048  speed:  37736.9 Mflops
+ii_s      dims: 4096, 4096, 4096  speed:  41669.7 Mflops
+ 
+Speed of function it_s    
+ 
+Func      Results            Int.
+  Warning: fuction it_s     M1=2048 N1=   1 N3=2048  TIM_DIF =    0.000
+it_s      dims: 2048, 2048,    1  speed:      1.0 Mflops
+it_s      dims: 2048, 2048,    2  speed:    391.6 Mflops
+it_s      dims: 2048, 2048,    3  speed:   1971.7 Mflops
+it_s      dims: 2048, 2048,    4  speed:   2929.3 Mflops
+it_s      dims: 2048, 2048,    5  speed:   3810.4 Mflops
+it_s      dims: 2048, 2048,    6  speed:   5391.9 Mflops
+it_s      dims: 2048, 2048,    7  speed:   6187.2 Mflops
+it_s      dims: 2048, 2048,    8  speed:   6446.7 Mflops
+it_s      dims:    2,    2, 2048  speed:    791.2 Mflops
+it_s      dims:    3,    3, 2048  speed:    933.6 Mflops
+it_s      dims:    4,    4, 2048  speed:   1013.7 Mflops
+it_s      dims:    5,    5, 2048  speed:   1066.5 Mflops
+it_s      dims:    6,    6, 2048  speed:   1103.6 Mflops
+it_s      dims:    7,    7, 2048  speed:   1125.7 Mflops
+it_s      dims:    8,    8, 2048  speed:   1142.8 Mflops
+it_s      dims:   32,   32, 2048  speed:  12202.7 Mflops
+it_s      dims: 2048, 2048,   32  speed:  17033.1 Mflops
+it_s      dims:    2,    2,    2  speed:      8.1 Mflops
+it_s      dims:    3,    3,    3  speed:     25.7 Mflops
+it_s      dims:    4,    4,    4  speed:     57.0 Mflops
+it_s      dims:    5,    5,    5  speed:     99.4 Mflops
+it_s      dims:    6,    6,    6  speed:    150.3 Mflops
+it_s      dims:    7,    7,    7  speed:    203.2 Mflops
+it_s      dims:    8,    8,    8  speed:    260.7 Mflops
+it_s      dims:    9,    9,    9  speed:    540.0 Mflops
+it_s      dims:   10,   10,   10  speed:    709.5 Mflops
+it_s      dims:   11,   11,   11  speed:    882.8 Mflops
+it_s      dims:   12,   12,   12  speed:   1114.2 Mflops
+it_s      dims:   13,   13,   13  speed:   1333.0 Mflops
+it_s      dims:   14,   14,   14  speed:   1579.7 Mflops
+it_s      dims:   15,   15,   15  speed:   1742.2 Mflops
+it_s      dims:   16,   16,   16  speed:   2205.8 Mflops
+it_s      dims:   24,   24,   24  speed:   4846.7 Mflops
+it_s      dims:   32,   32,   32  speed:   7419.9 Mflops
+it_s      dims:   48,   48,   48  speed:  11895.1 Mflops
+it_s      dims:   64,   64,   64  speed:  14542.2 Mflops
+it_s      dims:   96,   96,   96  speed:  18973.3 Mflops
+it_s      dims:  128,  128,  128  speed:  21040.3 Mflops
+it_s      dims:  129,  129,  129  speed:  20440.3 Mflops
+it_s      dims:  192,  192,  192  speed:  24126.9 Mflops
+it_s      dims:  256,  256,  256  speed:  25175.5 Mflops
+it_s      dims:  384,  384,  384  speed:  27304.6 Mflops
+it_s      dims:  512,  512,  512  speed:  26045.7 Mflops
+it_s      dims:  513,  513,  513  speed:  22056.0 Mflops
+it_s      dims:  768,  768,  768  speed:  29819.1 Mflops
+it_s      dims: 1024, 1024, 1024  speed:  31301.3 Mflops
+it_s      dims: 1536, 1536, 1536  speed:  34967.8 Mflops
+it_s      dims: 2048, 2048, 2048  speed:  37264.6 Mflops
+it_s      dims: 4096, 4096, 4096  speed:  41124.2 Mflops
+ 
+Speed of function ti_s    
+ 
+Func      Results            Int.
+ti_s      dims:    1,    1, 2048  speed:    220.2 Mflops
+ti_s      dims:    2,    2, 2048  speed:   4038.0 Mflops
+ti_s      dims:    3,    3, 2048  speed:   5878.4 Mflops
+ti_s      dims:    4,    4, 2048  speed:   7174.3 Mflops
+ti_s      dims:    5,    5, 2048  speed:   7996.9 Mflops
+ti_s      dims:    6,    6, 2048  speed:   8567.9 Mflops
+ti_s      dims:    7,    7, 2048  speed:   8975.4 Mflops
+ti_s      dims:    8,    8, 2048  speed:   3661.5 Mflops
+ti_s      dims: 2048, 2048,    2  speed:   1361.7 Mflops
+ti_s      dims: 2048, 2048,    3  speed:   1908.8 Mflops
+ti_s      dims: 2048, 2048,    4  speed:   2632.7 Mflops
+ti_s      dims: 2048, 2048,    5  speed:   3083.7 Mflops
+ti_s      dims: 2048, 2048,    6  speed:   3080.2 Mflops
+ti_s      dims: 2048, 2048,    7  speed:   3605.7 Mflops
+ti_s      dims: 2048, 2048,    8  speed:   4600.1 Mflops
+ti_s      dims: 2048, 2048,   32  speed:  10655.2 Mflops
+ti_s      dims:   32,   32, 2048  speed:  10539.5 Mflops
+ti_s      dims:    2,    2,    2  speed:      8.5 Mflops
+ti_s      dims:    3,    3,    3  speed:     28.5 Mflops
+ti_s      dims:    4,    4,    4  speed:     66.9 Mflops
+ti_s      dims:    5,    5,    5  speed:    129.9 Mflops
+ti_s      dims:    6,    6,    6  speed:    216.5 Mflops
+ti_s      dims:    7,    7,    7  speed:    339.0 Mflops
+ti_s      dims:    8,    8,    8  speed:    489.2 Mflops
+ti_s      dims:    9,    9,    9  speed:    682.6 Mflops
+ti_s      dims:   10,   10,   10  speed:    869.2 Mflops
+ti_s      dims:   11,   11,   11  speed:   1119.1 Mflops
+ti_s      dims:   12,   12,   12  speed:   1438.2 Mflops
+ti_s      dims:   13,   13,   13  speed:   1765.9 Mflops
+ti_s      dims:   14,   14,   14  speed:   2091.3 Mflops
+ti_s      dims:   15,   15,   15  speed:   2494.8 Mflops
+ti_s      dims:   16,   16,   16  speed:   2970.5 Mflops
+ti_s      dims:   24,   24,   24  speed:   6903.1 Mflops
+ti_s      dims:   32,   32,   32  speed:  10980.4 Mflops
+ti_s      dims:   48,   48,   48  speed:  12221.6 Mflops
+ti_s      dims:   64,   64,   64  speed:  14876.0 Mflops
+ti_s      dims:   96,   96,   96  speed:  19295.5 Mflops
+ti_s      dims:  128,  128,  128  speed:  21360.7 Mflops
+ti_s      dims:  129,  129,  129  speed:  20970.8 Mflops
+ti_s      dims:  192,  192,  192  speed:  24159.5 Mflops
+ti_s      dims:  256,  256,  256  speed:  25431.8 Mflops
+ti_s      dims:  384,  384,  384  speed:  27556.9 Mflops
+ti_s      dims:  512,  512,  512  speed:  26023.6 Mflops
+ti_s      dims:  513,  513,  513  speed:  21655.2 Mflops
+ti_s      dims:  768,  768,  768  speed:  30450.8 Mflops
+ti_s      dims: 1024, 1024, 1024  speed:  32131.6 Mflops
+ti_s      dims: 1536, 1536, 1536  speed:  35920.8 Mflops
+ti_s      dims: 2048, 2048, 2048  speed:  38286.4 Mflops
+ti_s      dims: 4096, 4096, 4096  speed:  42354.7 Mflops
+ 
+Results are in file  /tmp/matvec.tst

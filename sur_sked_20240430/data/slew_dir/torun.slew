@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  TORUN     Tr
+LAST_UPDATE: TORUN     2018.01.20
+COORD:       TORUN     meters     3638558.517  1221969.731  5077036.754
+MOUNT:       TORUN     char       ALTAZ
+SLEW_AZ:     TORUN     deg/sec    1.00
+SLEW_EL:     TORUN     deg/sec    0.267
+ACCL_AZ:     TORUN     deg/sec^2  0.05
+ACCL_EL:     TORUN     deg/sec^2  0.30
+TSETTLE_AZ:  TORUN     sec        5.0
+TSETTLE_EL:  TORUN     sec        5.0
+EL_MIN:      TORUN     deg        3.0
+EL_MAX:      TORUN     deg       93.0
+AZ_RANGE:    TORUN     deg      -80.0 80.0 280.0 440.0
+RECORDER:    TORUN     char      mark5
+PREOB:       TORUN     sec       10.0
+POSTOB:      TORUN     sec        2.0

@@ -1,0 +1,990 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML lang="en">
+<HEAD>
+     <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+     <META NAME="GENERATOR" CONTENT="redoc" >
+    <TITLE>   Introduction to VLBI Time Delay (VTD) package. </TITLE>
+</HEAD>
+<BODY>
+    <CENTER><B><BIG>   Introduction to VLBI Time Delay (VTD) package. </BIG></B></CENTER>
+<HR SIZE="6">
+    <CENTER><I>   </I></CENTER>
+    <CENTER><I>    L. Petrov </I></CENTER>
+    <CENTER><I>   </I></CENTER>
+<P>
+<CENTER><I><BIG> Abstract: </CENTER></I></BIG>
+ 
+<P><I><UL><FONT SIZE=2>
+ 
+ 
+   This document provides an outlines of the package of subroutines for
+computation of VLBI Time Delay and the Doppler frequency shift for observations
+of objects in the Solar system.
+ 
+ 
+</FONT></I></UL><P>
+ 
+<CENTER><BIG><I> Table of contents: </CENTER></BIG></I>
+ 
+<DL>
+<P><DD> 1 &nbsp; <A HREF="#section1"> General remarks </A> </DD><P>
+<P><DD> 2 &nbsp; <A HREF="#section2"> Strategy of computation </A> </DD><P>
+<P><DD> 3 &nbsp; <A HREF="#section3"> Interface to the subroutines </A> </DD><P>
+<DD> <DL><DD> 3.1 &nbsp; <A HREF="#section3.1"> VTD_INIT </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.2 &nbsp; <A HREF="#section3.2"> VTD_CONF </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.3 &nbsp; <A HREF="#section3.3"> VTD_LOAD </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.4 &nbsp; <A HREF="#section3.4"> VTD_METEO_IN </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.5 &nbsp; <A HREF="#section3.5"> VTD_DELAY </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.6 &nbsp; <A HREF="#section3.6"> VTD_DOPPLER </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.7 &nbsp; <A HREF="#section3.7"> VTD_READ_NZO </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.8 &nbsp; <A HREF="#section3.8"> VTD_LOAD_NZO </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.9 &nbsp; <A HREF="#section3.9"> VTD_LT_ORB </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.10 &nbsp; <A HREF="#section3.10"> VTD_REL_ORB </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.11 &nbsp; <A HREF="#section3.11"> VTD_QUIT </A> </DD> </DL><DD>
+<DD> <DL><DD> 3.12 &nbsp; <A HREF="#section3.12"> VTD_GET_VERSION </A> </DD> </DL><DD>
+</DL>
+ 
+<HR SIZE="2">
+ 
+<LISTING>
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section1"> </A> 1 &nbsp; General remarks
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+ 
+  VTD is a set of subroutines for computation of VLBI Time Delay, Doppler
+frequency shift for observations of objects in the Solar system and its
+partial derivatives. It does not have a built-in database handler, so it
+is adaptive enough to be incorporated in existing software packages. The
+options of the model are specified in the control file. At the high level,
+there are only five calls:
+ 
+  VTD_INIT     -- for initialization of the internal data structures;
+  VTD_CONF     -- for parsing configuration file;
+  VTD_LOAD     -- for loading input catalogues, planetary ephemerides, Earth
+                  orientation parameter series and other apriori parameters of
+                  the model as well as the range of dates for which VLBI time
+                  delay is to be computed.
+  VTD_METEO    -- for loading meteorological information. NB: meteorological
+                  information is not needed, if the path delay through the
+                  atmosphere is interpolated from the external time series
+                  of slanted path delays.
+  VTD_DELAY    -- for computation of VLBI time delay and its partial derivatives.
+ 
+  or
+ 
+  VTD_READ_NZO -- read coordinates of the near zone object
+  VTD_LOAD_NZO -- compute coefficients of the B-spline expansion of coordinates
+                  of the near zone object and load them in the VTD object.
+  VTD_DOPPLER  -- for computation of the Doppler frequency shift from a body
+                  in the Solar system.
+  VTD_LT_ORB   -- for computation of light time from the ground station to
+                  the orbiting station
+  VTD_REL_ORB  -- for computation of time dilation integral for a case when
+                  one of the stations is on the orbit.
+  VTD_QUIT     -- for deallocation dynamic memory used by VTD
+ 
+  Internal data structures are defined in one object called VTD which is
+passed from one routine to another. All routines have integer universal
+error handler parameter IUER. If the input value of IUER = -1, and the
+error is detected, the routine which detected the error prints the error
+message and returns non-zero output value of IUER. If the routine which
+has detected the error was called from the routine of upper level, the
+routine of the upper level prints its error message as well and returns
+non-zero value. Input value of IUER suppresses the error message. In the case
+of successful completion the output value of IUER = 0.
+ 
+  Inside VTD only SI units are allowed, except the date. Dates are specified
+in a pair of MJD,TAI.
+ 
+  VTD is written in Fortran90 was tested under Linux, HP-UX and Sun operating
+systems. VTD depends on petools library and optionally on cfitsio library.
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2"> </A> 2 &nbsp; Strategy of computation
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+ 
+  Computation of time delay and/or Doppler frequency shift is highly
+parameterized. Apriori data, names of variants of the algorithms for
+astronomical reductions are specified in the control file.
+ 
+  After parsing control file VTD needs apriori files to be loaded in the slots
+of internal data structures. VTD_LOAD loads station description file, station
+coordinate file, station velocity file, site eccentricity file. During this
+step it transforms units. It computes for each station longitude, geocentric
+and geodetic latitude, matrix of transformation from crust-fixed terrestrial
+reference system to Up(vertical)-East-North topocentric reference system,
+local gravity acceleration and the height above the reference ellipsoid.
+Then it loads source coordinates catalogue. Then it load series of pole
+coordinates and UT1 angles and computes coefficients of cubic spline for
+interpolation. Then it reads the file with DE403 ephemerides and parses it.
+Then it computes time-independent intermediate variables for solid Earth
+tides computation. These parameters depends only on station coordinates.
+Then it parses files with position variation models. In the case of harmonic
+site position variations model it loads parameters of the models into slots
+of internal data structure. In the case if time series of position variations
+it computes interpolating polynomials for these variations.
+ 
+  Reading all these input files and making some computations which are
+time-independent is done only once. All remaining work is done by VTD_DELAY
+or VTD_DOPPLER.
+ 
+  VTD first checks whether the time epochs passed to as an argument is
+the same as in the previous call. If not, then it calls VTD_MOMENT which
+computes site-independent intermediate variables. It computes positions of the
+celestial bodies: the Moon and the Sun and all planets, except the Pluto using
+DE403 ephemerides. It computes pole coordinates and UT1-TAI using interpolation
+polynomials created by VTD_LOAD. It computes site-independent sums over
+constituents of the tide-generating potential for solid Earth's tides
+displacements computations. Then VTD_MOMENT computes the matrix of
+transformation from the terrestrial reference system to the celestial reference
+system. It may use either the Newcomb-Andoyer formalism for precession,
+nutation and stellar angle (Greenwich true stellar time) or the Empirical
+Earth rotation model formalism. In addition to nutation expansion,
+it applies the small perturbation to the transformation matrix specified in the
+external file in for form of harmonic expansion with cross terms
+( t* sin (omega*t _phase), t* cos (omega*t _phase) )
+ 
+  Then VTD_DELAY checks whether site-dependent parameters for this particular
+epoch have been computed for the first and the second station of the
+baseline. If not, then it computes for each site station-specific
+parameters. This includes computation of the contribution due to antenna
+axis offset, solid Earth tides, pole tide, position variation models
+specified in the external files, troposphere/axis offset coupling.
+It applies site eccentricity, transforms coordinates from the crust fixed
+terrestrial reference frame to the celestial reference frame. Then it
+computes elevation and azimuth of the observing source at each station and
+computes atmospheric zenith path delay and the mapping function. Using
+these quantities VTD_DELAY computes apriori path delay at each station.
+ 
+  After calculation of site- and time- specific intermediate variables
+VTD_DELAY computes geometric path delay and VTD_DOPPLER computes the Doppler
+frequency shift parameter. VTD_DELAY computes small troposphere-geometric
+coupling contribution. VTD_DELAY computes (not implemented on 2007.01.01)
+the contribution to delay due to source structure and ionosphere.
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3"> </A> 3 &nbsp; Interface to the subroutines
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+ 
+  The program which calls VTD should have definition of the object VTD
+which are kept in the include block vtd.i , i.e. should have a statement
+ 
+INCLUDE 'vtd.i'
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.1"> </A> 3.1 &nbsp; VTD_INIT
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+      SUBROUTINE VTD_INIT ( VTD, IUER )
+ 
+! *   Routine VTD_INIT  initializes object VTD. It should be called      *
+! *   before first used of package VLBI Time Delay (VTD).                *
+! *                                                                      *
+! * ________________________ Modified parameters: ______________________ *
+! *                                                                      *
+! *      VTD ( RECORD    ) -- Object which keeps configuration and data  *
+! *                           related to VLBI Theoretical Delay (VTD)    *
+! *                           package.                                   *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                      Input: IUER=0 -- no error message will be       *
+! *                                       printed even in the case       *
+! *                                       of error.                      *
+! *                             IUER=-1,-2,-3 -- in the case of error    *
+! *                                       the message will be put on     *
+! *                                       stdout.                        *
+! *                             IUER=-3 -- in the case of error after    *
+! *                                        printing the error message    *
+! *                                        the program will terminate.   *
+! *                       Output:                                        *
+! *                             if input value of IUER =-2,-3 -- IUER    *
+! *                                        is not modified.              *
+! *                             otherwise, the output value of IUER is 0 *
+! *                             in the case of successful and            *
+! *                             positive non-zero in the vase of errors. *
+ 
+extern void vtd_init (
+              char * vtd,
+              int  * iuer
+            ) ;
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.2"> </A> 3.2 &nbsp; VTD_CONF
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine  VTD_CONF  parses configuration file of the package for    *
+! *   computation of VLBI Time Delay (VTD) and stores results of parsing *
+! *   in the internal fields of the object VTD.                          *
+! *                                                                      *
+! * _________________________ Input parameters: ________________________ *
+! *                                                                      *
+! * CONFIG_FILE ( CHARACTER ) -- Full path name of the configuration     *
+! *                              file.                                   *
+! *                                                                      *
+! * _________________________ Modified parameters: _____________________ *
+! *                                                                      *
+! *     VTD ( RECORD    ) -- Object which keeps configuration and data   *
+! *                          related to VLBI Theoretical Delay (VTD)     *
+! *                          package.                                    *
+! *    IUER ( INTEGER*4 ) -- Universal error handler argument.           *
+! *                          Input:  switch IUER=0 -- no error messages  *
+! *                                  will be generated even in the case  *
+! *                                  of error. IUER=-1 -- in the case of *
+! *                                  error the message will be put on    *
+! *                                  stdout.                             *
+! *                          Output: 0 in the case of successful         *
+! *                                  completion and non-zero in the      *
+! *                                  case of error.                      *
+ 
+extern void vtd_conf (
+               char * vtd_config_file,
+               char * vtd,
+               int  * iuer,
+               int    sizeof_vtd_config_file
+            ) ;
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.3"> </A> 3.3 &nbsp; VTD_LOAD
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine  VTD_LOAD  loads lists of stations participated in the     *
+! *   observing session, list of observed sources, time of the first and *
+! *   the last observation. It puts station and sources list in the      *
+! *   internal field of VTD. VTD reads the catalogue specified in the    *
+! *   control file, reads the Earth orientation parameters file, reads   *
+! *   planetary ephemerides, computes time-independent quantities needed *
+! *   for solid Earth tide computations, loads position variations       *
+! *   modes,  computes interpolating coefficients of site displacements  *
+! *   if needed. VTD_LOAD  should be called before computation of time   *
+! *   delay for the first observation.                                   *
+! *                                                                      *
+! * ________________________ Input parameters: _________________________ *
+! *                                                                      *
+! *     L_STA ( INTEGER*4 ) -- The number of stations participating in   *
+! *                            the experiment.                           *
+! *     C_STA ( CHARACTER ) -- List of statation names participating in  *
+! *                            the experiment. Dimenstion: L_STA.        *
+! *     L_SOU ( INTEGER*4 ) -- The number of observed sources.           *
+! *     C_SOU ( CHARACTER ) -- List of source names participating in     *
+! *                            the experiment. Dimenstion: L_SOU.        *
+! *   MJD_BEG ( INTEGER*4 ) -- Modified Julian data on the midnight of   *
+! *                            the first observation. Units: days.       *
+! *   TAI_BEG ( REAL*8    ) -- Moment of time of the first observation.  *
+! *                            Units: sec.                               *
+! *   MJD_END ( INTEGER*4 ) -- Modified Julian data on the midnight of   *
+! *                            the last observation. Units: days.        *
+! *   TAI_END ( REAL*8    ) -- Moment of time of the last observation.   *
+! *                            Units: sec.                               *
+! *                                                                      *
+! * ________________________ Modified parameters: ______________________ *
+! *                                                                      *
+! *     VTD ( RECORD    ) -- Object which keeps configuration and data   *
+! *                          related to VLBI Theoretical Delay (VTD)     *
+! *                          package.                                    *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                      Input: IUER=0 -- no error message will be       *
+! *                                       printed even in the case       *
+! *                                       of error.                      *
+! *                             IUER=-1,-2,-3 -- in the case of error    *
+! *                                       the message will be put on     *
+! *                                       stdout.                        *
+! *                             IUER=-3 -- in the case of error after    *
+! *                                        printing the error message    *
+! *                                        the program will terminate.   *
+! *                       Output:                                        *
+! *                             if input value of IUER =-2,-3 -- IUER    *
+! *                                        is not modified.              *
+! *                             otherwise, the output value of IUER is 0 *
+! *                             in the case of successful and            *
+! *                             positive non-zero in the vase of errors. *
+ 
+extern void vtd_load (
+               char   * vtd,
+               int    * l_sta,
+               char   * c_sta,
+               int    * l_sou,
+               char   * c_sou,
+               int    * mjd_beg,
+	       double * tai_beg,
+               int    * mjd_end,
+	       double * tai_end,
+               int    * iuer,
+               int      sizeof_c_sta_element,
+               int      sizeof_c_sou_element
+            ) ;
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.4"> </A> 3.4 &nbsp; VTD_METEO_IN
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine VTD_METEO_IN inserts atmospheric pressure and air          *
+! *   temperature for station STANAM in the object VTD.                  *
+! *                                                                      *
+! * _________________________ Input parameters: ________________________ *
+! *                                                                      *
+! *   STANAM ( CHARACTER ) -- Name of the station of the baseline.       *
+! *                           The station should be in the input         *
+! *                           catalogue defined in the control file.     *
+! * ATM_PRES ( REAL*8    ) -- Atmospheric pressure at the station in     *
+! *                           Pascals.                                   *
+! * AIR_TEMP ( REAL*8    ) -- Air temperature at the station in Kelvins. *
+! * AIR_TEMP_EFF ( REAL*8  ) -- Effective air temperature for taking     *
+! *                             into account thermal expansion of the    *
+! *                             antenna (in Kelvins). It is up to the    *
+! *                             analyst to descide which effective       *
+! *                             temperature is the best. It was found    *
+! *                             that the station air temperature lagged  *
+! *                             2-3 hours gives the best agreement with  *
+! *                             the in situ measuremenets.               *
+! *                                                                      *
+! * _________________________ Modified parameters: _____________________ *
+! *                                                                      *
+! *     VTD ( RECORD    ) -- Object which keeps configuration and data   *
+! *                          related to VLBI Theoretical Delay (VTD)     *
+! *                          package.                                    *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                      Input: IUER=0 -- no error message will be       *
+! *                                       printed even in the case       *
+! *                                       of error.                      *
+! *                             IUER=-1,-2,-3 -- in the case of error    *
+! *                                       the message will be put on     *
+! *                                       stdout.                        *
+! *                             IUER=-3 -- in the case of error after    *
+! *                                        printing the error message    *
+! *                                        the program will terminate.   *
+! *                       Output:                                        *
+! *                             if input value of IUER =-2,-3 -- IUER    *
+! *                                        is not modified.              *
+! *                             otherwise, the output value of IUER is 0 *
+! *                             in the case of successful and            *
+! *                             positive non-zero in the vase of errors. *
+ 
+extern void vtd_meteo_in (
+               char   * vtd,
+               char   * sta_nam,
+               double * pres,
+               double * temp,
+               double * humid,
+               int    * iuer,
+               int      sizeof_sta_nam
+            ) ;
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.5"> </A> 3.5 &nbsp; VTD_DELAY
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine  VTD_DELAY  is the main routine of the package for         *
+! *   computation of the VLBI Time Delay (VTD). It computes group delay  *
+! *   and phase delay as well as partial derivatives of group delay and  *
+! *   delay rate with respect to parameters of the model at the          *
+! *   specified moment of time, for the specified pair of stations and   *
+! *   for the specified source using the model specified from the        *
+! *   control file previously loaded into the data structure VTD.        *
+! *   It is assumed that routines VTD_INIT, VTD_CONF and VTD_LOAD were   *
+! *   called before the call of VTD_DELAY.                               *
+! *                                                                      *
+! *   VLBI Time delay is defined as the difference of two intervals of   *
+! *   proper time: 1) the interval of proper time of station #2 between  *
+! *   events: coming the wave front to the reference point on the moving *
+! *   axis and clock synchronization; 2) the interval of proper time of  *
+! *   station #1 between events: coming the wave front to the reference  *
+! *   point on the moving axis and clock synchronization. The time delay *
+! *   is referred to the moment of coming the wave front to the          *
+! *   reference point on the moving axis of the first antenna at time    *
+! *   measured by the time scale TAI. The reference point of the station *
+! *   for which modeling is done is defined as the point on the moving   *
+! *   axes which has the minimal distance to the fixed axis. In the      *
+! *   case if axes intersect, this is the point of intersection.         *
+! *                                                                      *
+! *   Precision of computation of VLBI time delay is deemed to be no     *
+! *   worse than 1.D-12 seconds, precision of computation of delay rate  *
+! *   is no worse than 1.D-15 . Accuracy of computation of time delay    *
+! *   is limited by accuracy of a priori information. It can be as good  *
+! *   as 1.0D-10 .                                                       *
+! *                                                                      *
+! * _________________________ Input parameters: ________________________ *
+! *                                                                      *
+! *  SOU_NAM ( CHARACTER ) -- Name of the source. The source should      *
+! *                           be in the input catalogue defined in the   *
+! *                           control file.                              *
+! * STA1_NAM ( CHARACTER ) -- Name of the first station of the baseline. *
+! *                           The station should be in the input         *
+! *                           catalogue defined in the control file.     *
+! * STA2_NAM ( CHARACTER ) -- Name of the second station of the baseline.*
+! *                           The station should be in the input         *
+! *                           catalogue defined in the control file.     *
+! *      MJD ( INTEGER*4 ) -- Modified Julian date of the midnight of    *
+! *                           the observation.                           *
+! *      TAI ( INTEGER*4 ) -- Time of the observations in seconds at     *
+! *                           time scale TAI elapsed from the midnight.  *
+! *  OBS_TYP ( VTD__OBS_TYPE ) -- The object with information about      *
+! *                                  observation type, polarization and  *
+! *                                  frequency setup of the experiment.  *
+! *                                  It is used for                      *
+! *                               1) computing source structure          *
+! *                                  contribution;                       *
+! *                               2) computing ionospheric contribution; *
+! *                               3) computing contribution to phase     *
+! *                                  caused by delay parallactic angle   *
+! *                                  rotation.                           *
+! *    Fields of VTD__OBS_TYPE:                                          *
+! *                                                                      *
+! *    INTEGER*4   %L_FRQ  ! The number of frequency channels within the *
+! *                          band                                        *
+! *    CHARACTER*2 %PLRZ   ! Polarization at each band: RR, LL, RL or LR *
+! *                          'RR' -- both antennas observed right        *
+! *                                  circular polarization;              *
+! *                          'LL' -- both antennas observed right        *
+! *                                  circular polarization;              *
+! *                          'LR' -- Reference antenna observed left     *
+! *                                  circular polarization and another   *
+! *                                  antenna observed right circular     *
+! *                                  polarization.                       *
+! *                          'RL' -- Reference antenna observed left     *
+! *                                  circular polarization and another   *
+! *                                  antenna observed right circular     *
+! *                                  polarization.                       *
+! *                          'NO' -- Contribution due to parallactic     *
+! *                                  angle correction is not computed.   *
+! *    INTEGER*4   %STATUS  ! Status: VTD__UNDF, VTD__BND, VTD__CHN      *
+! *                         VTD__UNDF -- ! Frequency setup is undefined. *
+! *                                        This indicates that no        *
+! *                                        information about frequencies *
+! *                                        and polarization is available.*
+! *                         VTD__BND  -- ! Frequency channel setup is    *
+! *                                        undefined, but the reference  *
+! *                                        frequency, effective          *
+! *                                        ionospheric frequencies and   *
+! *                                        polarization are known.       *
+! *                         VTD__CHN  -- ! Frequency channel setup is    *
+! *                                        known. Effective ionospheric  *
+! *                                        frequencies are computed on   *
+! *                                        the fly.                      *
+! *    INTEGER*4   %N_BND ! Number of either bands or channel depending  *
+! *                         on the status.                               *
+! *    INTEGER*4   %DELAY_TYPE ! Delay type. Delay type depends on       *
+! *                              band: low or high and on observable for *
+! *                              each band: phase delay, multi-band      *
+! *                              delay, narrow-band delay. The list of   *
+! *                              supported combination is defined in     *
+! *                              vtd.i                                   *
+! *    CHARACTER   %EXP_NAME    ! Experiment name. Experiment name may   *
+! *                             ! be used for gaining access to external *
+! *                             ! calibration files.                     *
+! *    CHARACTER   %SCAN_NAME   ! Scan name. Scan name may be used for   *
+! *                             ! gaining access to external calibration *
+! *                             ! files.                                 *
+! *    REAL*8      %FRQ ! Array of cyclic frequencies. Dimension %L_FRQ. *
+! *    REAL*8      %WEI ! Array of channel weights. Dimension %L_FRQ.    *
+! *    REAL*8      %FRQ_REF  ! Reference frequency per band.             *
+! *    REAL*8      %FRQ_ION_EFF ! Effective cyclic ionosphere            *
+! *                             ! frequency for this type of delay       *
+! *                             ! contribution. Units: Herz.             *
+! *                                                                      *
+! *    If no information about frequencies and polarization is           *
+! *    available, set OBS_TYP%STATUS to VTD__UNDF. Then contents         *
+! *    of  OBS_TYP will be ignored and contribution to delay caused      *
+! *    by the ionosphere, source structure and parallactic anlge         *
+! *    rotation will be set to zero.                                     *
+! *                                                                      *
+! * _________________________ Output parameters: _______________________ *
+! *                                                                      *
+! *    DELAY ( REAL*8    ) -- VLBI time delay. Units: seconds.           *
+! *     RATE ( REAL*8    ) -- VLBI delay rate. Units: dimensionless.     *
+! *  DER_DEL ( REAL*8    ) -- Vector of partial derivatives of group     *
+! *                           delay with respect to parameters of the    *
+! *                           model or some important intermediate       *
+! *                           quantities. Dimension: DER__NDER.          *
+! *            Symbolic names of the indexes of the partial derivatives  *
+! *            in the array DER_DEL are defined in vtd.i .               *
+! *            Their meaning:                                            *
+! *                                                                      *
+! *            VTD__DER_E1    -- Earth rotation Euler angle 1            *
+! *            VTD__DER_E2    -- Earth rotation Euler angle 2            *
+! *            VTD__DER_E3    -- Earth rotation Euler angle 3            *
+! *            VTD__DER_ST1X  -- Station 1, X coordinate                 *
+! *            VTD__DER_ST1Y  -- Station 1, Y coordinate                 *
+! *            VTD__DER_ST1Z  -- Station 1, Z coordinate                 *
+! *            VTD__DER_ST2X  -- Station 2, X coordinate                 *
+! *            VTD__DER_ST2Y  -- Station 2, Y coordinate                 *
+! *            VTD__DER_ST2Z  -- Station 2, Z coordinate                 *
+! *            VTD__DER_RA    -- Right ascension of the far-zone source  *
+! *            VTD__DER_DL    -- Declination of the far-zone source      *
+! *            VTD__DER_AT1   -- Station 1, atmospheric path delay       *
+! *            VTD__DER_AT2   -- Station 2, atmospheric path delay       *
+! *            VTD__DER_ATN1  -- Station 1, atmospheric north tilt       *
+! *            VTD__DER_ATE1  -- Station 1, atmospheric east  tilt       *
+! *            VTD__DER_ATN2  -- Station 2, atmospheric north tilt       *
+! *            VTD__DER_ATE2  -- Station 2, atmospheric east  tilt       *
+! *            VTD__DER_POS1  -- Position of near zone object, X coord.  *
+! *            VTD__DER_POS2  -- Position of near zone object, Y coord.  *
+! *            VTD__DER_POS3  -- Position of near zone object, Z coord.  *
+! *            VTD__DER_VEL1  -- Velocity of near zone object, X coord.  *
+! *            VTD__DER_VEL2  -- Velocity of near zone object, Y coord.  *
+! *            VTD__DER_VEL3  -- Velocity of near zone object, Z coord.  *
+! *            VTD__DER_AXF1  -- Antenna axis offset length 1st antenna. *
+! *            VTD__DER_AXF2  -- Antenna axis offset length 2nd antenna. *
+! *                                                                      *
+! *            VTD__ELEV1     -- Elevation angle of the 1st antenna      *
+! *            VTD__ELEV2     -- Elevation angle of the 2nd antenna      *
+! *            VTD__AZIM1     -- Aximuth angle of the 1st antenna        *
+! *            VTD__AZIM2     -- Aximuth angle of the 2nd antenna        *
+! *            VTD__TROP1     -- Slanted troposphere path at the         *
+! *                              1st antenna.                            *
+! *            VTD__TROP2     -- Slanted troposphere path at the         *
+! *                              2nd antenna.                            *
+! *            VTD__IONO1     -- Slanted ionosphere  path at the         *
+! *                              1st antenna.                            *
+! *            VTD__IONO2     -- Slanted ionosphere  path at the         *
+! *                              2nd antenna.                            *
+! *            VTD__TRP_HZD1  -- Hydrostatic troposphere path delay in   *
+! *                              zentith at the 1st antenna.             *
+! *            VTD__TRP_HZD2  -- Hydrostatic troposphere path delay in   *
+! *                              zentith at the 2nd antenna.             *
+! *            VTD__TRP_WZD1  -- Non-hydrostatic troposphere path delay  *
+! *                              in zentith at the 1st antenna.          *
+! *            VTD__TRP_WZD2  -- Non-hydrostatic troposphere path delay  *
+! *                              in zentith at the 1nd antenna.          *
+! *            VTD__PARAL1    -- Parallactic agle at the 1st antenna     *
+! *            VTD__PARAL2    -- Parallactic agle at the 2nd antenna     *
+! *            VTD__STRUC     -- Contribution of the source structure    *
+! *                              to time delay.                          *
+! *                                                                      *
+! *  DER_RAT ( REAL*8    ) -- Vector of partial derivatives of phase     *
+! *                           delay rate with respect to parameters of   *
+! *                           the model. Dimension: DER__NDER.           *
+! *                                                                      *
+! * _________________________ Modified parameters: _____________________ *
+! *                                                                      *
+! *     VTD ( RECORD    ) -- Object which keeps configuration and data   *
+! *                          related to VLBI Theoretical Delay (VTD)     *
+! *                          package.                                    *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                      Input: IUER=0 -- no error message will be       *
+! *                                       printed even in the case       *
+! *                                       of error.                      *
+! *                             IUER=-1,-2,-3 -- in the case of error    *
+! *                                       the message will be put on     *
+! *                                       stdout.                        *
+! *                             IUER=-3 -- in the case of error after    *
+! *                                        printing the error message    *
+! *                                        the program will terminate.   *
+! *                       Output:                                        *
+! *                             if input value of IUER =-2,-3 -- IUER    *
+! *                                        is not modified.              *
+! *                             otherwise, the output value of IUER is 0 *
+! *                             in the case of successful and            *
+! *                             positive non-zero in the vase of errors. *
+! *                                                                      *
+ 
+extern void vtd_delay (
+               char          * sou_nam,
+               char          * sta_nam1,
+               char          * sta_nam2,
+               int           * mjd_obs,
+               double        * tai_obs,
+	       vtd__obs_type * obs_typ,
+               char          * vtd,
+               double        * tau,
+               double        * rate_ph,
+               double        * der_del,
+               double        * der_rat,
+               int           * iuer,
+               int             sizeof_sou_nam,
+               int             sizeof_sta_nam1,
+               int             sizeof_sta_nam2
+              ) ;
+ 
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.6"> </A> 3.6 &nbsp; VTD_DOPPLER
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! ************************************************************************
+! *                                                                      *
+! *   Routine  VTD_DOPPLER is the main routine of the package VTD for    *
+! *   computation of the Doppler frequency shift parameter. It computes  *
+! *   also partial derivatives of the Doppler frequency shift parameter  *
+! *   with respect to parameters of the model at the specified moment of *
+! *   time, for the specified stations and for the specified near zone   *
+! *   source using the model specified from the control file previously  *
+! *   loaded into the data structure VTD. It is assumed that routines    *
+! *   VTD_INIT, VTD_CONF and VTD_LOAD were called before the call        *
+! *   of VTD_DO.                                                         *
+! *                                                                      *
+! *   The Doppler frequency shift parameter is defined as a ratio of     *
+! *   the observed frequency to the emitted frequency minus 1.           *
+! *                                                                      *
+! *   Precision of computation of VLBI time delay is deemed to be no     *
+! *   worse than 1.D-11 .                                                *
+! *                                                                      *
+! *   CAVEAT: as of 2007.01.11, computation of partial derivatives is    *
+! *           not implemented.                                           *
+! *                                                                      *
+! *                                                                      *
+! * _________________________ Input parameters: ________________________ *
+! *                                                                      *
+! *  SOU_NAM ( CHARACTER ) -- Name of the source. The source should      *
+! *                           be in the input catalogue defined in the   *
+! *                           control file.                              *
+! *  STA_NAM ( CHARACTER ) -- Name of the station. The station name      *
+! *                           should be in the input catalogue defined   *
+! *                           in the control file.                       *
+! *      MJD ( INTEGER*4 ) -- Modified Julian date of the midnight of    *
+! *                           the observation.                           *
+! *      TAI ( INTEGER*4 ) -- Time of the observations in seconds at     *
+! *                           time scale TAI elapsed from the midnight.  *
+! *                                                                      *
+! * _________________________ Output parameters: _______________________ *
+! *                                                                      *
+! *    D_FRQ ( REAL*8    ) -- The Doppler frequency shift parameter      *
+! *                           defined as a ratio of the observed         *
+! *                           frequency to the emitted frequency minus 1.*
+! *  DER_DEL ( REAL*8    ) -- Vector of partial derivatives of the       *
+! *                           Doppler frequency ratio with respect       *
+! *                           to parameters of the model. Dimension:     *
+!                             DER__NDER.                                 *
+! *            Symbolic names of the indexes of the partial derivatives  *
+! *            in the array DER_DEL are defined in vtd.i .               *
+! *            Their meaning:                                            *
+! *                                                                      *
+! *            VTD__DER_E1    -- Earth rotation Euler angle 1            *
+! *            VTD__DER_E2    -- Earth rotation Euler angle 2            *
+! *            VTD__DER_E3    -- Earth rotation Euler angle 3            *
+! *            VTD__DER_ST1X  -- Station, X coordinate                   *
+! *            VTD__DER_ST1Y  -- Station, Y coordinate                   *
+! *            VTD__DER_ST1Z  -- Station, Z coordinate                   *
+! *            VTD__DER_RA    -- Right ascension of the far-zone source  *
+! *            VTD__DER_DL    -- Declination of the far-zone source      *
+! *            VTD__DER_POS1  -- Position of near zone object, X coord.  *
+! *            VTD__DER_POS2  -- Position of near zone object, Y coord.  *
+! *            VTD__DER_POS3  -- Position of near zone object, Z coord.  *
+! *            VTD__DER_VEL1  -- Velocity of near zone object, X coord.  *
+! *            VTD__DER_VEL2  -- Velocity of near zone object, Y coord.  *
+! *            VTD__DER_VEL3  -- Velocity of near zone object, Z coord.  *
+! *                                                                      *
+! *  DER_FRQ ( REAL*8    ) -- Vector of partial derivatives of phase     *
+! *                           delay rate with respect to parameters of   *
+! *                           the model. Dimension: DER__NDER.           *
+! *                                                                      *
+! * _________________________ Modified parameters: _____________________ *
+! *                                                                      *
+! *     VTD ( RECORD    ) -- Object which keeps configuration and data   *
+! *                          related to VLBI Theoretical Delay (VTD)     *
+! *                          package.                                    *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                      Input: IUER=0 -- no error message will be       *
+! *                                       printed even in the case       *
+! *                                       of error.                      *
+! *                             IUER=-1,-2,-3 -- in the case of error    *
+! *                                       the message will be put on     *
+! *                                       stdout.                        *
+! *                             IUER=-3 -- in the case of error after    *
+! *                                        printing the error message    *
+! *                                        the program will terminate.   *
+! *                       Output:                                        *
+! *                             if input value of IUER =-2,-3 -- IUER    *
+! *                                        is not modified.              *
+! *                             otherwise, the output value of IUER is 0 *
+! *                             in the case of successful and            *
+! *                             positive non-zero in the vase of errors. *
+! *                                                                      *
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.7"> </A> 3.7 &nbsp; VTD_READ_NZO
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine  VTD_READ_NZO  reads the input file FILNZO with            *
+! *   coordinates of the near zone object, parses it and return arrays   *
+! *   of coordinates of the near zone object and time tags associated    *
+! *   with these coordinates.                                            *
+! *                                                                      *
+! * ________________________ Input parameters: _________________________ *
+! *                                                                      *
+! *   FILNZO ( CHARACTER ) -- Name of the file with coordinates of the   *
+! *                           the near zone objects. The file should     *
+! *                           comply specifications of the               *
+! *                           "Apriori positions of a near zone object". *
+! * NZO_NAME ( CHARACTER ) -- Name of the near zone object.              *
+! * OBJ_TYPE ( CHARACTER ) -- Type of the near zone object.              *
+! *                           Support types:                             *
+! *                           VTD__MG  -- Extra-galactic object          *
+! *                           VTD__GAL -- Galactic object                *
+! *                           VTD__ES  -- Near zone object near Earth    *
+! *    M_ARR ( INTEGER*4 ) -- The maximal points in the output arrays    *
+! *                           of near zone objects.                      *
+! *                                                                      *
+! * ________________________ Output parameters: ________________________ *
+! *                                                                      *
+! *    L_ARR ( INTEGER*4 ) -- The number of points in the array of       *
+! *                           the near zone object positions.            *
+! *  MJD_ARR ( INTEGER*4 ) -- Array of MJD dates of position arrays of   *
+! *                           near zone objects. Dimension: L_ARR.       *
+! *  TAI_ARR ( INTEGER*4 ) -- Array of TAU time tags of dates of         *
+! *                           position arrays of near zone objects.      *
+! *                           Dimension: L_ARR.                          *
+! *  POS_ARR ( INTEGER*4 ) -- Array of positions of the near zone        *
+! *                           object. Units: meters. Dimension: 3,L_ARR. *
+! *  VEL_ARR ( INTEGER*4 ) -- Array of velocities of the near zone       *
+! *                           object. Units: m/s. Dimension: 3,L_ARR.    *
+! * CENTER_NAME ( CHARACTER ) -- Name of the center of the coordinate    *
+! *                              system. Supported names:                *
+! *                              "EARTH BARYCENTER"                      *
+! *                              "SOLAR SYSTEM BARICENTER"               *
+! *    REF_NAME ( CHARACTER ) -- Reference system name. Supported names: *
+! *                              "EME2000"                               *
+! * TIM_CODE ( INTEGER*4 ) -- Time code of time tags. One of             *
+! *                           VTD__TDB, VTD__TDT .                       *
+! * COO_CODE ( INTEGER*4 ) -- Code of the metric of the coordinate       *
+! *                           system. Supported codes:                   *
+! *                           VTD__BRS, VTD__IERS1992, VTD__GRS .        *
+! *                                                                      *
+! * ________________________ Modified parameters: ______________________ *
+! *                                                                      *
+! *  IUER ( INTEGER*4, OPT ) -- Universal error handler.                 *
+! *                           Input: switch IUER=0 -- no error messages  *
+! *                                  will be generated even in the case  *
+! *                                  of error. IUER=-1 -- in the case of *
+! *                                  error the message will be put on    *
+! *                                  stdout.                             *
+! *                           Output: 0 in the case of successful        *
+! *                                   completion and non-zero in the     *
+! *                                   case of error.                     *
+! *                                                                      *
+! * ### 02-JAN-2006  VTD_READ_NZO   v2.0 (c) L. Petrov  11-JUN-2012 ###  *
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.8"> </A> 3.8 &nbsp; VTD_LOAD_NZO
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine  VTD_LOAD_NZO  computes coefficients of the B-spline       *
+! *   expansion of coordinates of the near zone object and loads them    *
+! *   in the appropriate fields of the VTD object. Coordinates of the    *
+! *   near-zone objects are supposed to be read by VTD_READ_NZO. These   *
+! *   coordinates and time tags are passed to VTD_LOAD_NZO.              *
+! *                                                                      *
+! *   The coefficients of the expansion will be used by other routines   *
+! *   of the VTD library for computation of position, velocity and       *
+! *   acceleration of the near zone object for calculation of VLBI       *
+! *   path delay and/or Doppler frequency shift.                         *
+! *                                                                      *
+! * ________________________ Input parameters: _________________________ *
+! *                                                                      *
+! * NZO_NAME ( CHARACTER ) -- Name of the near zone object.              *
+! * OBJ_TYPE ( CHARACTER ) -- Type of the near zone object.              *
+! *                           Support types:                             *
+! *                           VTD__MG  -- Extra-galactic object.         *
+! *                           VTD__GAL -- Galactic object.               *
+! *                           VTD__SS  -- Solar system object.           *
+! *                           VTD__ES  -- Near Earth object.             *
+! * OBJ_USED ( CHARACTER ) -- Type of the near zone object.              *
+! *                           VTD__EM  -- Observed emitter.              *
+! *                           VTD__OR  -- Observing orbiting antenna.    *
+! * TIM_CODE ( INTEGER*4 ) -- Time code of time tags. One of             *
+! *                           VTD__TDB, VTD__TDT, VTD__UTC, VTD__TAI.    *
+! *    L_ARR ( INTEGER*4 ) -- The number of points in the array of       *
+! *                           the near zone object positions.            *
+! *  MJD_ARR ( INTEGER*4 ) -- Array of MJD dates of position arrays of   *
+! *                           near zone objects. Dimension: L_ARR.       *
+! *  TAI_ARR ( INTEGER*4 ) -- Array of TAU time tags of dates of         *
+! *                           position arrays of near zone objects.      *
+! *                           Dimension: L_ARR.                          *
+! *  POS_ARR ( INTEGER*4 ) -- Array of positions of the near zone        *
+! *                           object. Units: meters. Dimension: 3,L_ARR. *
+! *    L_NOD ( INTEGER*4 ) -- The number of nodes for the B-spline basis *
+! *                           of the expansion.                          *
+! *    L_DEG ( INTEGER*4 ) -- The degree of the B-spline basis.          *
+! *                                                                      *
+! * ________________________ Modified parameters: ______________________ *
+! *                                                                      *
+! *       VTD ( RECORD    ) -- Object which keeps configuration and data *
+! *                            related to VLBI Theoretical Delay (VTD)   *
+! *                            package.                                  *
+! *  IUER ( INTEGER*4, OPT ) -- Universal error handler.                 *
+! *                           Input: switch IUER=0 -- no error messages  *
+! *                                  will be generated even in the case  *
+! *                                  of error. IUER=-1 -- in the case of *
+! *                                  error the message will be put on    *
+! *                                  stdout.                             *
+! *                           Output: 0 in the case of successful        *
+! *                                   completion and non-zero in the     *
+! *                                   case of error.                     *
+! *                                                                      *
+! *  ### 01-JAN-2006  VTD_LOAD_NZO  v2.0 (c) L. Petrov  13-JUN-2012  ###  *
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.9"> </A> 3.9 &nbsp; VTD_LT_ORB
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine VTD_LT_ORB computes the light time between the ground      *
+! *   station STA_GRO and orbiting station STA_ORB at the moment of time *
+! *   MJD,TAI on the clock synchronized with TAI for the ground station. *
+! *   It is assumed that the ephemeride of the orbiting station and the  *
+! *   catalogue of ground stations has already been loaded.              *
+! *                                                                      *
+! * _________________________ Input parameters: ________________________ *
+! *                                                                      *
+! *     VTD ( RECORD    ) -- Object which keeps configuration and data   *
+! *                          related to VLBI Theoretical Delay (VTD)     *
+! *                          package.                                    *
+! * STA_GRO ( CHARACTER ) -- Name of the ground station.                 *
+! * STA_ORB ( CHARACTER ) -- Name of the orbiting station.               *
+! *                          The station should be in the input          *
+! *                          catalogue defined in the control file.      *
+! *     MJD ( INTEGER*4 ) -- Modified Julian date of the midnight of     *
+! *                          the observation.                            *
+! *     TAI ( INTEGER*4 ) -- Time of the observations in seconds at      *
+! *                          time scale TAI elapsed from the midnight.   *
+! *                                                                      *
+! * _________________________ Output parameters: _______________________ *
+! *                                                                      *
+! *      LT ( REAL*8    ) -- time for propagation of light in vacuum     *
+! *                          from the ground station to the orbiting     *
+! *                          station.                                    *
+! *                                                                      *
+! * _________________________ Modified parameters: _____________________ *
+! *                                                                      *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                      Input: IUER=0 -- no error message will be       *
+! *                                       printed even in the case       *
+! *                                       of error.                      *
+! *                             IUER=-1,-2,-3 -- in the case of error    *
+! *                                       the message will be put on     *
+! *                                       stdout.                        *
+! *                             IUER=-3 -- in the case of error after    *
+! *                                        printing the error message    *
+! *                                        the program will terminate.   *
+! *                       Output:                                        *
+! *                             if input value of IUER =-2,-3 -- IUER    *
+! *                                        is not modified.              *
+! *                             otherwise, the output value of IUER is 0 *
+! *                             in the case of successful and            *
+! *                             positive non-zero in the vase of errors. *
+! *                                                                      *
+! *  ### 14-JUN-2012   VTD_LT_ORB  v1.0 (c)  L. Petrov  14-OCT-2012 ###  *
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.10"> </A> 3.10 &nbsp; VTD_REL_ORB
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine VTD_REL_ORB computes the time dilation for a VLBI station  *
+! *   which is on the orbit. The dilation is computed for interval       *
+! *   of geocentric time coordinates MJD_BEG/TCG_BEG, MJD_END/TCG_END.   *
+! *   It does this computation by evaluating the integral using          *
+! *   coefficients of spline interpolation which were computed by        *
+! *   routine VTD_LOAD_NZO.                                              *
+! *                                                                      *
+! * ________________________ Input parameters: _________________________ *
+! *                                                                      *
+! *     VTD ( VTD__TYPE ) -- Object which keeps configuration and data   *
+! *                          related to VLBI Theoretical Delay (VTD)     *
+! *                          package.                                    *
+! * STA_ORB ( CHARACTER ) -- Name of the orbiting station.               *
+! *                          The station should be in the input          *
+! *                          catalogue defined in the control file.      *
+! * MJD_BEG ( INTEGER*4 ) -- Modified Julian date of the midnight of     *
+! *                          the beginning of the interval.              *
+! * TCG_BEG ( REAL*8    ) -- Geocentric time coordinate for beginning of *
+! *                          the interval.                               *
+! * MJD_END ( INTEGER*4 ) -- Modified Julian date of the midnight of     *
+! *                          the end of the interval.                    *
+! * TCG_END ( REAL*8    ) -- Geocentric time coordinate for end of       *
+! *                          the interval.                               *
+! *                                                                      *
+! * _________________________ Modified parameters: _____________________ *
+! *                                                                      *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                      Input: IUER=0 -- no error message will be       *
+! *                                       printed even in the case       *
+! *                                       of error.                      *
+! *                             IUER=-1,-2,-3 -- in the case of error    *
+! *                                       the message will be put on     *
+! *                                       stdout.                        *
+! *                             IUER=-3 -- in the case of error after    *
+! *                                        printing the error message    *
+! *                                        the program will terminate.   *
+! *                       Output:                                        *
+! *                             if input value of IUER =-2,-3 -- IUER    *
+! *                                        is not modified.              *
+! *                             otherwise, the output value of IUER is 0 *
+! *                             in the case of successful and            *
+! *                             positive non-zero in the vase of errors. *
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.11"> </A> 3.11 &nbsp; VTD_QUIT
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Routine VTD_QUIT  releases memory allocated by internal data       *
+! *   structures of package VLBI Time Delay (VTD).                       *
+! *                                                                      *
+! * ________________________ Modified parameters: ______________________ *
+! *                                                                      *
+! *       VTD ( RECORD    ) -- Object which keeps configuration and data *
+! *                            related to VLBI Theoretical Delay (VTD)   *
+! *                            package.                                  *
+! *  IUER ( INTEGER*4, OPT ) -- Universal error handler.                 *
+! *                           Input: switch IUER=0 -- no error messages  *
+! *                                  will be generated even in the case  *
+! *                                  of error. IUER=-1 -- in the case of *
+! *                                  error the message will be put on    *
+! *                                  stdout.                             *
+! *                           Output: 0 in the case of successful        *
+! *                                   completion and non-zero in the     *
+! *                                   case of error.                     *
+! *                                                                      *
+! *  ### 14-APR-2006    VTD_QUIT   v1.6 (c)  L. Petrov  29-APR-2008 ###  *
+ 
+extern void vtd_quit (
+              char * vtd,
+              int  * iuer
+            ) ;
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3.12"> </A> 3.12 &nbsp; VTD_GET_VERSION
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+! *   Returns the VTD label with version.                                *
+! *                                                                      *
+! * ________________________ Modified parameters: ______________________ *
+! *                                                                      *
+! *       STR ( CHARACTER ) -- Version name of the VTD.                  *
+ 
+extern void   vtd_get_version (
+                char * vtd_version,
+                int    sizeof_vtd_version
+              ) ;
+</FONT></LISTING>
+<P>
+<HR SIZE="6">
+  <BR>
+Questions and comments about this guide should be directed to: <BR>
+  <BR>
+Leonid Petrov ( http://astrogeo.org/petrov ) <BR>
+  <BR>
+<EM>
+     Last update:    2012.11.25
+</EM>
+ 
+</BODY>
+</HTML>

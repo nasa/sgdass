@@ -1,0 +1,1589 @@
+      SUBROUTINE A2JST_PLNEOP ( SCSIG, EOPTRACE, KCONS, MAT, NPARM, &
+     &                          EOP_INDICIES, LBUF_LEN, LBUF, IPTR, PAGEWID, &
+     &                          N_APR, APR_VAL, APR_SIG, EST_VAL )
+      IMPLICIT   NONE ! Updated by Jim Ryan for I*4 compliance, Sept 2002
+!
+!     A2JST handles eop parameters for all pre-1997 modes, except the
+!     segment modes which are handled in A2JST_SEGEOP.
+!     Note: The EOP code has been lifted directly from old A2JST and
+!     not modified.  The code to handle segments has been left untouched
+!     (for the time being). The code for the non-eop parameters has been
+!     moved to A2JST_NOEOP.
+!
+! 1.2 REFERENCES:
+!
+! 2.  A2JST INTERFACE
+!
+! 2.1 Parameter File
+      INCLUDE 'astro_constants.i'
+      INCLUDE 'solve.i'
+!
+! 2.2 INPUT Variables: None
+!
+      REAL*8      MAT(*)
+      INTEGER*4   LBUF_LEN, IPTR, PAGEWID, N_APR
+      CHARACTER   LBUF(LBUF_LEN)*120
+!
+! 2.3 OUTPUT Variables:
+!
+      REAL*8    SCSIG(*)
+      REAL*8    EOPTRACE
+      REAL*8    APR_VAL(N_APR), APR_SIG(N_APR), EST_VAL(N_APR)
+      REAL*8    T_SEC, VEC_HEO(3)
+      LOGICAL*2 KCONS
+      INTEGER*2 EOP_INDICIES(3,3)
+!
+! EOPTRACE - sum of earth orientation constraint shares
+! KCONS - True if constraints are applied
+! SCSIG - Scaled sigmas
+!
+! 2.4 COMMON BLOCKS USED
+      INCLUDE 'socom.i'
+      INCLUDE 'socom_plus.i'
+      INCLUDE 'prfil.i'
+      INCLUDE 'glbc4.i'
+      INCLUDE 'precm.i'
+      INCLUDE 'glbcm.i'
+      INCLUDE 'heo.i'
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!     CALLING SUBROUTINES: adjst
+!       CALLED SUBROUTINES: eopell, rotcor, namnut, eop_share, epoc,
+!                           intrp_eomod, intrp_eovr,
+!                           parms, index_parm, index_parm_trot,
+!
+! 3.  LOCAL VARIABLES
+!
+      INTEGER*2 ISTS,IWDS,KBITN
+      INTEGER*2 ISTR_LEN / 20 /
+      PARAMETER ( ISTS = 1 )
+      PARAMETER ( IWDS = 10 )
+      INTEGER*2 IPARMS(IWDS,MAX_PAR), IPARMN
+      CHARACTER*20 LPARMS(MAX_PAR)
+      EQUIVALENCE (LPARMS,IPARMS)
+      INTEGER*2 TOTAL_POS(MAX_PAR), TOTAL_NUM, THIS_NUM, THIS_POS(3)
+      CHARACTER TOTAL_PARMS(MAX_PAR)*20, THIS_PARMS(3)*20
+      INTEGER*2 MAX_EOP_COR
+      PARAMETER ( MAX_EOP_COR=12*MAX_ROT )
+      INTEGER*2 NAMRX(4,MAX_EOP_COR), NAMRT(4,3), NAMTD(4,3), PTYPE(14), &
+     &          NDIMT(2,2), MSC(3), NAMNT(4,2)
+      CHARACTER QNAMRT*24, QNAMTD*24, QNAMNT*16, NAMRT_CHR(3)*8
+      EQUIVALENCE (QNAMRT,NAMRT(1,1))
+      EQUIVALENCE (NAMRT_CHR,NAMRT(1,1))
+      EQUIVALENCE (QNAMNT,NAMNT(1,1))
+      EQUIVALENCE (QNAMTD,NAMTD(1,1))
+      CHARACTER*6 QMSC
+      EQUIVALENCE (QMSC,MSC(1))
+      CHARACTER*8 QNDIMT
+      EQUIVALENCE (QNDIMT,NDIMT(1,1))
+      INTEGER*2   NP,IDS,IORD_STEP,M
+      INTEGER*4   JA, JB, JS
+      REAL*8      TC2000, XSIG, YSIG, USIG, DUT, DXWOB, DYWOB
+      REAL*8      CNVRT, PVAL, HOURS_PER_CYCLE, RATAP(3), RTOTAL, &
+     &            DUTD, DXWOBD, DYWOBD, TROTI, SAMP, SCAMPS(2), SPHS, &
+     &            UT1_M_TDB, TAI_M_UT1
+!
+      LOGICAL*2   KBIT,KPRINT, DO_EOP_SHARE, INTRP_RATES, &
+     &            GOOD_RTOTAL, FULL_ROT, APRS_FOR_EPOCH
+      CHARACTER   QTYP(2)*3, QNUT(2)*15, TYPEPR*6, CDUM*1
+      INTEGER*2   EO_RBCONS_ON(2)
+      INTEGER*2   ID, IHR, IM, IMIN, IORD, IROT, IROTC, IROTT, &
+     &            IXYU, IY, I, KP, KQ, KR, NPARM, NPARMR, NROTC, &
+     &            IEOP, IXYU_START, IXYU_STOP, THIS_NROT, &
+     &            IORD_START, IORD_STOP
+      INTEGER*2   HFIY, HFIM, HFID, HFIHR, HFIMIN, EOPCNT(3)
+      LOGICAL*2   EOP_PARM_ON, EOP_ON
+      LOGICAL*4   LOP
+!
+      INTEGER*4   IUER
+      REAL*8      TROT_CUR, ROTAP_CUR(4), SIGMA_SCALE_FACTOR, EOPSTA(3), &
+     &            EOPRMS(3), EOPTRA(3), DUMMY_R8
+!
+      CHARACTER   LABSDI(2)*12, LABSC(2)*4, STR*255, QMSC_MICRO(3)*9
+      REAL*8      XYUTOT(3), XYUTOTP(3)
+      INTEGER*2   IDUM2(2), ISTRUC1(MAX_STRUC)
+      INTEGER*2   EOP_STYLE_ALT(2), EOPA1_CHOICE_ALT(2)
+!
+      DATA QTYP       / 'PSI', 'EPS' /
+      DATA QNUT       / 'longitude (Psi)','obliquity (Eps)' /
+      DATA QNAMRT     / 'X WobbleY WobbleUT1-TAI ' /
+      DATA QNAMNT     / 'Psi     Eps     '/
+      DATA QNAMTD     / 'LOVE # lLOVE # hLAG.ANG.' /
+      DATA QMSC       / 'mama m' /
+      DATA QMSC_MICRO / 'microasec', 'microasec', 'microsec' /
+      DATA QNDIMT     / '    DEG ' /
+      DATA EOPRMS / 3*0 /, EOPSTA/ 3*0.0 /, EOPTRA/ 3*0.0 /, EOPCNT/ 3*0 /
+      DATA LABSDI / 'Diurnal     ', 'Semi-diurnal' /
+      DATA LABSC  / 'Sine', 'Cos ' /
+      DATA INTRP_RATES / .TRUE. /
+!
+      INTEGER*4  IER
+      CHARACTER  BUG_STR*32, EOP_TAG*23
+      CHARACTER, EXTERNAL :: JD_TO_DATE*23
+      INTEGER*4, EXTERNAL :: ILEN, I_LEN
+!
+! 4.  HISTORY
+!   WHO   WHEN    WHAT
+!   DG    910701  Modified for new E.O. mod file mapping
+!   KB    910816  Printing rate totals for original style of earth orientation
+!                 parameterization (offsets and rates at individual epochs)
+!   :94.01.14:jwr:Micro units introduced for adjstments and sigmas for eop offsets and
+!                 rates.
+!   :94.01.27:jwr:Missing test on kspool when writing hpeop info inserted.
+!   :94.01.28:jwr:For no eop mod file case, modified code to interpolate apriori's
+!                 rather than the contents of rotap.
+!   jmg   960610  Remove holleriths.
+!   jwr   970305  No eop stuff removed.
+!   pet   970829  Added warning message about UT1S-rate-AUG97 bug
+!   pet   970903  Aligned fileds for higher order polinomials for EOP
+!   jwr   971101  call to mapped_eop_results to write mapped eop results - near the beginning and
+!                 end of the session.
+!   pet   971104  Added a couple of line of code to write empty EOPPxx file.
+!   jwr   971117  Code to track eop indicies for later use in creating the eop/nut
+!                 correlation matrix.
+!   pet   971128  Bug HFEOP-NOV97 corrected: argument for get_hf_eop changed
+!                 from Julian centures to Julian days
+!   pet   990311  Added support of kludge environment variable HFEOP-NOV97BUG.
+!                 If an environement variable HFEOP-NOV97BUG has value "ON"
+!                 then an argument for get_hf_eop is in centures
+!   pet   1999.05.28. Made LBUF_LEN, LBUF, IPTR, PAGEWID formal arguments,
+!                     eliminated common block adj_buf
+!   pet   1999.10.15  MJD date of the EOP epoch is printed in sppol file
+!   pet   1999.10.20  Suppreseed printing MJD EOP epoch when a2jst_oldeop
+!                     is called in global mode.
+!   pet   2000.01.31  Forced to print leading zeroes in dates, f.e "00/11/04 07:01"
+!                     instead of " 0/11/ 4  7: 1"
+!                     Added openning spool file if it was not oipenned before
+!                     printing EOP date
+!   pet   2002.04.08  Added argumens APR_VAL, APR_SIG, EST_VAL. They should
+!                     transport some values needed to be put in listing in
+!                     SINEX format
+!   pet   2002.05.03  Improved source code. Added more comments.
+!   pet   2002.05.08  The field "parameter index" was changed from I4 to I5
+!                     in order to support solutions with more than 9999
+!                     parameters. As a result all adjustments and their formal
+!                     uncertainties were moved one character to the right edge
+!                     of listing;
+!                     Moved once charater to the right adjustments of nutation
+!                     angles wrt IAU1980;
+!                     Moved one character to right the line "EOP corrected for "
+!   pet   2002.06.03  Added printing nutation epoch
+!   jwr   2002.12.07  Use of KBIT in call to SBIT replaced with KBITN.
+!   jwr   2002.12.19  TRUE__L2 and FALSE__L2 introduced for -i2 removal
+!   pet   2003.10.02  Added support of harmonic EOP variations in HEO format
+!   pet   2003.10.03  Fixed a bug related to processing simulations.
+!                     The previous version tried to divide by zero.
+!   pet   2005.08.18  Added support of internal variable SEG_LISTING_STYLE.
+!                     SEG_LISTING_STYLE == SEG_PRE2005 is reserved for backward
+!                     compatibiltiy. If SEG_LISTING_STYLE == SEG_POST2005, then
+!                     for clock, atmospheric path delay in zenith direction
+!                     and atmospheric gtradients the time tag epoch is printed
+!                     with accuracy one millisecond in ISO-compatible format.
+!   pet   2005.08.18  Forced to print TAI time in time tag for parameters if &
+!                     SEG_LISTING_STYLE == SEG_POST2005
+!   pet   2006.01.19  Added support of ERM parameters
+!
+! 5.  A2JST PROGRAM STRUCTURE
+!
+! STATEMENTS FUNCTIONS
+!
+      KPRINT(NP)= ( KBIT(ISTRUC1,NP).EQV.KGLOBALS) .OR. .NOT.KBATCH .OR. &
+     &            (KBATCH.AND.ISLTY2.EQ.'I')
+!
+! --- Write empty EOP adjustments list into EOPPxx file. It is done in roder
+! --- to signal to MDLPL that EOP have been estimated using old parameterization
+!
+      CALL USE_EOP_PLOT_FILE ( 'O' )
+      WRITE ( UNIT=EOPL_LU, FMT='(A)' ) 'Segmented EOP have not been '// &
+     &        'estimated in the last solution'
+      CALL USE_EOP_PLOT_FILE ( 'C' )
+!
+! --- In March 1997 the algorithms for handling piecewise linear was changed
+! --- from estimating rates in the intervals to offsets at the interval breaks.
+! --- This entailed modifications to many parts of solve, but ADJUST was
+! --- impacted more than any other routine. However, only the code application
+! --- to segments required change and the old code for eop with polynomials
+! --- and sine waves was okay. To accomodate this with the least change ADJUST
+! --- was change to a simple switch which calls up a2jst_neweop for segmented
+! --- parameterization and this routine for polynomials and sines.
+! --- The code in old ADJST for the parameters after eop is no in a2jst_noeop,
+! --- which is always called by the new A2JST. The code for A2JST_PLNEOP was
+! --- taken from a2jst with as little modification as possible and the old
+! --- code for segmented paramerization is still here, but will never be used.
+! --- If was left because it is so tightly bundled with the code for
+! --- the other modes.
+!
+! --- As a part of changing solve for the new eop parameterization the meaning
+! --- of the variable 'eop_style' was changed and 'eopa1_choice' became
+! --- obsolete. However the code in ADJUST was closely tied to the old
+! --- definitions.  To accomodate this new local variables 'eop_style_alt'
+! --- and 'eopa1_choice_alt' were globally used to replace 'eop_style' and
+! --- 'eopa1_choice' in the code below.  The code immediatlely below uses
+! --- the new definitions to configure these 'alt' variables to mimic the
+! --- old defintions.
+!
+      EOPA1_CHOICE_ALT(1) = 0
+      EOPA1_CHOICE_ALT(2) = 0
+      DO I = 1,2
+         EOP_STYLE_ALT(I) = 1
+         IF     (EOP_STYLE(I) .EQ. EOP__POLY          ) THEN
+             EOP_STYLE_ALT(I) = 0
+           ELSE IF(EOP_STYLE(I) .EQ. EOP__SINE          ) THEN
+             CALL SBIT ( EOPA1_CHOICE_ALT(I), INT2(1), INT2(1) )
+             CALL SBIT ( EOPA1_CHOICE_ALT(I), INT2(2), INT2(1) )
+             CALL SBIT ( EOPA1_CHOICE_ALT(I), INT2(3), INT2(1) )
+           ELSE
+!
+! ---------- All other configurations are handled by a2jst_neweop,
+! ---------- so this is illegal.
+!
+             STOP 'Adjst:a2jst_oldeop - impossible eop configuration'
+         ENDIF
+      ENDDO
+!
+      JA = 3*MAX_PAR
+      JB = 2*MAX_PAR
+      JS = MAX_PAR
+      NROTC=0
+      EOP_ON = .FALSE.
+      IF ( EOP_STYLE_ALT(1) .EQ. 0  .AND.  EOP_STYLE_ALT(2) .EQ. 0 ) THEN
+           FULL_ROT = .TRUE.
+        ELSE
+           FULL_ROT = .FALSE.
+      END IF
+      DO I=1,MAX_PAR
+         CALL SBIT ( ISTRUC1, I, KBITN(ISTRUC,I) )
+      ENDDO
+      TYPEPR = ' '
+      IF ( KGLOBALS ) THEN
+           TYPEPR='global'
+           DO I = 1, MAX_PAR
+              CALL SBIT ( ISTRUC1, I, INT2(1) )
+           ENDDO
+      END IF
+      DO I=1,3
+         XYUTOTP(I) = 0.D0
+      ENDDO
+      XSIG = 0.D0
+      YSIG = 0.D0
+      USIG = 0.D0
+!
+! --- Get the parameter counter
+!
+      NPARM = NPARAM-IPSTP
+      IF ( L_EERM > 0 ) THEN
+!
+! -------- Take into account ERM parameters
+!
+           DO I = 1,3
+              IF ( IND_EERM_NOD(I) > 0 ) THEN
+                   NPARM = NPARM + EERM%DEGREE(I) + 1 + EERM_OVR(I)
+              END IF
+           END DO
+      END IF
+!
+! --- Process the polar motion and UT1 parameters and write archive
+! --- archive scratch file records type 8.  Initialize IROTC and NROTC
+! --- for handling the earth rotation cross-correlations.
+!
+      IF ( FULL_ROT ) THEN
+           IROTC = NPARM+1
+           NROTC = 0
+      END IF
+      NPARMR = NPARM
+      DO IEOP = 1,2
+!
+! ------ Process the polar motion parameters (x&y wobble) first.  Then do
+! ------ the UT1 parameters.  There are two possible parameterization
+! ------ styles, and both polar motion and UT1 can take on either style
+! ------ independently.
+!
+! ------ The first style (eop_style_alt = 0) involves a list of epochs; for
+! ------ each epoch, zero to four orders can be turned on.  (The first order
+! ------ is the offset, the second order is the rate, etc.)  The data in each
+! ------ epoch only applies to the parameters for that epoch.
+!
+!       The second style (eop_style_alt = 1) estimates at least an offset
+!       and a global rate.  (SOLVE treats the whole experiment as the
+!       epoch for this rate.)  Zero to three additional things may be
+!       estimated:
+!         1.  A series of rates which apply to individual epochs of
+!             equal length
+!         2.  A diurnal sine wave - which is treated as the sum of a sine
+!             and a cosine; the second sine and the cosine's amplitudes are
+!             estimated and used to calculate the amplitude and the
+!             phase offset of the diurnal sine
+!         3.  A semi-diurnal sine wave, treated like the diurnal sine
+!
+!
+!       Set up units coversions and text pointer correctly by type.
+!
+         IF ( IEOP .EQ. 1 ) THEN ! x and y wobble
+              IXYU_START = 1
+              IXYU_STOP  = 2
+              KR = 2
+!
+! ----------- Radians to milliarcseconds
+!
+              CNVRT =(180.0D0/PI__NUM) * 3600.0D0 * 1000.D0
+           ELSE ! Ut1
+             IXYU_START = 3
+             IXYU_STOP  = 3
+             KR = 3
+!
+! ---------- Seconds to milliseconds
+!
+             CNVRT =  1.0D3
+         END IF
+!
+! ------ Do a little initialization according to the parameterization
+! ------ style:  set the number of epochs to be checked.
+!
+         IF ( EOP_STYLE_ALT(IEOP) .EQ. 1) THEN ! New style parameterization
+!
+! ----------- If there are no individual epochs with which rates are
+! ----------- associated, the experiment itself must be treated as an
+! ----------- epoch, so that the offset and global rate can be printed.
+! ----------- If there are individual epochs (and rates), the offset
+! ----------- and global rate will be printed along with the rate for
+! ----------- the first epoch.
+!
+              IF ( KBIT ( EOPA1_CHOICE_ALT(IEOP), INT2(1) ) ) THEN
+                   THIS_NROT = NROT_A1(IEOP)
+                ELSE
+                   THIS_NROT = 1
+              END IF
+              IF ( NROT.EQ.0 ) THIS_NROT = 0
+            ELSE                             !old style
+              THIS_NROT = NROT
+         END IF
+!
+! ------ Get high-frequency corrections for this epoch
+!
+         IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) THEN
+              TROT_CUR = TROT_A1
+           ELSE
+              TROT_CUR = TROT(1)
+         ENDIF
+!
+         XYUTOT(1) = 0.D0
+         XYUTOT(2) = 0.D0
+         XYUTOT(3) = 0.D0
+!
+         IF ( KHFEOP .GT. 0  .OR.  STAT_HEO .EQ. HEO__READ ) THEN
+!
+! ----------- Convert TROT_CUR to month, day, year, hour, minute
+!
+              CALL EPOC ( HFIM, HFID, HFIY, HFIHR, HFIMIN, TROT_CUR )
+!
+! ----------- Beginning of fix-1 for letting HFEOP-NOV97 bug to bite us
+!
+              CALL GETENVAR ( 'HFEOP-NOV97BUG', BUG_STR )
+              IF ( ILEN(BUG_STR) .GT. 0 ) THEN
+!
+! ---------------- Transform t0 UPPER registr
+!
+                   CALL TRAN ( 11, BUG_STR, BUG_STR )
+              END IF
+              IF ( BUG_STR(1:2) .EQ. 'ON' ) THEN
+                   TC2000 = ( TROT_CUR - 2451545.D0 )/36525.D0 ! Beware: bug!
+              END IF
+!
+! ----------- End of fix-1 for letting HFEOP-NOV97 bug to bite us
+!
+              IF ( KHFEOP.EQ.1 .OR. KHFEOP.EQ.3 ) THEN
+                   CALL GET_HF_EOP ( TROT_CUR, DUT, DXWOB, DYWOB, DUTD, &
+     &                  DXWOBD, DYWOBD, INT2(1) )
+!
+! ---------------- Beginning of fix-2 for letting HFEOP-NOV97BUG to bite us
+!
+                   IF ( BUG_STR(1:2) .EQ. 'ON' ) THEN
+                        call get_hf_eop( tc2000, dut, dxwob, dywob, dutd, &
+     &                       dxwobd, dywobd, INT2(1) )              ! Beware: bug!
+                   END IF
+!
+! ---------------- End of fix-2 for letting HFEOP-NOV97 bug to bite us
+!
+                   XYUTOT(1) = XYUTOT(1)+DXWOB
+                   XYUTOT(2) = XYUTOT(2)+DYWOB
+                   XYUTOT(3) = XYUTOT(3)+DUT
+              ENDIF
+!
+              IF ( KHFEOP.EQ.2 ) THEN
+                   CALL GET_HF_EOP ( TROT_CUR, DUT, DXWOB, DYWOB, DUTD, &
+     &                  DXWOBD, DYWOBD, INT2(2) )
+!
+! ---------------- Beginning of fix-3 for letting HFEOP-NOV97 bug to bite us
+!
+                   IF ( BUG_STR(1:2) .EQ. 'ON' ) THEN
+                        call get_hf_eop( tc2000, dut, dxwob, dywob, dutd, &
+     &                       dxwobd, dywobd, int2(1) ) ! Beware: bug!
+                   END IF
+!
+! ---------------- End of fix-3 for letting HFEOP-NOV97 bug to bite us
+!
+                   XYUTOT(1) = XYUTOT(1) + DXWOB
+                   XYUTOT(2) = XYUTOT(2) + DYWOB
+                   XYUTOT(3) = XYUTOT(3) + DUT
+              ENDIF
+              IF ( STAT_HEO .EQ. HEO__READ ) THEN
+                   T_SEC = ( TROT_CUR - J2000__JD)*86400.0D0
+!
+! ---------------- Compute
+!
+                   IF ( KEROT ) THEN ! flyby mapped values
+                        CALL INTRP_EOMOD ( TROT_CUR, TAI_M_UT1, DUMMY_R8, &
+     &                       DUMMY_R8, DUMMY_R8, FALSE__L2, DUMMY_R8,     &
+     &                       DUMMY_R8, DUMMY_R8, IDUM2 )
+                      ELSE  ! Standard values
+                        CALL INTRP_EOVR  ( TROT_CUR, TAI_M_UT1, DUMMY_R8, &
+     &                       DUMMY_R8, DUMMY_R8, FALSE__L2, DUMMY_R8,     &
+     &                       DUMMY_R8, DUMMY_R8, IDUM2 )
+                   ENDIF
+                   UT1_M_TDB = -TAI_M_UT1 - 32.184D0
+!
+! ---------------- Get contribution to EOP due to harmonic variations
+!
+                   IUER = -1
+                   CALL GET_HEO ( T_SEC, HEO_EPOCH_SEC, UT1_M_TDB, L_HEO, &
+     &                            %VAL(ADR_HEO), VEC_HEO, IUER )
+                   IF ( IUER .NE. 0 ) THEN
+                        CALL ERR_LOG ( 8341, IUER, 'A2JST_PLNEOP', &
+     &                      'Error in computing harmonic EOP variations' )
+                        CALL EXIT ( 1 )
+                   END IF
+!
+                   XYUTOT(1) = XYUTOT(1) + VEC_HEO(2)/MAS__TO__RAD
+                   XYUTOT(2) = XYUTOT(2) + VEC_HEO(1)/MAS__TO__RAD
+                   XYUTOT(3) = XYUTOT(3) - VEC_HEO(3)/MSEC__TO__RAD/1.002737D0
+             END IF
+          ENDIF
+!
+! ------- The first parameterization style and the offset and rates
+! ------- for the second style are handled in much the same way.
+!
+          DO IXYU = IXYU_START,IXYU_STOP ! Either x&y pole or UT1
+             GOOD_RTOTAL = .TRUE.
+             IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) TROT_CUR = TROT_A1
+             DO IROT = 1,THIS_NROT  ! Run over the rotation epochs
+!
+                IF ( EOP_STYLE_ALT(IEOP) .NE. 1 ) TROT_CUR = TROT(IROT)
+                CALL EPOC ( IM, ID, IY, IHR, IMIN, TROT_CUR )
+                EOP_TAG = JD_TO_DATE ( TROT_CUR - 32.184D0/86400.0D0, IER )
+!
+! ------------- The new-style parameterization always estimates an offset
+! ------------- and and a global rate for the entire experiment. These are
+! ------------- dumped at epoch 1. It may also estimate one of a series of
+! ------------- rates (the rate breaks) for each epoch (including epoch 1).
+! ------------- The old-style parameterization can estimate up to 4
+! ------------- parameters (offset, rate, and the next two orders) for
+! ------------- each epoch, so all four possibilities must be checked.
+!
+                IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) THEN
+                     IF ( IROT .EQ. 1 ) THEN
+!
+! ----------------------- Run over offset  (iord = 2 for offset)
+! ----------------------- global rate      (iord = 3 for global rate)
+! ----------------------- rate for epoch 1 (iord = 4 for individual rate)
+!
+                          IORD_START = 2
+                          IORD_STOP  = 4
+                        ELSE
+!
+! ----------------------- Do rate for epochs other than the first
+! ----------------------- (iord = 4 for individual rate)
+!
+                          IORD_START = 4
+                          IORD_STOP  = 4
+                     END IF
+                     IORD_STEP = 1
+                  ELSE
+!
+! ------------------ Run over offset for this epoch (iord = 2)
+! ------------------ rate  for this epoch (iord = 4)
+! ------------------ second order term (iord = 6)
+! ------------------ third order term (iord = 8)
+!
+                     IORD_START = 2
+                     IORD_STOP  = 8
+                     IORD_STEP = 2
+                END IF ! EOP_STYLE
+!
+! ------------- Run over the applicable degrees
+!
+                DO IORD = IORD_START,IORD_STOP,IORD_STEP
+!
+! ------------- Convert iord to the order of the term it represents.
+! ------------- Key:  iord           kq
+! -------------      ------         -----------------
+! -------------        2            offset (order 0)
+! -------------        3            global rate (order 1)
+! -------------        4            rate for individual epoch (order 1)
+! -------------        6            order 2
+! -------------        8            order 3
+!
+                IF ( IORD .EQ. 3 ) THEN
+                     KQ = 1
+                   ELSE
+                     KQ = (IORD / 2) - 1
+                END IF
+!
+! ------------- Determine if this parameter is on (i.e., included in the
+! ------------- solution).  For the new style
+! ------------- of parameterization, the offset and global rate are always
+! ------------- estimated.  Rates for individual epochs may or may not be;
+! ------------- either all are on or all are off.  For the old style,
+! ------------- every epoch is associated with four parameters each for x,y
+! ------------- and Ut1, and the user may select any combination of these 12
+! ------------- parameters to be off and on.  LROT keeps track of
+! ------------- which are on and off.
+!
+                IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) THEN
+                     IF ( IORD .EQ. 2 .OR. IORD .EQ. 3 ) THEN !offset or global rate
+                          EOP_PARM_ON = .TRUE.
+                          IF ( IORD .EQ. 3  .AND.KBIT( EOPA1_CHOICE_ALT(IEOP), &
+     &                         INT2(1) ) ) THEN
+                               EOP_PARM_ON = .false.
+                          ENDIF
+                        ELSE   !individual rate
+                          IF ( KBIT ( EOPA1_CHOICE_ALT(IEOP), INT2(1) ) ) THEN
+                               EOP_PARM_ON = .TRUE.
+                            ELSE
+                               EOP_PARM_ON = .FALSE.
+                          END IF
+                     END IF
+                  ELSE
+                     IF ( IROTT( IROT, IXYU, INT2(KQ+1), LROT) .EQ. 1 ) THEN
+                          EOP_PARM_ON = .TRUE.
+                        ELSE
+                          EOP_PARM_ON = .FALSE.
+                     END IF
+                END IF
+!
+                IF ( EOP_PARM_ON ) THEN ! The parameter is ON.
+                     EOP_ON = .TRUE.
+!
+! ------------------ Accomplish 4 things..
+!
+                     NPARM = NPARM + 1
+                     IF ( FULL_ROT ) THEN
+                          NROTC = NROTC + 1
+                          PTYPE(NROTC) = 2*(IXYU-1) + KQ + 1
+                          DO KP = 1,4
+                             NAMRX(KP,NROTC) = NAMRT(KP,IXYU)
+                          END DO
+                     END IF
+!
+! ------------------ 1.  Prepare the adjustment, unscaled and scaled sigmas
+! ------------------     and totals for printing, etc.
+!
+                     MAT(JB+NPARM) = MAT(JB+NPARM) * CNVRT
+                     MAT(JS+NPARM) = MAT(JS+NPARM) * CNVRT
+                     SCSIG(NPARM)  = SCSIG(NPARM)  * CNVRT
+!
+! ------------------ Adjst will print totals for certain epochs.
+! ------------------ At the moment, will only calculate offset and rate totals
+! ------------------ for selected epochs:
+! -------------      in the old-style of parameterization,
+! -------------      for every selected epoch,
+! -------------      calculate an offset(/rate) total,
+! -------------      if an offset(/rate) adjustment is estimated there.
+! ------------------ In the new-style,
+! -------------      calculate an offset total at the start of the
+! -------------      experiment.  Also calculate a rate total at that
+! -------------      epoch.  This will use the global rate adjustment.
+! -------------      If the user estimates linear piecewise-continuous
+! -------------      rates, the total will also use the first rate
+! -------------      adjustment.
+! -------------      Totals at an epoch are aprioris plus adjustments for that
+! -------------      epoch.  Already have adjustment information, so get
+! -------------      apriori information, whenever time to do so for that
+! -------------      epoch.
+!
+                     APRS_FOR_EPOCH = .FALSE.
+                     IF ( IORD.EQ.2 ) APRS_FOR_EPOCH = .TRUE.
+!
+! ------------------ Case where old-style and estimating rates at the epoch
+! ------------------ without estimating offsets
+!
+                     IF ( EOP_STYLE_ALT(IEOP) .EQ. 0  .AND.  IORD .EQ. 4 .AND. &
+     &                    IROTT( IROT, IXYU, INT2(1), LROT) .NE. 1 ) THEN
+                          APRS_FOR_EPOCH = .TRUE.
+                     END IF
+                  IF (APRS_FOR_EPOCH) THEN
+!
+! ------------------ Starting the next epoch for which totals will be
+! ------------------ printed, so get all of the apriori information
+! ------------------ for that epoch, so that we can calculate that epoch's
+! ------------------ totals.  If printing offset info in this pass through
+! ------------------ the loops, just hang onto rate aprioris until the
+! ------------------ pass where printing rate info.
+!
+! ------------------ The only aprioris carried throughout solve are the
+! ------------------ standard (non-flyby mapping) offset aprioris,
+! ------------------ and solve only carries them in the
+! ------------------ old-style mode of parameterization.   Every other type
+! ------------------ of apriori (flyby, new-style or rate) must be
+! ------------------ calculated.
+!
+                     IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) THEN ! new-style
+                          IF ( KEROT ) THEN ! flyby mapped values
+                               CALL INTRP_EOMOD ( TROT_CUR, ROTAP_CUR(1), &
+     &                              ROTAP_CUR(2), ROTAP_CUR(3), ROTAP_CUR(4), &
+     &                              INTRP_RATES, RATAP(3), RATAP(1), RATAP(2), &
+     &                              IDUM2 )
+                            ELSE  ! Standard values
+                              CALL INTRP_EOVR ( TROT_CUR, ROTAP_CUR(1), &
+     &                             ROTAP_CUR(2), ROTAP_CUR(3), ROTAP_CUR(4), &
+     &                             INTRP_RATES, RATAP(3), RATAP(1), RATAP(2), &
+     &                             IDUM2 )
+                         ENDIF
+                       ELSE ! Old-style
+                         IF ( KEROT ) then
+                              CALL INTRP_EOMOD ( TROT_CUR, ROTAP_CUR(1), &
+     &                             ROTAP_CUR(2), ROTAP_CUR(3), ROTAP_CUR(4), &
+     &                             INTRP_RATES, RATAP(3), RATAP(1), RATAP(2), &
+     &                             IDUM2 )
+                           ELSE
+!
+! --------------------------- Calling intrp_eovr to get rate aprioris
+!
+                              CALL INTRP_EOVR ( TROT_CUR, ROTAP_CUR(1), &
+     &                             ROTAP_CUR(2), ROTAP_CUR(3), ROTAP_CUR(4), &
+     &                             INTRP_RATES, RATAP(3), RATAP(1), RATAP(2), &
+     &                             IDUM2 )
+! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+!  call un_curses ()
+!  write ( 6, * ) ' MAX_EROT_VALUES = ', MAX_EROT_VALUES
+!  write ( 6, * ) ' UT1PTB = ', UT1PTB
+!  write ( 6, * ) ' WOBXXB = ', WOBXXB
+!  write ( 6, * ) ' WOBYYB = ', WOBYYB
+!  write ( 6, * ) ' UT1INB = ', UT1INB
+!  write ( 6, * ) ' WOBINB = ', WOBINB
+!  write ( 6, * ) ' trot_cur=',trot_cur,' ratap=', -ratap(3)/86400.0D0, &
+!     &      ratap(1)/86400.0D0, ratap(2)/86400.0D0
+!  call pause ( 'ina2jst_plneop' ) ! %%%%%%%%%%%%%%%%%%%%%%%%%%
+! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                         ENDIF
+                    END IF
+                  END IF
+!
+! -------------   Now that we have both pieces of the totals, construct them
+!
+! --------------- A handy-dandy hint for where the totals will be printed
+! --------------- later:   these are printed either in the first data column
+! --------------- of the info line for an appropriate parameter, or on a
+! --------------- separate line, if no appropriate parameter exists.
+! --------------- So, since old-style (style = 0) offset and rate totals
+! --------------- and new-style (style = 1)
+! --------------- offset totals are based on the adjustment of a single
+! --------------- parameter, print those totals in the first data column
+! --------------- of the given parameter's info line.  New-style rate totals
+! --------------- are based on up to two adjustments (the adjustments of
+! --------------- the global rate and the first linear piecewise-continuous
+! --------------- rate, if it's estimated).  So these totals go on a separate
+! --------------- line.
+!
+! --------------- If no total being printed in a parameter's info line
+! --------------- in data column 1, print a blank.  (This applies to all
+! --------------- new-style rates and the higher order old-style terms.)
+!
+                  IF ( IXYU .LT. 3 ) Then ! x and y wobble
+                       IF ( IORD .NE. 2 ) THEN ! not working with offset
+                            IF ( EOP_STYLE_ALT(IEOP).EQ.0  .AND. &
+     &                           IORD .EQ. 4                     ) THEN
+!
+! ------------------------------ Old style rate - print the total
+! ------------------------------ (apriori + adjustment)
+!
+                                 PVAL = RATAP(IXYU) * CNVRT + MAT(JB+NPARM)
+                               ELSE
+                                 PVAL = MAT(JB+NPARM)
+                            END IF
+!
+! ------------------------- In the new style, add the global rate and
+! ------------------------- first epoch's segmented rate break adjustments,
+! ------------------------- to the rate apriori to get that style's rate total
+!
+                            IF ( EOP_STYLE_ALT(ieop).EQ.1 .AND. IROT .EQ. &
+     &                           1)RTOTAL = RTOTAL + MAT(JB+NPARM)
+                          ELSE IF ( ROTAP_CUR(IXYU+2) .GE. 1.D5 ) THEN
+!
+! ------------------------- Trying to do offset, but apriori is bad
+!
+                            PVAL = 0.D0
+                            GOOD_RTOTAL = .FALSE.
+                          ELSE
+!
+! ------------------------- offset - apriori good. make total
+! ------------------------- (apriori + adjustment)
+!
+                            IF ( IXYU .EQ. 1 ) THEN ! x-wobble
+!
+! ------------------------------ Total for offset
+!
+                                 PVAL = ROTAP_CUR(IXYU+2)*CNVRT + MAT(JB+NPARM)
+                                 XYUTOTP(IXYU) = XYUTOT(IXYU) + PVAL
+                                 XSIG = MAT(JS+NPARM)
+                                 IF ( EOP_STYLE_ALT(IEOP) .EQ. 1) THEN
+                                      RTOTAL = RATAP(IXYU)*CNVRT
+                                 END IF
+                               ELSE !y-wobble
+                                 PVAL = ROTAP_CUR(IXYU+2)*CNVRT + MAT(JB+NPARM)
+                                 XYUTOTP(IXYU) = XYUTOT(IXYU) + PVAL
+                                 YSIG = MAT(JS+NPARM)
+                                 IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) THEN
+                                      RTOTAL = RATAP(IXYU)*CNVRT
+                                 END IF
+                            ENDIF
+                       END IF !total for offset, apriori good
+                    ELSE
+!
+! -------------------- UT1 - TAI
+!
+                       IF ( IORD .NE. 2 ) THEN  ! anything but offset
+                            IF ( EOP_STYLE_ALT(IEOP) .EQ. 0 .AND. &
+     &                           IORD .EQ. 4 ) THEN
+!
+! ------------------------------ old style (style = 0) rate total
+!
+                                 PVAL = -RATAP(IXYU)*CNVRT + MAT(JB+NPARM)
+                               ELSE
+                                 PVAL = MAT(JB+NPARM)
+                            END IF
+!
+                            IF ( EOP_STYLE_ALT(IEOP).EQ.1 .AND. &
+     &                           IROT .EQ. 1 ) THEN
+                                 RTOTAL = RTOTAL + mat(jb+NPARM)
+                            END IF
+                         ELSE IF ( ROTAP_CUR(1) .GE. 1.D5 ) Then !
+!
+! ------------------------- offset,bad a priori
+!
+                            PVAL = 0.D0
+                            GOOD_RTOTAL = .FALSE.
+                         ELSE
+!
+! ------------------------- offset, a priori good
+! ------------------------- NOW INTERPOLATE
+!
+                            PVAL= -ROTAP_CUR(1)*CNVRT + MAT(JB+NPARM)
+                            XYUTOTP(IXYU) = XYUTOT(IXYU) + PVAL
+                            USIG = MAT(JS+NPARM)
+                            IF ( EOP_STYLE_ALT(IEOP) .EQ. 1) THEN
+                                 RTOTAL = -RATAP(IXYU)*CNVRT
+                            END IF
+                    END IF !offset, apriori good
+                  END IF !ut1 totals
+!
+! --------------- 2. Sum up various constraint statistics over the rates
+! ---------------    for the individual epochs (in the case where the user
+! ---------------    wanted parameterization style 1).
+!
+                  IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 .AND. IORD.EQ.4 ) THEN
+                       EOPRMS(IXYU)=EOPRMS(IXYU) + MAT(JB+NPARM)**2
+                       EOPSTA(IXYU)=EOPSTA(IXYU) + &
+     &                                     (MAT(jb+NPARM)/SEOCNST(IEOP))**2
+                       EOPTRA(IXYU)=EOPTRA(IXYU) + &
+     &                              (MAT(JS+NPARM)/SEOCNST(IEOP))**2
+                       EOPCNT(IXYU)=EOPCNT(IXYU)+1
+                  ENDIF
+!
+! --------------- 3.  Print the desired info
+!
+! --------------- if in batch, printing globals, and global parm, then print it
+! --------------- else if not in batch, then print parm
+!
+                  IF ( KPRINT(NPARM) ) THEN
+!
+! -------------------- Printing info about parameter &, if applicable,
+! -------------------- special line to display total rate at epoch one
+!
+! -------------------- Special line to print rate total at epoch one --
+! -------------------- printing it after the global rate parameter line --
+! -------------------- case where estimating segmented rate breaks
+!
+ 1220               FORMAT (6X,"Total rate at ", &
+     &                 2(I2,'/'),I2,1X,I2,':',I2, &
+     &                 F14.4,1X,A2,"sec/day")
+ 1222               FORMAT (6X,"Total rate at ", &
+     &                 2(I2,'/'),I2,1X,I2,':',I2, &
+     &                 1X,F9.4,1X,A2,"sec/day")
+ 1221               FORMAT (6X,"Total rate at first epoch ", &
+     &                          "is bad value or undefined")
+!
+! ----------------- Print info about current parameter
+!
+                    IF ( KSPOOL ) THEN
+                       IF ( IORD .EQ. 2 ) THEN ! offset
+!
+! ------------------------- Convert adjustment, sigma and scaled sigma to
+! ------------------------- microarcseconds and microseconds on the fly.
+!
+                            CALL CLRCH ( STR )
+                            IF ( SEG_LISTING_STYLE == SEG_PRE2005_SPOOL__FMT ) THEN
+                                 WRITE ( STR, 1600 ) NPARM, &
+     &                              (NAMRT(KP,IXYU),KP=1,4), &
+     &                              KQ, IY, IM, ID, IHR, IMIN, PVAL, MSC(KR), &
+     &                              MAT(JB+NPARM)*1.D3, QMSC_MICRO(KR), &
+     &                              MAT(JS+NPARM)*1.D3, QMSC_MICRO(KR), &
+     &                              SCSIG(NPARM)*1.D3, QMSC_MICRO(kr), &
+     &                              TYPEPR
+ 1600                               FORMAT ( I5, ". ", 4A2, 1X, I2, ",  ", &
+     &                                       2(I2,'/'), I2, 1X, I2, ':', I2, &
+     &                                       F14.4, 1X, A2, 'sec', &
+     &                                       3(F11.2,1X,A9), ' ', A6 )
+!
+! -------------------------------- Add leading zeroes
+!
+                                   CALL BLANK_TO_ZERO ( STR(22:29) )
+                                   CALL BLANK_TO_ZERO ( STR(31:35) )
+                              ELSE IF ( SEG_LISTING_STYLE == SEG_POST2005_SPOOL__FMT ) THEN
+                                 WRITE ( STR, 1605 ) NPARM, &
+     &                              NAMRT_CHR(IXYU), KQ, EOP_TAG, PVAL, MSC(KR), &
+     &                              MAT(JB+NPARM)*1.D3, QMSC_MICRO(KR), &
+     &                              MAT(JS+NPARM)*1.D3, QMSC_MICRO(KR), &
+     &                              SCSIG(NPARM)*1.D3, QMSC_MICRO(kr), &
+     &                              TYPEPR
+ 1605                            FORMAT ( I5, ". ", A, 2X, I1, ', ', &
+     &                               1X,A, 1X, F12.4, 1X, A2, 'sec', &
+     &                               3(F11.2,1X,A9), ' ', A6 )
+                            END IF
+                            WRITE ( 23, '(A)' ) STR(1:I_LEN(STR))
+!
+                            EOP_INDICIES(1,IXYU) = NPARM
+                            IF ( SIMULATION_TEST ) THEN
+                                 SIGMA_SCALE_FACTOR = 1.0D0
+                               ELSE
+                                 SIGMA_SCALE_FACTOR = SCSIG(NPARM)/MAT(JS+NPARM)
+                            END IF
+                            IF ( IXYU .EQ. 1 ) THEN
+                                 APR_VAL(XPL__SNX) = ROTAP_CUR(3)
+                                 EST_VAL(XPL__SNX) = MAT(JB+NPARM)/RAD__TO__MAS
+                              ELSE IF ( IXYU .EQ. 2 ) THEN
+                                 APR_VAL(YPL__SNX) = ROTAP_CUR(4)
+                                 EST_VAL(YPL__SNX) = MAT(JB+NPARM)/RAD__TO__MAS
+                              ELSE IF ( IXYU .EQ. 3 ) THEN
+                                 APR_VAL(UT1__SNX) = -ROTAP_CUR(1)
+                                 EST_VAL(UT1__SNX) = MAT(JB+NPARM)/1.D3
+                            END IF
+                          ELSE IF ( IORD.EQ.3 .OR. &
+     &                            ( IORD .EQ. 4 .AND. &
+     &                              EOP_STYLE_ALT(IEOP).EQ.1 ) ) THEN
+!
+! -------------------------- Rates (don't print anything in totals column)
+!
+                            CALL CLRCH ( STR )
+                            IF ( SEG_LISTING_STYLE == SEG_PRE2005_SPOOL__FMT ) THEN
+                                 WRITE ( STR, 1610) NPARM, (NAMRT(KP,IXYU),KP=1,4), &
+     &                                   KQ,IY,IM,ID,IHR,IMIN, &
+     &                                   MAT(JB+NPARM), MSC(KR), &
+     &                                   MAT(JS+NPARM), MSC(KR), &
+     &                                   SCSIG(NPARM), MSC(KR), TYPEPR
+ 1610                            FORMAT ( I5, ". ",4A2,1X,I2,",  ", &
+     &                                    2(I2,'/'),I2,1X,I2,':',I2, &
+     &                                    24X,3(F15.4,1X,A2, &
+     &                                    'sec/day '),' ',A6 )
+!
+! ------------------------------ Add leading zeroes
+!
+                                 CALL BLANK_TO_ZERO ( STR(22:29) )
+                                 CALL BLANK_TO_ZERO ( STR(31:35) )
+                               ELSE IF ( SEG_LISTING_STYLE == SEG_POST2005_SPOOL__FMT ) THEN
+                                 WRITE ( STR, 1615 ) NPARM, NAMRT_CHR(IXYU), &
+     &                                   KQ, EOP_TAG, &
+     &                                   MAT(JB+NPARM), MSC(KR), &
+     &                                   MAT(JS+NPARM), MSC(KR), &
+     &                                   SCSIG(NPARM), MSC(KR), TYPEPR
+ 1615                            FORMAT ( I5, ". ", A, 2X, I1,', ', &
+     &                                    1X,A, 20X, &
+     &                                    3(F15.4,1X,A2, 'sec/day '),' ',A6 )
+                             END IF
+                             WRITE ( 23, '(A)' ) STR(1:I_LEN(STR))
+                         ELSE IF (IORD .EQ. 4) THEN
+!
+! ------------------------- Rates (old-style)
+! ------------------------- (total goes in totals column)
+!
+! ------------------------- adjustment, sigma, and scaled sigma in micro units
+!
+                            IF ( IXYU .NE. 3 ) THEN
+                                 CALL CLRCH ( STR )
+                                 IF ( SEG_LISTING_STYLE == SEG_PRE2005_SPOOL__FMT ) THEN
+                                      WRITE ( STR, 1620) NPARM, &
+     &                                  (NAMRT(KP,IXYU),KP=1,4), &
+     &                                   KQ, IY, IM, ID, IHR, IMIN, PVAL, &
+     &                                   MAT(JB+NPARM)*1.D3, &
+     &                                   MAT(JS+NPARM)*1.D3, &
+     &                                   SCSIG(NPARM)*1.D3, TYPEPR
+ 1620                                 FORMAT ( I5,". ",4A2,1X,I2,",  ", &
+     &                                         2(I2,'/'),I2,1X,I2,':',I2, &
+     &                                         F14.4,1X,'mas/d',F11.2, &
+     &                                         ' microas/d'F11.2,1X, &
+     &                                         'microas/d',f11.2' microas/d ',a6)
+!
+! ---------------------------------- Add leading zeroes
+!
+                                     CALL BLANK_TO_ZERO ( STR(22:29) )
+                                     CALL BLANK_TO_ZERO ( STR(31:35) )
+                                   ELSE IF ( SEG_LISTING_STYLE == SEG_POST2005_SPOOL__FMT ) THEN
+                                      WRITE ( STR, 1625 ) NPARM, &
+     &                                        NAMRT_CHR(IXYU), &
+     &                                        KQ, EOP_TAG, PVAL, &
+     &                                        MAT(JB+NPARM)*1.D3, &
+     &                                        MAT(JS+NPARM)*1.D3, &
+     &                                        SCSIG(NPARM)*1.D3, TYPEPR
+ 1625                                 FORMAT ( I5,". ",A,2X,I1,', ', &
+     &                                         1X,A, 1X, F12.4,1X,'mas/d', &
+     &                                         F11.2, ' microas/d'F11.2,1X, &
+     &                                         'microas/d',f11.2' microas/d ',a6)
+                                 END IF
+!
+                                 EOP_INDICIES(2,IXYU) = NPARM
+                                 WRITE ( 23, '(A)' ) STR(1:I_LEN(STR))
+!
+                                 IF ( IXYU .EQ. 1 ) THEN
+                                      APR_VAL(XPR__SNX) = RATAP(1)
+                                      EST_VAL(XPR__SNX) = MAT(JB+NPARM)/ &
+     &                                                    RAD__TO__MAS
+                                   ELSE IF ( IXYU .EQ. 2 ) THEN
+                                      APR_VAL(YPR__SNX) = RATAP(2)
+                                      EST_VAL(YPR__SNX) = MAT(JB+NPARM)/ &
+     &                                                    RAD__TO__MAS
+                                 END IF
+                              ELSE
+!
+! ------------------------------ UT1 Rate
+!
+                                IF ( CALCV .GT. 0.0D0    .AND. &
+     &                               CALCV .LE. 8.200001 .AND. &
+     &                               .NOT. KEROT ) THEN
+!
+! ---------------------------------- Warining message for CALC 8.2 and older
+! ---------------------------------- Added by L. Petrov 29-AUG-97 19:12:42
+!
+                                     WRITE  ( 23, 7598 ) CALCV
+                                     STR = '!!! WARNING:  Adjustments of '// &
+     &                                'UT1-rate '// &
+     &                                'may be corrupted up to 50 '// &
+     &                                'microsec/day due to the bug '// &
+     &                                'UT1S-rate-AUG97  !!! WARNING'
+                                     WRITE  ( 23, '(A)' ) STR(1:I_LEN(STR))
+                                END IF
+!
+                                CALL CLRCH ( STR )
+                                IF ( SEG_LISTING_STYLE == SEG_PRE2005_SPOOL__FMT ) THEN
+                                     WRITE ( STR, 1630) NPARM, &
+     &                                    (NAMRT(KP,IXYU),KP=1,4), &
+     &                                    KQ, IY, IM, ID, IHR, IMIN, &
+     &                                    PVAL, MSC(KR), &
+     &                                    MAT(JB+NPARM)*1.d3, &
+     &                                    MAT(JS+NPARM)*1.d3, &
+     &                                    SCSIG(NPARM)*1.D3, TYPEPR
+ 1630                                FORMAT( I5,". ",4A2,1X,I2,",  ", &
+     &                                       2(I2,'/'),I2,1X,I2,':',I2, &
+     &                                       F14.4,1X,A2,'s/d', &
+     &                                       F11.2, ' micros/d', &
+     &                                       F12.2, 1X,'micros/d', &
+     &                                       f12.2,' micros/d ',A6)
+!
+! ---------------------------------- Add leading zeroes
+!
+                                     CALL BLANK_TO_ZERO ( STR(22:29) )
+                                     CALL BLANK_TO_ZERO ( STR(31:35) )
+                                   ELSE IF ( SEG_LISTING_STYLE == SEG_POST2005_SPOOL__FMT ) THEN
+                                     WRITE ( STR, 1635 ) NPARM, &
+     &                                    NAMRT_CHR(IXYU), KQ, EOP_TAG, &
+     &                                    PVAL, MSC(KR), &
+     &                                    MAT(JB+NPARM)*1.d3, &
+     &                                    MAT(JS+NPARM)*1.d3, &
+     &                                    SCSIG(NPARM)*1.D3, TYPEPR
+ 1635                                FORMAT( I5, ". ", A, 2X, I1, ', ', &
+     &                                       1X,A, 1X, &
+     &                                       F12.4,1X,A2,'s/d', &
+     &                                       F11.2, ' micros/d', &
+     &                                       F12.2, 1X,'micros/d', &
+     &                                       f12.2,' micros/d ',A6)
+                                END IF
+!
+                                EOP_INDICIES(2,IXYU) = NPARM
+                                WRITE ( 23, '(A)' ) STR(1:I_LEN(STR))
+                                APR_VAL(UTR__SNX) = -RATAP(3)
+                                EST_VAL(UTR__SNX) = MAT(JB+NPARM)/1.D3
+                            ENDIF
+                         ELSE
+!
+! ------------------------- higher order term
+!
+                            CALL CLRCH ( STR )
+                            WRITE ( STR, 1602 ) NPARM, (NAMRT(KP,IXYU),KP=1,4), &
+     &                             KQ, IY, IM, ID, IHR, IMIN, MAT(JB+NPARM), &
+     &                             MSC(KR), KQ, MAT(JS+NPARM), MSC(KR), KQ, &
+     &                             SCSIG(NPARM), MSC(KR), KQ, TYPEPR
+ 1602                       FORMAT ( I5, ". ", 4A2, 1X, I2, ",  ", 2(I2,'/'), &
+     &                            I2, 1X, I2, ':', I2, 16X, 3(F15.4, A2, &
+     &                            'sec/day*', I1, ' ' ), ' ', A6 )
+!
+! ------------------------- Add leading zeroes
+!
+                            CALL BLANK_TO_ZERO ( STR(22:29) )
+                            CALL BLANK_TO_ZERO ( STR(31:35) )
+                            WRITE ( 23, '(A)' ) STR(1:I_LEN(STR))
+                            EOP_INDICIES(3,IXYU) = NPARM
+                      END IF
+                    END IF
+!
+                    IF ( KSCREEN ) THEN
+                      IF ( IORD .EQ. 2 ) THEN !offset
+                         IPTR=IPTR+1
+                         WRITE ( LBUF(IPTR), 7600) NPARM, &
+     &                           (NAMRT(KP,IXYU),KP=1,4), KQ, IY, IM, ID, IHR, &
+     &                           IMIN, PVAL, MSC(KR), &
+     &                           MAT(JB+NPARM)*1.D3, QMSC_MICRO(KR), &
+     &                           SCSIG(NPARM)*1.D3, QMSC_MICRO(kr)
+!
+! ---------------------- Add leading zeroes
+!
+                         CALL BLANK_TO_ZERO ( LBUF(IPTR)(22:29) )
+                         CALL BLANK_TO_ZERO ( LBUF(IPTR)(31:35) )
+                         CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                         CALL NL_MN()
+                         EOP_INDICIES(1,IXYU) = NPARM
+                         IF ( SIMULATION_TEST ) THEN
+                              SIGMA_SCALE_FACTOR = 1.0D0
+                            ELSE
+                              SIGMA_SCALE_FACTOR = SCSIG(NPARM)/MAT(JS+NPARM)
+                         END IF
+ 7600                    FORMAT ( I5 ". ", 4A2, 1X, I2, ",  ", &
+     &                            2(I2,'/'), I2, 1X, I2, ':', I2, 1X, &
+     &                            F12.4, 1X, A2, 'sec', F12.2, 1X, A9, &
+     &                            F8.2, 1X ,A9 )
+                       ELSE IF ( IORD .EQ. 3  .OR.  ( IORD .EQ. 4 .AND. &
+     &                          EOP_STYLE_ALT(IEOP).EQ.1) ) THEN
+                        IPTR=IPTR+1
+                        WRITE ( LBUF(IPTR), 7601) NPARM, &
+     &                          (NAMRT(KP,IXYU),KP=1,4), KQ, IY, IM, ID, IHR, &
+     &                          IMIN, MAT(JB+NPARM), MSC(KR), SCSIG(NPARM), &
+     &                          MSC(KR)
+!
+! --------------------- Add leading zeroes
+!
+                        CALL BLANK_TO_ZERO ( LBUF(IPTR)(22:29) )
+                        CALL BLANK_TO_ZERO ( LBUF(IPTR)(31:35) )
+                        CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                        CALL NL_MN()
+ 7601                   FORMAT ( I5, ". ",4A2,1X,I2," ", &
+     &                         2(I2,'/'),I2,1X,I2,':',I2,1X,19X, &
+     &                         F7.3,1X,A2,'sec/day',F7.3,1X,A2,'sec/day')
+                       ELSE IF (IORD.EQ.4) THEN
+                        IPTR=IPTR+1
+                        IF ( IXYU .NE. 3 ) THEN
+                             WRITE ( LBUF(IPTR), 76031) NPARM, (NAMRT(KP,IXYU), &
+     &                               KP=1,4), KQ, IY, IM, ID, IHR, IMIN, PVAL, &
+     &                               MAT(JB+NPARM)*1.D3, SCSIG(NPARM)*1.D3
+!
+! -------------------------- Add leading zeroes
+!
+                             CALL BLANK_TO_ZERO ( LBUF(IPTR)(22:29) )
+                             CALL BLANK_TO_ZERO ( LBUF(IPTR)(31:35) )
+                             CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                             CALL NL_MN()
+76031                        FORMAT ( I5, ". ",4A2,1X,I2,",  ", &
+     &                            2(I2,'/'),I2,1X,I2,':',I2,1X, &
+     &                            F12.4,' mas/d',F12.2,' microas/d', &
+     &                             F8.2,' microas/d' )
+                             EOP_INDICIES(2,IXYU) = NPARM
+                           ELSE
+                             IF ( CALCV .GT. 0  .AND.  &
+     &                            CALCV .LE. 8.200001 .AND.  .NOT. KEROT ) THEN
+!
+! ------------------------------- Warining message for CALC 8.2 and older
+! ------------------------------- Added by L. Petrov 29-AUG-97 19:12:42
+!
+                                  WRITE  ( LBUF(IPTR), 7598 ) CALCV
+ 7598                             FORMAT ( '!!! WARNING:  You are using CALC ', &
+     &                                     'version ',F12.6,' and not using ', &
+     &                                     'EOP mod file. !!! WARNING' )
+                                  CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                                  CALL NL_MN()
+                                  IPTR=IPTR+1
+!
+                                  STR = '!!! WARNING:  Adjustments of '// &
+     &                                'UT1-rate '// &
+     &                                'may be corrupted up to 50 '// &
+     &                                'microsec/day due to the bug '// &
+     &                                'UT1S-rate-AUG97  !!! WARNING'
+                                  WRITE  ( LBUF(IPTR), '(A)' ) STR(1:I_LEN(STR))
+                                  CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                                  CALL NL_MN()
+                                  IPTR=IPTR+1
+                             END IF
+!
+                             WRITE ( LBUF(IPTR), 76032 ) NPARM, &
+     &                            (NAMRT(KP,IXYU),KP=1,4), KQ, IY, IM, ID, IHR, &
+     &                             IMIN, PVAL, MAT(JB+NPARM)*1.D3, &
+     &                             SCSIG(NPARM)*1.D3
+!
+! -------------------------- Add leading zeroes
+!
+                             CALL BLANK_TO_ZERO ( LBUF(IPTR)(22:29) )
+                             CALL BLANK_TO_ZERO ( LBUF(IPTR)(31:35) )
+                             CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                             CALL NL_MN()
+76032                        FORMAT ( I5, ". ",4A2,1X,I2,",  ", &
+     &                                  2(I2,'/'),I2,1X,I2,':',I2,1X, &
+     &                                 F12.4,' ms/d',F13.2,' micros/d', &
+     &                                 F9.2, ' micros/d' )
+                             EOP_INDICIES(2,IXYU) = NPARM
+                        ENDIF ! ixyu 3
+                      ELSE  ! higher order term
+                        IPTR=IPTR+1
+                        WRITE ( LBUF(IPTR), 7602 ) NPARM, ( NAMRT(KP,IXYU), &
+     &                         KP=1,4), KQ, IY, IM, ID, IHR, IMIN, &
+     &                         MAT(JB+NPARM), MSC(KR), KQ, SCSIG(NPARM), &
+     &                         MSC(KR), KQ
+!
+! --------------------- Add leading zeroes
+!
+                        CALL BLANK_TO_ZERO ( LBUF(IPTR)(22:29) )
+                        CALL BLANK_TO_ZERO ( LBUF(IPTR)(31:35) )
+                        CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                        CALL NL_MN()
+ 7602                   FORMAT ( I5, ". ", 4A2, 1X, I2, ",  ", 2(I2,'/'), I2,1X, &
+     &                           I2, ':', I2, 21X, F9.4, 1X, A2, &
+     &                           'sec/day*', I1, F7.4, 1X, A2, 'sec/day*', I1 )
+                        EOP_INDICIES(3,IXYU) = NPARM
+                      END IF
+                    END IF ! kscreen
+!
+! ----------------- Special line to print rate total at epoch one --
+! ----------------- printing it after the global rate parameter line -
+! ----------------- case where not estimating segmented rate breaks
+!
+                    IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) THEN
+                         IF ( IORD.EQ.3 .AND..NOT. KBIT &
+     &                        ( EOPA1_CHOICE_ALT(IEOP), INT2(1) ) ) THEN
+                             IF ( GOOD_RTOTAL ) THEN
+                                  IF ( KSPOOL ) THEN
+                                       WRITE ( 23, 1220 ) IY, IM, ID, IHR, &
+     &                                          IMIN, RTOTAL, MSC(KR)
+                                  END IF
+                                  IF ( KSCREEN ) THEN
+                                       IPTR=IPTR+1
+                                       WRITE ( LBUF(IPTR), 1222 ) IY, IM, ID, &
+     &                                         IHR, IMIN, RTOTAL, MSC(KR)
+                                       CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                                       CALL NL_MN()
+                                  ENDIF
+                               ELSE
+                                  IF ( KSPOOL  ) WRITE(23,1221)
+                                  IF ( KSCREEN ) THEN
+                                       IPTR=IPTR+1
+                                       WRITE ( LBUF(IPTR), 1221 )
+                                       CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                                       CALL NL_MN()
+                                 ENDIF
+                             END IF
+                        END IF
+                    END IF
+                  ENDIF
+                  MAT(JS+NPARM)=MAT(JS+NPARM)/CNVRT
+                END IF!The parameter is turned on
+              END DO  !Running over the applicable degrees
+!
+              IF ( EOP_STYLE_ALT(IEOP) .EQ. 1 ) THEN
+                   TROT_CUR = TROT_CUR + ROT_INTERVAL(IEOP)
+              END IF
+            END DO ! Running over the rotation epochs
+!
+! --------- In addition to the offset and rates, earth orientation style 1
+! --------- may estimate a diurnal and/or a semi-diurnal sine.
+!
+            IF ( ( EOP_STYLE_ALT(IEOP) .EQ. 1) .AND. NROT .GT. 0 ) THEN
+               DO IDS = 1,2 !Diurnal, then semi-diurnal
+                  IF ( KBIT( EOPA1_CHOICE_ALT(IEOP), INT2(IDS+1)) ) THEN ! This type sine estimated
+                       DO M = 1, 2 !Run over sine and cosine components
+                          NPARM=NPARM+1
+                          MAT(JB+NPARM) = MAT(JB+NPARM)*CNVRT  !change to mas or ms
+                          MAT(JS+NPARM) = MAT(JS+NPARM)*CNVRT
+                          SCSIG(NPARM)  = SCSIG(NPARM)*CNVRT
+!
+! ----------------------- Remember amplitude of component waves for constructing
+! ----------------------- diurnal/semi-diurnal sine's amplitude and phase offset
+! ----------------------- later
+!
+                          SCAMPS(M) = MAT(JB+NPARM)
+                          TROTI = DINT ( TROT_A1 + 0.5D0 ) + 0.5D0
+                          CALL EPOC ( IM, ID, IY, IHR, IMIN, TROTI )
+                          IF ( KSCREEN ) THEN
+                               IPTR=IPTR+1
+                               WRITE ( LBUF(IPTR), 1210) NPARM, &
+     &                                 (NAMRT(KP,IXYU),KP=1,4), LABSDI(IDS), &
+     &                                  LABSC(M), IY, IM, ID, IHR, IMIN, &
+     &                                  MAT(JB+NPARM), MSC(KR), SCSIG(NPARM), &
+     &                                  MSC(KR)
+                               CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                               CALL NL_MN()
+1210                           FORMAT ( I5, ". ",4A2,1X,A12,1X,A4," ", &
+     &                                  2(I2,'/'),I2,1X,I2,':',I2,16X,F9.2,1X, &
+     &                                  A2, "secs",1X,F9.4,1X,A2,"secs",1X)
+                           ENDIF
+!
+                           IF ( KSPOOL ) THEN
+                                WRITE ( 23,1211) NPARM, (NAMRT(KP,IXYU),KP=1,4), &
+     &                                LABSDI(IDS),LABSC(M),IY,IM,ID, &
+     &                          IHR, IMIN, MAT(JB+NPARM), MSC(KR), &
+     &                          MAT(JS+NPARM), MSC(KR), &
+     &                          SCSIG(NPARM), MSC(KR)
+1211                            FORMAT ( I5, ". ",4A2,1X,A12," ",A4,1X, &
+     &                                   2(I2,'/'),I2,1X,I2,':',I2,20X, &
+     &                                   F16.3,1X,A2,"secs",3X, &
+     &                                   F12.3 ,1X,A2,"secs",1X, &
+     &                                   F14.3,1X,A2,"secs",1X)
+                           ENDIF
+                       END DO ! Run over sine and cosine components
+!
+! -------------------- Print the amplitude of the total diurnal/semi-diurnal
+! -------------------- sine wave, as well as the time at which the wave
+! -------------------- evaluates to zero.
+!
+                       IF ( KFULLOUT ) THEN ! print total sine data
+!
+! ------------------------- Find amplitude of total diurnal or semi-diurnal sine
+!
+                            SAMP = DSQRT(SCAMPS(1)*SCAMPS(1) + &
+     &                             SCAMPS(2)*SCAMPS(2))
+!
+! ------------------------- Find the time at which the diurnal/semi-diurnal
+! ------------------------- sine wave evaluates to zero.
+! ------------------------- First, find the phase offset, in hrs,
+!
+                            IF ( IDS .EQ. 1 ) THEN
+                                 HOURS_PER_CYCLE = 24.D0 ! diurnal
+                              ELSE
+                                 HOURS_PER_CYCLE = 12.D0 !semi-diurnal
+                            END IF
+                            IF ( ABS(SCAMPS(1)) .GT. 1.D-10 ) THEN
+                                 SPHS = DATAN2 ( SCAMPS(2), SCAMPS(1) ) * &
+     &                                  HOURS_PER_CYCLE/(2.0D0*PI__NUM)
+                               ELSE
+                                 SPHS = 0.D0
+                            ENDIF
+!
+                            IF ( SPHS .LT. HOURS_PER_CYCLE/-2.0D0 ) THEN
+                                 SPHS=SPHS+HOURS_PER_CYCLE
+                            END IF
+!
+! ------------------------- The sine wave evaluates to zero at the time which
+! ------------------------- is the negative of the phase offset.
+! ------------------------- Also, convert this from hours to days.
+!
+                            SPHS = -SPHS / 24.0D0
+!
+! ------------------------- Now, add this to the start of the experiment
+! ------------------------- to find the absolute time when the
+! ------------------------- diurnal/semi-diurnal sine wave evaluates to zero.
+!
+                            SPHS = TROT_A1 + SPHS
+                            CALL EPOC ( IM, ID, IY, IHR, IMIN, SPHS )
+!
+                            IF ( KSCREEN ) THEN
+                                 IPTR=IPTR+1
+                                 WRITE ( LBUF(IPTR), 2177 ) SAMP,MSC(KR), IY, &
+     &                                                      IM, ID, IHR, IMIN
+                                 CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                                 CALL NL_MN()
+                            ENDIF
+                            IF ( KSPOOL ) THEN
+                                 WRITE ( 23, 177 ) SAMP, MSC(KR), IY, IM, ID, &
+     &                                             IHR, IMIN
+177                              FORMAT ( 58X, " Amp ",F7.3,1X,A2,"secs",3X, &
+     &                               'zero at ',1X,2(I2,'/'),I2,1X,I2,':',I2)
+2177                             FORMAT(49X," Amp ",F5.2,1X,A2,"s",1X, &
+     &                              'zero at ',1X,2(I2,'/'),I2,1X,I2,':',I2)
+                            END IF
+                         END IF !total sine data
+                     END IF !This type sine selected
+                 END DO !Diurnal, then semi-diurnal
+            END IF !only style 1 uses sines
+!
+            IF ( KSCREEN ) THEN
+                 IPTR=IPTR+1
+                 WRITE ( LBUF(IPTR), '(" ")' )
+                 CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+                 CALL NL_MN()
+            ENDIF
+            END DO  ! Running over x&y within x/y choice (or over UT1,
+!                     within UT1 choice)
+      END DO !Running over x/y, then UT1
+!
+      IF ( ( KHFEOP .GT. 0  .OR.  STAT_HEO .EQ. HEO__READ ) .AND. &
+     &           KPRINT(NPARM) .AND. &
+     &     .NOT. KGLOBALS      .AND. &
+     &           EOP_ON        .AND. &
+     &           KSPOOL              ) THEN
+!
+! -------- Convert the eop sigmas to micro-units on the fly.
+!
+            CALL CLRCH ( STR )
+            IF ( STAT_HEO .EQ. HEO__READ  .AND.  ILEN(NAME_HEO) .GT. 0 ) THEN
+                 STR = NAME_HEO
+            END IF
+            WRITE ( 23, '(A,A)' ) ' EOP corrected for hi-freq '// &
+     &                          'variations  (a-sigmas) ', STR(1:I_LEN(STR))
+            WRITE ( 23, '(22x,"XWOB",10x,"YWOB",10x,"UT1-TAI", &
+     &                    10X,"XSIG",9X,"YSIG",9X,"USIG")')
+            WRITE ( 23, '(22x," mas",10x," mas",10x,"  ms   ", &
+     &                   8x,"microasec",4x,"microasec",4x,"microsec")')
+            CALL CLRCH ( STR )
+            WRITE ( STR, '(2(I2,"/"),I2,1X,I2,":",I2,F14.4, &
+     &                   f15.4,F15.4,f14.2,F13.2,f13.2)') &
+     &              HFIY, HFIM, HFID, HFIHR, HFIMIN, (XYUTOTP(I),I=1,3), &
+     &              XSIG*1.D3, YSIG*1.D3, USIG*1.D3
+            CALL BLANK_TO_ZERO ( STR(1:8)   )
+            CALL BLANK_TO_ZERO ( STR(10:14) )
+            WRITE ( 23, '(A)' ) STR(1:I_LEN(STR))
+            WRITE ( 23, '(1X)' )
+      ENDIF
+!
+      IF ( ( KHFEOP .GT. 0  .OR.  STAT_HEO .EQ. HEO__READ ) .AND. &
+     &           KSCREEN       .AND. &
+     &           KPRINT(NPARM) .AND. &
+     &     .NOT. KGLOBALS      .AND. &
+     &           EOP_ON              ) THEN
+!
+           IPTR=IPTR+1
+           CALL CLRCH ( STR )
+           IF ( STAT_HEO .EQ. HEO__READ  .AND.  ILEN(NAME_HEO) .GT. 0 ) THEN
+                STR = NAME_HEO
+           END IF
+           WRITE ( LBUF(IPTR), '(A,A)' ) ' EOP corrected for hi-freq '// &
+     &                                   'variations ', STR(1:I_LEN(STR))
+           CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+           CALL NL_MN()
+           IPTR = IPTR+1
+           WRITE ( LBUF(IPTR), '(22x,"XWOB",10x,"YWOB",10x,"UT1-TAI", &
+     &             10X,"XSIG",9X,"YSIG",9X,"USIG")')
+           CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+           CALL NL_MN()
+!
+           IPTR=IPTR+1
+           WRITE ( LBUF(IPTR), '(22x," mas",10x," mas",10x,"  ms   ", &
+     &             8x,"microasec",4x,"microasec",4x,"microsec")')
+           CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+           CALL NL_MN()
+!
+           IPTR = IPTR+1
+           WRITE ( LBUF(IPTR), '(2(I2,"/"),I2,1X,I2,":",I2,F14.4, &
+     &             f15.4, F15.4,f14.2,F13.2,f13.2)') &
+     &             HFIY, HFIM, HFID, HFIHR, HFIMIN, (XYUTOTP(I),I=1,3), &
+     &             XSIG*1.D3, YSIG*1.D3, USIG*1.D3
+!
+           CALL BLANK_TO_ZERO ( LBUF(IPTR)(1:8)   )
+           CALL BLANK_TO_ZERO ( LBUF(IPTR)(10:14) )
+           CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+           CALL NL_MN()
+!
+           IPTR=IPTR+1
+           WRITE ( LBUF(IPTR), '(1X)' )
+           CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+           CALL NL_MN()
+      ENDIF
+!
+! --- Print out the earth orientation rate break constraint statistics
+!
+      DO IEOP = 1,2
+         EO_RBCONS_ON(IEOP) = 0
+         IF ( EOP_STYLE_ALT(IEOP) .EQ. 1    .AND.KBIT( CONSTRAINT_BITS, &
+     &        INT2(IEOP+3))        ) THEN
+!
+              EO_RBCONS_ON(IEOP) = 1
+         END IF
+      END DO
+!
+      IF ( ( EO_RBCONS_ON(1) .EQ. 1  .OR.  EO_RBCONS_ON(2) .EQ. 1 ) .AND..NOT. &
+     &     KBIT( PRE_IP(3), INT2(10)) ) THEN
+         IF ( ( .NOT. KGLOBALS .OR. .NOT.KBATCH ) .AND. KSPOOL  ) WRITE(23,9945)
+         IF ( ( .NOT. KGLOBALS .OR. .NOT.KBATCH ) .AND. KSCREEN ) THEN
+              IPTR=IPTR+1
+              WRITE ( LBUF(IPTR), 9945 )
+              CALL ADDSTR_F(LBUF(IPTR)(:PAGEWID) )
+              CALL NL_MN()
+         ENDIF
+9945     FORMAT(' Earth Orientation Rate Break Constraint Statistics')
+      END IF
+!
+      DO IXYU=1,3
+         IF ( IXYU .LE. 2 ) THEN
+              IEOP = 1
+           ELSE
+              IEOP = 2
+         END IF
+!
+         IF ( EO_RBCONS_ON(IEOP) .EQ. 1 .AND. .NOT.KBIT( PRE_IP(3), &
+     &        INT2(10))) THEN
+              IF ( EOPCNT(IXYU) .GT. 0 ) THEN
+                   EOPRMS(IXYU)=SQRT(EOPRMS(IXYU)/EOPCNT(IXYU))
+                   EOPSTA(IXYU)=SQRT(EOPSTA(IXYU)/EOPCNT(IXYU))
+              ENDIF
+              IF ( KSPOOL .AND. EOPCNT(IXYU) .GT. 0 ) THEN
+                   WRITE ( 23, 9946 ) (NAMRT(KP,IXYU),KP=1,4), SEOCNST(IEOP), &
+     &                     MSC(IXYU), EOPRMS(IXYU), MSC(IXYU), EOPSTA(IXYU), &
+     &                     EOPTRA(IXYU)/EOPCNT(IXYU), EOPCNT(IXYU)
+!
+9946               FORMAT ( ' ',4A2,' Input ',F6.2,' ',A2,'sec/day RMS ',F6.2, &
+     &                      ' ',A2,'sec/day NRMS ',F5.2,' share ',F3.1, &
+     &                      ' count ',I3)
+              END IF
+!
+          IF ( KSCREEN .AND. EOPCNT(IXYU) .GT. 0 ) THEN
+             IPTR=IPTR+1
+             WRITE ( LBUF(IPTR), 9946) (NAMRT(KP,IXYU),KP=1,4), SEOCNST(IEOP), &
+     &                 MSC(IXYU), EOPRMS(IXYU), MSC(IXYU), EOPSTA(IXYU), &
+     &                 EOPTRA(IXYU)/EOPCNT(IXYU), EOPCNT(IXYU)
+               CALL ADDSTR_F ( LBUF(IPTR)(:PAGEWID) )
+             CALL NL_MN()
+        ENDIF
+        ENDIF
+      ENDDO
+!
+! --- Generate the earth orientation sigma error ellipses and
+! --- offset constraint shares, as appropriate.
+!
+      IF (NPARMR .EQ. NPARM) GOTO 810 !no eo parameters set
+      IF ( (.NOT.KFULLOUT) .AND. ( .NOT. KBIT( CONSTRAINT_BITS, INT2(6))) &
+     &     .AND.(.NOT. KBIT( CONSTRAINT_BITS, INT2(1) )) ) GOTO 810
+      IF ( EOP_STYLE_ALT(1) .EQ. EOP_STYLE_ALT(2) ) THEN !eo styles can't be mixed
+          CALL GET_NAMES ( LPARMS, ISTR_LEN, MAX_PAR, IPARMN, &
+     &         TRUE__L2, FALSE__L2 )
+          CALL CINDEX_PARM ( 'EOP', TOTAL_POS, LPARMS, IPARMN, TOTAL_NUM, &
+     &                        TOTAL_PARMS, TRUE__L2,        CDUM )
+         IF ( TOTAL_NUM.NE.0) THEN !make sure 1+ eo offsets being estimated
+!
+! ----------- The constraint shares will only be calculated if there is one
+! ----------- epoch with x, y-wobble and ut1 all estimated.
+! ----------- This is automatically the case for parameterization style 1,
+! ----------- but the shares will be suppressed for the time being,
+! ----------- due to lack of interest and by request.
+!
+              IF ( EOP_STYLE_ALT(1) .EQ. 1 ) THEN
+                   DO_EOP_SHARE = .FALSE.
+                ELSE
+                   IF ( NROT .EQ. 1 .AND. TOTAL_NUM .EQ. 3 ) THEN
+                        DO_EOP_SHARE = .TRUE.
+                     ELSE
+                        DO_EOP_SHARE = .FALSE.
+                   END IF
+              END IF
+!
+! ----------- Loop over the offset epochs (The epochs processed when the
+! ----------- adjustments are printed are the RATE epochs)
+!
+              IF ( ( EOP_STYLE_ALT(1) .eq. 1 ) .AND. NROT .GT. 0 ) THEN
+                   THIS_NROT = 1
+                   TROT_CUR = TROT_A1
+                ELSE
+                   THIS_NROT = NROT
+              END IF
+!
+              DO I = 1,THIS_NROT
+                 IF ( EOP_STYLE_ALT(1) .NE. 1) TROT_CUR = TROT(I)
+                 CALL IND_PARM_TROT ( TOTAL_POS, TOTAL_PARMS, TOTAL_NUM, &
+     &                                TROT_CUR, THIS_POS, THIS_PARMS, THIS_NUM )
+                 IF ( KFULLOUT .AND. EOP_STYLE_ALT(1).EQ.0 ) THEN
+                      CALL EOPELL ( THIS_POS, THIS_NUM, 'Offset', MAT )
+                 END IF
+                 IF ( KBIT( CONSTRAINT_BITS, INT2(1) ) .AND. DO_EOP_SHARE) &
+     &                THEN
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!  This section was commented out since it yields error message (Error of
+!  decomposing martix) in the case of estimation EOP offset + UT1 rate and
+!  inposing constraints on EOP offsets.   pet  25-APR-97 11:10:56
+!
+!
+!                 CALL EOP_SHARE ( TROT_CUR, EOPTRACE,
+!     #                THIS_POS, THIS_PARMS, THIS_NUM, 'Offset', MAT )
+!                 KCONS=.TRUE.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                 ENDIF
+              END DO
+        END IF
+        CALL CINDEX_PARM ( 'EOR', TOTAL_POS, LPARMS, IPARMN, TOTAL_NUM, &
+     &                      TOTAL_PARMS, TRUE__L2,        CDUM )
+        IF ( TOTAL_NUM.NE.0 ) THEN ! make sure 1+ eo rates being estimated
+!
+! ---------- The constraint shares will only be calculated if there is one
+! ----------  epoch with x, y-wobble and ut1 all estimated.
+! ---------- This is automatically the case for parameterization style 1,
+! ----------   but the shares will be suppressed for the time being,
+! ----------   due to lack of interest and by request.
+!
+             IF ( EOP_STYLE_ALT(1) .EQ. 1 ) THEN
+                  DO_EOP_SHARE = .FALSE.
+                ELSE
+                  IF ( NROT .EQ. 1 .AND. TOTAL_NUM .EQ. 3 ) THEN
+                       DO_EOP_SHARE = .TRUE.
+                   ELSE
+                       DO_EOP_SHARE = .FALSE.
+                  END IF
+             END IF
+!
+! ---------- Loop over the offset epochs (The epochs processed when the
+! ---------- adjustments are printed are the RATE epochs)
+!
+             IF ( ( EOP_STYLE_ALT(1) .EQ. 1 ) .AND. NROT .GT. 0 ) THEN
+                  THIS_NROT = 1
+                  TROT_CUR = TROT_A1
+                ELSE
+                  THIS_NROT = NROT
+             END IF
+!
+             DO I = 1,THIS_NROT
+                IF ( EOP_STYLE_ALT(1) .NE. 1) TROT_CUR = TROT(I)
+                CALL IND_PARM_TROT ( TOTAL_POS, TOTAL_PARMS, TOTAL_NUM, &
+     &                               TROT_CUR, THIS_POS, THIS_PARMS, THIS_NUM )
+                IF ( KFULLOUT .AND. EOP_STYLE_ALT(1) .EQ. 0 ) THEN
+                     CALL EOPELL ( THIS_POS, THIS_NUM, '  Rate', MAT )
+                END IF
+!
+                IF ( KBIT ( CONSTRAINT_BITS, INT2(6)) .AND. DO_EOP_SHARE) &
+     &               THEN
+                     CALL EOP_SHARE ( TROT_CUR, EOPTRACE, THIS_POS, THIS_PARMS, &
+     &                    THIS_NUM, 'Rate', MAT, LBUF_LEN, LBUF, IPTR, PAGEWID )
+                     KCONS = .TRUE.
+                ENDIF
+             END DO
+        END IF
+      END IF
+ 810  CONTINUE
+!
+! --- Map the eop results to the specified epoch. Never invoked if the screen
+! --- turned on.
+!
+      IF ( .NOT. KGLOBALS ) THEN
+           IF ( MAPPED_EOP_OUTPUT .AND. .NOT. KSCREEN ) THEN
+                CALL MAP_EOP_RESULTS ( TROT_CUR, EOP_INDICIES, MAT, &
+     &                                 SIGMA_SCALE_FACTOR, LBUF_LEN, LBUF, &
+     &                                 IPTR, PAGEWID )
+           END IF
+           INQUIRE ( UNIT=23, OPENED=LOP )
+           IF ( LOP  .AND.  KSPOOL ) THEN
+                IF ( KBIT( LNUT(1), INT2(1) ) .OR. KBIT( LNUT(1), INT2(2) )) &
+     &               THEN
+                     WRITE ( 23, '(A,F12.6,A,F12.6)') &
+     &                                         ' EOP epoch (TDT)  MJD: ', &
+     &                                         TROT_CUR - 2400000.5D0, &
+     &                                         '       '// &
+     &                                         ' NUT epoch (TDT)  MJD: ', &
+     &                                         JDATE_ALL_MID-2400000.5D0
+                   ELSE
+                     WRITE ( 23, '(A,F12.6)' ) ' EOP epoch (TDT)  MJD: ', &
+     &                                         TROT_CUR - 2400000.5D0
+                END IF
+           END IF
+      END IF
+!
+      RETURN
+      END  !#!  A2JST_PLNEOP  #!#

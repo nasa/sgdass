@@ -1,0 +1,1793 @@
+2024.05.13  PIMA  2.44
+
+  a) Re-wrote task opag. The new version of pima downloads data files
+     with opacity and atmoispherc brightness temperature from a remote
+     server instead of computing it.
+ 
+  b) Updated task opal to handle a case when opacity and brightness
+     temperature is computed only for one azimuth.
+
+2024.05.13  PIMA  2.43
+
+  Added support of SFXC a priori delay files in Post-2020 format.
+  That affects all EVN data collected at 2020 and after.
+ 
+  Added support of SFXC clock data.
+
+2024.02.26  PIMA  2.42
+
+  Fixed regression bugs related to computation of polarization
+  bandpass for cir-cir polarization.
+
+2023.11.18  PIMA  2.41
+
+  Buf fix release
+
+2023.01.09  PIMA  2.40
+
+  a) Task gepm for generation of phase calibration band pass 
+     mask was written. It analysis phase calibration and 
+     generates a phase calibration mask generation file.
+
+  b) Added support of kludge parameters PIMAVAR_APR_GR_DEL,
+     PIMAVAR_APR_PH_RAT, add PIMAVAR_APR_PH_ACC. These 
+     parameters define correction to a priori path delay on
+     the fringe reference time.
+  
+  c) Increased the number of supported frequencies from 
+     32 to 64 and the number of frequency groups from 6 to 10.
+     All VLBI experiments processed with prior versions of
+     PIMA have to be re-loaded.
+
+  d) Changed fits_to_cfd. The new version reports the median
+     flux density at short, long, and mid-range baselines.
+
+  e) Added support of kludge parameter PIMAVAR_SOU_IGNORE
+     That variable defines a pattern or patterns that 
+     are define the line in the source catalogue that are 
+     excluded from consideration. If more than one pattern
+     is defined, they are separated by & character. That
+     kludge variable allows to use the same source list
+     for different experiments with conflicting definitions.
+
+  f) Added support of the input phase calibration at the 
+     accumulation period basis. The new PIMA logic computes
+     phase calibration averaged over the scan. Phase calibration
+     is considered as a linear function on time within a scan.
+     Phase calibration rate is computed during averaging. 
+     The averaged phase calibration is referred to the mean
+     epoch of a scan. 
+
+     Task pcpl now supports qualifier pcal_type that takes
+     value average or raw. If pcal_type raw is specified,
+     pcpl will show raw phases and amplitudes without averaging.
+
+  g) Fixed a bug: pf.py did not support correctly resuming in
+     coarse mode.
+
+
+2022.07.26  PIMA  2.39
+
+  a) Added support of 4-band lin-pol VLBI experiments in pir.py
+
+  b) Added task af in pir.py that computes 4 polarization
+     combinations, XX, XY, YX, and YY for lin-pol data.
+
+  c) Changed behavior of PIMAVAR_NO_GRRAT: now it effectively
+     sets group delay rate to zero.
+
+  d) Fixed an important bug: the old version always incorrectly
+     computed group delay when some IFs was masked out: 
+     it considered phase of masked IF is zero, but did not set
+     weight to zero. The error may reach up to a nanosecond in
+     some cases.
+
+  e) Added a new option -resume in pf.py. If pf.py tasks 
+     coarse, fine, or allfine have been interrupted, when pf.py
+     is invoked with -resume flag, it will examine fringe file
+     and fringe residual file. It will search backward the latest
+     full record and then restart with the next observation.
+     If the last record is corrupted, f.e. was written only
+     partially, pf.py will discard the corrupted record.
+
+  f) Fixed a number of bugs related to frequency group combine mode
+     and frequency merge mode. Added hints how to use frequency
+     group combine and merge modes to the user guide.
+
+  g) Upgraded PIMA to allow processing data with multiple phase centers.
+
+  h) Added support # SOURCE-NAMES  v 2.1 2022.07.24 format of the 
+     source catalogue that allows alternative source names specified
+     in the FITS-IDI file to have up to 16 characters.
+
+
+2021.12.18  PIMA  2.38
+
+  a) Fixed splt: the old version did not apply amplitude losses 
+     due to smearing.
+
+  b) Fixed computation of weights in splt when a mask was applied.
+
+  c) Fixed computation of weights in splt when a segmented average
+     is computed.
+
+  d) The old version wrote default 0.0 bandpass when a station
+     had the largest SNR below the limit. The new version 
+     writes default (1.0, 0.0) 
+
+  e) Fixed renormalization when bandpass with all zero values for
+     a given station was used.
+
+  f) Some observations may not have phase calibration, probably
+     due to a bug in difx2fits. Added an additional filter to
+     block these observations for being used for bandpass computation 
+     if PCAL_USE is not NO. If PCAL_USE is NO, that filter lets these
+     observations through.
+
+  g) Enforced using the same group delays in phase calibration for
+     processing observations of all polarizations during bandpass
+     computation.
+
+  h) Added option -full in pf.py task coarse. This option disables
+     simplifications in fringe fitting for speed up. If this option
+     is on, pima coarse mode differs from the fine mode only by
+     not using bandpass. This option is useful for processing the 
+     data with few if any observations with SNR > 40 and subsequent
+     bandpass computation.
+
+  i) Added a new program fits_tim_avr -- a utility for time 
+     averaging FITS-UVA calibrated visibility data.
+     The output is written in the file in fits format. Time averaging   
+     in seconds is specified. fits_tim_avr starts averaging 
+     from  first the visibility till it fills a chunks of tim_av_sec 
+     long. Then it coherently averages, updates weights, writes down 
+     starts again. Usage:  fits_tim_avr input_uva tim_av_sec output_uva
+     where the first argument is the input file, the second argument is 
+     the averaging interval in seconds, and the third argument is the   
+     name of the output file in fits format.                            
+
+     Usage:
+
+     fits_tim_avr input_uva tim_av_sec output_uva
+
+     where the first argument is the input file, the second 
+     argument is the averaging interval in seconds, and the 
+     third argument is the name of the output file in fits format.
+
+  j) Added program get_station_table_from_fits that reads the input
+     file in FITS-IDI and generates the list of station that 
+     participated in observations and were used for correlation.
+
+  k) added program scripts/pima_gen_wis.csh
+
+  l) Added support of fine-grained pcal station selection.
+     It is a common situation when pcal for one or more station
+     is poor and should not be used. The value of PCAL keyword
+     now accepts and additional qualifier with the list of stations
+     either to use or not to use. Syntax:
+
+     PCAL:  value[:action:[station[:station]...]
+
+     A separator : (column) or , (comma) between stations is allowed
+
+     Action is either TO_USE or NOT_TO_USE. The action is 
+     case insensitive. If action is TO_USE, then pcal only from
+     the stations form the list will be considered for ising. If action 
+     is NOT_TO_USE, then pcal from the stations on the list will not 
+     be used.
+     Example:
+
+     PCAL:   USE_ALL:NOT_TO_USE:MEDICINA:NYALE13S:RAEGSMAR:YARRA12M
+
+     Here phase calibration from the following stations, MEDICINA, 
+     NYALE13S, RAEGSMAR, YARRA12M will not be used.
+
+     PCAL:   USE_ALL:to_use:HART15M,KOKEE,WETTZELL
+
+     Here phase calibration only from the following stations, 
+     HART15M,KOKEE,WETTZELL will be used provided the phase 
+     is available and was not turned off with task gean.
+
+  m) Added new Python program pir.py (PIma Run) for further automation.
+
+     Program pir.py executes elements of the VLBI data analysis
+     pipeline. In total there are 16 elements. Elements can be
+     executed separately, or in the group, or all together.
+   
+     usage: pir.py [-h] [--version] [-v verbosity] [-b band]
+                   [-r run-level] [-s] experiment
+   
+     where experiment is the experiment code followed either NRAO,
+           or KVN, or IVS, or KaVA, or EAVN notation.
+   
+     parameter --verbosity that controls verbosiy of the output.
+               0 -- silent
+               1 -- normal verbosity (defaults)
+               2 -- debuggig mode.
+   
+     parameter --band specifies the 1-character long band name. If the
+               exeriment has two bands, the code for the upper band
+               sould be used.
+   
+     parameter --run-level controls which elements or a group of
+               elements of the VLBI data analysis pipeline should be
+               executed. See pir documentation for details.
+   
+     If parameter -s was specified, statically linked PIMA will be used.
+
+     While the VLBI data pipeline still requires manual steps for 
+     its execution, pir.py reduces the number of manual operations 
+     to the minimum and automatically runs other steps.
+
+  n) User guide describing the use of pir.py is updated.
+
+
+2020.10.27  PIMA  2.37
+
+  a) Updated support of dual-polarization observations. 
+     Fixed a regression bug that broke fringe fitting
+     in cross-polarization in cur-cir basis.
+
+  b) Added support of mixed polarization modes cir-lin and lin-cir
+     Caveat: ACCUM and FINE bandpass generation is supported 
+             only in cir-cir mode. Will be fixed in the new version.
+
+  c) Fixed resolving phase ambiguities in bandpass computation.
+
+  d) Enforced resolving phase ambiguities in phase calibration and
+     storing group delay in phase calibration in the bandpass file.
+
+2020.06.17  PIMA  2.36
+
+  a) Added support of multiple repositories in GVF database files
+     implemented in gvh version 20200617.
+
+  b) Fixed a number of bugs related to polarization bandpass 
+     computation with large frequency segments.
+
+  c) Added support of gain correction when task splt compute time 
+     and frequency averaged visibilities.
+
+  d) PIMA task mkdb now bypasses observations that were not 
+     fringed or commented out in the fringe file.
+
+  e) Fixed a serious regression bug that led to miss to a block(s) 
+     of observations when exporting results of fringe fitting 
+     to the out geo/astro database.
+
+  f) Fixed a number of bugs related to task splt when processing 
+     wide-field VLBA observations.
+
+
+2020.05.09  PIMA  2.35
+
+  a) Added support of MACOS (DARWIN) operating system. Installation
+     procedure is the same as for Linux
+
+  b) Added support of the new keyword SPLT.TOTAL_UV. It specifies 
+     whether or not to generate output files with the total visibilities 
+     averaged over frequency and over all accumulation period over the 
+     scan after applying phase rotation for the results of fringe 
+     fittings. The total visibilities are referred to the band reference
+     frequency. If YES is specified, the files with total visibilities
+     are written in the same output directories averaged visibilities,
+     in addition to them. The output file is in plain ascii. Format
+     description can be found in file doc/Total_visibilities_format.txt
+
+  c) Added support of the SPLT.SNR_MIN. It specifies the minimum SNR over 
+     the entire scan for the data to be used by splt to export to the 
+     output fits-file by task splt. The data from the observation with 
+     the SNR less than that limit are not exported.
+
+     The SNR is defined as the ratio of the fringe amplitude to
+    the mean value of amplitude of noise. If to consider that 
+     real and image part of noise are independent and have Gaussian
+     distribution with variance \sigma, the mean amplitude is 
+     \sqrt{\pi/2} \approx 1.253 \sigma. The variance of the amplitude
+     noise is \sqrt{2 - \pi/2} \approx 0.655 \sigma.
+
+  d) Change the beam attenuation model. The old model used expansion
+     coefficients from the VLA beam attenuation pattern scaled for the 
+     diameter. The new model uses the theoretical pattern for a uniformly
+     illuminated aperture that is scaled with diameter and frequency.
+
+  e) Added new dump type created during fits file loading. 
+     Now PIMA always write a dump of phase calibration in a 
+     plain ascii file with extension .pcl that is placed in EXPER 
+     directory.
+
+  f) Added support of options --noopt and --opt for reconfigure.
+     reconfigure --noopt will cause PIMA to be compiled in the
+     non-optimized mode. PIMA in the non-optimized mode runs
+     significantly slower, but this mode enables more verbose
+     output in a case of crash. reconfigure --opt configures
+     PIMA in the normal optimization mode.
+
+  g) Fixed a bug related to processing data with more than one
+     frequency groups. The old version incorrectly applied
+     correction to phase, group delay, and phase delay rate for
+     the difference between fringe reference time and scan 
+     reference time. The difference in the time tag of the 
+     first valid accumulation period between frequency group
+     was not accounted.
+
+  h) Fixed a bug: the contribution of phase delay rate due to the 
+     differences between the a priori source positions used during
+     fringe fitting and for correlation was added to group delay rate,
+     which is wrong.
+
+  i) Fixed a regression bug in splt introduced in 2019:
+     group delay and phase delay rate was applied twice during
+     data averaging.
+        
+  j) Fixed a regression bug: PIMA always zeroed out dual-pol
+     data if weights at one polarization are zero. The new 
+     version of PIMA relaxed check: if check only whether weights
+     of the requested polarization are above the threshold 
+     ignoring weights for the polarization that is not requested.
+
+  k) Fixed a regression bug that prevented computation of bandpass
+     when no pcal was used.
+
+  l) Fixed a regression bug that caused a crash in bandpass 
+     computation when one or more IFs were masked out.
+
+  m) Made pf.py to honor command line options for tasks map, autm, 
+     and pict.
+
+  n) Removed support of obsolete keyword FRIB.SECONDARY_SNR_MIN and
+     FRIB.SECONDARY_MAX_TRIES.
+
+  o) Fixed a regression bug: the previous version always used the 
+     first pcal tone in the single phase cal tone extraction mode.
+
+  p) Added support of cable delay measurement system (CDMS) extraction
+     from logs files to antab files.
+
+  q) Added detection of records with cable calibration that have 
+     the same time tag and their removal of duplicate records
+     from further processing.
+
+  r) Added a support of a kludge environment variable
+     PIMAVAR_NO_INTRP. If it is set to YES, then no cable calibration
+     interpolation is disabled, and the point nearest to the scan 
+     reference time is taken. This may be desirable if cable 
+     calibration is noisy.
+
+  s) Changed format of the database output in plain ascii format:
+     cable calibration fields were added.
+
+  t) Added resolving ambiguity in group delay and phase delay rate 
+     due to folding the FFT transform.
+
+  u) Fixed the algorithm for decomposing phase delay rate, group
+     delay, and group delay rate to support correctly the case when
+     fringe reference time is significantly different for observations
+     of a given scan.
+
+  v) Fixed a regression bug introduced in 2019: task  splt multiplied
+     amplitudes by the primary beam attenuation instead of dividing
+     on it.
+
+  w) Added support of gfortan-10.1
+
+
+2020.03.25 PIMA  2.34
+
+  a) Added support of resolving group delay ambiguities in
+     phase calibration signal. PIMA computes group delays
+     in phase calibration over the band and over an individual
+     IFs. Now its stores group delays i the bandpass file. 
+     Group delay ambiguities for a given observation are 
+     resolved with respect to group delays stored in the 
+     bandpass files
+
+  b) Updated the logic that supports a different number of phase 
+     calibration tones per IF with different spacing between
+     frequencies of phase calibration tones within a given experiment.
+
+
+2020.03.08 PIMA  2.33
+
+  Bug-fix release. 
+
+  a) Applied time smearing decorrelation
+
+  b) Updated weighting algorithm in splt: the previous version required
+     at least 8 accumulation periods to compute the statistics. The 
+     current version requires at least 8 points per accumulation period.
+
+  b) Fixed a regression bug: applying the beam attenuation by splt was
+     accidentally lost.
+
+  c) Fixed a regression bug: applying onof was accidentally dropped.
+
+  d) Added an extra check for file length in the staging directory:
+     if the file length in the staging directory is shorter than
+     in the primary directory, then it is removed and copied again.
+
+
+2019.11.27 PIMA  2.32
+
+  Bug-fix release. 
+
+  a) Decorrelation factor now takes into account bandwidth
+     and time smearing and corrects fringe amplitude when
+     FRIB.AMPL_EDGE_WINDOW_COR keyword is set to USE.
+
+  a) Fixed regression bugs that broke acta task.
+
+  c) The previous version incorrectly computed bandpass for 
+     cir-pol data with more than one frequency group.
+
+  d) support of gvf_20191127 was added. There were minor changes
+     made in database files in GVF format. PIMA 2.32 is compliant
+     with this changes
+
+
+2019.05.25 PIMA  2.31
+
+  a) Improved support of bandpass generation: task bpas now supports all 
+     modes of bandpass generation for lin-lin data.
+
+  b) Added a new column in output fringe files: Decor_tim. That column
+     shows the ratio of the visibility coherently averaged over time
+     to the visibility incoherently averaged over time.      
+
+  c) Added a test for generating a list of observations for bandpass 
+     computation: observations with decor_tim less than 0.8 are 
+     discarded. This improved robustness of bandpass computation,
+     since the RFI or fringe fitting to phase calibration signal 
+     typically have decor_tim < 0.8, while normal observations
+     have decor_tim typically greater 0.9.
+    
+  d) Added a new task gepm for computation of the bandpass mask
+     at frequencies that are the closest to phase calibration tones.
+
+  e) Moved pima_apriori_update.py to VTD and renamed as
+     vtd_apriori_update.py
+
+  f) Added setting stacksize and environment variable GOMP_STACKSIZE 
+     on start-up of executables. That eliminated necessity to setup 
+     stackszie and GOMP_STACKSIZE to avoid a crash during loading
+     the executable.
+
+  g) Forced shell intermediate files, for instance object files 
+     created by the compiler be group readable and group writable. 
+     Forced make invoke shell bypassing startup scripts which made 
+     running make significantly faster.
+
+  h) Added ./reconfigure command that re-runs stored configuration. 
+     ./reconfigure -d displays the last configuration.
+
+
+2019.03.08 PIMA  2.30
+
+
+  a) Limited support of visibilities in linear polarization (lin-pol).
+     Support of new values of POLAR: keywords:
+
+     XX   -- horizontal polarization at both antennas
+     YX   -- vertical   polarization at the 1st antenna and horizontal at the 2nd
+     XY   -- horizontal polarization at the 1st antenna and vertical   at the 2nd
+     YY   -- vertical   polarization at both antennas
+     Q    -- Stokes parameter Q
+     U    -- Stokes parameter U
+     V    -- Stokes parameter V
+     ALL  -- fringing all combinations: XX, YX, XY, YY
+     ORIG -- fringing all combinations: XX, YX, XY, YY without polarization 
+             rotation and without applying native and polarization bandpasses
+
+     At the moment, PIMA does not supports for lin-pol data
+        1) producing Q, U, V Stokes polarizations;
+        2) bandpass computation in modes others than INIT;
+        3) task splt.
+     These limitations will be lifted in the future.
+
+     PIMA does not support cir-lin and lin-cir modes yet.
+
+     PIMA bandpass computation of lin-pol data requires a run of coarse fringe
+     fitting in ORIG polarization. Task coarse of pf.py wrapper does it
+     automatically.
+
+  b) Support of environment variables in PIMA control file.
+     Format ${VAR_NAME}, where VAR_NAME is an environment variable.
+     PIMA expands the environment variable at any occurrence of the control file.
+     Nested environment variables are supported.
+
+  c) 4 new fields in fringe output file is added.
+
+  d) 5 new fields in the database in ascii format is added.
+
+  e) New Python program pima_apriori_update.py is added to the distribution.
+     As it follows from its name, it updates a priori files used by PIMA
+     and psolve:
+         -- EOP
+         -- 3D TEC time series
+         -- slant path delays
+         -- loading displacements
+
+     This program requires control file. It downloads relevant data from 
+     remote data servers and transforms the output in the form required 
+     by VTD.
+
+     NB: pima_apriori_updat.py requires curl.
+
+  f) PIMA (as well as petools) can be configured against openblas
+     implementation of the BLAS library.
+
+
+2018.10.15 PIMA  2.29
+
+  This is a bug-fixing release.
+  
+a) Numerous changes to prevent crashes in an attempt to 
+   perform an operation with not-a-number. Operations with
+   non-a-number were acceptable with gfortran prior
+   version 8, but causes segmentation fault exception
+   with version 8.0 and newer. Users of gfortran/gcc-8.0
+   and newer are strongly encouraged to update fftw to
+   version 3.38. or newer. NB: "make check" is mandatory
+   when fftw is built. There were reported instances that
+   fftw provided wrong results with certain combinations
+   of compiler flags. 
+
+b) Added configure option --with-curl, since cfitsio-3.42
+   and newer may be compiled with curl support, and in that
+   case PIMA needs be linked against curl.
+
+c) Added support of scans more than 9999 accumulation periods.
+
+d) Fixed a bug for computation of the non-linear phase term 
+   when a sources is off the pointing direction and its name
+   was changed by name swapping procedure invoked by specifying
+   ^ in the 32-th column of the source name file.
+
+e) Fixed a bug in pf.py, task gaco -- the previous version did not
+   check observations against the exclusion list generated from
+   gvh databases that keep the observations suppressed during 
+   psolve solution.
+
+
+2018.06.01 PIMA  2.28
+
+  This is mainly a bug-fixing release.
+
+a) Adjusted onof algorithm. The previous version turned on
+   the amplitude threshold algorithm in situations when
+   it should not do it, and as a result onof flagged out
+   too many good points.
+
+b) Cleaned code for using NERS (bye-bye manual downloading 
+   Earth orientation parameter files).
+
+Prominent bugs:
+  a) Support of NERS is fixed;
+  b) Task onof did not work correctly for processing 
+     dual-band data;
+  c) Bandpass in the accumulation mode did not work correctly.
+  d) Fixed in task mppl related to an attempt to perform
+     arithmetic operation under not-a-number
+
+2017.12.22 PIMA  2.27
+
+a) Added support of a new bandpass generation mode for 
+   a situation when the highest SNR is too low (say, less
+   than 25) and normal way of bandpass generation may fail
+   because of large noise. This may happen in processing
+   Radioastron observations. In that case 
+   BPS.INTRP_METHOD: LINEAR is set, BPS.MSEG_ACCUM
+   and BPS.NOBS_FINE are set to the half of the number 
+   of spectral channels in the IF and BPS.DEG_AMP: 0,
+   BPS.DEG_PHS: 1. In that case PIMA coherently averages 
+   the residuals of the observations used for bandpass
+   generation to two points per IF and generate the bandpass
+   using the phase offset and linear trend for phase and
+   one per IF single multiplication factor for amplitude.
+   The only strong requirement for bandpass computation in
+   the mode is that all used observations should be detections.
+
+b) Added description of the parameters in the header of the 
+   VLBI database in the ascii format written by task mkdb. 
+   Added description of these parameters in the documentation.
+
+c) Changed interface of the old 32-bit Solve that required
+   Intel Fortran compiler to the modern 64-bit psolve built
+   with gfortran.
+
+d) Fixed a number of bugs.
+
+
+2017.08.31 PIMA  2.26
+=====================
+
+a) Added support of new task tsmo for computation of the 
+   system temperature model. This task works in two modes:
+   "if" mode and "elevation" model. tsmo in the "if" mode
+   computes the average ratio of Tsys between the IFs
+   of the specified range of IFs. Assuming this ratio is
+   stable over the experiment, PIMA flags Tsys values
+   that have significant difference with respect to the
+   mean ratio. Task tmso in the elevation mode decompose
+   Tsys at a given station into the product of three
+   components T_o * a(t) * b(e), where T_o is the mean
+   Tsys, a(t) and b(e) are functions of time and elevation
+   presented in the form of expansion of B-spline of the
+   1st degree and normalized to have the minimum value 1.0
+   Task tsmo detects and flags out outliers. It creates
+   two arrays: modeled Tsys and cleaned Tsys. The modeled
+   Tsys is the output of T_o * a(t) * b(e). Cleaned Tsys
+   is equal to modeled Tsys, except points without measured
+   Tsys or the points that were flagged out. Flagged and
+   missing Tsys values are replaced with modeled Tsys.
+
+   See documentation for detail.
+
+b) Keyword Tsys now supports three values: MEASURED,
+   CLEANED, and MODELED to instruct PIMA which Tsys to
+   use. Old value INTRP is obsolete. PIMA interprets it
+   as a synonym to MEASURED.
+
+c) Task tspl now supports new keyword "data" that takes
+   the following values:
+
+   measured  (default) -- tspl displayed measured Tsys;
+
+   tatm                -- tspl displays Tatm (brightness temperature of the 
+                          atmosphere) computed using the output of the 
+                          numerical weather model;
+
+   trec                -- tspl displays Trec (receiver temperature) computed
+                          after subtraction Tatm from measured Tsys;
+
+   opacity             -- tspl displays atmosphere opacity computed using 
+                          the output of the numerical weather model;
+
+   table               -- tspl displays a wide table with all parameters
+                          related to Tsys.
+
+d) Added task opal to pf.py. It exacutes PIMA task opal for the specified
+   experiment and PIMA task tsmo in mode if,elev. If the experiment has the 
+   chained control files for two bands and pf.py is called for the high
+   band, task tsmo is executed twice: for the high band and the low band.
+
+e) Fixed bugs that often caused computation of modeled Tsys to crash.
+
+f) Added support of keyword SCAN_LEN_SKIP by task splt. That means a user
+   has an ability to mask the specified amount of data at the beginning
+   of a scan to prevent propagation of the visibilities that were recorded
+   when antennas were not yet on-source.
+
+g) Improved speed of task splt by the factor of 1.5-2.5.
+
+
+2017.03.16  PIMA 2.25
+=====================
+
+a) Made massive changes in handling bandpass computation, bandpass 
+   normalization and re-normalization. Summary: 
+
+   aa) forced bandpass normalization to be consistent with voltage
+       normalization;
+
+   bb) forced computation of amplitude bandpass for the reference
+       stations as square of the geometric mean of power bandpasses
+       at baselines with the reference station;
+
+   cc) redefined usage of autocorrelation and fringe masks for 
+       autocorrelation.
+
+   It is recommended to re-generate bandpasses if the data are used
+   for imaging. A detailed document that describes the algorithm
+   for amplitude normalization can be found in doc/pima_amp.pdf
+   and http://astrogeo.org/pima/pima_amp.pdf
+
+b) Added support of a new value of keyword SPLT.STA_BASED: ALL.
+
+   When SPLT.STA_BASED: ALL or YES, PIMA performs a procedure that converts 
+   baseline-dependent group delays and phase delay rates to station-based
+   for each scan. Input data pass four filter: FRIB.SNR_DETECTION, 
+   EXCLUDE_OBS_FILE, INCLUDE_OBS_FILE, and OBS. PIMA uses k observations
+   that passed the filter for computing station-dependent quantities
+   at n stations. If SPLT.STA_BASED: YES, PIMA will use these k 
+   observations that part the input filters for generating the output
+   time and frequency averaged visibilities. If SPLT.STA_BASED: ALL,
+   PIMA will use all n*(n+1)/2 observations at baselines between 
+   n stations, regardless whether they passed the input filter or not.
+   For instance, if among three observations at baselines AB, AC, BC,
+   the last one did not pass the input filter because, for instance,
+   the SNR below detection limit, if SPLT.STA_BASED: YES, PIMA will
+   generate the output for baselines AB and AC. If SPLT.STA_BASED: ALL,
+   PIMA will generate the output for baselines AB, AC, and BC.
+
+c) Added support of a changing source names without changing a priori
+   for a case when a source name is specified in columns 33:42. This
+   name has precedence to names in columns 1:8, 11:20, 23:30.
+   Character ^ at the 32th column tells PIMA to change name of the 
+   source specified in columns 33:42 to the name specified in columns 1:8.
+   It will use the a priori positions specified for that sources in
+   columns 46:73. Character ^ at the 32th column is used when we want
+   just to change source name. Using character ^ at the 32th column 
+   we can even swap source names.
+    
+   If the field in the column 32 is blank and the field in columns 33:42
+   contains a source name, PIMA will search a record with the IVS name 
+   equal to the string specified in columns 33:40 and it will use the 
+   a priori for that record. Blank at the 32th column is used when we 
+   want associated source observed under name A to a known source with
+   name B with its a priori positions.
+
+   The differences between these to cases:
+       1) when character ^ is used, the a priori specified at the same
+          line are used, while if the 32th columns is blank, a priori
+          for another matching record is used. Since PIMA applies
+          phase correction due to difference between a priori position
+          specified in the source catalogue and the a priori used by
+          the correlator, the result will be different.
+   
+       2) when character ^ is used, source name swapping is allowed,
+          but name swapping is impossible when blank is used in field 32.
+
+d) Added support of the Network Earth Rotation Service in VTD.
+   That means a user do not need to worry any more about 
+   downloading files with the Earth orientation parameters:
+   PIMA will do it automatically. Refer to VTD documentation 
+   for instructions how to enable NERS.
+
+   NB: a new dependency on ners library appeared.
+
+e) Added 4 new keywords for support of phase transfer of 
+   simultaneous multi-band observations:
+
+   FRIB.FRQ_TRANSFER_BAND:       value
+
+        NO           -- no phase transfer is made
+
+        control_file -- name of the secondary control file for the 
+                        lower band of this VLBI experiment. That
+                        control file determines the frequency band
+                        whether fringe phases should be taken 
+                        for the phase transfer to the frequencies 
+                        of the band specified in the main control 
+                        file.
+
+   FRIB.FRQ_TRANSFER_METHOD:     method
+
+   Defines the smoothing method applied to phase before frequency 
+transfer.
+
+        SPLINE   -- phase at the lower band is expanded in B-spline basis
+                    with the number of knots specified by keyword
+                    FRIB.FRQ_TRANSFER_DEG
+
+        LEGENDRE -- phase at the lower band is expanded in Legendre basis
+                    with the degree specified by keyword 
+                    FRIB.FRQ_TRANSFER_DEG
+
+        ASIS     -- phase at lower band is not expanded and transferred
+                    as is.
+
+
+   FRIB.FRQ_TRANSFER_MSEG:       segment_length
+
+   Defines the length of the segment that will be coherently averaged
+before frequency transfer.
+
+        segment_length -- The averaging factor for the phase at low band 
+                          to be used for interpolation before transfer.                          
+                          An integer number in a range [1, NCHN], where 
+                          NCHN is the number of spectral channels in 
+                          an IF, or AUTO. Value AUTO forces PIMA to 
+                          determine segment length in order to have 
+                          the SNR within a segment no less than 1.5
+
+   FRIB.FRQ_TRANSFER_DEG:        degree
+
+   Defines the degree of the polynomial or the number of knots of
+B-spline for smoothing phase before frequency transfer.
+
+        degree -- The meaning of this keyword depends on 
+                   FRIB.FRQ_TRANSFER_METHOD. If the expansion basis is 
+                   LEGENDRE, then FRIB.FRQ_TRANSFER_DEG is the
+                   degree of the Legendre polynomial for expansion of 
+                   the phase at the low band. If the expansion basis is 
+                   SPLINE, then FRIB.FRQ_TRANSFER_DEG is the number of 
+                   spline knots in each intermediate frequency for 
+                   expansion of the amplitude of the phase at the low 
+                   band. It is ignored if method is ASIS.
+
+   As a results of definition of knew keywords, control files should
+be upgraded and visibility data be reloaded.
+
+f) Fixed an important bug in automap.py script: the previous version
+   may skip important steps in image processing and under-CLEAN 
+   an image.
+
+g) Fixed a bug in mkdb: under some circumstances rounding errors
+   triggered to declare some observations to be out of order
+   and as a result, PIMA did not put them into database;
+
+Required updates: upgrade of the control file, petools, ners, 
+spd_client, and vtd.
+
+2016.09.11  PIMA 2.24
+=====================
+
+a) Support of beam waveguide antennas, like WARK30M (VTD). The antenna
+   axis offset type for beam waveguide antennas should be specified 
+   as BWG, not AZEL in the antenna description file. Ignoring differences
+   between AZEL and BWG mounting type ruins processing dual-band 
+   observations.
+
+b) New routine for parsing IVS log files for Field system versions 9.11 and
+   newer. Support of usb/lsb and dual-pol data.
+
+c) Fixed a bug in computing correction for attenuation of the main beam
+
+d) Support of Earth Orientation time series in NERS format (VTD)
+
+e) Support of high resolution monitors (DIAGI)
+
+Required updates: petools and vtd.
+
+
+2016.06.26  PIMA 2.23
+=====================
+
+a) Fixed a regression bug related to loading phase cal from
+   legacy VLBA calibration file.
+
+b) a lot of changes in pf.py wrapper.
+   
+c) Renames ps.py into pr.py, excluded pm.py wrapper
+   Added automap.py and imadir.py wrappers.
+
+d) finished documentation files doc/pima_user_guide.html/.pdf
+   and doc/pima_wrapper.html/pdf
+
+
+2016.02.29  PIMA 2.22
+=====================
+
+  a) Completed pf.py script. It is a wrapper around PIMA.
+
+     Now it includes the following tasks
+       load   -- load the experiment, 
+       logs   -- VLBI log processing,
+       gean   -- import calibration information
+       coarse -- coarse fringe fitting
+       bpas   -- generation of a complex bandpass
+       fine   -- fine fringe fitting
+       mkdb   -- export results of fringe fitting into 
+                 a database in GVF format suitable for Post-Solve
+       mktxt  -- export results of fringe fitting into an ascii file
+       gain   -- import antenna gain curves
+       splt   -- export visibilities averaged over time and frequency
+                 after phase rotation for results of fringe fitting
+       autm   -- Automated imaging
+       pict   -- Generation of pictures of sources images in gif format
+       map    -- Automated mapping that includes gain calibration, 
+                 splitting, imaging, and creation of pictures
+
+  b) Added an optional configuration parameters --difmap that specifies 
+     location of difmap. PIMA script pf.py supports a task (autm) that 
+     call difmap for automatic imaging.
+     
+  c) Added an optional configuration parameters --debug that prints
+     debigging output. This may be helpful when configuration does not
+     work as expected.
+
+  d) Added support of a new task: gaco (GAin COrrection). This task
+     is useful when an experiment with many sources is processed.
+     A new keyword SPLT.GAIN_CORR_FILE specifies a gain correction
+     file. Gain correction file specifies gain correction for each
+     station, each IF. PIMA task splt multiplies visibility by a product 
+     of gain corrections for two stations of a baseline.
+
+     Task gaco requires one or two qualifiers depending on a mode.
+     Task gaco can run in two modes: initialization and computation. 
+     The mode is specified by the first qualifier. The first qualifier 
+     INIT sets the init mode. Task gaco in the the init mode requires 
+     the of the first qualifier. PIMA will create a gain correction file 
+     with all corrections equal to that value.
+
+     When the first qualifier is SOURCE, it sets the computation mode.
+     The value of the qualifier is either a source name or a comma
+     separated list of source names or the name of a file that contains
+     source names, one name per line. This qualifier sets the list of 
+     sources that have been imaged. They will be used for deriving 
+     gain correction. The second qualifier has value dir. Its value is 
+     the directory name that contains both calibrated visibility files
+     created by PIMA task splt and self-calibrated visibility files 
+     generated by DIFMAP. PIMA will match visibilities before and after 
+     imaging and compute mean visibility amplitudes scale factors for 
+     each station, each IF for calibrated visibilities using least squares.
+     Results of this computation is written in the output file specified
+     by keyword SPLT.GAIN_CORR_FILE.
+
+     PIMA task splt checks wither SPLT.GAIN_CORR_FILE specifies the file
+     with gain correction. If it does, it apples the gain correction,
+     i.e. multiplies visibility by the product of gains at two stations 
+     and writes an additional GACO section in the output FITS file with 
+     gain corrections and writes the gain corrections into the history 
+     section of the FITS file.
+     
+     There are two major use cases. An analyst finds that amplitude at 
+     a given station, given IF or range of IFs is unusable, for instance
+     because Tsys is corrupted. Then the analyst first runs task gaco in 
+     the init mode and then manually changes gain corrections to affected 
+     IFs to zero. As a result, PIMA will bypass these visibilities. 
+     The second use case: an analyst processed several strong sources and 
+     found that for a given station(s), fringe amplitude requires 
+     significant (f.e. more than 20%) correction in each scan. After getting 
+     good images of given strong source, an analyst would like to apply 
+     these corrections to remaining sources. Task gaco in the source mode 
+     allows to compute this correction. This facilitates imaging, especially
+     imaging faint sources and sources with poor uv-coverage. Task gaco
+     honors gain correction used when source images were generated. That 
+     means you can re-run gaco several times, and the gain correction will
+     be accounted only once. Task gaco in the source mode honors the previous
+     gain corrections for the stations and IFs that did not contribute to 
+     images of the specified sources and keep them unchanged.
+   
+  e) Added subarray consolidation. Since PIMA performs fringe fitting in the
+     baseline mode, an individual scan may not have detections less than 
+     N*(N+1)/2 baselines of a N-station network. PIMA designate a subnetwork
+     with detections at a given scan as an subarray. Normally PIMA unites
+     observations of different scans with the same subnetwork in a subarray.
+     PIMA computes station-based visibility phases for each subarray 
+     individually. A new keyword SPLT.SUBARRY_CONSOLIDATION was introduced.
+     It controls how subarrays are consolidated after initial process for
+     converting baseline-depended fringe phases into station-based fringe
+     phases. This keyword supports three values: NO, MIN, and MAX.
+     Value NO means to disable subarray consolidation. Value MIN instructs 
+     PIMA to preform minimal subarray consolidation: if all stations of 
+     subarray A are present in the subarray B, then the subarray B is 
+     consolidated with subarray A. Value MAX instructs to preform maximum
+     subarray consolidation: if a subarray has at least one common station
+     with subarray B, both subarrays are consolidated. At the moment, this
+     feature is still considered experimental. Use it at your own risk.
+
+  PIMA 2.22 depends on VTD-20160229
+
+  Since two new keywords were introduced in PIMA-2.22, the control files 
+  needs to be upgraded with task upgr.
+
+
+2016.01.24  PIMA 2.21
+=====================
+
+  a) Re-wrote support of multiple phase-calibration tones per IF.
+     Fixed the problem when the group delay over group delays
+     is close to -+ 1/2 cycle.
+
+  b) Added  support of specifying the index of the phase calibration
+     tone to use, if the user decides to apply one tone when 
+     multiple tones are available. This is done mainly for 
+     compatibility, since when multiple phase calibration tones
+     are available, all the tones should be used.w
+
+  c) Added support of switch -auto in fits_to_radplot. When -auto 
+     is specified, fits_to_radplot instead of making a plot 
+     of calibrated cross-correlation amplitude versus baseline length
+     will make a plot versus the length of the baseline projection to 
+     the direction which makes the scatter of the amplitude with
+     respect to a smoothed curve minimal.
+
+  d) Improved resistance of PIMA to corrupted data: the previous
+     version of PIMA crashed when autocorrelation was 
+     a signaled denormalized number due to data corruption.
+
+  e) Improved pf.py script. Added support of tasks logs, gean, 
+     splt.
+
+  f) Extended documentation file doc/pima_user_guide.html, 
+     although it still is not completed
+
+  g) Numerous bug fixes.
+
+
+2015.12.31  PIMA 2.20
+=====================
+
+
+a) Included in the distribution front-end PIMA scripts
+   pf.py, pt.py, ps.py, pm.py . They are wrappers to
+   PIMA.
+
+b) Added support of import of the interferometric model 
+   generated for the KJCC correlator.
+
+c) Finished document doc/pima_02.html "Description of control 
+   file keywords of VLBI data processing software PIMA"
+
+d) Added an ability to combine results of fringe fitting
+   for task mkdb when the visibility data are two or more
+   frequency groups. Data can be fringed N times with 
+   FRQ_GRP: k. Then the fringe files and fringe residual 
+   files are combined and used as input for task mkdb
+   with FRQ_GRP: b-e, where b and e are the start and and
+   frequency groups.
+
+e) Fixed a bug: the old version may put a small value 
+   for the amplitude bandpass at the edge of the IF 
+   when 1) spline interpolation is used; 2) the edge
+   spectral channels were masked out; 3) the spectral
+   channel averaging was set > 2.
+
+f) Fixed a regression bug related to processing data with
+   estimation of the phase acceleration
+
+g) Fixed a regression bug related to processing the data
+   with polarization I when phase calibration was on. 
+   The polarization bandpasses created with PIMA prior
+   2015.12.18 should be re-created.
+
+h) Fixed amplitude scaling for data from the  SFXC correlator 
+   since visibility amplitudes from the SFXC correlator are 
+   already scaled for digitization loss in cross-correlation 
+   (but not autocorrelation).
+
+i) Fixed a bug related to processing merged frequency groups.
+   the autocorrelation index of a chain was wrong.
+
+j) Added masking a uv-point with a broken chain of merged frequency
+   group. This prevented a crash if some uv points for 
+   a merged frequency group were missing.
+
+k) Changed treatment of phase-cal for dual-polarization data.
+   The previous versions used the RR phase cal for both RR and
+   LL data. The new version uses LL phase cal for LL data.
+   As a result old polarization bandpasses must be redone.
+
+l) Added support of a new mode in parsing LOG files: 
+   DBBC log file with USB/LSB pairs of BBC (mode = 5).
+
+m) Fixed several bugs related to processing legacy VLBA calibration 
+   data.
+
+n) Added support a case when the chained IFs are in separate FITS-IDI
+   files. Fixed treatment of phase calibration for such a case.
+
+
+2015.09.19  PIMA 2.19
+=====================
+
+a) Added a new feature: support of WVR path delays.
+   Four new keywords have been introduced:
+
+   WVR_FILE:  Full path name of the WVR data. At the moment,
+              only form "* WVR_EFL data. Format version 2014.07.24"
+              is supported. More than one file can be specified,
+              one file per station. If no WVR data are available,
+              NO should be used.
+
+   WVR_USE:   WVR usage. Specifies the algorithm for interpolation and
+              smoothing of original WVR data and the contribution of
+              WVR path delay phases should be subtracted from the
+              visibility phases. Supported values:
+
+              NO       -- do not apply visibility phases
+
+              WVR_3SPL -- Expand original data into smoothing 
+                          spline of the 3rd degree.
+
+              WVR_LIN  -- Expand original data into smoothing 
+                          spline of the 1st degree.
+
+              WVR_AVR  -- Expand original data into smoothing 
+                          spline of the 3rd degree.
+
+   WVR_SMOOTHING_INTERVAL: interval of the smoothing spline in seconds.
+                           10-40 seconds is usually adequate
+
+   WVR_SMOOTHING_SIGMA:    Reciprocal weight of the constraint imposed
+                           on WVR smoothing spline in seconds. The smaller 
+                           parameter, the close smoothing spline to the 
+                           averaged path delay. The bigger parameter,
+                           the greater fluctuations in WVR phases are
+                           allowed. 2.0D-11 is usually adequate.
+
+b) Added a new feature: support of the external interferometric model
+   for the SFXC correlator. 
+
+   As of 2015.09.19, the SFXC correlator does not put interferometric 
+   model used by the correlator into the FITS-IDI file. PIMA supports
+   task moim ( MOdel IMport) for importing parameters of the delay
+   model from external files.
+
+   moim pareses two keys :  INTMOD_TYPE, and INTMOD_FILE.
+   INTMOD_TYPE defines the format of the external delay file.
+   It should be SFXC when delay files are for the SFXC correlator.
+
+   INTMOD_FILE defines either individual delay file(s) with extension 
+   .del used by the SFXC correlator, or the directory tree(s).
+   More than one lines INTMOD_FILE: can be defined in the control file.
+   If the value of the INTMOD_FILE: is a directory, all files with
+   extension .del in that directories and all sub-directories are
+   parsed.
+
+c) PIMA now supports processing the visibilities with unequal IFs that 
+   have the same start frequencies and different stop frequencies.
+   PIMA puts them in different frequency groups even if the original
+   FITS-IDI files use only one frequency group. The restriction that
+   the number of spectral channels in all IFs of all FITS-IDI files
+   processed together must be the same is still held.
+
+d) Fixed a number of bugs in the installation scripts. Updated control
+   files of examples.
+
+   PIM-files of PIMA 2.19 are not compatible with early versions of PIMA
+   The control files should be updated by task upgr, and the data should
+   be re-loaded.
+
+
+2015.06.04  PIMA 2.18
+=====================
+
+a) Fixed fringe amplitude re-normalization for the case of mixed 
+   2/4 level quantization.
+
+
+2015.05.07  PIMA 2.17
+=====================
+
+a) Added support of dual-pol phase calibration. The previous version
+   used RR phase calibration when processing I-pol data. In a case
+   of a power reset during the experiment, this may lead to changes
+   of phases between RR and LL polarizations. As a result, 
+   RR and LL visibilities were combined into I-pol visibilities 
+   incorrectly.
+
+b) Fixed a regression bug introduced in version 2.16: applying 
+   phase calibration effectively was deactivated and PIMA ignored
+   phase calibration in fringe fitting.
+
+c) Added a new task: pdpl -- plot of differences RR and LL
+   phase calibration. Works similar to pcpl.
+
+d) Added a new task: pplt -- plot of the polarization bandpass.
+   Works similar to bplt.
+
+e) Changed tspl (tsys plot): added an ability to change 
+   the intermediate frequency for Tsys plot.
+
+
+2014.12.31  PIMA 2.16
+=====================
+
+a) Added support of a new feature: combination of frequency
+   groups. PIMA has an ability to combine several existing 
+   frequency groups and create a new virtual frequency group 
+   that contains all IFs of these groups sorted over frequency. 
+   PIMA can perform fringe fitting only within a frequency group. 
+   In order to mitigate this limitation, frequency combination 
+   allows to create a virtual frequency group. The distinction 
+   of two similar processes, merging and combination of
+   frequency groups is that merged frequency groups must
+   be observed simultaneously, while combined frequency 
+   groups must observed non-simultaneously.
+
+   Syntax FRQ_GRP:  x-y where where x is the minimum frequency 
+   group and y is the maximum frequency groups. This syntax
+   has effect only during loading the FITS files. Upon loading
+   PIMA creates a new frequency group with index k+1, where k
+   is the number of frequency groups defined in the FITS-files.
+
+   When syntax FRQ_GRP:  x-y is used for any other task than 
+   fits file loading, the frequency group x is used.
+
+   After loading, the new frequency group can be used.
+   The main motivation of the new feature is to perform fringe
+   fitting over an extra-wide band.
+
+b) Two new keywords were introduced for future use:
+   PCAL_MASK_FILE:     NO
+   TEC_FILE:           NO
+
+c) Format of the fringe output was updated: 4 new columns
+   were added to the end: TEC, TEC_RATE, TEC_ERR, TEC_RATE_ERR.
+   PIMA understands both formats: 1.00, 1.01, and new 1.02
+   versions.
+
+
+2014.12.02  PIMA 2.15
+=====================
+
+a) Added a partial support of a new feature: merging
+   frequency groups. If visibilities are split into 
+   several frequency groups, they cannot be processed
+   simultaneously. That means that fringe fitting cannot
+   be done with visibilities in more than one frequency
+   group. Originally, support of frequency groups in FITS-IDI
+   was designed for non-simultaneous data, and this 
+   restriction did not pose a problem. However, there are two 
+   known situations when fringe fitting across frequency
+   groups is necessary: 1) DiFX may split the data of two
+   sub-bands in different groups; 2) we may want to fringe
+   fit an ultra wide-band recorded with agile frequency 
+   switching.
+
+   New version of PIMA supports the following syntax: 
+   FRQ_GRP:  x:y where x is the minimum frequency group
+   and y is the maximum frequency groups. If a range
+   of frequency groups is specified, PIMA merges 
+   frequency groups from x to y into 1 frequency group.
+   The number of IFs that PIMA sees is increased from
+   n to (x-y+1)*n. So, effectivly, PIMA "sees" the data
+   as if they belong to a large single frequency group.
+
+   Restriction: the number of IFs in each frequency
+   group should be the same.
+
+   As of version 2.15, phase calibration, system   
+   temperature, and gain are not merged. This will be 
+   fixed in next version.
+
+b) numerous bug fixes.
+
+
+2014.11.22  PIMA 2.14
+=====================
+
+a) Increased the  maximum number of spectral channels from 
+   8192 to 16384
+
+b) Updated the procedure for computation of visibility weights
+   of task splt. The following options are supported:
+
+   SPLT.WEIGHT_TYPE: ONE     -- all weights are unity.
+
+   SPLT.WEIGHT_TYPE: OBS_SNR -- Calibrated amplitude is computed
+                                over the observation. The SNR for 
+                                a given IF is computed based on
+                                the SNR over the observation.
+                                Rms of noise is computed as 
+                                a ratio of calibrated amplitude 
+                                to the SNR over the IF. Weight is 
+                                reciprocal to the square of noise 
+                                rms. Thus, the weight is computed 
+                                for a given IF using all accumulation 
+                                periods of the observation.
+
+   SPLT.WEIGHT_TYPE: OBS_RMS    Weighted variance of calibrated 
+                                visibilities is computed for a given
+                                IF using all accumulation periods
+                                of a given observation. Weight 
+                                is reciprocal to the variance.
+
+   SPLT.WEIGHT_TYPE: SEG_RMS    Weighted variance of calibrated 
+                                visibilities is computed for a given
+                                IF using all accumulation periods
+                                over a given segment. Weight is 
+                                reciprocal to the variance.
+
+   SPLT.WEIGHT_TYPE: AUTO       If the number of accumulation periods
+                                per segment is greater of equal than 
+                                the threshold (currently 8), WEIGHT_TYPE
+                                AUTO is equivalent to WEIGHT_TYPE: SEG_RMS.
+                                If the number of accumulation periods
+                                per segment is less than the threshold
+                                (currently 8), weighted variance of
+                                calibrated visibilities is computed over 
+                                so-called "weights segments". These weight 
+                                segments are longer than the output 
+                                visibility segments. Weight for a given 
+                                IF, given segment is reciprocal to the 
+                                variance of the weight segment with the 
+                                middle epoch nearest to the to the epoch 
+                                of the given segment. 
+
+c) Fixed a bug in PIMA_SPLT: the previous version normalized the 
+   autocorrelation spectrum of only the first station of a baseline,
+   but did not do it for the second sration.
+
+d) Added new task onof. The purpose of this task is to flag visibilities
+   at the beginning and/or the end of a scan. At the beginning or/and end
+   of a scan some data may be lost. Using uv with noise instead of signal
+   affect dertimentally imaging. Parsing VLBI log file is supposed
+   to set on-off time of valid recording. However, for a number of 
+   reasons information about actual start and end of a scan may not
+   properly propagate to the visilibity file. Task onof is supposed to
+   determine on and off time by analyzing vibilities.
+
+   It is supposed to run after fringe fitting. After phase rotation for
+   results of fringe fitting, applying all calibrations, and averaging 
+   over frequency, calibrated vilisbilites are analyzed. First, the 
+   mean and wrms of visibilities over the scan kernel are computed.
+   The scan kernel is a portion of data that are considered free from
+   data losses. Then the data are analyzed backward from the start
+   of a kernel towards the first accumulation period (AP). The visibilites
+   that have amplitude less than the mean ampltidue over a kernel
+   in accordance with a special criteria is flagged out. Flag suppress
+   visilities at all IFs for a given epoch of an AP. The same procedure
+   is repeated forward from the last AP of the kernel to the last
+   AP of the scan. The start and end of the kernel are defined 
+   by parameters ONOF.KERNEL_START_SHARE and ONOF.KERNEL_END_SHARE
+   that define the start and end AP of a kernel as a share from the 
+   nominal scan length.
+   
+   Three criteria are examined for determining whether the AP is 
+   to be flagged out. If the AP amplitude is less than 
+   ONOF.AMPL_THRESHOLD share of the mean amplitude over the kernel,
+   the AP status is set as a candidate for flagging. This criterion 
+   is not applied if ONOF.NSIG_THRESHOLD = 0.
+
+   If the AP amplitude is less than ONOF.NSIG_THRESHOLD times of the wrms
+   of fringe amplitude over the kernel, the AP status is set as a candidate 
+   for flagging. This criterion is not applied if ONOF.NSIG_THRESHOLD = 0.
+
+   If status "candidate for flagging" was set to a given AP, the third
+   criteria is checked. If the status "candidate for flagging" was set 
+   for ONOF.MIN_LOW_AP consecutive APs, all these APs and remaining APs
+   to be checked either at the beginning or end of a scan are flagged
+   out. ONOF.MIN_LOW_AP = 0, then an AP with "candidate for flagging" 
+   status is flaged out.
+
+   Flags are written in file specified by the keyword TIME_FLAG_FILE.
+   Depending on option ONOF.GEN_FLAGS_MODE, the previous flags for
+   a given scan can be either ignored ( ONOF.GEN_FLAGS_MODE: CREATE )
+   or honored ( ONOF.GEN_FLAGS_MODE: UPDATE ). In a latter case 
+   onof task does not see AP that are flagged out, and therefore, their
+   status cannot be changed.
+
+   Onof flag is used by PIMA as weight: it multiplies visibility data
+   by flag. Onof operates with values 1.0 or 0.0 only.
+
+   Options:
+
+   ONOF.GEN_FLAGS_MODE: [NO, CREATE, UPDATE]
+                        NO     -- onof procedure is not running
+                        CREATE -- original flagging status for a given
+                                  observation is set to 1.0, i.e.
+                                  unflag
+                        UPDATE -- original flagging status for a given
+                                  observation is honored. Onof does not
+                                  see flagged scans and preserves their
+                                  flag value.
+                         
+  ONOF.KERNEL_START_SHARE: The start epoch of the kernel interval defined
+                           as an offset with respect to the nominal start
+                           time as a share of the scan length. Should be
+                           in a range [0, 1]. For instance if the scan
+                           length is 100s, and ONOF.KERNEL_START_SHARE: 0.2,
+                           then the start epoch of the kernel is 20s.
+
+  ONOF.KERNEL_END_SHARE:   The send epoch of the kernel interval defined
+                           as an offset with respect to the nominal start
+                           time as a share of the scan length. Should be
+                           in a range [0, 1]. For instance if the scan
+                           length is 200s, and ONOF.KERNEL_END_SHARE: 0.9,
+                           then the start epoch of the kernel is 180s.
+
+  ONOF.COHERENT_INTERVAL:  Interval of coherency in seconds used for 
+                           computation of mean amplitude. In a case 
+                           if the kernel interval is longer than the
+                           coherency interval, the mean and wrms of
+                           visibilites is computed over the shorter
+                           coherency interval. If unsure, set it to 1200.
+
+  ONOF.AMPL_THRESHOLD:     Threshold criterion. An AP with amplitude 
+                           times ONOF.AMPL_THRESHOLD of the mean
+                           amplitude over the scan kernel is considered 
+                           as a candidate for flagging. 
+                           ONOF.AMPL_THRESHOLD: 0.0 means no amplitude
+                           threshold criterion is checked.
+
+  ONOF.NSIG_THRESHOLD:     N-sigma criterion. An AP with amplitude 
+                           ONOF.AMPL_THRESHOLD times wrms of the 
+                           visibility over the scan kernel is considered 
+                           as a candidate for flagging.
+                           ONOF.NSIG_THRESHOLD: 0.0 means no amplitude
+                           n-sigma criterion is checked.
+
+  ONOF.MIN_LOW_AP:         0 means that the AP that satisfied flagging
+                           criteria ONOF.AMPL_THRESHOLD or ONOF.NSIG_THRESHOLD
+                           is flagged out. If ONOF.MIN_LOW_AP > 0, then
+                           onof checks how many consecutive APs have low
+                           amplitude. If ONOF.MIN_LOW_AP APs has low 
+                           amplitude, then the rest of the scan portion 
+                           (before the kernel interval or after kernel 
+                           interval) is flagged out. If after k APs with
+                           low amplitude ( k < ONOF.MIN_LOW_AP ) follows
+                           an AP with high amplitude, these k APs are not
+                           flagge.
+
+  NB: This change requires upgrade of control file. Use task upgr for that.
+
+2014.09.18  PIMA 2.13
+=====================
+
+            Added a rudimentary interface to atmosphere opacity
+            and atmosphere brightness temperature computed from the
+            output of numerical weather models with software SPD 
+            (Slant Path Delay) http://astrogeo.org/spd.
+
+            At the moment, PIMA has an ability to plot atmosphere
+            opacity and sky brightness temperature.
+
+            a) Added new task opag (OPAcity Generation).
+               Requires spd package installed!
+               Has keyword atmo_dir that requires the value:
+               name of the directory with the state of the 
+               atmosphere from numerical weather model in 
+               HEB format. It computes the series of atmosphere
+               opacity and antenna brightness temperatures
+               for all stations participated in the VLBI experiment
+               and time epochs within the time range of the session.
+               PIMA prepares the control file for SPD and launches
+               that program which makes all the work.
+             
+            b) Added new task opal (OPAcity Loading). This task
+               loads into PIMA internal data structure the output 
+               of computation of SPD that was generated by task opag.
+             
+            c) Extended task tspl (TSys PLot). Now it accepts keyword
+               data that has one of the following values: 
+               measured, nwm, and opacity.
+
+               When value measured is specified, measured system 
+               temperature is displayed.
+
+               When value nwm is specified, atmosphere brightness temperature
+               computed with SPD using the output of numerical weather 
+               models is displayed. It is assumed that brightness temperature
+               was loaded to PIMA data structures with task opal.
+
+               When value opacity is specified, atmosphere opacity
+               computed with SPD using the output of numerical weather 
+               models is displayed. It is assumed that brightness temperature
+               was loaded to PIMA data structures with task opal.
+              
+            d) PIMA has new dependency: package spd_client. That tar-ball
+               can be downloaded from http://astrogeo.org/spd
+
+ 
+2014.08.24  PIMA 2.12
+=====================
+
+            a) Added support of kludge environment variables
+               PIMAVAR_MIN_FRG and PIMAVAR_MAX_FRG that set
+               the minimum and maximum frequency group in
+               input FITS-IDI file(s). Other frequency groups 
+               are ignored.
+
+            b) Fixed bpas DEBUG_LEVEL: 21 -- the previous version
+               plotted autocorrelation amplitude (red) for the 1st
+               station of a baseline (which may happen a reference
+               or a remote station). The current version plots 
+               autocorrelation amplitude for the remote station.
+
+            c) Fixed a big in bandpass computation statistics:
+               the phase rms for baselines without the reference 
+               station was incorrect.
+
+            d) requires update of petools and vtd libraries.
+
+            e) Linked against new version of VTD library. That
+               version supports modeling a priori path delay through
+               the neutral atmosphere using numerical weather
+               models. Requires update of VTD configuration files.
+
+
+2014.06.19  PIMA 2.11
+=====================
+
+            Fixed a regression bug acquired in PIMA 2.10: pima splt
+            did not sort sub-arrays. For this reason difmap incorrectly
+            determined a sign of the baseline, lost phase misclosure,
+            and as a result, produced very poor maps.
+
+2014.04.19  PIMA 2.10
+=====================
+
+            a) Added support of MAX OS (DARWIN). For this reason, PIMA 2.10
+               requires petools, vtd, gvh, and fourpack of 2014.04.04 or newer.
+
+            b) Added a new task acta (AutoCorrelation, Time Average).
+               For each scan, each station it generates ascii table with 
+               text table of autocorrelation spectrum. The task honors
+               keywords OBS:, INCLUDE_OBS:, EXCLUDE_OBS: keywords. These 
+               keywords allow to reduce the scope of the task. If there
+               is more than one observation with a given station in 
+               a given scan, PIMA acta selects the one that has the maximum
+               number of accumulation periods. Keywords SCAN_LEN_USED, 
+               SCAN_LEN_SKIP set constraints on which accumulation periods
+               will be used for computation of scan average. Keyword 
+               FRIB_1D_FRQ_MSEG: controls frequency averaging: how many 
+               spectral channels will be averaged together. FRIB_1D_FRQ_MSEG: 1 
+               means no averaging. 
+
+               The output is written in sub-directory EEEE_atb, where
+               EEEE is experiment name specified in the keyword SESS_CODE:.
+               EEEE_atb is placed in the scratch directory specified in 
+               the keyword EXPER_DIR:. Output file name has syntax       
+               acta_sca_NNNNNNNNNN_SSSSSSSS.txt
+                        NNNNNNNNNN          -- is 10 characters long scan 
+                                               name;
+                                   SSSSSSSS -- is  8 characters long station 
+                                               name.
+               Trailing blanks in name components are replaced with 
+               underscores.
+
+            c) Added program acta_plot. It reads an ascii  file created by
+               PIMA task acta and visualizes auto spectrum. The optional
+               argument allows to store the plot in file in GIF (.gif), 
+               PostScript (.ps), or internal DiaGI format (.sav) depending
+               on extension.
+
+            e) Added support of DiaGI format in FRIB.1D_DRF_PLOT: keyword.
+
+            f) fixed a bug in splt that may result in creation of an empty
+               station table in the output FITS file. Difmap cannot process
+               FITS-files with empty station tables.
+
+            g) Minor bug fixes.
+
+2014.02.25  PIMA 2.09
+=====================
+
+            Minor bug fixes.
+
+2014.02.08  PIMA 2.08
+=====================
+
+            a) Added support of the new fine fringe fitting mode:
+               FRIB.FINE_SEARCH: ACC
+               In this mode group delay, phase delay rate, and phase 
+               delay acceleration are estimated by fine fringe fitting
+               procedure, while group delay, phase delay rate, and 
+               group delay rate are adjusted in FRIB.FINE_SEARCH: LSQ
+               mode.
+
+               In FRIB.FINE_SEARCH: ACC mode estimates of phase delay
+               acceleration are written in the fringe result file
+               instead of group delay rates. Task splt recognizes
+               what the fringe results file contains and applies 
+               either group delay rates of phase delay accelerations
+               depending on the mode of the fine fringe fitting 
+               routine that generated them,
+
+               This fine fringe fitting mode may be combined with 
+               PHASE_ACCELERATION or PHASE_ACCEL_MIN/PHASE_ACCEL_MAX. 
+               In that case the total phase delay acceleration: a sum 
+               of a priori value and its estimate found by fine fringe 
+               fitting is written in fringe result file.
+
+            b) Added support of two new keywords:
+               PHASE_ACCEL_MIN and PHASE_ACCEL_MAX. They specify
+               the range of phase accelerations. Units: 1/s.
+               These two parameters are zero by default. When
+               non-zero, a coarse fringe fitting is done with 
+               iterations with trial a priori accelerations. A priori trial
+               phase delay accelerations are in a range from PHASE_ACCEL_MIN
+               to PHASE_ACCEL_MAX with equal step. The step of a priori 
+               phase delay accelerations is chosen automatically in such 
+               a way that when the phase acceleration value equal to that
+               step is applied to visibility data, the maximum phase change 
+               does not exceed 1/3 of the phase turn (2 rad).
+
+               When PHASE_ACCEL_MIN and PHASE_ACCEL_MAX are not zero,
+               coarse fringe fitting selects fringe fitting parameters
+               in three-dimensional space: group delay, phase delay rate,
+               and phase delay acceleration. Phase delay acceleration that
+               corresponds to the fringe amplitude maximum is applied to 
+               visibility data before fine fringe fitting mode. In 
+               FRIB.FINE_SEARCH: LSQ fine fringe fitting mode, phase delay 
+               rate, group delay, and group delay rate are adjusted and written 
+               in fringe fitting result file, and phase delay acceleration 
+               information is lost. Usually, this is undesirable. In the case
+               of FRIB.FINE_SEARCH: ACC, group delay, phase delay rate, 
+               and phase delay acceleration are adjusted and the total value 
+               of phase delay acceleration (from coarse fringe fitting and 
+               fine fringe fitting) is written in fringe fitting result file. 
+               This phase delay acceleration will be used by splt task.
+               
+               PHASE_ACCEL_MIN, PHASE_ACCEL_MAX, PHASE_ACCELERATION, and
+               FRIB.FINE_SEARCH: ACC are mainly designed for processing
+               data of space-VLBI experiments. PHASE_ACCELERATION and non-zero
+               PHASE_ACCEL_MIN/PHASE_ACCEL_MAX are not compatible.
+
+
+2014.01.16  PIMA 2.07
+=====================
+
+            a) Cleaned code for computation of output visibility 
+               weights for task splt.
+
+            b) Re-enabled option SPLT.WEIGHT_TYPE: SNR.
+
+            c) Added support of environment variable PIMAVAR_SPLT_SUB_SRT
+               If it is set to YES, then task splt sets segment
+               reference time to the subarray reference time. 
+               Subarray reference time is the weighted epoch of
+               a subarray rounded to 1 sec. In general, subarray
+               reference time is outside segment start-stop time.
+               This an experimental option. It may have undesirable
+               side effects. Use it at your risk. 
+
+            d) Updated fits_to_radplot. If extension of the output
+               file is ".txt", then no plot is produced, but the
+               table with visibilities and weights is written in
+               the output file.
+
+            e) Fixed a bug related to computation of output 
+               visibility weights when SPLT.WEIGHT_TYPE: SNR
+               option was used.
+
+2014.01.07  PIMA 2.06
+=====================
+
+            Increase the maximum number of phase tines from 2 to 32.
+
+2013.12.27  PIMA 2.05
+=====================
+
+            Fixed a bug related to processing quasi-simultaneous 
+            multifrequency data: the old version may incorrectly
+            set the scan start time.
+
+2013.11.23  PIMA 2.03
+=====================
+
+            a) Changed behavior when an single-baseline scan not
+               assigned to a subarray is found by splt: the previous
+               version stopped with an error message. The new 
+               version discard an observation and continues.
+
+            b) Fixed plotting autocorrelation: plotting routine
+               incorrectly normalized bandpass when the first 
+               displayed IF had index > 1.
+
+            c) Accelerated significantly auxiliary programs 
+               fits_to_map and fits_to_cfd
+
+            d) Fixed a bug in fits_to_radplot that ignored 
+               deselected points (weight < 0.0) in dual-polarization
+               data
+
+2013.10.31  PIMA 2.02
+=====================
+
+            a) fixed a bug: wrong Stokes code was generated by splt
+               task if LL polarization was used.
+            b) PIMA splt choked when processed the data in baseline
+               based mode.
+
+2013.10.25  PIMA 2.01
+=====================
+
+            a) Code for correcting group delay rate for significant
+               correction to a priori source positions in splt
+               task was accidentally removed. This affected sources
+               with corrections to a priori positions exceeding 0".3.
+
+2013.10.08  PIMA 2.00 
+=====================
+
+          1) PIMA was upgraded to generate output visibility files
+             suitable for imaging with DIFMAP. Support of dual
+             polarizations RR and LL was added. Support of sub-arrays
+             was added.
+
+          2) PIMA was upgraded to support observations with 
+             an orbiting station.
+
+          3) PIMA was upgraded to process correctly observations 
+             far from pointing direction.
+
+          4) Procedure for computing complex bandpass was upgraded
+             to support modeling the bandpass frequency dependence
+             with B-splines.
+
+          5) Added new programs 
+             fits_to_map     -- show the map stored in FITS-image file.
+             fits_to_radplot -- show the dependence of amplitudes of 
+                                visibilities averaged over time and
+                                frequency as a function of baseline
+                                length.
+             fits_to_uvplot  -- show the dependence of projections
+                                of baseline vectors to the plane 
+                                normal to the source.
+             fits_to_cfd     -- compute statistics of image
+             extra_gain      -- extract and print gain corrections
+                                determined by the self-calibration
+                                process
+             corr_gain       -- applying amplitude corrections to
+                                visibilities in the input FITS-file using
+                                the input table of gain corrections.
+
+2012.12.31   
+==========
+
+          1) PIMA requires fourpack library of 2012.12.31 or newer.
+             This library in turn  requires FFTW compiled with
+             OpenMP support. It was found that fftw-3.3.3 when 
+             compiled with threads support and linked against 
+             openmp library crashes or hangs when attempts to 
+             perform FFT of an array longer than 0.002Tb.
+
+          2) Increased limit PIM__MUV ( Maximal number of UV 
+             points in a scan ) from 8192 to 65536. This allows
+             to fringe fit scans 512 s long with AP length 8 ms
+             (1/128 s).
+         
+          3) Added new keyword in PIMA control file: STAGING_DIR
+             This keyword specifies the name of staging directory.
+             When the name of staging directory is specified, 
+             PIMA first checks whether the directory has all files 
+             with visibilities. If not, then PIMA removes all files
+             from that directory and copies there files with 
+             visibilities. If drive where the staging directory is
+             significantly faster than the directory with UV data 
+             specified UV_FITS keyword(s), PIMA will run faster.
+             It is recommended to have SSD RAID-0 disk arrays for 
+             staging directory.
+
+          4) Added support of value TXT for keywords
+
+               FRIB.2D_FRINGE_PLOT
+               FRIB.1D_RESFRQ_PLOT
+               FRIB.1D_RESTIM_PLOT
+               FRIB.1D_DRF_PLOT
+ 
+               If value TXT are specified for these keywords, PIMA 
+               generates a text style "plot": it writes an ascii table 
+               of arguments and values in '1D text table' or 
+               '2D text table' format with auxiliary information. 
+               These table can be used for making plots with 
+               an alternative software.
+ 
+          5) Fixed a number of bugs related to processing pathological
+             observations that have only one datapoint.
+
+          6) Developed an auxiliary program fft_speed_test that checks
+             FFT test. This allows to see whether you have really fast
+             FFT
+
+             Added pima/share/pima_wis_huge.inp for large 2D FFT transforms,
+             up to 32Gb.
+
+2012.10.08   
+==========
+
+	     Control file format was changed: three new keywords were 
+	     added. The old control files should be upgraded using task upgr.
+	     The new release requires updated petools-20121008.
+
+	     1) Fixed SPLT task. The previous version produced wrong
+	        results when a correction for a quadratic term in fringe
+                phase due to large differences in a priori source positions
+                phase was made. Reduced the threshold for applying
+                phase correction due to a priori source position differences.
+	      
+	     2) Added support of a priori phase_acceleration which now can
+	        be specified in the control file;
+	
+	     3) Added support of computation of a priori path delay for 
+	        Radioastron
+
+	     4) Added support of modeling complex bandpass in a form
+	        of expansion over B-spline basis.
+
+             5) Added program uva_merge that processes several input
+                files with visibilities in FITS format for the same source
+                and merges them together.
+
+	     6) Fixed a bug: the previous version incorrectly set reference
+	        frequency when the first IF of a band is LSB.
+
+	     7) Improved speed by adding parallelization in three more
+	        places in fringe fitting algorithm. Improved speed by one 
+                and half order of magnitudes for a case  when the number 
+                of spectral channels in one IF exceeded 256.
+
+
+2012.08.24   1) Replaced fast_fft library with fourpack
+==========
+	
+	     2) Updated parse_log for accepting Tsys from digital BBC.
+
+	       
+2012.08.14   The first public release.
+==========

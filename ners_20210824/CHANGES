@@ -1,0 +1,93 @@
+2023.10.17  2.150 Added support of an option ine ners_eopser
+                  to specify the end epoch ofthe series
+                  up to 90 days in the future.
+
+2021.08.24  2.140 Make the model of contribution to UT1 due to
+                  zonal tides configurable.
+
+                  Added support of Ray & Erofeeva (2014) model
+                  for the contribution of zonal tides to UT1.
+
+                  Added new EOP types: poluz, poluz_r, ezrr
+                  eop3zr, eop3zs. They include the Euler angle
+                  around axis 3 with the contribution of zonal 
+                  tides to UT1 removed.
+
+                  Version of client earlier than 2.140 are incompatible
+                  with NERS server messages 2.140 or newer.
+
+2021.07.17  2.130 Decreased frequency of leap second file to be
+                  updated. Added a check whether the temporary
+                  leap second file is empty.
+
+2020.11.20  2.120 Added EOP cashing for azimuth/elevation computation.
+                  Set group write permission by default to all NERS
+                  related files and NERS source code.
+
+2019.10.20  2.110 Rewrote locking support.
+
+                  Fixed behavior with no Internet connection: 
+                  the previous version stopped with the error
+                  message. This behavior is configurable now.
+
+                  Added two additional configuration parameters:
+
+                     ON_FAIL_TO_READ: -- defines behavior when NERS cannot
+                                         read the message from the server:
+                           stop    -- stop with the error message
+                           warning -- issue the warning and continue
+                           ignore  -- continue without warning
+
+                     LOCK_TIMEOUT:     -- timeout in seconds for locking
+
+2019.05.15  2.100 Made it working without setting GOMP_STACKSIZE 
+                  environment variable and without setting limits to 
+                  rather large number.
+
+2018.06.28  2.90  Added computation of hour angles and renamed ners_azel
+                        to ners_azelha
+		  Fixed as bug in computation of parameter eops
+                  Fixed installation program related to bug
+                    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=41080
+                  Fixed compilation errors raised by Intel fortran compiler
+                  Fixed ners_eop regression bug when the EOP is computed 
+                    at the current moment of time.
+                  Added support of LDFLAGS in configure
+                  
+2018.06.15  2.80  Added Python wrapper
+                  Added program ners_azel for computing azimuth and elevation
+                  Fixed a number of bugs. 
+                  Changed ABI.
+
+2018.05.31  2.70  Made NERS thread-safe. 
+                  Added support of environment variable NERS_CONFIG
+                  that specifies the name of the NERS configuration file.
+                  Fixed documentation.
+
+2018.04.22  2.60  Fixed a bug related to double counting the secular term
+                  in nutation that may be present in the expression for
+                  precession.
+
+2018.01.06  2.50  Fixed jumps in EOP at the interval of transition
+                  from IERS C04 to NERS forecast. 
+                  Improved documentation.
+                  Added check for BSD legacy csh.
+
+2017.05.12  2.40  Bug fixes in the installation procedure.
+                  Improved documentation. Added examples.
+
+2016.12.24  2.30  Updated NERS message format. Included there the URLs
+                  of input EOP and AAM time series
+
+2016.12.06  2.20  Added support of long-term EOP prediction.
+
+2016.11.15  2.10  Fixed a bug in ners_eopser.
+                  Added a header to the EOP series.
+                  Added a new switch -i in ners_eop
+                  Removed dependencies on VTD, SPD_CLIENT, and cfitsio
+
+2016.09.01  2.00  Changed ABI. 
+                  Replaced unnormalized spline with B-splines.
+
+2016.06.23  1.00  First public release.
+

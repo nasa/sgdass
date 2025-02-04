@@ -1,0 +1,84 @@
+\usepackage{graphicx}
+\usepackage{epsf}
+\usepackage{color}
+\usepackage{natbib}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\hypersetup{
+            colorlinks=true,
+            linkcolor=black,
+            filecolor=black,
+            citecolor=black,
+            urlcolor=blue
+           }
+\input mace.tex
+\newcommand{\pid}   {\par\hangindent=2em\hangafter=-9\noindent}
+\newcommand{\ppid}  {\par\hangindent=4em\hangafter=-9\noindent}
+\newcommand{\pppid} {\par\hangindent=6em\hangafter=-9\noindent}
+\newcommand{\ppppid}{\par\hangindent=8em\hangafter=-9\noindent}
+%\newcommand{\nthr}[1]{ \multicolumn{3}{ @{} l }{#1} }
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+\newcommand{\dint}{\int\hspace{-0.25em}\int}
+\newcommand{\sinc}{\rm sinc }
+\newcommand{\hh}{\hphantom}
+\newcommand{\hp}{\hphantom{+}}
+\newcommand{\vex}{\vspace{1ex}}
+\newcommand{\vhex}{\vspace{0.5ex}}
+\newcommand{\den}{\Frac{1}{c}\Frac{1}{1 + \Frac{1}{c}\lp \vec{V_{\earth}}(t_1)\, + \dmat{E}(e(t_1))\,\vec{r}_2\rp} }
+\newcommand{\jgr}{Jour. Geophys. Res.}
+\newcommand{\grl}{Geophys. Res. Let}
+\renewcommand{\refname}{\par\vspace{-2ex}\par}
+\definecolor{Dblue}{rgb} {0.152,0.268,0.720}
+\definecolor{Dred}{rgb}{0.535,0.148,0.070}%0.312,0.070,0.070}
+\definecolor{Dgreen}{rgb}{0.094,0.410,0.094}
+\newcommand{\Blb}[1]{\textcolor{Dblue}{\bf #1}}
+\newcommand{\Grb}[1]{\textcolor{Dgreen}{\bf #1}}
+\newcommand{\Rdb}[1]{\textcolor{Dred}{\bf #1}}
+\definecolor{LightSiren}{rgb}{0.900,0.850,0.980}
+\definecolor{LightGreen}{rgb}{0.900,0.980,0.850}
+\newcommand{\vx}{\vspace{1ex}}
+\newcommand{\bss}{\hspace{-2em}}
+
+\makeatletter\newenvironment{sirenbox}{%
+       \noindent
+       \begin{lrbox}{\@tempboxa}\begin{minipage}{0.99\columnwidth}}{\end{minipage}\end{lrbox}%
+       \colorbox{LightSiren}{\usebox{\@tempboxa}}
+}\makeatother
+\makeatletter\newenvironment{greenbox}{%
+       \noindent
+       \begin{lrbox}{\@tempboxa}\begin{minipage}{0.99\columnwidth}}{\end{minipage}\end{lrbox}%
+       \colorbox{LightGreen}{\usebox{\@tempboxa}}
+}\makeatother
+\newcommand{\web}[1]{\Blb{\url{#1}}}
+
+\voffset    = -20mm
+\hoffset    = -12mm
+\textwidth  = 163mm
+\textheight = 225mm
+\tolerance  = 600
+\hfuzz      = 0.3mm
+
+%
+\newcommand{\pet}[1]{\underline{\bf #1}}
+\newcommand{\Number}[1]{\ifnum#1<10\relax0\number#1\else\number#1\fi}
+\newcommand{\isodate}{
+\count151=\time
+\divide\count151 by 60
+\count151=\count151
+\multiply\count151 by 60
+\count152=\time
+\advance\count152 by -\count151
+\divide\count151 by 60
+\count152=\count151
+\multiply\count151 by 60
+\count153=\time
+\advance\count153 by -\count151
+\Number{\year}.\Number{\month}.\Number{\day}--\Number{\count152}:\Number{\count153}
+}
+
+\pagestyle{fancy}
+\rhead{}
+\lhead{}
+\lfoot{}
+\rfoot{}

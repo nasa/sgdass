@@ -1,0 +1,226 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of psolve. It creates the        *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ### 10-OCT-2017    configure   v1.4 (c)  L. Petrov 22-DEC-2023 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+setenv LC_ALL C
+setenv LANG   C
+#
+# -- Initialization
+#
+setenv SOLVE_VERSION          "20241125"
+setenv VTD_VERSION_MIN        "20241125"
+setenv NERS_VERSION_MIN       "20210824"
+setenv SPD_CLIENT_VERSION_MIN "20241125" 
+setenv PETOOLS_VERSION_MIN    "20241115"
+setenv GVH_VERSION_MIN        "20231212"
+setenv VEX_PARSER_VERSION_MIN "20210707"
+setenv SOLVE_PREFIX           $HOME
+#
+setenv SOLVE_GVF_DATA         undefined
+setenv SOLVE_SCRATCH_DATA     undefined
+setenv SOLVE_SAVE_DATA        undefined
+setenv SOLVE_SCRATCH_PIMA     undefined
+setenv SOLVE_CENTER_ABR       undefined
+setenv SOLVE_CENTER_NAME      undefined
+setenv SOLVE_PS_VIEWER        undefined
+setenv SOLVE_GIF_VIEWER       undefined
+setenv SOLVE_STP_DIR          undefined
+setenv SOLVE_NOOOPT           NO
+setenv SOLVE_ROOT             `dirname $0`
+if  ( $SOLVE_ROOT == '.' )    setenv SOLVE_ROOT `pwd`
+setenv SOLVE_PETOOLS_DIR      $HOME
+setenv SOLVE_VTD_DIR          $HOME
+setenv SOLVE_CFITSIO_DIR      $HOME
+setenv SOLVE_SPD_CLIENT_DIR   $HOME
+setenv SOLVE_NERS_DIR         $HOME
+setenv SOLVE_GVH_DIR          $HOME
+setenv SOLVE_VEX_PARSER_DIR   $HOME
+#
+setenv SOLVE_OS               `uname`
+setenv CONF_LOG               ${SOLVE_ROOT}/temp/conf.log
+setenv BUILD_LOG              ${SOLVE_ROOT}/temp/build.log
+setenv SOLVE_NOOPT            NO
+setenv SOLVE_DEBUG            NO
+setenv SOLVE_VERS             `echo $SOLVE_VERSION | awk '{printf "%s.%s.%s", substr($0,0,4), substr($0,5,2),  substr($0,7,2) }'`
+#
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv SOLVE_PETOOLS_DIR "$str"
+          set find_option = 1
+     endif
+#
+     set match_cfitsio=`echo $arg | awk '{print index ($1,"--with-cfitsio")}'`
+     if ( $match_cfitsio > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv SOLVE_CFITSIO_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_spc=`echo $arg | awk '{print index ($1,"--with-spd_client")}'`
+     if ( $match_spc > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,19)}'`
+	  setenv SOLVE_SPD_CLIENT_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_ners=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_ners > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv SOLVE_NERS_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-vtd")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv SOLVE_VTD_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_gvh=`echo $arg | awk '{print index ($1,"--with-gvh")}'`
+     if ( $match_gvh > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv SOLVE_GVH_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_vex=`echo $arg | awk '{print index ($1,"--with-vex_parser")}'`
+     if ( $match_vex > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,19)}'`
+	  setenv SOLVE_VEX_PARSER_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SOLVE_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_noopt = `echo $arg | awk '{print index($1,"--noopt")}'`
+     if ( $match_noopt > 0 ) then
+	  setenv SOLVE_NOOPT YES
+          set find_option = 1
+     endif
+#
+     set match_debug = `echo $arg | awk '{print index($1,"--debug")}'`
+     if ( $match_debug > 0 ) then
+	  setenv SOLVE_DEBUG YES
+          set find_option = 1
+     endif
+#
+     set match_scratch=`echo $arg | awk '{print index ($1,"--scratch_data")}'`
+     if ( $match_scratch < 1 ) set match_scratch=`echo $arg | awk '{print index ($1,"--scratch-data")}'`
+     if ( $match_scratch > 0 ) then
+          setenv SOLVE_SCRATCH_DATA `echo $arg | awk '{printf substr($1,16)}'`
+          set find_option = 1
+     endif
+#
+     set match_save=`echo $arg | awk '{print index ($1,"--save_data")}'`
+     if ( $match_save > 0 ) then
+          setenv SOLVE_SAVE_DATA `echo $arg | awk '{printf substr($1,13)}'`
+          set find_option = 1
+     endif
+#
+     set match_gvf=`echo $arg | awk '{print index ($1,"--gvf_data")}'`
+     if ( $match_gvf > 0 ) then
+          setenv SOLVE_GVF_DATA `echo $arg | awk '{printf substr($1,12)}'`
+          set find_option = 1
+     endif
+#
+     set match_pima=`echo $arg | awk '{print index ($1,"--scratch_pima")}'`
+     if ( $match_pima > 0 ) then
+          setenv SOLVE_SCRATCH_PIMA `echo $arg | awk '{printf substr($1,16)}'`
+          set find_option = 1
+     endif
+#
+     set match_center_abr=`echo $arg | awk '{print index ($1,"--center_abr")}'`
+     if ( $match_center_abr > 0 ) then
+          setenv SOLVE_CENTER_ABR `echo $arg | awk '{printf substr($1,14)}'`
+          set find_option = 1
+     endif
+#
+     set match_center_name=`echo $arg | awk '{print index ($0,"--center_name")}'`
+     if ( $match_center_name > 0 ) then
+          set solve_center_name = `echo $arg | awk '{printf substr($0,15)}'`
+          setenv SOLVE_CENTER_NAME "$solve_center_name"
+          set find_option = 1
+     endif
+#
+     set match_ps_viewer=`echo $arg | awk '{print index ($1,"--ps_viewer")}'`
+     if ( $match_ps_viewer > 0 ) then
+          setenv SOLVE_PS_VIEWER `echo $arg | awk '{printf substr($1,13)}'`
+          set find_option = 1
+     endif
+#
+     set match_gif_viewer=`echo $arg | awk '{print index ($1,"--gif_viewer")}'`
+     if ( $match_gif_viewer > 0 ) then
+          setenv SOLVE_GIF_VIEWER `echo $arg | awk '{printf substr($1,14)}'`
+          set find_option = 1
+     endif
+#
+     set match_stp_dir=`echo $arg | awk '{print index ($1,"--stp_dir")}'`
+     if ( $match_stp_dir > 0 ) then
+          setenv SOLVE_STP_DIR `echo $arg | awk '{printf substr($1,11)}'`
+          set find_option = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $SOLVE_ROOT/doc/solve_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "vtd: "$SOLVE_VERSION
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set DATE_LONG = `date "+%d-%h-%Y %H:%M:%S" | tr "[a-z]" "[A-Z]"`
+echo  "Configuration of Post-solve $SOLVE_VERSION on $DATE_LONG " >! $CONF_LOG
+echo  $0 $argv >>! $CONF_LOG
+#
+if ( $SOLVE_DEBUG == "NO" ) then
+     support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+  else
+     csh -x support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run gmake"
+     exit 0
+  else
+     echo "Error in configuration."
+     exit $config_status
+endif

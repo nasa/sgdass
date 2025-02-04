@@ -1,0 +1,68 @@
+# VLBI station parameters Format 2022.04.03
+#
+# Created on 2021.01.07
+# 
+# 2021.04.26 pet  SDS gs0011 provided Tsys(elevation)
+# 2021.07.02 pet  Added STOW_AZIM and STOW_ELEV fields
+# 2021.08.27 pet  Adjusted slewing parameters using results of SDS gs0017. 
+#                 NB: Scatter for elevation arcs is -+ 2.5 sec.
+# 2022.01.28 pet  Added BACKEND definition
+# 2022.04.03 pet  Added peculiar clock offset
+#                 Knocked out frequency range: [9.380, 9.440] GHz.
+# 2023.03.16 pet  Added results of gain measurement on 2023.03.15
+#
+SHORT_NAME:   GGAO12M   char       Gs
+LAST_UPDATE:  GGAO12M   char       2021.08.27
+COORD:        GGAO12M   meters      1130794.763    -4831233.803     3994217.042
+MOUNT:        GGAO12M   char       ALTAZ
+SLEW_AZ:      GGAO12M   deg/sec    5.00
+SLEW_EL:      GGAO12M   deg/sec    1.23
+ACCL_AZ:      GGAO12M   deg/sec^2  1.33
+ACCL_EL:      GGAO12M   deg/sec^2  1.41
+TSETTLE_AZ:   GGAO12M   sec        2.35
+TSETTLE_EL:   GGAO12M   sec        2.04
+EL_MIN:       GGAO12M   deg        7.0
+EL_MAX:       GGAO12M   deg       87.2
+AZ_RANGE:     GGAO12M   deg      -180.0    0.0  180.0  360.0
+RECORDER:     GGAO12M   char      mark6
+BACKEND:      GGAO12M   char      rdbe
+SETMODE:      GGAO12M   sec           4.0
+PREOB:        GGAO12M   sec           3.0
+POSTOB:       GGAO12M   sec           2.0
+HOR_AZIM:     GGAO12M   deg        0.0  15.0  58.0  90.0 130.0 149.99 150.0 234.0 234.01 360.0
+HOR_ELEV:     GGAO12M   deg        6.0   7.0   7.0   7.0   7.0   7.0   42.0  42.0   7.0    7.0
+STOW_AZIM:    GGAO12M   deg        90.0
+STOW_ELEV:    GGAO12M   deg        50.0
+#
+CLOCK_DATES:  GGAO12M   sec        2020.06.11   2049.12.31
+CLOCK_OFFSET: GGAO12M   sec        0.602E-6
+#
+TSYS_DATES:   GGAO12M   char      2021.06.01  2049.12.31
+TSYS_ELEVS:   GGAO12M   deg       7.0    10.0  20.0  30.0  60.0  87.0
+TSYS_FREQS:   GGAO12M   GHz       4.8    11.0 
+TSYS_POLVALS: GGAO12M   K     H   110.0  77.0  70.0  66.0  61.0  55.0
+TSYS_POLVALS: GGAO12M   K     V   110.0  77.0  70.0  66.0  61.0  55.0
+TSYS_FREQS:   GGAO12M   GHz       11.0   11.5 
+TSYS_POLVALS: GGAO12M   K     H   115.0  86.0  75.0  73.0  65.0  61.0
+TSYS_POLVALS: GGAO12M   K     V   115.0  86.0  75.0  73.0  65.0  61.0
+#
+GAIN_DATES:   GGAO12M   char      2023.03.16 2049.12.31
+GAIN_FREQS:   GGAO12M   GHz       3.000  3.500
+GAIN_ELEVS:   GGAO12M   deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS: GGAO12M   K/Jy  H      0.013  0.013  0.019  0.021  0.020  0.019  0.015  0.021  0.024  0.018
+GAIN_POLVALS: GGAO12M   K/Jy  V      0.017  0.017  0.018  0.018  0.017  0.017  0.017  0.018  0.019  0.019
+#
+GAIN_FREQS:   GGAO12M   GHz          5.240    5.752
+GAIN_ELEVS:   GGAO12M   deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS: GGAO12M   K/Jy  H      0.028  0.028  0.028  0.029  0.029  0.029  0.029  0.030  0.030  0.030
+GAIN_POLVALS: GGAO12M   K/Jy  V      0.029  0.028  0.027  0.026  0.026  0.026  0.025  0.027  0.028  0.031
+#
+GAIN_FREQS:   GGAO12M   GHz          6.360    6.872
+GAIN_ELEVS:   GGAO12M   deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS: GGAO12M   K/Jy  H      0.034  0.034  0.035  0.035  0.035  0.035  0.036  0.037  0.038  0.039
+GAIN_POLVALS: GGAO12M   K/Jy  V      0.034  0.034  0.033  0.032  0.032  0.032  0.032  0.034  0.036  0.039
+#
+GAIN_FREQS:   GGAO12M   GHz         10.200   10.712
+GAIN_ELEVS:   GGAO12M   deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS: GGAO12M   K/Jy  H      0.039  0.037  0.036  0.035  0.034  0.034  0.033  0.036  0.039  0.042
+GAIN_POLVALS: GGAO12M   K/Jy  V      0.032  0.031  0.029  0.029  0.028  0.027  0.027  0.029  0.031  0.034

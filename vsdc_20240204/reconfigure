@@ -1,0 +1,22 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   Rerun configuration with using parameters of ./configure           *
+# *                                                                      *
+# *                                                                      *
+# * ### 03-MAY-2019   reconfigure  v2.1 (c)  L. Petrov  12-MAY-2020 ###  *
+# *                                                                      *
+# ************************************************************************
+if ( -f temp/conf.log == 0 ) then
+     echo "Unfortunately, the old configuration was lost. Reconfiguration is not possible"
+     echo "Just run configure with all options"
+     exit 1 
+endif
+if ( -f temp/conf.log ) then
+     set com=`cat temp/conf.log`
+     python3 $com
+  else
+     echo "Unfortunately, the old configuration was not properly stored. Reconfiguration is not possible"
+     echo "Just run configure with all options"
+     exit 1 
+endif

@@ -1,0 +1,185 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program geo_import  downloads databases from the IVS       *
+# *   Data Center to the incoming directory. It checks whether the       *
+# *   program db_import which actually makes the job is running. If      *
+# *   it is running than geo_import does nothing. If not then it         *
+# *   launches db_import. If db_import fails then it gathers output and  *
+# *   error messages which db_import generates and send an e-mail to     *
+# *   the geo_import administrator (e-mail address is specified in the   *
+# *   configuration file).                                               *
+# *                                                                      *
+# *   Usage: geo_import [configuration_file]                             *
+# *                                                                      *
+# *   If the argument configuration file is omitted then                 *
+# *   $MK5_ROOT/local/dbi.lcl is used.                                   *
+# *                                                                      *
+# *   It is assumed that geo_import is indirectly scheduled by cron.     *
+# *   NB: geo_import cannot be scheduled by cron directly since cron     *
+# *       accepts only sh-scripts, but descriminates C-shell scripts.    *
+# *                                                                      *
+# *  ### 19-OCT-2000   geo_import   v1.7 (c) L. Petrov  04-JAN-2005 ###  *
+# *                                                                      *
+# ************************************************************************
+setenv SHELL /bin/csh
+#
+# --- set configuration file
+#
+if ( $?MK5_ROOT == 0 ) then
+&C0& MK5_ROOT
+endif
+#
+setenv HELP_DIR ${MK5_ROOT}/help
+#
+if ( $1 != "" ) then
+     set dbi_config = $1
+     if ( -f $1 ) then
+        else
+          echo "geo_import: check first argument. Configuration file $1 is not found"
+	  exit 2
+     endif
+  else
+     set dbi_config = ${MK5_ROOT}"/local/dbi.lcl"
+endif
+#
+# --- Check whether configuration file exists
+#
+if ( -f $dbi_config ) then
+   else
+     echo "geo_import: Configuration file $dbi_config was not found"
+     exit 2
+endif
+#
+# --- Execute (by source) configuration file. Ths configuration file contains
+# --- installataion specific definitions of environment variables
+#
+source $dbi_config
+umask 0002
+#
+# --- check whether all environment variables were set OK
+#
+if ( $?dbi_exec == 0 ) then
+     echo "geo_import: variable dbi_exec is not defined in configuration file " $dbi_config
+     exit 1
+endif
+if ( $?dbi_stopfile == 0 ) then
+     echo "geo_import: variable dbi_stopfile is not defined in configuration file " $dbi_config
+     exit 1
+endif
+if ( $?email_failure == 0 ) then
+     echo "geo_import: variable email_failure is not defined in configuration file " $dbi_config
+     exit 1
+endif
+if ( $?host_name == 0 ) then
+     echo "geo_import: variable host_name is not defined in configuration file " $dbi_config
+     exit 1
+endif
+if ( $?verbosity == 0 ) then
+     echo "geo_import: variable verbosity is not defined in configuration file " $dbi_config
+     exit 1
+endif
+##
+if ( $verbosity > 2 ) then
+     set verbosity = 2
+endif
+#
+# --- set names of the temporary files and remove them if they accidentally
+# --- existed
+#
+set temp_file = "/tmp/geo_import_$$.tmp"
+set log_file  = "/tmp/geo_import_$$.log"
+if (-f $temp_file) then
+     rm -f $temp_file
+endif
+if (-f $log_file) then
+     rm -f $log_file
+endif
+#
+# --- Check: does db_import is running
+# --- Execute command ps
+#
+if ( $host_name == `uname -n` ) then
+     ps -eaf > $temp_file
+  else 
+     remsh $host_name ps -eaf > $temp_file
+endif
+#
+# --- ... and then parse its output
+#
+grep $dbi_exec $temp_file > /dev/null
+set dbi_running = $status
+if ( $dbi_running == 0 ) then
+#
+# -- dbi_import is running. Hm. Nothing to do. End of work
+#
+     if ( $verbosity != 0 ) then
+          echo "geo_import: db_import has been running"
+     endif
+  else
+#
+# -- dbi_import is not running. Good...
+# -- Check stop file...
+#
+     if ( -f $dbi_stopfile ) then
+#
+# ------- E-eh! Stop file exist. It means that db_import is suspended
+#
+          if ( $verbosity != 0 ) then
+	       echo "geo_import: db_import is suspended: stop file $dbi_stopfile exists"
+          endif
+	  goto LABEL_EXIT
+     endif
+     if ( $verbosity != 0 ) then
+          echo "geo_import: launch db_import"
+     endif
+#
+# -- Launch db_import and collect its output (informational or error messages)
+# -- in $log_file
+#
+     $dbi_exec -c $dbi_config -v $verbosity >>&! $log_file
+     set dbi_status = $status
+     if ( $dbi_status == 0 ) then
+        else
+#
+# ------- Dbi_import terminated abnormally. We have to send an error message
+#
+          set date_now = `date '+%Y.%m.%d-%H:%M:%S'`
+          echo "geo_import   $date_now" >> $log_file  
+	  echo " "  >> $log_file
+	  echo "    db_import status =" $dbi_status >> $log_file
+	  echo "geo_import   IS SUSPENDED: ">> $log_file
+	  echo "Stop file $dbi_stopfile should be removed for geo_import activation" >> $log_file
+#
+# ------- Send the mail message if email_failre email list is not empty
+#
+	  if ( "$email_failure" == "" ) then
+	     else
+               $mail_command -s "Errors in db_import (Automatically generated message)" $email_failure < $log_file
+          endif
+#
+# ------- Create a stop file (and put there date of suspension) in order to
+# ------- prevent attempt to invoke geo_import again and again send the
+# ------- error message to dbi-administrator who certainly will not be glad
+# ------- to find spam in his/her mail box.
+#
+	  echo "geo_import   $date_now" > $dbi_stopfile
+          if ( $verbosity != 0 ) then
+               echo "geo_import: Errors in db_import"
+               echo "geo_import: db_import is suspended"
+          endif
+	  goto LABEL_EXIT
+     endif
+endif
+LABEL_EXIT:
+#
+# --- Remove temporary files
+#
+if ( $verbosity < 2 ) then
+     if ( -f $temp_file ) then
+          rm -f $temp_file
+     endif
+     if ( -f $log_file ) then
+          rm -f $log_file
+     endif
+endif

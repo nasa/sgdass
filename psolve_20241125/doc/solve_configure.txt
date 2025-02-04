@@ -1,0 +1,75 @@
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+  --debug                 prints debugging information during configurtation
+  --noopt                 disable optimization. This reduces speed by
+                          a factor 2-3, but exposes debugging information.
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$HOME]
+  --share=share_dir       Directory for solve data. NB: upgrade will overwrite
+                          this directory.
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+Optional Packages:
+  --with-PACKAGE[=ARG]         use PACKAGE [ARG=yes]
+  --without-PACKAGE            do not use PACKAGE (same as --with-PACKAGE=no)
+
+  --with-petools=[dir name]    specifies directory name where package petools
+                               is installed.
+
+  --with-cfitsio=[dir name]    specifies directory name where package cfitsio
+                               is installed.
+
+  --with-spd_client=[dir name] specifies directory name where package spd_client
+                               is installed. NB: spd_client should be configured
+                               to be installed with petools.
+
+  --with-ners=[dir name]       specifies directory name where package ners
+                               is installed. NB: ners should be configured
+                               to be installed with petools.
+
+  --with-vtd=[dir name]        specifies directory name where package vtd
+                               is installed. NB: ners should be configured
+                               to be installed with cfitsio.
+
+  --with-gvh=[dir name]        specifies directory name where package gvh
+                               is installed. 
+
+  --with-vex_parser=[dir name] specifies directory name where package vex_parser
+                               is installed. 
+
+  --stp_dir=[dir name]         specifies the station parameter file directory.
+                               It is neede only for processing simulations.
+
+  --scratch_data=[dir name]    specifies scratch directory. Mandatory argument
+
+  --save_data=[dir name]       specifies directory where various Solve 
+                               configuration files reside. During installation
+                               Solve checks whether a file with a given name
+                               already exists. If exists, it does not update 
+                               it. Mandatory argument.
+
+  --gvf_data=[dir name]        directory with VLBI databases in GVF format.
+                               Mandatory argument.
+
+  --center_abr=[name]          2-3 letter your scientific center abbreviation.
+
+  --center_name=[name]         your scientific center name.
+
+  --ps_viewer=[prog name]      name of the PostScript viewer program. The
+                               program should accept one argument: file name.
+
+  --gif_viewer=[prog name]     name of the gif image viewer program. The
+                               program should accept one argument: file name.

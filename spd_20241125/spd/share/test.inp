@@ -1,0 +1,12 @@
+SITLIST Format  Version 2003.07.31
+#
+#  The list contains positions of 3 sites
+#
+#  Created:      2018.11.17_08:28:07
+#
+#
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP
+#                                                                                                 
+GGAO0000  1130686.515 -4831353.021  3994110.924 2014.01.01 end        R 
+GGAO2000  1131085.283 -4832762.941  3995482.380 2014.01.01 end        R 
+GGAO4000  1131440.316 -4834279.882  3996736.509 2014.01.01 end        R 

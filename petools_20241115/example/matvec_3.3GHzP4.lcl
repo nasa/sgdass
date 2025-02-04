@@ -1,0 +1,102 @@
+! Local parameters for center  pethome  for processor Pentium 4 @ 3.4GHz
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!
+!
+!     ------------------------------
+! === |                            |
+! === | $MK5_ROOT/include/matvec.i |
+! === |                            |
+!     ------------------------------
+! 
+!
+! --- Maximum matrix condition number for inversion. If the matrix condition 
+! --- number turns out to exceed this value, then the procedure of matrix
+! --- inversion detects an error condition.
+!
+      COND__MAX = 1.0D11 
+!
+! --- Tolerance parameter for matrix decomposition (and inversion): 
+! --- if a diagonal element turns out less than DB__INCMAT_EPS the matrix
+! --- is declared singular.
+!
+      DB__INVMAT_EPS = 1.0D-15
+!
+! --- Tolerance for dividing zero in matrix inversion of small dimensions
+!
+      EPS__MATVEC = 1.0D-11
+!
+! --- Parameters below define boundary dimensions when one algorithm of
+! --- basic matric-vector algebra runs faster than another. These parameters 
+! --- were obtained for the best performance of the HP 9000/785 processor. 
+! --- You can use these parameters for any machine without substantial 
+! --- degradation of performance, although this may not be the optimal choice.
+!
+      DB__DP_VV_V      =   32 
+      DB__ADD_RCT      =   64 
+      DB__MUL_MM_II_I  =   16
+      DB__MUL_MM_IT_I  =   16 
+      DB__MUL_MM_TI_I  =   16 
+      DB__MUL_MM_TT_I  =   16 
+!
+      DB1__MUL_MM_II_S =   24
+      DB2__MUL_MM_II_S =  768
+      DB3__MUL_MM_II_S =  512 
+!
+      DB1__MUL_MM_IS_I =   24
+      DB2__MUL_MM_IS_I =  768 
+      DB3__MUL_MM_IS_I =  512 
+!
+      DB1__MUL_MM_IT_S =    7
+      DB2__MUL_MM_IT_S =  512
+      DB3__MUL_MM_IT_S =  512
+!
+      DB1__MUL_MM_TI_S =   24 
+      DB2__MUL_MM_TI_S =  512
+      DB3__MUL_MM_TI_S =  384
+!
+      DB1__MUL_MM_SI_I =    8
+      DB2__MUL_MM_SI_I = 1024
+      DB3__MUL_MM_SI_I = 1024
+!
+      DB1__MUL_MM_ST_I =   24
+      DB2__MUL_MM_ST_I = 1024
+      DB3__MUL_MM_ST_I = 1024
+!
+      DB1__MUL_MM_TS_I =   24 
+      DB2__MUL_MM_TS_I = 1024
+      DB3__MUL_MM_TS_I = 1024
+!
+      DB1__MUL_MM_SS_I =   16
+      DB2__MUL_MM_SS_I = 1024
+      DB3__MUL_MM_SS_I = 1024
+!
+!     DB1__MUL_MM_SS_S   Should not exceed 16 
+!
+      DB1__MUL_MM_SS_S =   16  
+      DB2__MUL_MM_SS_S =  384
+      DB3__MUL_MM_SS_S =  384
+!
+      DB1__MUL_MV_SV_V =   32
+!
+! --- DB__INVMAT_DIR -- maximal dimension for using direct highly optimized
+! --- routine for matrix inversion (NB: cannot be greater than DB__INVMAT_MAX)
+!
+      DB__INVMAT_DIR   =   32
+!
+! --- Minimal dimension for which a recursion of matrix inversion is stopped
+! --- and direct optimized routines for algebraic operations are used 
+! --- (NB: 
+! ----     1) cannot be greater than DB__INVMAT_MAX defined in matvec.templ
+! ----     2) changes in this constant requires uncommenting lines in source
+! ----        code of $MK5_ROOT/libs/matvec/invs_recursive.f
+!
+      DB__INVMAT_MIN   =    4
+!
+      DB__DPPSL        =   64 
+!
+! --- Peak speed of matrix-matrix multiplication in Mflops 
+! --- (need for adjustment of testing software only)
+!
+      MFLOP__PEAK  = 3000.0
+! 
+! <<< End of file solve.lcl

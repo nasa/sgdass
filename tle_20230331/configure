@@ -1,0 +1,148 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of configure. It creates the     *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ###  23-MAR-2023   configure    v1.0 (c) L. Petrov 23-MAR-2023 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv TLE_VERSION         "20230331"
+setenv PETOOLS_VERSION_MIN "20220424"
+setenv VTD_VERSION_MIN     "20200501"
+setenv NERS_VERSION_MIN    "20200501"
+setenv SPC_VERSION_MIN     "20211124"
+setenv TLE_PREFIX          /opt
+setenv VTD_PREFIX          /opt
+setenv CFITSIO_PREFIX      /opt
+setenv NERS_PREFIX         /opt
+setenv SPC_PREFIX          /opt
+setenv TLE_ROOT            `dirname $0`
+if ( $TLE_ROOT == '.' )    setenv TLE_ROOT `pwd`
+setenv PETOOLS_DIR         /opt64
+setenv CONF_LOG            ${TLE_ROOT}/temp/conf.log
+setenv BUILD_LOG           ${TLE_ROOT}/temp/build.log
+setenv TLE_NOOPT           NO
+setenv tle_debug           0
+#
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_prefix > 0 ) then
+          setenv tle_debug 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv TLE_NOOPT YES
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv TLE_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_DIR "$str"
+          set find_option = 1
+     endif
+#
+     set match_nopetools=`echo $arg | awk '{print index ($1,"--without-petools")}'`
+     if ( $match_nopetools > 0 ) then
+	  echo "petools is a mandatory library"
+	  exit 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-vtd")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv VTD_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_ners=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_ners > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv NERS_PREFIX "$str"
+          set find_option  = 1
+     endif
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-spd_client")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,19)}'`
+	  setenv SPC_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_cfitsio=`echo $arg | awk '{print index ($1,"--with-cfitsio")}'`
+     if ( $match_cfitsio > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv CFITSIO_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $TLE_ROOT/doc/tle_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "tle: $TLE_VERSION"
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+echo "tle config  $date_stamp  on  $host_name" >! $CONF_LOG
+echo $0 $argv >> $CONF_LOG
+if ( $tle_debug == 1 ) then
+     csh -x support/config.csh | tee -a $CONF_LOG   
+     set sts = $status
+   else
+     support/config.csh | tee -a $CONF_LOG   
+     set sts = $status
+endif 
+if ( `grep Error $CONF_LOG` == "" ) then
+     if ( $sts != 0 ) then
+          echo "Failure in configuration"
+          exit ( 1 )
+     endif
+     set config_status = 0
+  else 
+     set config_status = 1
+endif 
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run gmake"
+     exit $config_status 
+  else
+     exit $config_status 
+endif

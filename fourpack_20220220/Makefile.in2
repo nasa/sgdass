@@ -1,0 +1,80 @@
+LOG = $(FOURPACK_ROOT)/temp/build.log
+
+build:
+	@echo "Building fourpach started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`    |& tee   > $(BUILD_LOG)
+	@echo " "                                                                                  |& tee  -a $(BUILD_LOG)
+	source support/fourpack_vars; cd src; umask 0002; make -j $(NUM_PROC) lib                  |& tee  -a $(BUILD_LOG)
+ifeq ($(FOURPACK_SHARED),YES)
+	source support/fourpack_vars; cd src; umask 0002; make shared                              |& tee  -a $(BUILD_LOG)
+endif
+	source support/fourpack_vars; cd src; umask 0002; make -j $(NUM_PROC) bin                  |& tee  -a $(BUILD_LOG)
+	@echo " "                                                                                  |& tee  -a $(BUILD_LOG)
+	@echo "Building fourpack finihsed at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`    |& tee  -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+.PHONY: install
+install:
+	@echo "Instsalling fourpack started at $(DATE)"
+	if ( -d $(FOURPACK_PREFIX)          == 0 ) mkdir $(FOURPACK_PREFIX)
+	if ( -d $(FOURPACK_PREFIX)/lib      == 0 ) mkdir $(FOURPACK_PREFIX)/lib
+	if ( -d $(FOURPACK_PREFIX)/bin      == 0 ) mkdir $(FOURPACK_PREFIX)/bin
+	if ( -d $(FOURPACK_PREFIX)/include  == 0 ) mkdir $(FOURPACK_PREFIX)/include
+	cp src/libfourpack.a            $(FOURPACK_PREFIX)/lib/libfourpack.a
+	cp include/fourpack.i           $(FOURPACK_PREFIX)/include/fourpack.i
+	cp include/fourpack_constants.i $(FOURPACK_PREFIX)/include/fourpack_constants.i
+	cp src/create_fftw_plan         $(FOURPACK_PREFIX)/bin/create_fftw_plan
+        ifeq ($(FOURPACK_OS),Linux)
+	    if ( $(FOURPACK_SHARED) == "YES" ) cp src/libfourpack.so.1.0 $(FOURPACK_PREFIX)/lib/libfourpack.so.1.0
+	    if ( $(FOURPACK_SHARED) == "YES" ) ln -sf libfourpack.so.1.0   $(FOURPACK_PREFIX)/lib/libfourpack.so.1
+	    if ( $(FOURPACK_SHARED) == "YES" ) ln -sf libfourpack.so.1.0   $(FOURPACK_PREFIX)/lib/libfourpack.so
+        endif
+        ifeq ($(FOURPACK_OS),Darwin)
+	    if ( $(FOURPACK_SHARED) == "YES" ) cp src/libfourpack.1.dylib  $(FOURPACK_PREFIX)/lib/libfourpack.1.dylib
+	    if ( $(FOURPACK_SHARED) == "YES" ) if ( -l $(FOURPACK_PREFIX)/lib/libfourpack.dylib ) rm $(FOURPACK_PREFIX)/lib/libfourpack.dylib
+	    if ( $(FOURPACK_SHARED) == "YES" ) ln -s $(FOURPACK_PREFIX)/lib/libfourpack.1.dylib   $(FOURPACK_PREFIX)/lib/libfourpack.dylib
+	    if ( $(FOURPACK_SHARED) == "YES" ) install_name_tool -id $(FOURPACK_PREFIX)/lib/libfourpack.dylib $(FOURPACK_PREFIX)/lib/libfourpack.1.dylib
+	    if ( $(FOURPACK_SHARED) == "YES" ) install_name_tool -change $(FOURPACK_ROOT)/lib/libfourpack.1.dylib $(FOURPACK_PREFIX)/lib/libfourpack.dylib $(FOURPACK_PREFIX)/bin/create_fftw_plan
+        endif
+	cp support/export_fourpack_vars $(FOURPACK_PREFIX)/bin/fourpack_vars
+
+uninstall:
+	if ( -f $(FOURPACK_PREFIX)/lib/libfourpack.a       ) rm -f $(FOURPACK_PREFIX)/lib/libfourpack.a
+	if ( -f $(FOURPACK_PREFIX)/lib/libfourpack.so.1.0  ) rm -f $(FOURPACK_PREFIX)/lib/libfourpack.so.1.0
+	if ( -l $(FOURPACK_PREFIX)/lib/libfourpack.so.1    ) rm -f $(FOURPACK_PREFIX)/lib/libfourpack.so.1
+	if ( -l $(FOURPACK_PREFIX)/lib/libfourpack.so      ) rm -f $(FOURPACK_PREFIX)/lib/libfourpack.so
+	if ( -f $(FOURPACK_PREFIX)/lib/libfourpack.1.dylib ) rm -f $(FOURPACK_PREFIX)/lib/libfourpack.1.dylib
+	if ( -l $(FOURPACK_PREFIX)/lib/libfourpack.dylib   ) rm -f $(FOURPACK_PREFIX)/lib/libfourpack.dylib
+	if ( -f $(FOURPACK_PREFIX)/include/fourpack.i      ) rm -f $(FOURPACK_PREFIX)/include/fourpack.i
+	if ( -f $(FOURPACK_PREFIX)/include/fourpack_constants.i     ) rm -f $(FOURPACK_PREFIX)/include/fourpack_constants.i
+	if ( -f $(FOURPACK_PREFIX)/bin/create_fftw_plan    ) rm -f $(FOURPACK_PREFIX)/bin/create_fftw_plan
+	if ( -f $(FOURPACK_PREFIX)/bin/fourpack_vars       ) rm -f $(FOURPACK_PREFIX)/bin/fourpack_vars
+
+clean:	
+	cd src; make clean      >>& /dev/null; set  status = 0
+	if ( -f src/libfourpack.1.dylib   ) rm -f src/libfourpack.1.dylib   
+
+distclean:	
+	cd src; make clean      >>& /dev/null; set  status = 0
+	if ( -f src/libfourpack.1.dylib   ) rm -f src/libfourpack.1.dylib   
+	./reconfigure -d > /tmp/fourpack_last_configure.txt ; chmod 666 /tmp/fourpack_last_configure.txt
+	if ( -f $(CONF_LOG)                         ) rm -f $(CONF_LOG)                         
+	if ( -f $(BUILD_LOG)                        ) rm -f $(BUILD_LOG)
+	support/rmfile     fourpack_vars
+	support/rmfile     export_fourpack_vars
+	support/rmfile     Makefile
+	support/rmfile     build.log
+	support/rmfile     conf.log
+	support/purge      temp
+	support/purge      src
+	support/purge      support
+	support/purge      doc
+	support/purge      include
+	support/purge      ./
+
+tar:	distclean
+	cd src; make distclean      >>& /dev/null; set  status = 0
+	cd ../; tar -cf -  fourpack_$(FOURPACK_VERSION)  | \
+                lbzip2 -c > /tmp/fourpack-$(FOURPACK_VERSION).tar.bz2 
+	@support/distribution_update.csh $(FOURPACK_VERSION)
+	@echo "The tar-file is uploaded to the Web, documentation is updated"
+	sync

@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+# 2018.07.01 pet Updated acceleration rate
+#
+SHORT_NAME:  DSS34     Ti
+LAST_UPDATE: DSS34     2018.07.01
+COORD:       DSS34     meter     -4461146.720  2682439.125 -3674392.845
+MOUNT:       DSS34     char       ALTAZ
+SLEW_AZ:     DSS34     deg/sec    0.8
+SLEW_EL:     DSS34     deg/sec    0.8
+ACCL_AZ:     DSS34     deg/sec^2  0.4
+ACCL_EL:     DSS34     deg/sec^2  0.4
+TSETTLE_AZ:  DSS34     sec        2.0
+TSETTLE_EL:  DSS34     sec        2.0
+EL_MIN:      DSS34     deg        6.0   
+EL_MAX:      DSS34     deg       86.0   
+AZ_RANGE:    DSS34     deg     -180.0  -90  180.0 270.0   
+RECORDER:    DSS34     char     mark5
+PREOB:       DSS34     sec      10.0
+POSTOB:      DSS34     sec       2.0

@@ -1,0 +1,13 @@
+REPA_STATUS  Format version of 2006.06.01 
+# 
+# REPA status template file. Created on 22-MAY-2006 17:27:37
+# 
+Db_Name:        Any     
+Baseline:       ALL             
+Box_Plot:       Good    
+Argument:       Time    
+Value:          Delay   
+Mode:           DiaGi   
+Page:           1       
+Box_Symmetric:  No 
+Marked_Source:  No

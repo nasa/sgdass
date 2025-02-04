@@ -1,0 +1,26 @@
+To install, use three commands:
+
+./configure
+make
+make install
+
+See ./configure --help for options
+
+spd_client can be installed in two ways:
+
+1) without dependencies to petools library and/or lapack;
+
+   A user can specifies --without-petools and/or --without-lapack 
+   in ./configure. In that case built-in routines will be used.
+
+2) with dependencies to petools library. A user needs to specify 
+   directory where petools is installed.
+
+   --with-petools=DIR, where DIR is the petools installation directory.
+                       NB: dependency on petools atomatically uses
+                       lapack library used to build petools.
+
+NB: if spd_client was configured without petools it cannot be used
+by other packages that require petools, such as VTD, MALO, PIMA.
+Use configuration without petools only if you plan to use spd_client
+for the applications that do not require petools.

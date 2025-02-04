@@ -1,0 +1,20 @@
+# CDDIS file definition  Version 1.0  of 2019.10.22
+#
+# 2020.10.14 Leonid Petrov created
+# 2020.11.13 Leonid Petrov corrected a typo in the data field
+# 2021.02.10 Leonid Petrov corrected Data_content_type
+#
+Short_description:    VLBI Level 1A data in SWIN format
+Long_description:     Output of VLBI analysis with the DiFX correlator in swin format.
+Format_file_name:     /vlbi/ivsformats/swin.pdf
+Reference:            n/a
+DOI:                  n/a
+Filenaming_scheme:    @{date{%Y}}/@{date{%Y%m%d}}_@{sess}_v@{vers{%03d}}_swin.tar
+File_location:        /vlbi/ivsdata/swin
+Product_ID:           VLBI_DATA_SWIN
+Data_type:            VLBI
+Data_content_type:    SWIN
+Data_format:          swin
+Validate_proc:        data_swin.py
+Magic:                # SWIN-ARCHIVE meta data.
+Compression_type:     bz2

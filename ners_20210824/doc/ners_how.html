@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov  2014.12.03_00:25:02 -->
+<HTML>
+<HEAD>
+    <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <META NAME="GENERATOR" CONTENT="manually" >
+    <META HTTP-EQUIV="Description" Content="geodesy, geosciences, Earth Rotation, astronomy" >
+    <META NAME="Author" CONTENT="Leonid Petrov" >
+    <LINK REL="icon" HREF="/icons/ners_48.png" type="image/icon" />
+    <LINK REL="shortcut icon" HREF="/icons/ners_48.png" type="image/png" />
+    <LINK HREF="/ners.css" REL="stylesheet" TYPE="text/css">
+    <TITLE> How the Network Earth Rotation Service is working</TITLE>
+
+</HEAD>
+<BODY>
+<!--#include virtual='/ners_header.html' -->
+
+<H1> How the Network Earth Rotation Service is working </H1>
+<P>
+   The Network Earth Rotation Service (<EM class="ners">NERS</EM>) consists
+ot two segments: server and client.
+
+<H2> NERS server segment </H2>
+
+   The <EM class="ners">NERS</EM> server segment checks every hour for 
+updates of input Earth orientation time series and the output of numerical 
+weather models. If no updates happens, it sleeps for an hour. If an update
+has happened, the server initiates re-computation of the EOP message.
+The EOP message consists of six parts:
+
+<OL>
+     <LI> The <EM class="ners">NERS</EM> configuration: names of the model, 
+          URLs of input data used by the server, date of their last update 
+          etc.
+          </LI><P>
+
+     <LI> The table of UTC minus TAI function.
+          </LI><P>
+
+     <LI> The coefficients of expansion of IERS C04 time series into B-spline
+          basis for the interval since 197.01.01 to the date of their last 
+          availability, typically 30&ndash;35 days in the past. The 
+          coefficients are computed using IERS C04 time series and provide
+          their interpolation.
+          </LI><P>
+
+     <LI> The coefficients of expansion of Euler angles E1, E2, E3 into 
+          B-spline for the interval of end of IERS C04 time series 
+          availability through 48&ndash;72 hours in the future.
+          These coefficients provide the short-term forecast.
+          The coefficients are estimates with least square using input
+          Earth orientation parameter and the atmospheric angular moment 
+          (AAM) time series computed from the numerical weather models in 
+          the data assimilation and the forecast modes.  The contributing 
+          series of E(t) and the AAM are assigned specific weights. The 
+          weights are adjusted to provide the best quality of the forecast.
+          The AAM dominates forecast 24&ndash;72 hours in the future, while
+          the EOP time series dominates at scales 36 hours and further 
+          in the past.
+          </LI><P>
+
+     <LI> The coefficients of expansion of Euler angles E1, E2, E3 into 
+          B-spline for the interval from 72 hours to 6 months in the future.
+          These coefficients provide the long-term prediction. The accuracy
+          of the long-term prediction is significantly worse than the accuracy
+          of the short-term prediction. It is assumed that the long-term 
+          prediction will be used only in emergency situation when short-term
+          forecast is unavailable.
+          </LI><P>
+
+     <LI> The coefficients of small quasi-harmonic variations of Euler angles 
+          E1, E2, and E3. These are computed from analysis of space geodesy
+          data and are updated 4&ndash;6 times a year.
+          </LI><P>
+
+</OL>
+
+  The message is formatted as a binary file and is accessible for downloading
+via the HTTP interface.
+
+<H2> NERS client segment </H2>
+
+   The <EM class="ners">NERS</EM> client segment provides a library that
+computes the Earth rotation matrix or the Earth orientation parameters
+from the NERS message and provides several executables. The client library 
+performs three major functions:
+
+<UL>
+  <LI> It manages the local copy of the <EM class="ners">NERS</EM> message.
+       When the <EM class="ners">NERS</EM> gets a request to provide the 
+       Earth's rotation matrix, it first checks the local copy of the 
+       message. If the message does not exist, the client automatically 
+       downloads it from the <EM class="ners">NERS</EM> server. If it 
+       exists, it check its age. If the age is old than the threshold 
+       specified in the control file, the client checks the age of the
+       message at the server. If the message at the server is newer,
+       the client will automatically download it from the server and 
+       replaces the local copy.
+       </LI><P>
+
+  <LI> It reads, parses the local copy of the <EM class="ners">NERS</EM>,
+       and using the coefficients computes the Earth rotation matrix or 
+       other Earth orientation parameters. 
+
+  <LI> It supports internal bufferization. A typical use case is 
+       computation of the Earth's rotation matrix in a cycle for a number
+       of epochs within the specified time range. In order to minimize 
+       computation time, the client expands the requested parameter
+       over B-spline basis within the specified time range. The client
+       will uses these B-spline coefficients for a consequent request 
+       to compute the Earth's rotation matrix or other EOPs. It will also
+       check the age of these B-spline coefficients, and if the age 
+       exceeds the threshold, it will check whether the 
+       <EM class="ners">NERS</EM> message is newer.
+</UL>
+
+The executables provide the command-line interface to 
+<EM class="ners">NERS</EM> library. They parse input parameters,
+call routines of <EM class="ners">NERS</EM> library and print out
+the output. These executables serve as examples or can be called
+from other programs or interpreters when fast execution time is not
+required.
+
+<H2> NERS Internet services </H2>
+
+  The <EM class="ners">NERS</EM> supports several Internet services:
+
+<UL>
+   <LI> Web interface to <A HREF="/eop_online.html"> computation of the EOP 
+        value</A> on the specified moment of time.
+        </LI><P>
+
+   <LI> Web interface to <A HREF="/eop_series.html"> computation of the EOP 
+        time series</A> on the specified time interval and time step.
+        </LI><P>
+
+   <LI> Web interface to <A HREF="/eop_online_now.html"> computation of the EOP 
+        values</A> at the current moment of time that is automatically 
+        updated every 10 seconds.
+        </LI><P>
+</UL>
+  
+  These services have a web form that runs <EM class="ners">NERS</EM> executables
+at the server. They can be used interactively  by filling the form manually,
+of using via <A HREF="https://www.gnu.org/software/wget">wget</A>, 
+<A HREF="https://curl.haxx.se">curl</A>, or other tools for automatically 
+retrieval the results of parsing form as it 
+<A HREF="/use_case.html#level2">is explained here</A>.
+
+
+<HR size="1">
+<!--#include virtual='/ners_footer.html' -->
+</BODY>
+</HTML>

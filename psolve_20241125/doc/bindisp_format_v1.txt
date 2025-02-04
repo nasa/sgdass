@@ -1,0 +1,104 @@
+   Specifications of BINDISP  format version of 2002.12.12
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   BINDISP format is for describing time series of site position 
+variations. A file in this format contains three components of the 
+displacement vector of a specific site equally sampled within 
+a certain time range.
+
+   A file consists of records of fixed length. Record length is 
+8 bytes. A file has 8 header records and at least one data record 
+which follows header records.
+
+Header record 1:
+----------------
+
+Field  1:8  A8   -- Magic record. Should be "BINDISP " for  
+                    a valid file.
+
+Header record 2:
+----------------
+
+Field 1:4   I*4  -- Integer modified Julian of the format 
+                    revision date.
+Field 5:5   A1   -- Identifier for used binary integer format.
+                    Supported identifiers:
+                    B -- big endian format
+                    L -- little endian format
+Field 6:6   A1   -- Identifier for used binary float format.
+                    Supported identifiers:
+                    I -- IEEE 754/854 format.
+                    D -- Dec format.
+Field 7:8   I*2  -- Reserved. filled with binary value 0.
+
+Header record 3:
+----------------
+
+Field 1:8   A8   -- 8-letter long site identifier. May contain 
+                    any characters with decimal codes 32-255, but 
+                    blanks are allowed only at the end of the site 
+                    identifier. This field should not necessarily 
+                    have a special meaning. Parsing software should
+                    not try to interpret it.
+
+Header record 4:
+----------------
+
+Field 1:4   I*4  -- The total number of data records.
+Field 5:8   R*4  -- Sampling interval in seconds: the interval
+                    between two consecutive epochs.
+
+Header record 5:
+----------------
+
+Field 1:8   R*8  -- X site coordinate in a crust fixed reference 
+                    frame. Units: meter.
+
+Header record 6:
+----------------
+
+Field 1:8   R*8  -- Y site coordinate in a crust fixed reference 
+                    frame. Units: meter.
+
+Header record 7:
+----------------
+
+Field 1:8   R*8  -- Z site coordinate in a crust fixed reference 
+                    frame. Units: meter.
+
+Header record 8:
+----------------
+
+Field 1:4   I*4  -- Integer modified Julian data at the midnight
+                    of the time epoch of the first data record.
+Field 5:8   R*4  -- Time in TDT elapsed from the midnight od
+                    the time epoch of the first data record,
+                    in seconds.
+
+Data record:
+------------
+
+Field 1:2   I*2  -- X coordinate of site displacement for a given 
+                    epoch in a crust-fixed reference system. 
+                    Units: 1.D-5 meter.
+
+Field 3:4   I*2  -- Y coordinate of site displacement for a given 
+                    epoch in a crust-fixed reference system. 
+                    Units: 1.D-5 meter.
+
+Field 5:6   I*2  -- Z coordinate of site displacement for a given 
+                    epoch in a crust-fixed reference system. 
+                    Units: 1.D-5 meter.
+
+Field 7:8   I*2  -- Reserved. Filled with binary value 0.
+
+  Comments:
+
+  1. Data records follow in chronological order. No records can be 
+     missed. The epoch of the J+1 th record is the epoch of the 
+     J -th record plus the sampling interval. The epoch of the K-th 
+     physical record of the file is (MJD,TDT) + (K-9)*Sample_interval. 
+     Physical records are counted from 1.
+
+  2. Maximal displacements in site positions which can be described  
+     in this file cannot exceed by modulo 327mm.

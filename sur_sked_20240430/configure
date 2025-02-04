@@ -1,0 +1,173 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *  C-shell program for configuration of sur_sked. It creates Makefile. *
+# *                                                                      *
+# *  ###  07-JAN-2013   configure   v1.3 (c)  L. Petrov 30-APR-2024 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv SUR_SKED_VERSION     "20240430"
+#
+setenv PETOOLS_VERSION_MIN  "20211030"
+setenv SPC_VERSION_MIN      "20211124"
+setenv VTD_VERSION_MIN      "20210505"
+setenv NERS_VERSION_MIN     "20210824"
+setenv SUR_SKED_PREFIX          /opt
+setenv SUR_SKED_ROOT           `dirname $0`
+if ( $SUR_SKED_ROOT == '.' )    setenv SUR_SKED_ROOT `pwd`
+setenv PETOOLS_PREFIX       /opt
+setenv VTD_PREFIX           /opt
+setenv NERS_PREFIX          /opt
+setenv CFITSIO_PREFIX       /opt
+setenv SUR_SKED_SCRATCH     ""
+setenv SUR_SKED_EXP_DIR     "/vlbi"
+setenv SUR_SKED_PRC_DIR     ""
+setenv SUR_SKED_SEQ_DIR     ""
+setenv SUR_SKED_STP_DIR     ""
+setenv SUR_SKED_SHARE_DIR   ""
+setenv SUR_SKED_NOOPT       "NO"
+setenv SUR_SKED_PYTHON_ONLY "NO"
+setenv CFITSIO_PREFIX       /opt
+setenv sur_sked_debug       0
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+echo "SUR_SKED config  $date_stamp  on  $host_name" >&! temp/conf.log
+echo "$0 $argv" >> temp/conf.log
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SUR_SKED_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_share=`echo $arg | awk '{print index ($1,"--share")}'`
+     if ( $match_share > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,9)}'`
+	  setenv SUR_SKED_SHARE_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_exp_dir=`echo $arg | awk '{print index ($1,"--exp_dir")}'`
+     if ( $match_share > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv SUR_SKED_EXP_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_prc_dir=`echo $arg | awk '{print index ($1,"--prc_dir")}'`
+     if ( $match_share > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv SUR_SKED_PRC_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_seq_dir=`echo $arg | awk '{print index ($1,"--seq_dir")}'`
+     if ( $match_share > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv SUR_SKED_SEQ_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_stp_dir=`echo $arg | awk '{print index ($1,"--stp_dir")}'`
+     if ( $match_share > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv SUR_SKED_STP_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_python_only=`echo $arg | awk '{print index ($1,"--python-only")}'`
+     if ( $match_python_only > 0 ) then
+	  setenv SUR_SKED_PYTHON_ONLY YES
+          set find_option  = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_PREFIX "$str"
+          set find_option = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-vtd")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv VTD_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv NERS_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_cfitsio=`echo $arg | awk '{print index ($1,"--with-cfitsio")}'`
+     if ( $match_cfitsio > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv CFITSIO_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_prefix > 0 ) then
+          setenv sur_sked_debug 1
+          set find_option = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $SUR_SKED_ROOT/doc/sur_sked_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "SUR_SKED: $SUR_SKED_VERSION"
+          set find_option = 1
+	  exit 0
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SUR_SKED_NOOPT "YES"
+          set find_option = 1
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+if ( $sur_sked_debug == 0 ) then
+     support/config.csh | tee -a temp/conf.log
+     set config_status = $status
+  else
+     csh -x support/config.csh | tee -a temp/conf.log
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed." | tee -a temp/conf.log
+     echo "Now run gmake"               | tee -a temp/conf.log
+     exit 0
+  else
+     echo "Error in configuration."     ! tee -a temp/conf.log
+     exit $config_status
+endif

@@ -1,0 +1,29 @@
+Program  NERS_AZELHA  computes azimuth, elevation, hour angle,
+as well as their time derivatives at moment of time TIM_TAI for 
+a station with coordinates in the crust-fixed terrestrial coordinate 
+system COO_TRS that observes a source with coordinates in the 
+barycentric celestial coordinate system RA, DEC. Both annual and 
+diurnal aberrations are taken into account. Elevation is computed 
+with respect to the normal to the reference ellipsoid. Vertical 
+deflection is ignored. Optionally the elevation can be corrected 
+for refraction.
+ 
+This program can be used only for computation of azimuths, elevations
+and hour angles of an object beyond the Solar system, such a as 
+a star or a galaxy.
+ 
+Usage: ners_azelha date coo_trs ra dec [none|optic|radio]
+ 
+where date is the date in YYYY.MM.DD_hh:mm:ss.sss format or now,
+      coo_trs is the vector of station coordinates in the rotating
+              crust-fixed coordinate system in meters,
+      ra      is the right ascension of the observed body in rad;
+      dec     is the declination of the observed body in rad;
+      [none|optic|radio] is optional computation of refration:
+                         none  -- not to account refraction,
+                         optic -- to account refraction in optic
+                                  range;
+                         radio -- to account for refraction in
+                                  radio range.
+Units: radians for azimuth, elevation angle, and hour angle;
+       rad/s for their time derivatives.

@@ -1,0 +1,1292 @@
+      Description of keywords of VTD (VLBI Time Delay) control file language
+ 
+ 
+                                   L. Petrov
+ 
+ 
+                                   2023.03.14
+ 
+ 
+                                Abstract
+ 
+   This document provides detailed description of syntax of the language
+used for specification of control file for the package VTD (VLBI Time Delay).
+ 
+ 
+Questions and comments about this guide should be directed to:
+ 
+Leonid Petrov ( http://astrogeo.org/petrov )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ General rules
+ 
+ 
+2 ................ Description of keyword
+ 
+   2.1 ........... LEAP_SECOND:
+   2.2 ........... DE403_EPHEMERIDES:
+   2.3 ........... STATION_DESCRIPTION:
+   2.4 ........... STATION_COORDINATES:
+   2.5 ........... STATION_VELOCITIES:
+   2.6 ........... STATION_ECCENTRICITIES:
+   2.7 ........... SOURCE_COORDINATES:
+   2.8 ........... SOURCE_COORDINATES_2ND:
+   2.9 ........... SOURCE_COORDINATES_3RD:
+   2.10 .......... SOURCE_COORDINATES_4TH:
+   2.11 .......... SOURCE_PRLX_PRP_MOTION:
+   2.12 .......... AEM_FILE
+   2.13 .......... ERM_FILE
+   2.14 .......... HARMONIC_EOP_FILE:
+   2.15 .......... EOP_SERIES:
+   2.16 .......... EOP_TIME_SCALE:
+   2.17 .......... UZT_MODEL:
+   2.18 .......... UZT_USE:
+   2.19 .......... EROT_COMPAT:
+   2.20 .......... PRECESSION_EXPRESSION:
+   2.21 .......... NUTATION_EXPANSION:
+   2.22 .......... GEODESIC_NUTATION:
+   2.23 .......... SOLID_EARTH_TIDES_ZERO_FREQ:
+   2.24 .......... SOLID_EARTH_TIDES_2ND_DEGREE:
+   2.25 .......... SOLID_EARTH_TIDES_3RD_DEGREE:
+   2.26 .......... POLE_TIDE_MODEL:
+   2.27 .......... MPL_FILE:
+   2.28 .......... POSVAR_FIL:
+   2.29 .......... POSVAR_MOD:
+   2.30 .......... POSVAR_INT:
+   2.31 .......... POSVAR_USE:
+   2.32 .......... AXIS_OFFSET_MODEL:
+   2.33 .......... ANTENNA_DEFORMATIONS_FILE:
+   2.34 .......... ANTENNA_THERMAL_EXPANSION
+   2.35 .......... METEO_DEF
+   2.36 .......... HYDROSTATIC_ZENITH_DELAY:
+   2.37 .......... WET_ZENITH_DELAY:
+   2.38 .......... HYDROSTATIC_MAPPING_FUNCTION:
+   2.39 .......... WET_MAPPING_FUNCTION:
+   2.40 .......... ATMOSPHERE_TILT_PARTIALS:
+   2.41 .......... SLANT_PATH_DELAY
+   2.42 .......... ATMOSPHERE_PATH_DELAY_PARTIAL
+   2.43 .......... EXTERNAL_DELAY_DIR
+   2.44 .......... EXTERNAL_DELAY_DIR_2ND
+   2.45 .......... EXTERNAL_DELAY_DIR_3RD
+   2.46 .......... EXTERNAL_DELAY_DIR_4TH
+   2.47 .......... IONOSPHERE_MODEL:
+   2.48 .......... IONOSPHERE_SCALE:
+   2.49 .......... SOU_DEBIAS_MODEL:
+   2.50 .......... IONOSPHERE_DATA_FILE:
+   2.51 .......... IONOSPHERE_DATA_FILE_2ND:
+   2.52 .......... IONOSPHERE_DATA_FILE_3RD:
+   2.53 .......... IONOSPHERE_DATA_FILE_4TH:
+   2.54 .......... IONOSPHERE_DATA_FILE_5TH:
+   2.55 .......... IONOSPHERE_DATA_FILE_6TH:
+   2.56 .......... IONOSPHERE_DATA_FILE_8TH:
+   2.57 .......... GRS_METRIC:
+   2.58 .......... TROP_AXOF_COUPLING:
+   2.59 .......... TROP_GEOMETRIC_COUPLING:
+   2.60 .......... PARALLACTIC_ANGLE:
+   2.61 .......... GALACTIC_ABERRATION:
+   2.62 .......... GEOM_EXPR_FAR_ZONE:
+   2.63 .......... GEOM_EXPR_NEAR_ZONE:
+   2.64 .......... SOURCE_STRUCTURE:
+   2.65 .......... DOPPLER_EXPR:
+   2.66 .......... DELAY_RATE:
+ 
+________________________________________________________________________________
+ 
+        1 General rules
+        ===============
+ 
+  Control file for VTD consists of lines of variable length. Lines which
+starts from characters # or * are considered as comments and ignored by
+parsing software. Each line consists of a keyword and the value. All
+keywords must be specified, no defaults are allowed. A value should be
+separated the keyword by one or more delimiters. Valid delimiters:
+blank (decimal code 32), tabulation (decimal code 9) and binary zero.
+The first line of the control file should have the label of the format
+version. The current label version is
+# VTD Control file.   Format version of 2009.02.21
+ 
+  If the file does not have correct format label, VTD library will issue
+and errors message.
+ 
+        2 Description of keyword
+        ========================
+ 
+                2.1 LEAP_SECOND:
+                ~~~~~~~~~~~~~~~~
+ 
+    LEAP_SECOND: [leap_second_file_name or NERS]
+ 
+ 
+  leap_second_file_name is the name of the file in LEAP_SECOND format which
+tabulates epochs of discontinuities of the function UT1 - TAI(t) and values
+of discontinuities.
+ 
+  If NERS is specified, the leap second is downloaded automatically
+using the Network Earth Rotation Service
+ 
+                2.2 DE403_EPHEMERIDES:
+                ~~~~~~~~~~~~~~~~~~~~~~
+ 
+    DE403_EPHEMERIDES: planetary_ephemerides_file_name
+ 
+ 
+   Planetary_ephemerides_file_name is the name of the DE403 ephemerides file.
+ 
+ 
+                2.3 STATION_DESCRIPTION:
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    STATION_DESCRIPTION: station_description_file_name
+ 
+ 
+   Station_description_file_name is the name of the file in STADESC format.
+That file contains information about all stations which participated in
+the experiment: IVS station name, antenna mounting type, antenna axis
+offset, tectonic plate. This file may contain information about other
+stations which did not participated in the analyzed experiment.
+All stations which participated in the experiment must be listed in this
+file.
+ 
+                2.4 STATION_COORDINATES:
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    STATION_COORDINATES: station_coordinates_file_name
+ 
+ 
+   Station_coordinates_file_name is the name of the file either in
+GETPAR_STA format
+( http://astrogeo.org/psolve/doc/getpar_02.html#section3.1 )
+or in SIT-MODFILE format. That file contains information about all stations
+which participated in the experiment: IVS station name, station coordinates
+and epoch for coordinates of those stations which had episodic motion. This
+file may contain information about other stations which did not participated
+in the analyzed experiment. All stations which participated in the experiment
+must be listed in this file.
+ 
+                2.5 STATION_VELOCITIES:
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    STATION_VELOCITIES: station_velocities_file_name
+ 
+ 
+   Station_velocities_file_name is the name of the file either in
+GETPAR_VEL format
+( http://astrogeo.org/psolve/doc/getpar_02.html#section3.2 )
+or in VEL-MODFILE format. That file contains information about all stations
+which participated in the experiment: IVS station name, station velocities.
+This file may contain information about other stations which did not
+participated in the analyzed experiment. All stations which participated
+in the experiment must be listed in this file.
+ 
+                2.6 STATION_ECCENTRICITIES:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    STATION_ECCENTRICITIES: station_eccentricities_file_name
+ 
+ 
+   Station_eccentricities_file_name is the name of the file with
+eccentricity vector in ECC-FORMAT. It contains IVS station name, CDP
+monument number, starting date of validity of the eccentricity vector,
+end date of validity of the eccentricity vector, eccentricity vector for
+each station each period of validity defined as the vector from the
+monument point for which station coordinates are referred to, to the
+reference point on the antenna, defined as a point on the fixed axis which
+is located at the closest distance to the moving axis.
+ 
+                2.7 SOURCE_COORDINATES:
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOURCE_COORDINATES: source_coordinates_file_name
+ 
+ 
+  The qualifier Source_coordinates_file_name is the name of the file either
+in GETPAR_SOU format
+( http://astrogeo.org/psolve/doc/getpar_02.html#section3.3 )
+or in SOU-MODFILE format. That file contains information the sources
+which participated in the experiment: IVS source name, source coordinates.
+This file may contain information about other source which were not observed
+in the analyzed experiment.
+ 
+ 
+                2.8 SOURCE_COORDINATES_2ND:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOURCE_COORDINATES: [source_coordinates_file_name_2 or NONE]
+ 
+ 
+  The qualifier source_coordinates_file_name is the name of the file either
+in GETPAR_SOU format
+( http://astrogeo.org/solve_root/help/getpar_02.html#section3.3 )
+or in SOU-MODFILE format. This is the secondary catalogue used by VTD.
+It might be convenient to keep coordinates of source in more than one file.
+That file contains information the sources which participated in the
+experiment: IVS source name, source coordinates. This file may contain
+information about other source which were not observed in the analyzed
+experiment.
+ 
+ 
+                2.9 SOURCE_COORDINATES_3RD:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOURCE_COORDINATES: [source_coordinates_file_name_3 or NONE]
+ 
+ 
+  The qualifier source_coordinates_file_name is the name of the file either
+in GETPAR_SOU format
+( http://astrogeo.org/psolve/doc/getpar_02.html#section3.3 )
+or in SOU-MODFILE format. This is the ternary catalogue used by VTD.
+It might be convenient to keep coordinates of source in more than one file.
+That file contains information the sources which participated in the
+experiment: IVS source name, source coordinates. This file may contain
+information about other source which were not observed in the analyzed
+experiment.
+ 
+ 
+                2.10 SOURCE_COORDINATES_4TH:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOURCE_COORDINATES: [source_coordinates_file_name_4 or NONE]
+ http://astrogeo.org/psolve/doc
+ 
+  The qualifier source_coordinates_file_name is the name of the file either
+in GETPAR_SOU format
+( http://astrogeo.org/psolve/doc/getpar_02.html#section3.3 )
+or in SOU-MODFILE format. This is the fourth catalogue used by VTD.
+It might be convenient to keep coordinates of source in more than one file.
+That file contains information the sources which participated in the
+experiment: IVS source name, source coordinates. This file may contain
+information about other source which were not observed in the analyzed
+experiment.
+ 
+                2.11 SOURCE_PRLX_PRP_MOTION:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOURCE_PRLX_PRP_MOTION: [source_parallax_and_proper_motion_file or NONE]
+ 
+ 
+  The qualifier source_parallax_and_proper_motion_file specifies the name of
+the file with a priori source proper motions and parallaxes. Each line of
+that file contains IVS source name J2000 source name, proper motion over
+right ascension without scaling cos(delta) factor, proper motion over
+declination, annual parallax, and comment. See file prlx_prp_format.txt
+in the documentation directory for the format description.
+ 
+ 
+                2.12 AEM_FILE
+                ~~~~~~~~~~~~~
+ 
+    AEM_FILE: aem_file_name or NONE
+ 
+ 
+   Keyword AEM_FILE specifies the name of the file with the a priori
+Earth rotation model. This file is one of the three files that describes
+the Earth's rotation in accordance to the empirical Earth rotation model
+formalism. The file should conform specifications of the AEM files. The AEM
+file defines values of "large" parameters, i.e. those parameters which
+squares are not-negligible. These are parameters for precession, several
+terms in nutation and several terms in the Earth's axial rotation.
+ 
+ 
+                2.13 ERM_FILE
+                ~~~~~~~~~~~~~
+ 
+    ERM_FILE: erm_file_name or NONE
+ 
+ 
+   Keyword ERM_FILE specifies the name of the file with the a priori
+Earth rotation model. This file is one of the three files that describes
+the Earth's rotation in accordance to the empirical Earth rotation model
+formalism. The file should conform specifications of the ERM files. The ERM
+file defines coefficients that describe long periodic, "small" variations
+in Earth's rotation, i.e. those parameters variations which squares are
+negligible. The coefficients of B-spline allows to compute the instantaneous
+vector of perturbations to the Earth's rotation. These file describes
+the slowly varying component of the Earth rotation.
+ 
+ 
+                2.14 HARMONIC_EOP_FILE:
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    HARMONIC_EOP_FILE: [NONE or NERS or file_name]
+ 
+ 
+  Keyword HARMONIC_EOP_FILE specifies the name of the file with the harmonic
+Earth Orientation model. This models describes perturbation in the Earth
+orientation with respect to the a priori model specified by the a priori EOP
+files, a priori nutation, precession and built-in expression for the UT1 angle.
+The model is in the form
+sum (a + b*t)*{sin/cos}( theta/2*t**2 + omega*t + phase)
+ 
+  The purpose of this model is to correct a priori EOP model specified in
+EOP_SERIES, PRECESSION_EXPRESSION, NUTATION_EXPANSION, GEODESIC_NUTATION
+keywords.
+ 
+  NERS      -- the harmonic EOP variations are taken using the Network Earth
+               Rotation Service (NERS) automatically. The NERS client
+               control file specified by EOP_SERIES keyword is used.
+ 
+  file_name -- name of the file with the model in HEO format.
+ 
+ 
+                2.15 EOP_SERIES:
+                ~~~~~~~~~~~~~~~~
+ 
+    EOP_SERIES: [NONE or NERS or ners_configuration_file or
+                 earth_orientation_parameters_file]
+ 
+ 
+   Earth_orientation_parameters_file is the name of the file of the
+Earth orientation parameters either in EOP-MOD or NERS EOP series format,
+or NERS configuration file or NERS. The file with the Earth Orientation
+Parameters contains values of X-coordinate of the pole coordinate,
+Y-coordinate of  the pole coordinate, and UT1 angle at the equidistant
+grid of time epochs.
+   NONE   -- No external file with EOP series.
+             (Supported when ERM formalism was chosen)
+ 
+   NERS   -- The EOP data are taken using NERS. Default NERS client
+             control file is used.
+ 
+   ners_configuration_file -- name of the control file for NERS client
+ 
+   earth_orientation_parameters_file -- name of the file with Earth
+                                        orientation parameters
+ 
+VTD analyzes the first line of the file in order to determine whether it
+is the file with the Earth orientation parameters or the NERS configuration
+file.
+ 
+                2.16 EOP_TIME_SCALE:
+                ~~~~~~~~~~~~~~~~~~~~
+ 
+    EOP_TIME_SCALE: time_scale_of_eop_table
+ 
+ 
+  Time_scale_of_eop_table defines the time scale used for time tags in the
+table of the input Earth orientation series specified in the value of the
+keyword EOP_SERIES. Supported values:
+ 
+   TAI
+   TDT
+   TDB
+   UTC
+   UT1
+   NERS   -- the same as TAI
+   NONE   -- (Supported when ERM formalism was chosen)
+ 
+                2.17 UZT_MODEL:
+                ~~~~~~~~~~~~~~~
+ 
+    UZT_MODEL: [NONE or NERS or DICKMAN1993 or DICKMAN1993_PRINCIPAL
+                or DICKMAN1993_SHORT]
+ 
+ 
+  UT1_zonal_tides_model_name is the name of the model of UT1 variations
+induced by zonal tides. Supported  values:
+ 
+  NONE                  -- no model is used.
+  NERS                  -- the same as NONE
+  DICKMAN1993           -- model of Dickman, 1993, all terms
+  DICKMAN1993_PRINCIPAL -- model of Dickman, 1993, only principal term and
+                           14 terms which contributes to UT1 rate greater
+                           than 1.0D-14 rad/s
+  DICKMAN1993_SHORT     -- model of Dickman, 1993, only terms with periods
+                           shorter than 60 days
+ 
+                2.18 UZT_USE:
+                ~~~~~~~~~~~~~
+ 
+    UZT_USE: [NONE or NERS or ADD or INTERPOLATE or SUBTRACT]
+ 
+ 
+  The way how to apply the mode of UT1 variations induced by zonal tides.
+ 
+  NONE         --  not to apply contribution of UT1 variations induced
+                   by zonal tides;
+ 
+  NERS         --  the same as NONE
+ 
+  ADD          --  add contribution to UT1 caused by zonal tides to apriori
+                   EOP;
+ 
+  SUBTRACT     --  subtract contribution to UT1 caused by zonal tides from
+                   a priori EOP;
+ 
+  INTERPOLATE  --  the  model is used for subtracting contribution
+                   to UT1 due to zonal tides before computation of
+                   interpolating coefficients, and then contribution of UT1
+                   are added to final a priori UT1 values after interpolation.
+ 
+ 
+                2.19 EROT_COMPAT:
+                ~~~~~~~~~~~~~~~~~
+ 
+    EROT_COMPAT: [NONE or NERS or CALC10 or NO_SANG]
+ 
+ 
+  If specified, adds corrections to the a priori Earth rotation angles
+to be compatible with Calc10. It can be used for testing in order to
+precisely emulate values computed by Calc. These corrections DO NOT
+improve VLBI path delay prediction. This option is intended for tests
+only.
+ 
+  NONE (recommended) means that no emulation is performed.
+ 
+  NERS the same as NONE
+ 
+                2.20 PRECESSION_EXPRESSION:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    PRECESSION_EXPRESSION: precession_model_name
+ 
+ 
+  Keyword PRECESSION_EXPRESSION specifies the name of the precession model.
+Supported expansions:
+ 
+  LIESE_1977     -- Values of precession parameters from Lieske 1976.
+  SIMON_1994     -- Values of precession parameters from Simon 1994.
+  IERS_1996      -- Values of precession parameters from IERS 1996.
+  CAPITAINE_2003 -- Values of precession parameters from Capitaine 2003
+  CAPITAINE_2005 -- Values of precession parameters from Capitaine 2005
+  NERS           -- Precession is computed by the NERS. The NERS client
+                    control file specified by EOP_SERIES keyword is used.
+  NONE           -- No precession (Supported when ERM formalism was chosen)
+ 
+                2.21 NUTATION_EXPANSION:
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    NUTATION_EXPANSION: nutation_expansion_name
+ 
+ 
+  Keyword NUTATION_EXPANSION specifies the name of the nutation expansions.
+Supported expansions:
+ 
+  WAHR1980       -- Wahr 1980 nutation expansion. Expansion for Doodson
+                    arguments referred to at that paper are used.
+  IERS1996       -- Empirical nutation expansion computed by T. Herring
+                    and presented in the IERS 1996 Conventions. Expansion
+                    for Doodson arguments referred to at that paper are used.
+  REN2000        -- Theoretical expansion of the rigid Earth model by
+                    J. Souchay
+  MHB2000        -- MHB2000 expansion according coefficients presented in
+                    the program which T. Herring posted on the Web.
+  MHB2000_TRANSF -- REN2000 expansion with the transfer function from
+                    Mathews at al, 2002 paper.
+  MHB2000_ADDON  -- REN2000 expansion with the transfer function from
+                    Mathews at al, 2002 paper and all add-on terms listed
+                    at that paper.
+  MHB2000_PETA   -- Simplified expansion to nutation with only three non-linear
+                    terms.
+  NERS           -- Nutation is computed by the NERS. The NERS client
+                    control file specified by EOP_SERIES keyword is used.
+  NONE           -- No nutation (Supported when ERM formalism was chosen)
+ 
+ 
+                2.22 GEODESIC_NUTATION:
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    GEODESIC_NUTATION usage_flag
+ 
+ 
+  Keyword NUTATION_EXPANSION specifies whether geodesic nutation should be
+modeled.
+ 
+  usage_flag -- one of
+                YES -- to model geodesic nutation
+                NONE  -- not to model geodesic nutation
+ 
+ 
+                2.23 SOLID_EARTH_TIDES_ZERO_FREQ:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOLID_EARTH_TIDES_ZERO_FREQ: Love_model_name
+ 
+ 
+  Keyword SOLID_EARTH_TIDES_ZERO_FREQ specifies the name of the model of
+Love numbers for the zeroth frequency. Unfortunately, several erroneous papers
+and thoughtless resolution of scientific societies created a great confusion
+about the issues of so-called "permanent tide". VTD allows a user to specify
+the model for computation of the zonal tides of the zero-th frequency.
+ 
+  Love_model_name -- model code. One of
+ 
+                     MDG97AN -- Mathews, Dehant, Gipson 1997, anelastic
+                                variant.
+                     NONE    -- consider Love numbers for the tides of
+                                the second degree as zero.
+ 
+ 
+                2.24 SOLID_EARTH_TIDES_2ND_DEGREE:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOLID_EARTH_TIDES_2ND_DEGREE: Love_model_name
+ 
+ 
+  Keyword SOLID_EARTH_TIDES_2ND_DEGREE specifies the name of the model of
+Love numbers of the second degree as a function of frequency.
+ 
+  Love_model_name -- model code. One of
+ 
+                     MDG97EL      -- Mathews, Dehant, Gipson 1997, elastic
+                                     variant.
+                     MDG97AN      -- Mathews, Dehant, Gipson 1997, anelastic
+                                     variant.
+                     DDW99EH      -- Dehant, Defraigne, Wahr 1999, elastic,
+                                     hydrostatic variant.
+                     DDW99IN      -- Dehant, Defraigne, Wahr 1999, inelastic,
+                                     non-hydrostatic variant.
+                     LOVE         -- Love, 1923 model
+                     MATHEWS_2000 -- Mathews, 2000 model
+                     MATHEWS_2001 -- Mathews, 2001 model
+                     NONE         -- consider Love numbers for the tides of
+                                     the second degree as zero.
+ 
+ 
+                2.25 SOLID_EARTH_TIDES_3RD_DEGREE:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOLID_EARTH_TIDES_3RD_DEGREE: Love_model_name
+ 
+ 
+  Keyword SOLID_EARTH_TIDES_2ND_DEGREE specifies the name of the model of
+Love numbers of the third degree.
+ 
+  Love_model_name -- model code. One of
+ 
+                     MDG97EL -- Mathews, Dehant, Gipson 1997.
+                     NONE    -- consider Love numbers for the tides of
+                                the second degree as zero.
+ 
+ 
+                2.26 POLE_TIDE_MODEL:
+                ~~~~~~~~~~~~~~~~~~~~~
+ 
+    POLE_TIDE_MODEL: Love_model_name
+ 
+ 
+  Keyword POLE_TIDE_MODEL specifies the name of the model of Love numbers
+used for computation of the pole tide.
+ 
+  Love_model_name -- model code. One of
+ 
+                     MDG97EL      -- Mathews, Dehant, Gipson 1997, elastic
+                                     variant.
+                     MDG97AN      -- Mathews, Dehant, Gipson 1997, anelastic
+                                     variant.
+                     DDW99EH      -- Dehant, Defraigne, Wahr 1999, elastic,
+                                     hydrostatic variant.
+                     DDW99IN      -- Dehant, Defraigne, Wahr 1999, inelastic,
+                                     non-hydrostatic variant.
+                     LOVE         -- Love, 1923 model
+                     MATHEWS_2000 -- Mathews, 2000 model
+                     MATHEWS_2001 -- Mathews, 2001 model
+                     NONE         -- consider Love numbers for the pole tides
+                                     as zero.
+ 
+                2.27 MPL_FILE:
+                ~~~~~~~~~~~~~~
+ 
+    MEAN_POLE_MODEL: expression_id
+ 
+ 
+  Keyword MEAN_POLE_MODEL MPL_FILE specifies the name of the expression
+for the mean pole positions.
+ 
+   expression_id -- one of
+ 
+   NONE     -- mean pole positions is zero.
+ 
+   IERS2010 -- expression for pole tide following IERS2010 conventions.
+               NB: THIS EXPRESSION IS WRONG!!  It was included only
+               for tests.
+ 
+   IERS2022 -- expression for pole tide following IERS2022 conventions.
+ 
+                2.28 POSVAR_FIL:
+                ~~~~~~~~~~~~~~~~
+ 
+    POSVAR_FIL: model_index  model_file_name
+ 
+  Keyword POSVAR_FIL specifies the name of the file with the model of
+position variations.
+ 
+  model_index     -- the index of the model. Should be 1 if only one
+                     model of position variations is in use. Of more than
+                     one model is in use, then the models are numbered
+                     consecutively from 1 to the last model. Maximum
+                     8 models can be specified.
+ 
+  model_file_name -- the name of the file with the model.
+ 
+ 
+                2.29 POSVAR_MOD:
+                ~~~~~~~~~~~~~~~~
+ 
+    POSVAR_MOD: model_index  model_type
+ 
+ 
+  Keyword POSVAR_MOD specifies the model type. Two types are supported:
+time series and harmonic site position variations model.
+ 
+  model_index  -- the index of the model. Should be 1 if only one
+                  model of position variations is in use. Of more than
+                  one model is in use, then the models are numbered
+                  consecutively from 1 to the last model. Maximum
+                  8 models can be specified.
+ 
+  model_type   -- one of
+                  HARMONIC_MODE -- the file is in HARPOS format:
+                                   http://astrogeo.org/psolve/doc/harpos_format.txt
+                  TIME_SERIES   -- the file is in BINDISP format:
+                                   http://astrogeo.org/psolve/doc/bindisp_format.txt
+                  B_SPLINE      -- ...
+ 
+                2.30 POSVAR_INT:
+                ~~~~~~~~~~~~~~~~
+ 
+    POSVAR_INT: model_index  interpolation_type
+ 
+ 
+  Keyword POSVAR_MOD specifies the type of interpolation. The values of the
+position variations models are first read at several epoch around the time
+range of the experiment, then interpolation polynomials are computed. Position
+variations at the epoch of the observation are computed on the basis of this
+polynomial. Two interpolation types are supported: LINEAR and SPLINE
+ 
+  model_index        -- the index of the model. Should be 1 if only one
+                        model of position variations is in use. Of more than
+                        one model is in use, then the models are numbered
+                        consecutively from 1 to the last model. Maximum
+                        8 models can be specified.
+  interpolation_type -- one of
+                        LINEAR
+                        SPLINE
+ 
+                2.31 POSVAR_USE:
+                ~~~~~~~~~~~~~~~~
+ 
+    POSVAR_USE: model_index  usage_flag
+ 
+  Keyword POSVAR_INT specifies the action of position variations model
+is not available for the requested station, requested epochs.
+An alternative is either issue a warning and continue or print the fatal
+error message and stop.
+ 
+  model_index        -- the index of the model. Should be 1 if only one
+                        model of position variations is in use. Of more than
+                        one model is in use, then the models are numbered
+                        consecutively from 1 to the last model. Maximum
+                        8 models can be specified.
+  interpolation_type -- one of
+                        REQUIRED     -- if position variation model is not
+                                        available for a requested station,
+                                        requested epoch, then stop.
+                        IF_AVAILABLE -- if position variation model is not
+                                        available for a requested station,
+                                        requested epoch, then print
+                                        a warning, set variations to zero
+                                        and continue.
+ 
+                2.32 AXIS_OFFSET_MODEL:
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    AXIS_OFFSET_MODEL: usage_flag
+ 
+ 
+   usage_flag -- the flag. Supported values:
+                 YES  -- (recommended) means that the contribution to delay
+                          due to antenna axis offset is taken into account.
+                 NONE --  means that the contribution to delay caused
+                          by the antenna axis offset is ignored. It is used
+                          for tests only.
+                 CALC9 -- forces VTD to emulated a bug in Calc9. This
+                          option is for tests only.
+ 
+ 
+                2.33 ANTENNA_DEFORMATIONS_FILE:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    ANTENNA_DEFORMATIONS_FILE: [NONE or agd_file]
+ 
+ 
+  Keyword ANTENNA_DEFORMATIONS_FILE  specifies the file name that
+keeps parameters of the models of antenna deformation caused by gravity.
+The file should conforms AGD specifications. The current model tabulates
+the change of the focal length as a function of elevation for each antenna.
+Some antenna may me missing from the agd_file file. The contribution to delay
+caused by antenna deformations for these antenna will be set to zero.
+ 
+ 
+                2.34 ANTENNA_THERMAL_EXPANSION
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    ANTENNA_THERMAL_EXPANSION NONE or [MODEL antenna_information_file
+                                       INSITU [NONE or insitu_file]
+                                       TEMPERATURE [METEO or SPD]
+                                       LAG time_in_seconds]
+ 
+ 
+  Keyword ANTENNA_THERMAL_EXPANSION defines the mode for computing
+the contribution to time delay caused by antenna structures thermal
+expansion. The 1st qualifier may be NONE or MODEL. If the 1st qualifier
+is MODEL, then VTD expects to read 8 qualifiers. The second qualifier
+is the name of the antenna information file in the ANTI format. The
+antenna information file defines the type of each antenna, dimensions
+of the antenna structure and their coefficient of thermal expansion,
+reference temperature. Some antennas may be missing from this file.
+Contribution to path delay caused by antenna deformations of these antennas
+will be set to zero. The 3rd qualifier is INSITU. The 4th qualifier is
+the name of the file with information about antennas that have available
+data of their thermal height variation measurements with the invar rod.
+These stations will be excluded from computation of contribution due to antenna
+thermal deformation according to the model of thermal expansion. Position
+variations of the reference point for these antennas should be included to
+the model specified by POSVAR_MOD, POSVAR_FIL, POSVAR_INT, POSVAR_USE.
+ 
+  The antenna deformations caused by thermal expansion depend on the
+effective temperature of elements of antenna structure. The 5th
+qualifier is TEMPERATURE. It defines the source of temperature data
+defined in the 6th qualifier METEO or SPD. If METEO, then temperature is
+supplied with VTD_METEO_IN subroutine. These are usually data collected
+by local meteorological sensor. If SPD, then air temperature is supplied
+in SPD (slant path delay) data files. It is computed from the output of
+the global numerical weather model. The 7th qualifier is LAG. The 8th
+qualifier defines the lag of antenna temperature with respect to air
+temperature. Antenna temperature at time t is computed as air temperature
+at time t - lag.
+ 
+  Restrictions: TEMPERATURE SPD requires EXTERNAL_DELAY_DIR directory
+names be defined that supplied the source of information about
+expansion coefficients via 3D B-splines.
+ 
+                2.35 METEO_DEF
+                ~~~~~~~~~~~~~~
+ 
+    METEO_DEF model
+ 
+ 
+    Qualifier METEO_DEF defines the model that is used for computing
+missing meteorological parameters. If the atmospheric pressure and/or
+air temperature are negative, they are interpreted as missing.
+ 
+  default_model:
+     IMA  -- the model of the International Meteorological Association
+             ISO Standard atmosphere 1976.
+     CALC -- Undocumented model that Calc uses. This model is for
+             test only.
+     NONE -- not to change meteorological parameters. Keep in mind,
+             that if NONE specified, subsequent computation of zenith
+             path delay using SAASTAMOINEN model will be
+             __completely wrong__.
+ 
+ 
+                2.36 HYDROSTATIC_ZENITH_DELAY:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    HYDROSTATIC_ZENITH_DELAY: [NONE or  zenith_delay_path_model_name or
+                                    MMF mmd_model_file ]
+ 
+ 
+   Keyword HYDROSTATIC_ZENITH_DELAY specifies the name of the a priori model
+for the hydrostatic component zenith path delay.
+ 
+   zenith_delay_path_model_name -- the name of the model. One of
+          NONE         -- do not model hydrostatic path delay
+          SAASTAMOINEN -- Saastamoinen model
+          MMF          -- the Mean Mapping Function mode (Petrov (2009), in
+                          preparation). Requires the name of the file with
+                          the MMF model in the following qualifier.
+ 
+                2.37 WET_ZENITH_DELAY:
+                ~~~~~~~~~~~~~~~~~~~~~~
+ 
+    WET_ZENITH_DELAY: [NONE or zenith_delay_path_model_name]
+ 
+ 
+   Keyword WET_ZENITH_DELAY specifies the name of the a priori model
+for the non-hydrostatic component of the zenith path delay.
+ 
+   zenith_delay_path_model_name -- the name of the model. One of
+          NONE         -- do not model non-hydrostatic path delay
+          MMF          -- the Mean Mapping Function mode (Petrov (2009), in
+                          preparation). Requires the name of the file with
+                          the MMF model in the following qualifier.
+ 
+                2.38 HYDROSTATIC_MAPPING_FUNCTION:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    HYDROSTATIC_MAPPING_FUNCTION: [NONE or mapping_function_name
+                                        or [MMF mmf_mode file] ]
+ 
+ 
+  Keyword HYDROSTATIC_MAPPING_FUNCTION defines the model for the mapping
+function for the hydrostatic component of the path delay -- dependence of
+the hydrostatic component of the atmospheric path delay with elevation.
+NB: the argument of the mapping function is so-called vacuum elevation: the
+elevation which the source would have in the absence of refractive
+atmosphere.
+ 
+  mapping_function_name -- the name of the mapping function. One of
+          NMFH -- Niell 1996 mapping function.
+          MMF  -- the Mean Mapping Function mode (Petrov (2009), in
+                  preparation). Requires the name of the file with
+                  the MMF model in the following qualifier.
+ 
+ 
+                2.39 WET_MAPPING_FUNCTION:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    WET_MAPPING_FUNCTION: [NONE or mapping_function_name
+                                or [MMF mmf_mode file]
+                                or external_delay_dir ]
+ 
+ 
+  Keyword WET_MAPPING_FUNCTION defines the model for the mapping function
+for the non-hydrostatic component of the path delay -- dependence of the
+non-hydrostatic component of the atmospheric path delay with elevation.
+NB: the argument of the mapping function is the so-called vacuum elevation:
+the elevation which the source would have in the absence of refractive
+atmosphere.
+ 
+  mapping_function_name -- the name of the mapping function. One of
+          NMFW -- Niell 1996 mapping function.
+          MMF  -- the Mean Mapping Function mode (Petrov (2009), in
+                  preparation). Requires the name of the file with
+                  the MMF model in the following qualifier.
+ 
+ 
+                2.40 ATMOSPHERE_TILT_PARTIALS:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    ATMOSPHERE_TILT_PARTIALS: tilt_partials
+ 
+ 
+  Keyword ATMOSPHERE_TILT_PARTIALS defines the model for partial
+derivatives of the atmospheric tilt, or using another words,
+atmospheric gradients.
+ 
+  tilt_partials  -- the name of tilt_partials model.
+                    Currently, only one value is supported:
+                    MACMILLAN_1995
+ 
+                2.41 SLANT_PATH_DELAY
+                ~~~~~~~~~~~~~~~~~~~~~
+ 
+    SLANT_PATH_DELAY [SPD_3D or NONE]
+ 
+ 
+  Keyword  SLANT_PATH_DELAY  defines that the path delay through
+the neutral atmosphere for a given elevation, azimuth, time for a given
+station should be computed by three-dimensional B-spline interpolation
+of the time series of slant path delays. These time series of path delays
+are supposed to have been computed at an elevation/azimuth grid for
+each station using a standalone program SPD_3D by solving numerically a system
+of non-linear differential equations of wave propagation through the 4D,
+heterogeneous atmosphere (L. Petrov, 2009, in preparation) represented by
+the 4D field of atmospheric parameters that are the output of a numerical
+weather model. NB: the contribution of the neutral atmosphere can be computed
+either by using mapping function approach (keywords HYDROSTATIC_ZENITH_DELAY,
+HYDROSTATIC_MAPPING_FUNCTION, WET_MAPPING_FUNCTION, WET_ZENITH_DELAY)
+or by SLANT_PATH_DELAY.
+ 
+   SPD_3D -- slant path delay will be computed by interpolation of time
+             series of B-spline coefficients stored in files that are
+             kept directory EXTERNAL_DELAY_DIR (or EXTERNAL_DELAY_DIR_2,
+             EXTERNAL_DELAY_DIR_3, EXTERNAL_DELAY_DIR_4 if defined )
+ 
+   NONE   -- algorithm for computing slant path delay by interpolation of time
+             series of B-spline coefficients will be disabled.
+ 
+ 
+                2.42 ATMOSPHERE_PATH_DELAY_PARTIAL
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   ATMOSPHERE_PATH_DELAY_PARTIAL [NONE or NMW or NMF or IONO_350 or IONO_400 or
+                                  IONO_450 or IONO_500 or TOTAL_SCALE or
+                                  TOTAL_WATER or
+                                  (GAUSSIAN_LAYER [layer_height layer_fwhm])]
+ 
+ 
+   Keyword ATMOSPHERE_PATH_DELAY_PARTIAL defines partial derivative of
+slant path delay with respect to the path delay in zenith direction.
+This partial derivatives is not used for computing a priori path delay,
+but is supposed to be used for parameter estimation. The partial derivatives
+are placed in arrays DER_DEL, DER_RAT, in slots VTD__DER_AT1 (partial
+derivatives for station #1) and VTD__DER_AT2 (partial derivatives for
+station #2).
+ 
+            NONE -- no partial is computed
+ 
+            NMFH -- Niell (1996) hydrostatic mapping function
+ 
+            NMFW -- Niell (1996) wet mapping function
+ 
+        IONO_350 -- mapping function for the case when residual
+                    atmosphere is described as a thin shell
+                    at height 350 km. Such a model is suitable
+                    for characterizing residual ionosphere.
+ 
+        IONO_400 -- mapping function for the case when residual
+                    atmosphere is described as a thin shell
+                    at height 400 km. Such a model is suitable
+                    for characterizing residual ionosphere.
+ 
+        IONO_450 -- mapping function for the case when residual
+                    atmosphere is described as a thin shell
+                    at height 450 km. Such a model is suitable
+                    for characterizing residual ionosphere.
+ 
+        IONO_500 -- mapping function for the case when residual
+                    atmosphere is described as a thin shell
+                    at height 500 km. Such a model is suitable
+                    for characterizing residual ionosphere.
+ 
+     TOTAL_SCALE -- mapping function for the case when residual
+                    atmosphere is considered proportional to
+                    the total atmosphere. The partial derivative
+                    is defined as a ratio of the total slant path
+                    delay to the total path delay in the zenith
+                    direction. NB: this partial derivative requires
+                    computation of a priori slant path delay
+                    (SLANT_PATH SPD_3D).
+ 
+     WATER_SCALE -- mapping function for the case when residual
+                    atmosphere is considered proportional to
+                    the water vapor contribution to the atmosphere.
+                    The partial derivative is defined as a ratio of
+                    the water vapor contribution of slant path
+                    delay to the water vapor contribution to path
+                    delay in the zenith direction. NB: this partial
+                    derivative requires computation of a priori slant
+                    path delay (SLANT_PATH SPD_3D).
+ 
+  GAUSSIAN_LAYER -- layer_height  layer_fwhm  -- mapping function for
+                    the case when the dependence of concentration
+                    of the residual atmosphere is described with
+                    the Gaussian model with the specified height
+                    and the specified full width half maximum
+                    (FWHM). The height of the layer in meters
+                    is specified in the 3rd qualifier and the FWHM
+                    in meter is specified in the 4th qualifier.
+ 
+ 
+                2.43 EXTERNAL_DELAY_DIR
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    EXTERNAL_DELAY_DIR [NONE or directory_name]
+ 
+ 
+   Keyword EXTERNAL_DELAY_DIR specifies the directory name of
+files with external path delays. The format of these files is defined
+by SLANT_PATH_DELAY keyword. If SLANT_PATH_DELAY is SPD_3D, then
+the files in the EXTERNAL_DELAY_DIR directory should satisfy spd_3d_bin
+specification. Each file contains the time series of the B-spline
+coefficients for a specific station.
+ 
+ 
+                2.44 EXTERNAL_DELAY_DIR_2ND
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    EXTERNAL_DELAY_DIR_2ND [NONE or directory_name]
+ 
+ 
+   Keyword EXTERNAL_PATH_DELAY_FILE specifies the secondary directory
+name of files with external path delays. Each file contains the time
+series of B-spline coefficients for a specific station. If a file
+for a given station is not found in directory EXTERNAL_DELAY_DIR,
+it is sought in directory EXTERNAL_DELAY_DIR_2ND.
+ 
+ 
+                2.45 EXTERNAL_DELAY_DIR_3RD
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    EXTERNAL_DELAY_DIR_3RD [NONE or directory_name]
+ 
+ 
+   Keyword EXTERNAL_PATH_DELAY_FILE specifies the name of third directory
+of files with external path delays. Each file contains the time
+series of B-spline coefficients for a specific station. If a file
+for a given station is not found in directories EXTERNAL_DELAY_DIR,
+EXTERNAL_DELAY_DIR_2ND, it is sought in directory EXTERNAL_DELAY_DIR_3RD.
+ 
+ 
+                2.46 EXTERNAL_DELAY_DIR_4TH
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    EXTERNAL_DELAY_DIR_4TG [NONE or directory_name]
+ 
+ 
+   Keyword EXTERNAL_PATH_DELAY_FILE specifies the name of fourth directory
+of files with external path delays. Each file contains the time
+series of B-spline coefficients for a specific station. If a file
+for a given station is not found in directories EXTERNAL_DELAY_DIR,
+EXTERNAL_DELAY_DIR_2ND, and EXTERNAL_DELAY_DIR_3RD, it is sought in
+directory EXTERNAL_DELAY_DIR_4TH.
+ 
+ 
+                2.47 IONOSPHERE_MODEL:
+                ~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_MODEL: [NONE or GNSS_TEC_MAP]
+ 
+ 
+   Keyword IONOSPHERE_MODEL specifies the ionospheric model for
+computation of path delay. Accepted values:
+ 
+   NONE         -- no ionosphere path delay is applied.
+ 
+   GNSS_TEC_MAP -- apply ionospheric path delay computed using
+                   GNSS TEC maps.
+ 
+ 
+                2.48 IONOSPHERE_SCALE:
+                ~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_SCALE: value
+ 
+ 
+   Keyword IONOSPHERE_SCALE specifies the scale factor. The ionospheric
+contribution computed from TEC maps is multiplied by that parameter.
+ 
+ 
+                2.49 SOU_DEBIAS_MODEL:
+                ~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOU_DEBIAS_MODEL: [None value]
+ 
+ 
+   Keyword SOU_DEBIAS_MODEL specifies the name of the source position
+de-bias model. It is for compensation of the source position bias
+caused by the the deficiency of an ionospheric model or other models.
+The contribution of the de-bias model to path delay is computed
+on the basis of an empirical model that describes the position bias
+in declination as a function of declination. Supported models:
+NONE, MAP_850N, MAP_750R, MAP_780S.
+ 
+                2.50 IONOSPHERE_DATA_FILE:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_DATA_FILE: [NONE or file name]
+ 
+ 
+   Keyword IONOSPHERE_DATA_FILE specifies a binary file ion viono
+format that keeps GNSS TEC maps for some period of time.
+ 
+ 
+                2.51 IONOSPHERE_DATA_FILE_2ND:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_DATA_FILE_2ND: [NONE or file_name]
+ 
+ 
+   Keyword IONOSPHERE_DATA_FILE_2ND specifies a binary file ion viono
+format that keeps GNSS TEC maps for some period of time.
+ 
+ 
+                2.52 IONOSPHERE_DATA_FILE_3RD:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_DATA_FILE_3RD: [NONE or file_name]
+ 
+ 
+   Keyword IONOSPHERE_DATA_FILE_3RD specifies a binary file ion viono
+format that keeps GNSS TEC maps for some period of time.
+ 
+ 
+                2.53 IONOSPHERE_DATA_FILE_4TH:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_DATA_FILE_4TH: [NONE or file_name]
+ 
+ 
+   Keyword IONOSPHERE_DATA_FILE_4TH specifies a binary file ion viono
+format that keeps GNSS TEC maps for some period of time.
+ 
+ 
+                2.54 IONOSPHERE_DATA_FILE_5TH:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_DATA_FILE_5TH: [NONE or file_name]
+ 
+ 
+   Keyword IONOSPHERE_DATA_FILE_5TH specifies a binary file ion viono
+format that keeps GNSS TEC maps for some period of time.
+ 
+ 
+                2.55 IONOSPHERE_DATA_FILE_6TH:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_DATA_FILE_6TH: [NONE or file_name]
+ 
+ 
+   Keyword IONOSPHERE_DATA_FILE_7TH specifies a binary file ion viono
+format that keeps GNSS TEC maps for some period of time.
+ 
+ 
+                2.56 IONOSPHERE_DATA_FILE_8TH:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    IONOSPHERE_DATA_FILE_8TH: [NONE or file_name]
+ 
+ 
+   Keyword IONOSPHERE_DATA_FILE_8TH specifies a binary file ion viono
+format that keeps GNSS TEC maps for some period of time.
+ 
+ 
+                2.57 GRS_METRIC:
+                ~~~~~~~~~~~~~~~~
+ 
+    GRS_METRIC: metric_identifier
+ 
+ 
+  Keyword GRS_METRIC specifies the name of the metric tensor for the
+geocentric reference system.
+ 
+  metric_identifier -- Identifier of the metric tensor. Supported values:
+                       IAU2000  -- the metric tensor proposed by Kopeikin
+                                   and Brumberg. recommended by IAU2000
+                                   resolution.
+                       ITRF2000 -- the metric tensor which was implicitly
+                                   used in data analysis in the 20-th century,
+                                   which was used for constructing the
+                                   ITRF2000 catalogue of station positions
+                                   and velocities.
+ 
+  Comment: recommendation of IERS2003 is contradictory: in one place
+the authors of Conventions claimed that they compliant with the IAU2000
+recommendation, at another place they propose formulae based on ITRF2000
+metric.
+ 
+                2.58 TROP_AXOF_COUPLING:
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    TROP_AXOF_COUPLING: usage_flag
+ 
+ 
+   The keyword TROP_AXOF_COUPLING specifies whether to compute contribution to
+delay due to coupling of the troposphere path delay and antenna axis offsets.
+By another words TROP_AXOF_COUPLING takes into account additional troposphere
+path delay due to motion of the reference point.
+ 
+   usage_flag -- the flag. Supported values:
+                 YES -- to compute contribution due to coupling of the
+                        troposphere path delay and antenna axis offsets.
+                  NO -- not to compute contribution due to this coupling.
+ 
+ 
+                2.59 TROP_GEOMETRIC_COUPLING:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    TROP_GEOMETRIC_COUPLING: usage_flag
+ 
+ 
+   The keyword  TROP_GEOMETRIC_COUPLING  specifies whether to compute the
+contribution to delay due to coupling of the troposphere path delay and
+geometric delay.
+ 
+   usage_flag -- the flag. Supported values:
+                 YES -- to compute contribution due to coupling of the
+                        troposphere path delay and geometric delay.
+                  NO -- not to compute contribution due to this coupling.
+ 
+                2.60 PARALLACTIC_ANGLE:
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    PARALLACTIC_ANGLE: usage_flag
+ 
+ 
+   The keyword  PARALLACTIC_ANGLE  specifies whether to compute the
+contribution to phase delay and phase delay rate due to the parallactic
+angle. NB: the contribution of the parallactic angle to group delay is zero.
+ 
+ 
+   usage_flag -- the flag. Supported values:
+                 YES -- to compute contribution to phase delay due
+                        parallactic angle
+                  NO -- not to compute contribution due to parallactic angle.
+ 
+ 
+                2.61 GALACTIC_ABERRATION:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    GALACTIC_ABERRATION: usage_flag
+ 
+ 
+   The keyword  GALACTIC_ABERRATION specifies whether to compute the
+contribution to delay caused by the galactic aberration.
+ 
+   usage_flag -- the flag. Supported values:
+                 YES -- to compute contribution to phase delay due
+                        parallactic angle
+                  NO -- not to compute contribution due to parallactic angle.
+ 
+ 
+                2.62 GEOM_EXPR_FAR_ZONE:
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    GEOM_EXPR_FAR_ZONE: model_name
+ 
+ 
+   The keyword  GEOM_EXPR_FAR_ZONE specifies the name of the expression for
+geometric delay in far zone (larger than 10 pc) in vacuum based on general
+relativity.
+ 
+   model_name -- the name of the expression. Supported values:
+                 KS_1999 -- expression Kopeikin and Schaefer, 1999
+                 PK_2001 -- expression Petrov and Kopeikin, 2001 (recommended)
+ 
+ 
+                2.63 GEOM_EXPR_NEAR_ZONE:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    GEOM_EXPR_NEAR_ZONE: model_name
+ 
+ 
+   The keyword  GEOM_EXPR_NEAR_ZONE specifies the name of the expression for
+geometric delay in the near zone (from Earth's satellite to 10 pc) in
+vacuum based on general relativity.
+ 
+   model_name -- the name of the expression. Supported values:
+                 LIGHT_TIME -- iterative solution of the light equation
+ 
+ 
+                2.64 SOURCE_STRUCTURE:
+                ~~~~~~~~~~~~~~~~~~~~~~
+ 
+    SOURCE_STRUCTURE: control_file_name
+ 
+ 
+   The keyword  SOURCE_STRUCTURE specifies the control file for modeling
+contribution to delay due to source structure.
+ 
+   control_file_name -- the name of the control file or
+                        NO -- contribution to delay due to source structure
+                              will not be computed.
+                        This option is currently being tested.
+ 
+ 
+                2.65 DOPPLER_EXPR:
+                ~~~~~~~~~~~~~~~~~~
+ 
+    DOPPLER_EXPR: model_name
+ 
+ 
+   The keyword  DOPPLER_EXPR specifies the name of the expression for
+computation of the Doppler frequency shift for an object within the
+Solar system based on general relativity.
+ 
+                2.66 DELAY_RATE:
+                ~~~~~~~~~~~~~~~~
+ 
+    DELAY_RATE: YES or NONE
+ 
+ 
+   The keyword  DELAY_RATE specifies whether to compute delay rate.
+If DELAY_RATE is NONE computation runs faster.
+ 
+   YES -- to compute delay rate using analytical expressions.
+ 
+   NO  -- not to compute delay rate.

@@ -1,0 +1,266 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *  C-shell program for configuration of pima. It creates the Makefile. *
+# *                                                                      *
+# *  ###  31-JAN-2011   configure  v1.10 (c)  L. Petrov 03-MAR-2019 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv PIMA_VERSION         "20250107"
+#
+setenv GVH_VERSION_MIN      "20220327"
+setenv PETOOLS_VERSION_MIN  "20241115"
+setenv NERS_VERSION_MIN     "20210824"
+setenv SPC_VERSION_MIN      "20241125"
+setenv VTD_VERSION_MIN      "20241125"
+setenv FOURPACK_VERSION_MIN "20200501"
+setenv PIMA_PREFIX          /opt
+setenv PIMA_ROOT           `dirname $0`
+if ( $PIMA_ROOT == '.' )    setenv PIMA_ROOT `pwd`
+setenv PETOOLS_PREFIX       /opt
+setenv VTD_PREFIX           /opt
+setenv GVH_PREFIX           /opt
+setenv FOURPACK_PREFIX      /opt
+setenv CFITSIO_PREFIX       /opt
+setenv SPC_PREFIX           /opt
+setenv NERS_PREFIX          /opt
+setenv PIMA_PSOLVE_DIR      /opt
+setenv PIMA_DIFMAP_DIR      /opt
+setenv PIMA_NOOPT           "NO"
+setenv PIMA_CURL_DIR        "-lcurl"
+setenv PIMA_SHARE_DIR       /opt
+setenv PIMA_WITHOUT_PYTHON  "NO"
+setenv PIMA_WITHOUT_SOLVE   "NO"
+setenv PIMA_WITHOUT_DIFMAP  "NO"
+setenv PIMA_EXP_DIR         "/vlbi"
+setenv PIMA_FITS_DIR        ""
+setenv PIMA_SCRATCH_DIR     ""
+setenv CONF_LOG             ${PIMA_ROOT}/temp/conf.log
+setenv BUILD_LOG            ${PIMA_ROOT}/temp/build.log
+setenv pima_debug            0
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+if ( -f temp/conf.log != 0 ) then
+     cp temp/conf.log temp/old_conf.log 
+endif
+echo "pima config  $date_stamp  on  $host_name" >&! temp/conf.log
+echo "$0 $argv" >> temp/conf.log
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_prefix > 0 ) then
+          setenv pima_debug 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv PIMA_NOOPT "YES"
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv PIMA_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_PREFIX "$str"
+          set find_option = 1
+     endif
+#
+     set match_gvh=`echo $arg | awk '{print index ($1,"--with-gvh")}'`
+     if ( $match_gvh > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv GVH_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-vtd")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv VTD_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv NERS_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-spd_client")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,19)}'`
+	  setenv SPC_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_fast_fft=`echo $arg | awk '{print index ($1,"--with-fourpack")}'`
+     if ( $match_fast_fft > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,17)}'`
+	  setenv FOURPACK_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_cfitsio=`echo $arg | awk '{print index ($1,"--with-cfitsio")}'`
+     if ( $match_cfitsio > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv CFITSIO_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_mk5_dir=`echo $arg | awk '{print index ($1,"--with-solve")}'`
+     if ( $match_mk5_dir > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,14)}'`
+	  setenv PIMA_PSOLVE_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_scratch=`echo $arg | awk '{print index ($1,"--without-solve")}'`
+     if ( $match_scratch > 0 ) then
+	  setenv PIMA_WITHOUT_SOLVE "YES"
+          set find_option  = 1
+     endif
+#
+     set match_difmap_dir=`echo $arg | awk '{print index ($1,"--with-difmap")}'`
+     if ( $match_difmap_dir > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,15)}'`
+	  setenv PIMA_DIFMAP_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_without_difmap=`echo $arg | awk '{print index ($1,"--without-difmap")}'`
+     if ( $match_without_difmap > 0 ) then
+	  setenv PIMA_DIFMAP_DIR ""
+          PIMA_WITHOUT_DIFMAP = "YES"
+          set find_option  = 1
+     endif
+#
+     set match_difmap_dir=`echo $arg | awk '{print index ($1,"--with-curl")}'`
+     if ( $match_difmap_dir > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv PIMA_CURL_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_difmap_dir=`echo $arg | awk '{print index ($1,"--without-curl")}'`
+     if ( $match_difmap_dir > 0 ) then
+	  setenv PIMA_CURL_DIR ""
+          set find_option  = 1
+     endif
+#
+     set match_scratch=`echo $arg | awk '{print index ($1,"--without-python")}'`
+     if ( $match_scratch > 0 ) then
+	  setenv PIMA_WITHOUT_PYTHON "YES"
+          set find_option  = 1
+     endif
+#
+     set match_fits=`echo $arg | awk '{print index ($1,"--pima-fits")}'`
+     if ( $match_fits > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv PIMA_FITS_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_scratch=`echo $arg | awk '{print index ($1,"--pima-scratch")}'`
+     if ( $match_scratch > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv PIMA_SCRATCH_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set share_dir=`echo $arg | awk '{print index ($1,"--stable-share")}'`
+     if ( $share_dir > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv PIMA_SHARE_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_pima_exp_dir=`echo $arg | awk '{print index ($1,"--pima-exp-dir")}'`
+     if ( $match_pima_exp_dir > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv PIMA_EXP_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $PIMA_ROOT/doc/pima_configure.txt
+          set find_option = 1
+          if ( -f temp/old_conf.log != 0 ) then
+               cp temp/old_conf.log temp/conf.log 
+          endif
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "pima: $PIMA_VERSION"
+          set find_option = 1
+          if ( -f temp/old_conf.log != 0 ) then
+               cp temp/old_conf.log temp/conf.log 
+          endif
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+          if ( -f temp/old_conf.log != 0 ) then
+               cp temp/old_conf.log temp/conf.log 
+          endif
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+if ( $PIMA_FITS_DIR == "" ) then
+     echo "fits directory was not specitied. Please use option --pima_fits=[directory_name]"
+     echo "Error in configuration."
+     if ( -f temp/old_conf.log != 0 ) then
+           cp temp/old_conf.log temp/conf.log 
+     endif
+     exit 1
+endif
+if ( $PIMA_SCRATCH_DIR == "" ) then
+     echo "pima scratch directory was not specitied. Please use option --pima_scratch=[directory_name]"
+     echo "Error in configuration."
+     if ( -f temp/old_conf.log != 0 ) then
+           cp temp/old_conf.log temp/conf.log 
+     endif
+     exit 1
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+if ( $pima_debug == 0 ) then
+     support/config.csh | tee -a temp/conf.log
+     set config_status = $status
+  else
+     setenv                    | tee -a temp/conf.log
+     csh -x support/config.csh | tee -a temp/conf.log
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed." | tee -a temp/conf.log
+     echo "Now run gmake"               | tee -a temp/conf.log
+     exit 0
+  else
+     echo "Error in configuration."     | tee -a temp/conf.log
+     exit $config_status
+endif

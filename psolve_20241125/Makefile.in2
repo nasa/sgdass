@@ -1,0 +1,467 @@
+build:	
+	@echo "Building psolve started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`       |& tee > $(BUILD_LOG)
+	@echo " "                                                                                   |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/libs/newlib; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/libs/fclib;  source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/libs/ftlib;  source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/libs/curlib; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/libs/cutil;  source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/libs/b3d;    source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC) |& tee  -a $(BUILD_LOG)
+#
+	cd  $(SOLVE_ROOT)/progs/solve/psolve_reset ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/enter        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/slveb        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/accor        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/adder        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/alen         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/basfe        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/bclok        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/chpart       ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/copyq        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/corel        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/corrn        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/covp         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/globl        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/hausr        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/mdlpl        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/flopt        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/slend        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/slveb        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/solve_inq    ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/stoprun      ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/setfl        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/uptdb        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/getdb        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/norml        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/optin        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/reway        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+#
+	cd  $(SOLVE_ROOT)/progs/solve/proc         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/arcpe        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/back         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/cres         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/adjst        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/elim         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/repa         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/gamb         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/pamb         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/progs/solve/batch        ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+#
+	cd  $(SOLVE_ROOT)/utils/cable_part         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/corel_export       ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/edc_transfer       ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/eopkal             ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/eop_alignment      ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/erm_to_eop         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/get_apriori_eop    ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/getpar             ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/gps_iono           ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/har_pos            ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/heo_cov            ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/opa                ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/ploser             ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/procpar            ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/read_cgm           ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/read_crl           ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/redoc              ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/samb               ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/simobs             ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/simul              ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/smon               ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/spl_pos            ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/spool_bite         ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/src_alignment      ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/suppress_cgm       ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  $(SOLVE_ROOT)/utils/usermcal           ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+#
+	-chmod g+rw temp/psolve
+	-chmod g+rw temp/conf.log
+	-chmod g+rw temp/build.log
+	@echo " "                                                                               |& tee  -a $(BUILD_LOG)
+	@echo "Building psolve finihsed at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`  |& tee  -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+devu:
+	cd  $(SOLVE_ROOT)/utils/$(PSOLVE_DEVU_PROG) ; source $(SOLVE_ROOT)/support/solve_vars; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cp -pv bin/`echo $(PSOLVE_DEVU_PROG)`  $(SOLVE_PREFIX)/psolve/bin/`echo $(PSOLVE_DEVU_PROG)`
+	-chmod g+rwx,o+rx $(SOLVE_PREFIX)/psolve/bin/`echo $(PSOLVE_DEVU_PROG)`
+
+devs:
+	cd  $(SOLVE_ROOT)/utils/$(PSOLVE_DEVS_PROG); source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cp -pv bin/`echo $(PSOLVE_DEVS_PROG)`  $(SOLVE_PREFIX)/psolve/bin/`echo $(PSOLVE_DEVS_PROG)`
+	-chmod g+rwx,o+rx $(SOLVE_PREFIX)/psolve/bin/`echo $(PSOLVE_DEVS_PROG)`
+
+procpar: 
+	cd  $(SOLVE_ROOT)/utils/procpar ; source $(SOLVE_ROOT)/support/solve_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+
+.PHONY: install
+install:
+	if ( -d $(SOLVE_PREFIX)                 == 0 ) mkdir -p $(SOLVE_PREFIX)
+	if ( -d $(SOLVE_PREFIX)/psolve          == 0 ) mkdir    $(SOLVE_PREFIX)/psolve
+	if ( -d $(SOLVE_PREFIX)/psolve/bin      == 0 ) mkdir    $(SOLVE_PREFIX)/psolve/bin
+	if ( -d $(SOLVE_PREFIX)/psolve/doc      == 0 ) mkdir    $(SOLVE_PREFIX)/psolve/doc
+	if ( -d $(SOLVE_PREFIX)/psolve/libs     == 0 ) mkdir    $(SOLVE_PREFIX)/psolve/libs
+	if ( -d $(SOLVE_PREFIX)/psolve/share    == 0 ) mkdir    $(SOLVE_PREFIX)/psolve/share
+	if ( -d $(SOLVE_PREFIX)/psolve/include  == 0 ) mkdir    $(SOLVE_PREFIX)/psolve/include
+	if ( -d $(SOLVE_SAVE_DATA)              == 0 ) mkdir -p $(SOLVE_SAVE_DATA)
+	if ( -d $(SOLVE_SAVE_DATA)/master_dir   == 0 ) mkdir    $(SOLVE_SAVE_DATA)/master_dir
+	if ( -d $(SOLVE_SCRATCH_DATA)           == 0 ) mkdir -p $(SOLVE_SCRATCH_DATA)
+	if ( -d $(SOLVE_SCRATCH_DATA)/work_dir  == 0 ) mkdir    $(SOLVE_SCRATCH_DATA)/work_dir
+	if ( -d $(SOLVE_SCRATCH_DATA)/spool_dir == 0 ) mkdir    $(SOLVE_SCRATCH_DATA)/spool_dir
+	if ( -d $(SOLVE_SCRATCH_DATA)/cgm_dir   == 0 ) mkdir    $(SOLVE_SCRATCH_DATA)/cgm_dir
+#
+	cp $(SOLVE_ROOT)/bin/solve_inq           $(SOLVE_PREFIX)/bin/solve_inq
+	cp $(SOLVE_ROOT)/bin/psolve_reset        $(SOLVE_PREFIX)/psolve/bin/psolve_reset
+	cp $(SOLVE_ROOT)/bin/enter               $(SOLVE_PREFIX)/psolve/bin/enter
+	cp $(SOLVE_ROOT)/bin/ACCOR               $(SOLVE_PREFIX)/psolve/bin/ACCOR
+	cp $(SOLVE_ROOT)/bin/ADDER               $(SOLVE_PREFIX)/psolve/bin/ADDER
+	cp $(SOLVE_ROOT)/bin/ALEN                $(SOLVE_PREFIX)/psolve/bin/ALEN
+	cp $(SOLVE_ROOT)/bin/BASFE               $(SOLVE_PREFIX)/psolve/bin/BASFE
+	cp $(SOLVE_ROOT)/bin/BCLOK               $(SOLVE_PREFIX)/psolve/bin/BCLOK
+	cp $(SOLVE_ROOT)/bin/CHPART              $(SOLVE_PREFIX)/psolve/bin/CHPART
+	cp $(SOLVE_ROOT)/bin/COPYQ               $(SOLVE_PREFIX)/psolve/bin/COPYQ
+	cp $(SOLVE_ROOT)/bin/COREL               $(SOLVE_PREFIX)/psolve/bin/COREL
+	cp $(SOLVE_ROOT)/bin/CORRN               $(SOLVE_PREFIX)/psolve/bin/CORRN
+	cp $(SOLVE_ROOT)/bin/COVP                $(SOLVE_PREFIX)/psolve/bin/COVP
+	cp $(SOLVE_ROOT)/bin/GLOBL               $(SOLVE_PREFIX)/psolve/bin/GLOBL
+	cp $(SOLVE_ROOT)/bin/HAUSR               $(SOLVE_PREFIX)/psolve/bin/HAUSR
+	cp $(SOLVE_ROOT)/bin/MDLPL               $(SOLVE_PREFIX)/psolve/bin/MDLPL
+	cp $(SOLVE_ROOT)/bin/FLOPT               $(SOLVE_PREFIX)/psolve/bin/FLOPT
+	cp $(SOLVE_ROOT)/bin/SLEND               $(SOLVE_PREFIX)/psolve/bin/SLEND
+	cp $(SOLVE_ROOT)/bin/SLVEB               $(SOLVE_PREFIX)/psolve/bin/SLVEB
+	cp $(SOLVE_ROOT)/bin/stoprun             $(SOLVE_PREFIX)/psolve/bin/stoprun
+	cp $(SOLVE_ROOT)/bin/SETFL               $(SOLVE_PREFIX)/psolve/bin/SETFL
+	cp $(SOLVE_ROOT)/bin/UPTDB               $(SOLVE_PREFIX)/psolve/bin/UPTDB
+	cp $(SOLVE_ROOT)/bin/GETDB               $(SOLVE_PREFIX)/psolve/bin/GETDB
+	cp $(SOLVE_ROOT)/bin/NORML               $(SOLVE_PREFIX)/psolve/bin/NORML
+	cp $(SOLVE_ROOT)/bin/OPTIN               $(SOLVE_PREFIX)/psolve/bin/OPTIN
+	cp $(SOLVE_ROOT)/bin/REWAY               $(SOLVE_PREFIX)/psolve/bin/REWAY
+	cp $(SOLVE_ROOT)/bin/PROC                $(SOLVE_PREFIX)/psolve/bin/PROC
+	cp $(SOLVE_ROOT)/bin/tb3d                $(SOLVE_PREFIX)/psolve/bin/tb3d
+	cp $(SOLVE_ROOT)/bin/tb1b3d              $(SOLVE_PREFIX)/psolve/bin/tb1b3d
+	cp $(SOLVE_ROOT)/bin/ARCPE               $(SOLVE_PREFIX)/psolve/bin/ARCPE
+	cp $(SOLVE_ROOT)/bin/BACK                $(SOLVE_PREFIX)/psolve/bin/BACK
+	cp $(SOLVE_ROOT)/bin/CRES                $(SOLVE_PREFIX)/psolve/bin/CRES
+	cp $(SOLVE_ROOT)/bin/ADJST               $(SOLVE_PREFIX)/psolve/bin/ADJST
+	cp $(SOLVE_ROOT)/bin/ELIM                $(SOLVE_PREFIX)/psolve/bin/ELIM
+	cp $(SOLVE_ROOT)/bin/REPA                $(SOLVE_PREFIX)/psolve/bin/REPA
+	cp $(SOLVE_ROOT)/bin/REPAB               $(SOLVE_PREFIX)/psolve/bin/REPAB
+	cp $(SOLVE_ROOT)/bin/GAMB                $(SOLVE_PREFIX)/psolve/bin/GAMB
+	cp $(SOLVE_ROOT)/bin/PAMB                $(SOLVE_PREFIX)/psolve/bin/PAMB
+	cp $(SOLVE_ROOT)/bin/paru                $(SOLVE_PREFIX)/psolve/bin/paru
+	cp $(SOLVE_ROOT)/bin/BATCH               $(SOLVE_PREFIX)/psolve/bin/BATCH
+	cp $(SOLVE_ROOT)/temp/psolve             $(SOLVE_PREFIX)/psolve/bin/psolve
+#
+	cp $(SOLVE_ROOT)/bin/CABLE_PART          $(SOLVE_PREFIX)/psolve/bin/CABLE_PART
+	cp $(SOLVE_ROOT)/bin/GPS_IONO            $(SOLVE_PREFIX)/psolve/bin/GPS_IONO
+	cp $(SOLVE_ROOT)/bin/USERMCAL            $(SOLVE_PREFIX)/psolve/bin/USERMCAL
+	cp $(SOLVE_ROOT)/bin/corel_export        $(SOLVE_PREFIX)/psolve/bin/corel_export
+	cp $(SOLVE_ROOT)/bin/edc_transfer        $(SOLVE_PREFIX)/psolve/bin/edc_transfer
+	cp $(SOLVE_ROOT)/bin/getpar              $(SOLVE_PREFIX)/psolve/bin/getpar
+	cp $(SOLVE_ROOT)/bin/eop_alignment       $(SOLVE_PREFIX)/psolve/bin/eop_alignment
+	cp $(SOLVE_ROOT)/bin/eopkal              $(SOLVE_PREFIX)/psolve/bin/eopkal
+	cp $(SOLVE_ROOT)/bin/erm_to_eop          $(SOLVE_PREFIX)/psolve/bin/erm_to_eop
+	cp $(SOLVE_ROOT)/bin/get_apriori_eop     $(SOLVE_PREFIX)/psolve/bin/get_apriori_eop
+	cp $(SOLVE_ROOT)/bin/har_pos             $(SOLVE_PREFIX)/psolve/bin/har_pos
+	cp $(SOLVE_ROOT)/bin/heo_cov             $(SOLVE_PREFIX)/psolve/bin/heo_cov
+	cp $(SOLVE_ROOT)/bin/opa                 $(SOLVE_PREFIX)/psolve/bin/opa
+	cp $(SOLVE_ROOT)/bin/ploser              $(SOLVE_PREFIX)/psolve/bin/ploser
+	cp $(SOLVE_ROOT)/bin/read_cgm            $(SOLVE_PREFIX)/psolve/bin/read_cgm
+	cp $(SOLVE_ROOT)/bin/read_crl            $(SOLVE_PREFIX)/psolve/bin/read_crl
+	cp $(SOLVE_ROOT)/bin/redoc               $(SOLVE_PREFIX)/psolve/bin/redoc
+	cp $(SOLVE_ROOT)/bin/samb                $(SOLVE_PREFIX)/psolve/bin/samb
+	cp $(SOLVE_ROOT)/bin/simobs              $(SOLVE_PREFIX)/psolve/bin/simobs
+	cp $(SOLVE_ROOT)/bin/simul               $(SOLVE_PREFIX)/psolve/bin/simul
+	cp $(SOLVE_ROOT)/bin/smon                $(SOLVE_PREFIX)/psolve/bin/smon
+	cp $(SOLVE_ROOT)/bin/spl_pos             $(SOLVE_PREFIX)/psolve/bin/spl_pos
+	cp $(SOLVE_ROOT)/bin/spool_bite          $(SOLVE_PREFIX)/psolve/bin/spool_bite
+	cp $(SOLVE_ROOT)/bin/src_alignment       $(SOLVE_PREFIX)/psolve/bin/src_alignment
+	cp $(SOLVE_ROOT)/bin/suppress_cgm        $(SOLVE_PREFIX)/psolve/bin/suppress_cgm
+#
+	cp $(SOLVE_ROOT)/bin/axof_update         $(SOLVE_PREFIX)/psolve/bin/axof_update
+	cp $(SOLVE_ROOT)/bin/bas_spline          $(SOLVE_PREFIX)/psolve/bin/bas_spline
+	cp $(SOLVE_ROOT)/bin/basplo              $(SOLVE_PREFIX)/psolve/bin/basplo
+	cp $(SOLVE_ROOT)/bin/basrep              $(SOLVE_PREFIX)/psolve/bin/basrep
+	cp $(SOLVE_ROOT)/bin/bsp_plot            $(SOLVE_PREFIX)/psolve/bin/bsp_plot
+	cp $(SOLVE_ROOT)/bin/c04_to_erp          $(SOLVE_PREFIX)/psolve/bin/c04_to_erp
+	cp $(SOLVE_ROOT)/bin/check_bnames        $(SOLVE_PREFIX)/psolve/bin/check_bnames
+	cp $(SOLVE_ROOT)/bin/check_jnames        $(SOLVE_PREFIX)/psolve/bin/check_jnames
+	cp $(SOLVE_ROOT)/bin/c04_to_erp          $(SOLVE_PREFIX)/psolve/bin/c04_to_erp
+	cp $(SOLVE_ROOT)/bin/dif_c04_usno        $(SOLVE_PREFIX)/psolve/bin/dif_c04_usno
+	cp $(SOLVE_ROOT)/bin/dif_eop             $(SOLVE_PREFIX)/psolve/bin/dif_eop
+	cp $(SOLVE_ROOT)/bin/dif_eop_ext         $(SOLVE_PREFIX)/psolve/bin/dif_eop_ext
+	cp $(SOLVE_ROOT)/bin/dif_erm             $(SOLVE_PREFIX)/psolve/bin/dif_erm
+	cp $(SOLVE_ROOT)/bin/dif_erp_c04         $(SOLVE_PREFIX)/psolve/bin/dif_erp_c04
+	cp $(SOLVE_ROOT)/bin/dif_polu_c04        $(SOLVE_PREFIX)/psolve/bin/dif_polu_c04
+	cp $(SOLVE_ROOT)/bin/eob_to_eops         $(SOLVE_PREFIX)/psolve/bin/eob_to_eops
+	cp $(SOLVE_ROOT)/bin/eob_to_erp          $(SOLVE_PREFIX)/psolve/bin/eob_to_erp
+	cp $(SOLVE_ROOT)/bin/eops_to_eob         $(SOLVE_PREFIX)/psolve/bin/eops_to_eob
+	cp $(SOLVE_ROOT)/bin/find_badeop         $(SOLVE_PREFIX)/psolve/bin/find_badeop
+	cp $(SOLVE_ROOT)/bin/find_badnut         $(SOLVE_PREFIX)/psolve/bin/find_badnut
+	cp $(SOLVE_ROOT)/bin/remove_badeop       $(SOLVE_PREFIX)/psolve/bin/remove_badeop       
+	cp $(SOLVE_ROOT)/bin/local_cat           $(SOLVE_PREFIX)/psolve/bin/local_cat
+	cp $(SOLVE_ROOT)/bin/smooth_eop          $(SOLVE_PREFIX)/psolve/bin/smooth_eop
+	cp $(SOLVE_ROOT)/bin/sort_eob            $(SOLVE_PREFIX)/psolve/bin/sort_eob
+	cp $(SOLVE_ROOT)/bin/sou_list            $(SOLVE_PREFIX)/psolve/bin/sou_list
+	cp $(SOLVE_ROOT)/bin/src_stat            $(SOLVE_PREFIX)/psolve/bin/src_stat
+	cp $(SOLVE_ROOT)/bin/up_sitmod           $(SOLVE_PREFIX)/psolve/bin/up_sitmod
+	cp $(SOLVE_ROOT)/bin/up_velmod           $(SOLVE_PREFIX)/psolve/bin/up_velmod
+	cp $(SOLVE_ROOT)/bin/update_apr_cat      $(SOLVE_PREFIX)/psolve/bin/update_apr_cat
+	cp $(SOLVE_ROOT)/bin/update_source_names $(SOLVE_PREFIX)/psolve/bin/update_source_names
+#
+	cp $(SOLVE_ROOT)/support/solve_vars  $(SOLVE_PREFIX)/psolve/bin/solve_vars
+#
+	cp $(SOLVE_ROOT)/include/addcm.i       $(SOLVE_PREFIX)/psolve/include/addcm.i
+	cp $(SOLVE_ROOT)/include/ba2cm.i       $(SOLVE_PREFIX)/psolve/include/ba2cm.i
+	cp $(SOLVE_ROOT)/include/baccm.i       $(SOLVE_PREFIX)/psolve/include/baccm.i
+	cp $(SOLVE_ROOT)/include/cals.i        $(SOLVE_PREFIX)/psolve/include/cals.i
+	cp $(SOLVE_ROOT)/include/cnstr.i       $(SOLVE_PREFIX)/psolve/include/cnstr.i
+	cp $(SOLVE_ROOT)/include/corel.i       $(SOLVE_PREFIX)/psolve/include/corel.i
+	cp $(SOLVE_ROOT)/include/crecm.i       $(SOLVE_PREFIX)/psolve/include/crecm.i
+	cp $(SOLVE_ROOT)/include/curlib.i      $(SOLVE_PREFIX)/psolve/include/curlib.i
+	cp $(SOLVE_ROOT)/include/dcali.i       $(SOLVE_PREFIX)/psolve/include/dcali.i
+	cp $(SOLVE_ROOT)/include/dcont.i       $(SOLVE_PREFIX)/psolve/include/dcont.i
+	cp $(SOLVE_ROOT)/include/dmapp.i       $(SOLVE_PREFIX)/psolve/include/dmapp.i
+	cp $(SOLVE_ROOT)/include/equmem.i      $(SOLVE_PREFIX)/psolve/include/equmem.i
+	cp $(SOLVE_ROOT)/include/fast.i        $(SOLVE_PREFIX)/psolve/include/fast.i
+	cp $(SOLVE_ROOT)/include/fclib.i       $(SOLVE_PREFIX)/psolve/include/fclib.i
+	cp $(SOLVE_ROOT)/include/flyby.i       $(SOLVE_PREFIX)/psolve/include/flyby.i
+	cp $(SOLVE_ROOT)/include/gamb.i        $(SOLVE_PREFIX)/psolve/include/gamb.i
+	cp $(SOLVE_ROOT)/include/general.i     $(SOLVE_PREFIX)/psolve/include/general.i
+	cp $(SOLVE_ROOT)/include/getpar.i      $(SOLVE_PREFIX)/psolve/include/getpar.i
+	cp $(SOLVE_ROOT)/include/glbc2.i       $(SOLVE_PREFIX)/psolve/include/glbc2.i
+	cp $(SOLVE_ROOT)/include/glbc3.i       $(SOLVE_PREFIX)/psolve/include/glbc3.i
+	cp $(SOLVE_ROOT)/include/glbc4.i       $(SOLVE_PREFIX)/psolve/include/glbc4.i
+	cp $(SOLVE_ROOT)/include/glbcm.i       $(SOLVE_PREFIX)/psolve/include/glbcm.i
+	cp $(SOLVE_ROOT)/include/glbp.i        $(SOLVE_PREFIX)/psolve/include/glbp.i
+	cp $(SOLVE_ROOT)/include/glocm.i       $(SOLVE_PREFIX)/psolve/include/glocm.i
+	cp $(SOLVE_ROOT)/include/iono_vmod.i   $(SOLVE_PREFIX)/psolve/include/iono_vmod.i
+	cp $(SOLVE_ROOT)/include/iono_solve.i  $(SOLVE_PREFIX)/psolve/include/iono_solve.i
+	cp $(SOLVE_ROOT)/include/mdlcm.i       $(SOLVE_PREFIX)/psolve/include/mdlcm.i
+	cp $(SOLVE_ROOT)/include/nwcom.i       $(SOLVE_PREFIX)/psolve/include/nwcom.i
+	cp $(SOLVE_ROOT)/include/oborg.i       $(SOLVE_PREFIX)/psolve/include/oborg.i
+	cp $(SOLVE_ROOT)/include/obors.i       $(SOLVE_PREFIX)/psolve/include/obors.i
+	cp $(SOLVE_ROOT)/include/obser.i       $(SOLVE_PREFIX)/psolve/include/obser.i
+	cp $(SOLVE_ROOT)/include/pamb.i        $(SOLVE_PREFIX)/psolve/include/pamb.i
+	cp $(SOLVE_ROOT)/include/param.i       $(SOLVE_PREFIX)/psolve/include/param.i
+	cp $(SOLVE_ROOT)/include/plist.i       $(SOLVE_PREFIX)/psolve/include/plist.i
+	cp $(SOLVE_ROOT)/include/precm.i       $(SOLVE_PREFIX)/psolve/include/precm.i
+	cp $(SOLVE_ROOT)/include/prfil.i       $(SOLVE_PREFIX)/psolve/include/prfil.i
+	cp $(SOLVE_ROOT)/include/pvers.i       $(SOLVE_PREFIX)/psolve/include/pvers.i
+	cp $(SOLVE_ROOT)/include/repa.i        $(SOLVE_PREFIX)/psolve/include/repa.i
+	cp $(SOLVE_ROOT)/include/resfl.i       $(SOLVE_PREFIX)/psolve/include/resfl.i
+	cp $(SOLVE_ROOT)/include/reway.i       $(SOLVE_PREFIX)/psolve/include/reway.i
+	cp $(SOLVE_ROOT)/include/simul.i       $(SOLVE_PREFIX)/psolve/include/simul.i
+	cp $(SOLVE_ROOT)/include/socom.i       $(SOLVE_PREFIX)/psolve/include/socom.i
+	cp $(SOLVE_ROOT)/include/socom_plus.i  $(SOLVE_PREFIX)/psolve/include/socom_plus.i
+	cp $(SOLVE_ROOT)/include/solve.i       $(SOLVE_PREFIX)/psolve/include/solve.i
+	cp $(SOLVE_ROOT)/include/solve_paths.i $(SOLVE_PREFIX)/psolve/include/solve_paths.i
+#
+	cp $(SOLVE_ROOT)/libs/cutil/cutil.a    $(SOLVE_PREFIX)/psolve/libs/cutil.a
+	cp $(SOLVE_ROOT)/libs/curlib/curlib.a  $(SOLVE_PREFIX)/psolve/libs/curlib.a
+	cp $(SOLVE_ROOT)/libs/cutil/cutil.a    $(SOLVE_PREFIX)/psolve/libs/cutil.a
+	cp $(SOLVE_ROOT)/libs/ftlib/ftlib.a    $(SOLVE_PREFIX)/psolve/libs/ftlib.a
+	cp $(SOLVE_ROOT)/libs/b3d/b3d.a        $(SOLVE_PREFIX)/psolve/libs/b3d.a
+	cp $(SOLVE_ROOT)/libs/newlib/newlib.a  $(SOLVE_PREFIX)/psolve/libs/newlib.a
+	cp $(SOLVE_ROOT)/libs/fclib/fclib.a    $(SOLVE_PREFIX)/psolve/libs/fclib.a
+#
+	if ( -d $(SOLVE_SAVE_DATA)        == 0 ) mkdir $(SOLVE_SAVE_DATA)
+	if ( -d $(SOLVE_GVF_DATA)         == 0 ) mkdir $(SOLVE_GVF_DATA)
+	if ( -d $(SOLVE_GVF_DATA)/obs     == 0 ) mkdir $(SOLVE_GVF_DATA)/obs
+	if ( -d $(SOLVE_GVF_DATA)/obs/db  == 0 ) mkdir $(SOLVE_GVF_DATA)/obs/db
+	if ( -d $(SOLVE_GVF_DATA)/obs/env == 0 ) mkdir $(SOLVE_GVF_DATA)/obs/env
+#
+	if ( -f $(SOLVE_SAVE_DATA)/flyby_mod_set == 0        ) cp $(SOLVE_ROOT)/share/flyby_mod_set        $(SOLVE_SAVE_DATA)/flyby_mod_set
+	if ( -f $(SOLVE_SAVE_DATA)/REPAB_template == 0       ) cp $(SOLVE_ROOT)/share/REPAB_template       $(SOLVE_SAVE_DATA)/REPAB_template
+	if ( -f $(SOLVE_SAVE_DATA)/SOLMOD == 0               ) cp $(SOLVE_ROOT)/share/SOLMOD               $(SOLVE_SAVE_DATA)/SOLMOD
+	if ( -f $(SOLVE_SAVE_DATA)/CORFIL == 0               ) cp $(SOLVE_ROOT)/share/CORFIL               $(SOLVE_SAVE_DATA)/CORFIL
+	if ( -f $(SOLVE_SAVE_DATA)/flyby_calibrations == 0   ) cp $(SOLVE_ROOT)/share/flyby_calibrations   $(SOLVE_SAVE_DATA)/flyby_calibrations
+	if ( -f $(SOLVE_SAVE_DATA)/repa_stat_template == 0   ) cp $(SOLVE_ROOT)/share/repa_stat_template   $(SOLVE_SAVE_DATA)/repa_stat_template
+	if ( -f $(SOLVE_SAVE_DATA)/repa_template == 0        ) cp $(SOLVE_ROOT)/share/repa_template        $(SOLVE_SAVE_DATA)/repa_template
+	if ( -f $(SOLVE_SAVE_DATA)/ECCDAT.ecc == 0           ) cp $(SOLVE_ROOT)/share/ECCDAT.ecc           $(SOLVE_SAVE_DATA)/ECCDAT.ecc
+	if ( -f $(SOLVE_SAVE_DATA)/CLOCK_PICK == 0           ) cp $(SOLVE_ROOT)/share/CLOCK_PICK           $(SOLVE_SAVE_DATA)/ECCDAT.ecc
+	if ( -f $(SOLVE_SAVE_DATA)/STATION_PICK == 0         ) cp $(SOLVE_ROOT)/share/STATION_PICK         $(SOLVE_SAVE_DATA)/ECCDAT.ecc
+	if ( -f $(SOLVE_SAVE_DATA)/letok == 0                ) cp $(SOLVE_ROOT)/share/letok                $(SOLVE_SAVE_DATA)/letok
+	if ( -f $(SOLVE_SAVE_DATA)/partial_calibrations == 0 ) cp $(SOLVE_ROOT)/share/partial_calibrations $(SOLVE_SAVE_DATA)/partial_calibrations
+	if ( -f $(SOLVE_SAVE_DATA)/sitpl.dat == 0            ) cp $(SOLVE_ROOT)/share/sitpl.dat            $(SOLVE_SAVE_DATA)/sitpl.dat
+	if ( -f $(SOLVE_SAVE_DATA)/solve_lite.vtd == 0       ) cp $(SOLVE_ROOT)/share/solve_lite.vtd       $(SOLVE_SAVE_DATA)/solve_lite.vtd
+	if ( -f $(SOLVE_SAVE_DATA)/solve.vtd == 0            ) cp $(SOLVE_ROOT)/share/solve.vtd            $(SOLVE_SAVE_DATA)/solve.vtd
+	if ( -f $(SOLVE_SAVE_DATA)/vcat.conf == 0            ) cp $(SOLVE_ROOT)/support/vcat.conf          $(SOLVE_SAVE_DATA)/vcat.conf
+
+	@echo $(SOLVE_VERS)       > $(SOLVE_SCRATCH_DATA)/work_dir/RELEASE_DATE
+	@echo $(SOLVE_VERS)       > $(SOLVE_SCRATCH_DATA)/work_dir/REVISION_DATE 
+	@cp $(SOLVE_ROOT)/doc/*     $(SOLVE_PREFIX)/psolve/doc/
+	@support/psolve_gen_db.csh  $(SOLVE_GVF_DATA) $(PSOLVE_ROOT) 
+
+	@echo "=== solve is installed. Please proceed to configuration. ==="
+
+.PHONY: doc
+doc: 
+	redoc doc/solve_guide_02.rdc  txt  doc/solve_guide_02.txt
+	redoc doc/solve_guide_02.rdc  html doc/solve_guide_02.html
+	redoc doc/solve_guide_03.rdc  txt  doc/solve_guide_03.txt
+	redoc doc/solve_guide_03.rdc  html doc/solve_guide_03.html
+	redoc doc/solve_guide_03.rdc  syn  doc/solve_guide_03.syn
+	redoc doc/eopkal_01.rdc       html doc/eopkal_01.html
+	redoc doc/eopkal_01.rdc       txt  doc/eopkal_01.txt
+	redoc doc/sima_01.rdc         html doc/sima_01.html
+	redoc doc/sima_01.rdc         txt  doc/sima_01.txt
+	redoc doc/ploser_01.rdc       html doc/ploser_01.html
+	redoc doc/ploser_01.rdc       txt  doc/ploser_01.txt
+	redoc doc/correlations.rdc    html doc/correlations.html
+	redoc doc/correlations.rdc    txt  doc/correlations.txt
+	redoc doc/eop_alignment.rdc   html doc/eop_alignment.html
+	redoc doc/eop_alignment.rdc   txt  doc/eop_alignment.txt
+	redoc doc/user_constraint.rdc html doc/user_constraint.html
+	redoc doc/user_constraint.rdc txt  doc/user_constraint.txt
+	redoc doc/repa_02.rdc         html doc/repa_02.html
+	redoc doc/repa_02.rdc         txt  doc/repa_02.txt
+	redoc doc/repa_01.rdc         html doc/repa_01.html
+	redoc doc/repa_01.rdc         txt  doc/repa_01.txt
+	redoc doc/get_apriori_eop.rdc html doc/get_apriori_eop.html
+	redoc doc/get_apriori_eop.rdc txt  doc/get_apriori_eop.txt
+	redoc doc/axof.rdc            html doc/axof.html
+	redoc doc/axof.rdc            txt  doc/axof.rxt
+	redoc doc/getpar_02.rdc       html doc/getpar_02.html
+	redoc doc/getpar_02.rdc       txt  doc/getpar_02.txt
+	redoc doc/sinex.rdc           html doc/sinex.html
+	redoc doc/sinex.rdc           txt  doc/sinex.txt
+
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "Solve guide 2"         --header-spacing 10 -q --minimum-font-size 12 --zoom 1.33 -s Letter -B 25. -T 25.0 -L 25. -R 25.0 solve_guide_02.html  solve_guide_02.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "Solve guide 3"         --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             solve_guide_03.html  solve_guide_03.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "eopkal guide"          --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             eopkal_01.html       eopkal_01.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide sima_01"         --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             sima_01.html         sima_01.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide ploser_01"       --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             ploser_01.html       ploser_01.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide correlations"    --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             correlations.html    correlations.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide eop_alignment"   --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             eop_alignment.html   eop_alignment.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide user_constraint" --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             user_constraint.html user_constraint.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide repa_02"         --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             repa_02.html         repa_02.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide get_apriori_eop" --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             get_apriori_eop.html get_apriori_eop.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide repa_01"         --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             repa_01.html         repa_01.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide axof"            --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             axof.html            axof.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide getpar_02"       --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             getpar_02.html       getpar_02.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "guide sinex"           --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0             sinex.html           sinex.pdf
+
+clean: 
+	cd  $(SOLVE_ROOT)/libs/newlib; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/libs/fclib;  source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/libs/ftlib;  source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/libs/curlib; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/libs/cutil;  source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/libs/b3d;    source $(SOLVE_ROOT)/support/solve_vars; make clean
+#
+	cd  $(SOLVE_ROOT)/progs/solve/psolve_reset ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/enter        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/slveb        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/accor        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/adder        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/alen         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/basfe        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/bclok        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/chpart       ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/copyq        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/corel        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/corrn        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/covp         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/globl        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/hausr        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/mdlpl        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/flopt        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/slend        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/slveb        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/solve_inq    ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/stoprun      ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/setfl        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/uptdb        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/getdb        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/norml        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/optin        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/reway        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+#
+	cd  $(SOLVE_ROOT)/progs/solve/proc         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/arcpe        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/back         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/cres         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/adjst        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/elim         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/repa         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/gamb         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/pamb         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/progs/solve/batch        ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+#
+	cd  $(SOLVE_ROOT)/utils/cable_part         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/corel_export       ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/edc_transfer       ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/eopkal             ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/erm_to_eop         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/eop_alignment      ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/get_apriori_eop    ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/getpar             ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/gps_iono           ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/har_pos            ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/heo_cov            ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/opa                ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/ploser             ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/procpar            ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/read_cgm           ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/read_crl           ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/redoc              ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/samb               ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/simobs             ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/simul              ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/smon               ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/spl_pos            ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/spool_bite         ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/src_alignment      ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/suppress_cgm       ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+	cd  $(SOLVE_ROOT)/utils/usermcal           ; source $(SOLVE_ROOT)/support/solve_vars; make clean
+#
+	@echo "=== solve is cleaned ==="
+#
+uninstall: 
+	if ( -d $(SOLVE_PREFIX)/psolve )        rm -fR $(SOLVE_PREFIX)/psolve
+	if ( -f $(SOLVE_PREFIX)/bin/solve_inq ) rm -fR $(SOLVE_PREFIX)/bin/solve_inq 
+	@echo "=== solve is uninstalled ==="
+
+distclean:	clean
+	./reconfigure -d > /tmp/solve_last_configure.txt
+	-chmod 666 /tmp/solve_last_configure.txt
+	if ( -f $(CONF_LOG)                     ) rm -f $(CONF_LOG)                         
+	if ( -f $(BUILD_LOG)                    ) rm -f $(BUILD_LOG)
+	if ( -f $(SOLVE_ROOT)/temp/psolve       ) rm $(SOLVE_ROOT)/temp/psolve
+	if ( -f $(SOLVE_ROOT)/support/vcat.conf ) rm $(SOLVE_ROOT)/support/vcat.conf    
+	if ( -f $(SOLVE_ROOT)/Makefile          ) rm $(SOLVE_ROOT)/Makefile 
+	@find progs/   -name "*.o*"     -exec rm {} \;
+	@find utils/   -name "*.o*"     -exec rm {} \;
+	@find support/ -name "*.o*"     -exec rm {} \;
+	@find progs/   -name "\#*"      -exec rm {} \;
+	@find utils/   -name "\#*"      -exec rm {} \;
+	@find doc/     -name "\#*"      -exec rm {} \;
+	@find support/ -name "\#*"      -exec rm {} \;
+	@find progs/   -name "*~"       -exec rm {} \;
+	@find utils/   -name "*~"       -exec rm {} \;
+	@find doc/     -name "*~"       -exec rm {} \;
+	@find support/ -name "*~"       -exec rm {} \;
+	@find ./       -name "*~"       -exec rm {} \;
+	@find ./       -name "*~"       -exec rm {} \;
+	@find temp/    -name "make*"    -exec rm {} \;
+	@find temp/    -name "psolve"   -exec rm {} \;
+	@find temp/    -name "conf.log" -exec rm {} \;
+	@support/purge $(PIMA_ROOT)/include
+	@support/purge $(PIMA_ROOT)/support
+	@support/purge $(PIMA_ROOT)
+	@echo "=== solve is distcleaned ==="
+#
+
+tar:	distclean
+	@if ( -f temp/conf.log ) rm temp/conf.log 
+	@if ( -f /tmp/psolve_${SOLVE_VERSION} ) rm -f /tmp/psolve_${SOLVE_VERSION}
+	cd ../; tar -cf - psolve_${SOLVE_VERSION} | \
+                lbzip2 -c > /tmp/psolve-$(SOLVE_VERSION).tar.bz2 
+	@cp /tmp/psolve-$(SOLVE_VERSION).tar.bz2 /astrogeo.org/psolve/
+	@cp INSTALL                              /astrogeo.org/psolve/INSTALL.txt
+	@cp README                               /astrogeo.org/psolve/README.txt
+	@sync
+	@ls -lrt /astrogeo.org/psolve/psolve-$(SOLVE_VERSION).tar.bz2  
+	@echo "tar-ball is copied to the solve web page at astrogeo.org"
+	@echo "========================================================"

@@ -1,0 +1,25 @@
+import os, inspect
+#  Sur_sked configuration
+#
+#  @T@
+#
+sur_sked_prefix   = "@sur_sked_prefix@"
+ners_prefix       = "@ners_prefix@"
+sur_sked_stp      = "@stp_dir@"
+sur_sked_prc      = "@prc_dir@"
+sur_sked_seq      = "@seq_dir@"
+sur_sked_exp      = "@exp_dir@"
+sur_sked_freq_def = "@share_dir@/freq_def.txt"
+#
+import sys
+if ( not ners_prefix+"/bin"        in sys.path ): sys.path.append(ners_prefix+"/bin")
+if ( not sur_sked_prefix+"/bin"    in sys.path ): sys.path.append(sur_sked_prefix+"/bin")
+if ( not sur_sked_prefix+"/script" in sys.path ): sys.path.append(sur_sked_prefix+"/script")
+#
+if ( "SUR_SKED_STP"      in os.environ ): sur_sked_stp      = os.environ["SUR_SKED_STP"]
+if ( "SUR_SKED_PRC"      in os.environ ): sur_sked_prc      = os.environ["SUR_SKED_PRC"]
+if ( "SUR_SKED_SEQ"      in os.environ ): sur_sked_seq      = os.environ["SUR_SKED_SEQ"]
+if ( "SUR_SKED_FREQ_DEF" in os.environ ): sur_sked_freq_def = os.environ["SUR_SKED_FREQ_DEF"]
+def HERE():
+    line = "%s Line %s:" % ( os.path.basename( inspect.getframeinfo(inspect.currentframe().f_back).filename ), \
+                             inspect.getframeinfo(inspect.currentframe().f_back).lineno )

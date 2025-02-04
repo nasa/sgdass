@@ -1,0 +1,128 @@
+    Label:   spd_3d_bin  1.0 version of 2009.01.07 LE
+    Purpose: Contains results of computing slanted path delay of 
+             radiowave propagation through the 3D, continuous,
+             heterogeneous atmosphere. The path delay is defined as 
+             a difference in the propagation time between the emitter 
+             and the receiver through the atmosphere and the propagation 
+             between these two points along the geodetic line in 
+             vacuum. The path delay is computed for a set of stations for
+             a certain epoch at a regular grid of azimuths and elevations.
+             The grid is equidistant at azimuths and non-equidistant at 
+             elevation angles. The values of path delays computed on 
+             a grid can be used for computing coefficients of the 
+             interpolating functions that enable us to compute
+             the path delay in an arbitrary direction.
+    Example: http://astrogeo.org/spd_data/spd_6h_bin
+    Type:    Binary, little endian.
+
+    File in spd_3d_bin format consists of rescords of 7 types.
+    The type of each reacord is determined by the first 
+    8-characters ling field prefix. The records follow in this order:
+
+    LAB_REC -- Defines offsets, sizes and the number of other records
+    TIM_REC -- Defines the start time, stop time of DEL records 
+               and the time step 
+    STA_REC -- Defines station coordinates
+    MOD_REC -- Defines the slanted path model type and the model description
+    MET_REC -- Defines escription of the numerical weather model used 
+               for computation
+    ELV_REC -- Defines the elevation axis for the 2D grid of
+               path delays through the neutral atmosphere
+    AZM_REC -- Defines the azimuth axis for the 2D grid of
+               path delays through the neutral atmosphere
+    DEL_REC -- Defines the surface pressure surface temperature
+               and the 2D grid of path delay through the neutral atmosphere.
+
+    The file contains only onre record of the fesit seven tpyes and usually 
+    more than one record of DEL_REC. Each DEL_REC corresponds to one time 
+    epoch. The time epochs follow each other in chronological order with
+    the same time step, without gaps. The time epoch of a specific DEL_REC
+    is determined bny its index in the file, time of the first epoch, and
+    the time step.
+
+    Decription of individual records:
+
+    LAB__REC 
+           CHARACTER  PREF*8     ! prefix: LAB_REC 
+           INTEGER*8  LEN        ! length of the LAB_REC record
+           CHARACTER  FMT_LAB*40 ! Format label
+           INTEGER*8  OFF_TIM    ! Offset of the TIM record in bytes wrt the file beginning      
+           INTEGER*8  OFF_STA    ! Offset of the STA record in bytes wrt the file beginning      
+           INTEGER*8  OFF_MOD    ! Offset of the MOD record in bytes wrt the file beginning      
+           INTEGER*8  OFF_MET    ! Offset of the MET record in bytes wrt the file beginning      
+           INTEGER*8  OFF_ELV    ! Offset of the ELV record in bytes wrt the file beginning      
+           INTEGER*8  OFF_AZM    ! Offset of the AZM record in bytes wrt the file beginning      
+           INTEGER*8  OFF_DEL    ! Offset of the first TIM record in bytes wrt the file beginning
+           INTEGER*8  LEN_TIM    ! Length of the TIM record in bytes
+           INTEGER*8  LEN_STA    ! Length of the STA record in bytes
+           INTEGER*8  LEN_MOD    ! Length of the MOD record in bytes
+           INTEGER*8  LEN_MET    ! Length of the MET record in bytes
+           INTEGER*8  LEN_ELV    ! Length of the ELV record in bytes
+           INTEGER*8  LEN_AZM    ! Length of the AZM record in bytes
+           INTEGER*8  LEN_DEL    ! Length of the DEL record in bytes
+	   INTEGER*4  TOT_NUM_DEL ! The number of DEL records
+
+    TIM_REC
+           CHARACTER  PREF*8     ! prefix: TIM_REC 
+           INTEGER*8  NREC       ! The number of time epochs the file contains
+	   INTEGER*4  MJD_BEG    ! Modified Julian date at TAI     ! Modified Julian date at TAI for the first epochfor the first epoch
+	   INTEGER*4  MJD_END    ! Modified Julian date at TAI for the last epoch
+	   REAL*8     TAI_BEG    ! TAI for the first epoch. Units: seconds
+	   REAL*8     TAI_END    ! TAI for the last epoch. Untis: seconds
+	   REAL*8     TIM_STEP   ! Time step. Units: seconds
+
+    STA_REC
+           CHARACTER  PREF*8     ! prefix: STA_REC 
+           CHARACTER  NAME*8     ! Station name. NB: the station name does NOT necessarily
+                                 ! controrms any convention. It may be an arbitrary combination
+                                 ! of characters. Parser software should NOT assign any meaning 
+                                 ! to this field
+	   REAL*8     COO_CFS(3) ! Station coordinates in the crust-fixed coordinate system.
+                                 ! Units: meters
+	   REAL*8     PHI_GCN    ! Station geocentric latitude. Units: radians
+	   REAL*8     PHI_GDT    ! Station geodetic latitude. Units: radians
+	   REAL*8     HEI_ELL    ! Station height above the reference ellipsoid. Units: meters
+	   REAL*8     HEI_GEOID  ! Station height above the geoid. Units: meters
+
+    MOD_REC
+           CHARACTER  PREF*8     ! prefix: MOD_REC 
+	   INTEGER*4  N_RFR      ! Number of components of the model
+	   CHARACTER  SPD_TYPE(3)*8 ! Array of names of the slanted path delay model components.
+                                    ! Supported values: 
+                                    !   total    -- Total path delay through the neutral atmosphere
+                                    !   hydro    -- Path delay through the hydrostatic component of the atmosphere
+                                    !   non-hydr -- Path delay through the non-hydrostatic component of the atmosphere
+                                    !   undef    -- Undefined, not used
+           INTEGER*8  N_LINES       ! Number of lines with model description
+           INTEGER*8  LEN_TEXT      ! Length of the text with model description in bytes
+           CHARACTER*1, POINTER :: TEXT(:) ! Text with the model description as a string that contains \n characters 
+                                           ! of length LEN_TEXT + 1 (the last character is \0)
+    MET_REC
+           CHARACTER  PREF*8     ! Prefix: STA_REC 
+           INTEGER*8  N_LINES    ! Number of lines with numerical weather model description
+           INTEGER*8  LEN_TEXT   ! Length of the text with teh numerical model description in bytes
+           CHARACTER*1, POINTER :: TEXT(:) ! Text with the numerical weather model description as 
+                                           ! a string that contains \n characters of length 
+                                           ! LEN_TEXT + 1 (the last character is \0)
+    ELV_REC
+           CHARACTER  PREF*8     ! Prefix: ELV_REC
+	   INTEGER*8  N_EL	 ! The number of elements along the elevation angle axis
+	   REAL*4,    POINTER ::   ELEV(:) ! Array of elevation angles. Dimension: N_EL, 
+                                           ! Units: radians. Array is sorted in decreasing order.
+    AZM_REC
+           CHARACTER  PREF*8
+	   INTEGER*8  N_AZ       ! The number of elements along the azimuth axis
+	   REAL*4,    POINTER ::   AZIM(:) ! Array of azimuth angles. Dimension: N_AZ, 
+                                           ! Units: radians. Array is sorted in increasing order.
+    DEL_REC
+           CHARACTER  PREF*8
+	   REAL*4     SURF_PRES  ! Surface pressure. Units: Pascal
+	   REAL*4     SURF_TEMP  ! Surface air temperature. Units: Kelvin
+	   REAL*4,    POINTER ::   DEL(:,:,:) ! 3D array of slanted path delay components. 
+                                              ! The first  axis runs over elevation angles.
+                                              ! Dimension: N_EL defined in ELV_REC
+                                              ! The second axis runs over azimuth angles
+                                              ! Dimension: N_AZ defined in AZM_REC
+                                              ! The third  runs over components.
+                                              ! Dimension: N_RFR defined in MOD_REC
+                                              ! Units: seconds

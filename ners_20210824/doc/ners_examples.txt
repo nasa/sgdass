@@ -1,0 +1,63 @@
+There are five example programs at both Fortran and C languages
+These programs should be linked against ners library. 
+In additopm, there are four examples of python wrappers. 
+
+These examples can be compiled with a make file that has the following lines
+.c.o:
+	gcc -I${NERS_PREFIX}/include -c -o $*.o $*.c
+
+.f.o:
+	gfortran -ffree-form -I$(NERS_PREFIX)/include -c -o $*.o $*.f # for gfortran
+
+.f.o:
+	ifort -FR -fpp -I$(NERS_PREFIX)/include -c -o $*.o $*.f # for intel ifort compiler
+
+The following line should be added to the command line for linking: -L$(NERS_PREFIX)/lib -lners
+Here NERS_PREFIX is the prefix where NERS library is installed.
+
+
+1) Test program NERS_FORTRAN_EXAMPLE_01 demonstrates how to compute   
+   the Earth rotation matrix that transform a vector in the rotating  
+   terrestrial coordinate system fixed with respect the Earth's       
+   crust to the inertial non-rotating celestial coordinate system.    
+
+2) Test program NERS_FORTRAN_EXAMPLE_02 demonstrates how to compute   
+   TAI time that corresponds to UTC time tag. The UTC time tag        
+   is expressed as sum of days elapsed since 2000.01.01_00:00:00 UTC  
+   epoch multiplied by 86400.0 and the UTC time tag with respect to   
+   the midnight.                                                      
+
+3) Test program NERS_FORTRAN_EXAMPLE_03 demonstrates how to compute   
+   the time series of 8 Earth orientation parameters with a specified 
+   time step for the specified time range and print them as a table.  
+   NB: the units in the table are not SI units, but the non-standard  
+   units historically used in the past.                               
+
+4) Test program NERS_FORTRAN_EXAMPLE_04 demonstrates how to learn     
+   the range of dates for which the NERS provides the Earth           
+   orientation parameters. NERS routine NERS_INQ returns either two   
+   ranges:  1) the range of the EOP forecast which is based on        
+   measurements, also called the data assimilation range and          
+   2) the long-term prediction that is based in extrapolation, or     
+   the time epoch of the forecast generation. It is assumed that the  
+   EOP long-term prediction will be used only in a case of either     
+   NERS servers failure or a failure of the NERS client to establish  
+   Internet connection.                                               
+
+5) Test program NERS_FORTRAN_EXAMPLE_05 demonstrates how to compute
+   elevation anglem, azimuth and hour anlge at a given moment of time
+   for a station with given Carthezian coodinates observing a source
+   with given right asension and declination.
+
+Test programs ners_c_example_01.c, ners_c_example_02.c, ners_c_example_03.c, 
+ners_c_example_04.c, and ners_c_example_05.c are analogous to Fortran code.
+
+Python wrappers:
+
+a) ners_python_get_eop_example.py
+
+b) ners_python_utc_to_tai_example.py
+
+c) ners_python_azelha_example.py
+
+d) ners_python_transform_example.py

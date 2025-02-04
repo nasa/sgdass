@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML lang="en">
+<HEAD>
+     <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+     <META NAME="GENERATOR" CONTENT="redoc" >
+    <TITLE> VLBI_AXIS_OFFSET  Format version of 2004.05.18 </TITLE>
+</HEAD>
+<BODY>
+    <CENTER><B><BIG> VLBI_AXIS_OFFSET  Format version of 2004.05.18 </BIG></B></CENTER>
+<HR SIZE="6">
+    <CENTER><I>   </I></CENTER>
+    <CENTER><I> Leonid Petrov </I></CENTER>
+    <CENTER><I>   </I></CENTER>
+<P>
+<CENTER><I><BIG> Abstract: </CENTER></I></BIG>
+ 
+<P><I><UL><FONT SIZE=2>
+ 
+ 
+   This document describes the format for a priori and a posteriori
+antenna axis offsets of VLBI stations.
+ 
+ 
+</FONT></I></UL><P>
+ 
+<CENTER><BIG><I> Table of contents: </CENTER></BIG></I>
+ 
+<DL>
+<P><DD> 1 &nbsp; <A HREF="#section1"> Format </A> </DD><P>
+</DL>
+ 
+<HR SIZE="2">
+ 
+<LISTING>
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section1"> </A> 1 &nbsp; Format
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+  File in VLBI_AXIS_OFFSET format consists of records of variable length
+in ASCII coding. The first and the last line of a valid file shuld have
+the format label
+ 
+VLBI_AXIS_OFFSET  Format version of 2004.05.18
+ 
+  A line which starts from character # is considered as comment and
+ignored by parser.
+ 
+Field  1:8   A8    IVS station name
+Field 11:17  F7.4  Apriori offset according to the project
+                   or local measurements in meters
+Field 22:28  F7.4  Aposteriori offset in meters
+Field 33:38  F6.4  Formal uncertainty of the estimate from VLBI solution
+                   in meters. This field is blank if antenna axis offset
+                   was not adjusted for this station
+Field 40:79  A40   Comment
+</FONT></LISTING>
+<P>
+<HR SIZE="6">
+  <BR>
+Questions and comments about this guide should be sent to: <BR>
+  <BR>
+Leonid Petrov ( sgdass@lists.nasa.gov ) <BR>
+  <BR>
+<EM>
+     Last update: 2006.10.03
+</EM>
+ 
+</BODY>
+</HTML>

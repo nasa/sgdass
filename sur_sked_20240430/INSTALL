@@ -1,0 +1,62 @@
+sur_sked installation.
+
+1) Install dependencies:
+
+ 1) tcsh       6.10      or newer Should be symlinked to csh
+ 2) gcc        4.7       or newer
+ 3) gfortran   4.7       or newer
+ 4) ncurses    5.7       or newer     https://ftp.gnu.org/gnu/ncurses
+ 5) readline   6.0       or newer     https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+ 6) cfitsio    3.26      or newer  *  http://heasarc.gsfc.nasa.gov/fitsio/fitsio.html
+ 7) atlas      3.10.0    or newer     http://math-atlas.sourceforge.net
+ 8) petools    20171120  or newer     http://astrogeo.org/petools
+ 9) spd_client 20171027  or newer     http://astrogeo.org/spd
+10) ners       20170512  or newer     http://earthrotation.net/ners
+11) vtd        20171230  or newer     http://astrogeo.org/vtd
+
+See http://astrogeo.org/pima  for a detailed explanation how to 
+install dependencies. PIMA and Post-Solve have the same dependencies.
+
+*) patch is required.
+
+2) configure
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$HOME]
+
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+Required Packages:
+  --with-PACKAGE[=ARG]       use PACKAGE [ARG=yes]
+  --without-PACKAGE          do not use PACKAGE (same as --with-PACKAGE=no)
+
+  --with-petools=[dir name]      specifies directory names where package petools
+                                 is installed (default  /opt)
+
+  --with-vtd=[dir name]          specifies directory names where package vtd
+                                 is installed (default: /opt )
+
+  --with-cfitsio=[dir name]      specifies directory names where package 
+                                 cfitsio is installed (default: /opt )
+
+  --sur_sked-slew_dir=[dir name] specifies name of the directory with 
+                                 where files with slewing information about
+                                 VLBI stations is kept. Default:
+                                 $prefix/share/sur_sked/
+
+3) make
+
+4) make install
+
+Leonid Petrov
+2017.12.31_22:50:38

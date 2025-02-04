@@ -1,0 +1,189 @@
+   Specifications of BSPSIT format version of 2005.03.14
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   BSPSIT format is for describing site displacements which can
+be represented by an expansion with the B-spline basis.
+The expansion is defined on a expanded non-descending sequence of knots. 
+The first and the last knot has multiplicity 1-degree, other knots 
+are represented as simple. The sequence may have several consecutive 
+knots with equal epochs, except the first and the last. The number of knots
+with the same epochs should not exceed the degree of the B-spline basis.
+The expanded sequence of knots has indexes 
+1-degree, 1-degree+1, ... 0, 1, 2, ... N, N+1, N+2, ... N+degree,
+i.e. in the expanded sequence the first and the last knot are split 
+into the set of knots with the number of elements equal to the degree.
+
+   BSPSIT file provides the number of knots, the degree of the B-spline 
+ basis, apriori site position, time epochs of knots, estimates of 
+ B-spline coefficients, global site position, global site velocity
+ and elements of the covariance matrix between B-spline coefficients,
+ global site position, global site velocity.
+ 
+   A file in BSPSIT format consists of records of variable length in
+ASCII coding. The records are separated by a character with decimal
+code 13. The records of the following types are supported:
+ 
+ 1) Header record; (mandatory)
+ 2) Knot definition record; (mandatory)
+ 3) Degree definition records; (mandatory)
+ 4) Site definition records; (mandatory)
+ 5) Knot epoch definition records; (mandatory)
+ 6) B-spline coefficient records; (mandatory)
+ 7) Global position adjustment record; (optional)
+ 8) Global position velocity record; (optional)
+ 9) Covariance records; (optional)
+10) Trailer record. (mandatory)
+ 
+   Records which start from # character are considered as comments.
+ 
+ 
+1) A header record contains the string
+   "BSPSIT Format version of 2005.03.14"
+ 
+   The header record allows to distinguish the valid file in the
+   BSPSIT format from files in other formats.
+ 
+2) A knot definition record defines the total number of knots. 
+   The first and the last knot are assumed to have multiplicity
+   1-degree and each of them is counted as one knot. Multiple knots
+   inside the sequence are considered as different knots and counted
+   separately.
+ 
+Format of a K-record:
+---------------------
+ 
+Field  1:1   A1     -- Record ID. Should be letter K (decimal code 75)
+Field  3:6   I4     -- The number of knots
+ 
+3) A degree definition record defines the degree of the B-spline basis.
+   Degree should not be less than 0.
+ 
+Format of a D-record:
+---------------------
+ 
+Field  1:1   A1     -- Record ID. Should be letter D (decimal code 68)
+Field  3:6   I4     -- The degree of B-splint
+ 
+4) A site definition record defines the site identifier and site
+   coordinates in a crust-fixed reference frame. The file cannot
+   contain more than one definition of the same site.
+ 
+Format of an S-record:
+----------------------
+ 
+Field  1:1   A1     -- Record ID. Should be letter S (decimal code 83)
+Field  2:3   A2     -- Delimiters: blanks.
+Field  4:11  A8     -- 8-letter long site identifier. May contain
+                       any characters with decimal codes 32-255, but
+                       blanks are allowed only at the end of the site
+                       identifier. This site identifier should be
+                       unique among S-records. This field should not
+                       necessarily have a special meaning. Parsing
+                       software should not try to interpret it.
+field 12:13  a2     -- delimiters: blanks.
+Field 14:26  F13.4  -- Site X coordinate in a crust fixed reference
+                       frame. Units: meters.
+field 27:27  a1     -- delimiters: blanks.
+Field 28:40  F13.4  -- Site Y coordinate in a crust fixed reference
+                       frame. Units: meters.
+field 41:41  a1     -- delimiters: blanks.
+Field 42:54  F13.4  -- Site Z coordinate in a crust fixed reference
+                       frame. Units: meters.
+field 55:56  a2     -- delimiters: blanks.
+Field 57:64  F8.4   -- Site geocentric latitude, positive to north,
+                       in degrees. This field is for information only.
+                       Parsing software MUST ignore it.
+field 65:65  a1     -- delimiters: blanks.
+Field 66:73  F8.4   -- Site longitude, positive towards east,
+                       in degrees. This field is for information only.
+                       Parsing software MUST ignore it.
+field 74:74  a1     -- delimiters: blanks.
+Field 75:80  F6.1   -- Site height above the reference ellipsoid
+                       in meters. This field is for information only.
+                       Parsing software MUST ignore it.
+ 
+5) A knot definition record defines the epoch in TAI of the knot.
+   E-record should follow in the time order.
+ 
+Format of a E-record:
+---------------------
+ 
+Field  1:1   A1     -- Record ID. Should be letter K (decimal code 69)
+Field  3:6   I4     -- knot index in the range [1,N_KNOT], where N_KNOT is 
+                       the total number of knots defined in the K-record
+Field 9:31   A23    -- The time epoch of the knot in YYYY.MM.DD-hh:mm:ss.sss
+                       format. The time tag is in TAI.
+ 
+6) A B-spline coefficient record defines the values of B-spline coefficients
+   for X, Y and Z components of site positions for a specified knot. 
+   The knot index should be within [1-degree, KNOT-1] range, where KNOT 
+   is the total number of knots defined in the K-record.
+   B-records should follow in the order of increasing knot indexes.
+ 
+Format of a B-record:
+---------------------
+ 
+Field  1:1    A1     -- Record ID. Should be letter B (decimal code 69)
+Field  3:6    I4     -- Knot index in the range [1-degree,N_KNOT-1], where 
+                        N_KNOT is the total number of knots defined in 
+                        the K-record.
+Field  9:18   F10.6  -- The value of B-spline coefficient for this knot,
+                        for X coordinate. Units: m.
+Field 21:30   F10.6  -- The value of B-spline coefficient for this knot, 
+                        for Y coordinate. Units: m.
+Field 33:42   F10.6  -- The value of B-spline coefficient for this knot,
+                        for Z coordinate. Units: m.
+
+7) Global position adjustment record defines adjustment to a site 
+   position which affects all epochs within the time range of 
+   time epochs.
+ 
+Format of a P-record:
+---------------------
+ 
+Field  1:1   A1     -- Record ID. Should be letter V (decimal code 69)
+Field  9:18  F10.6  -- Adjustment to X-coordinate. Units: m.
+Field 21:30  F10.6  -- Adjustment to Y-coordinate. Units: m.
+Field 33:42  F10.6  -- Adjustment to Z-coordinate. Units: m.
+Field 45:67  A23    -- Reference time epoch for adjustment of site 
+                       position in YYYY.MM.DD-hh:mm:ss.sss
+ 
+8) Global velocity adjustment record defines adjustment to a site 
+   velocity which affects all epochs within the time range of 
+   time epochs.
+ 
+Format of a V-record:
+---------------------
+ 
+Field  1:1   A1     -- Record ID. Should be letter V (decimal code 86)
+Field  9:18  F10.6  -- Adjustment to X component of velocity. Units: mm/yr
+Field 21:30  F10.6  -- Adjustment to Y component of velocity. Units: mm/yr
+Field 33:42  F10.6  -- Adjustment to Z component of velocity. Units: mm/yr
+ 
+9) Covariance record determines element of the covariance matrix between
+   the extended vector of estimates of B-spline coefficients. The extended 
+   vector of estimates contains the global site position adjustment 
+   with index of N_KNOT and the global site velocity with index of N_KNOT+1
+   C-records may be missing for some elements of the covariance matrix.
+   Missing elements are considered to be zeroes.
+ 
+Format of a C-record:
+---------------------
+ 
+Field  1:1   A1     -- Record ID. Should be letter C (decimal code 67)
+Field  3:6   I4     -- Extended knot index of the first element of the 
+                       adjustment vector. Runs in the range 
+                       [1-degree,N_KNOT+1]. Index N_KNOT corresponds to 
+                       global site position adjustment. Index N_KNOT+1
+                       corresponds to global site velocity.
+Field  8:8   A1     -- Component index of the first element of the 
+                       adjustment vector. One of X, Y or Z.
+Field 11:14  I4     -- Extended knot index of the second element of the 
+                       adjustment vector. Runs in the range 
+                       [1-degree,N_KNOT+1]. Index N_KNOT corresponds to 
+                       global site position adjustment. Index N_KNOT+1
+                       corresponds to global site velocity.
+Field 16:16  A1     -- Component index of the second element of the 
+                       adjustment vector. One of X, Y or Z.
+Field 19:36  F18.12 -- Covariance between two elements of the extended 
+                       vector of estimates.

@@ -1,0 +1,100 @@
+                Synopsis of VTD control file language ( 2023.03.14 )
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
+    LEAP_SECOND: [leap_second_file_name or NERS]
+    DE403_EPHEMERIDES: planetary_ephemerides_file_name
+    STATION_DESCRIPTION: station_description_file_name
+    STATION_COORDINATES: station_coordinates_file_name
+    STATION_VELOCITIES: station_velocities_file_name
+    STATION_ECCENTRICITIES: station_eccentricities_file_name
+    SOURCE_COORDINATES: source_coordinates_file_name
+    SOURCE_COORDINATES: [source_coordinates_file_name_2 or NONE]
+    SOURCE_COORDINATES: [source_coordinates_file_name_3 or NONE]
+    SOURCE_COORDINATES: [source_coordinates_file_name_4 or NONE]
+    SOURCE_PRLX_PRP_MOTION: [source_parallax_and_proper_motion_file or NONE]
+    AEM_FILE: aem_file_name or NONE
+    ERM_FILE: erm_file_name or NONE
+    HARMONIC_EOP_FILE: [NONE or NERS or file_name]
+    EOP_SERIES: [NONE or NERS or ners_configuration_file or
+                 earth_orientation_parameters_file]
+    EOP_TIME_SCALE: time_scale_of_eop_table
+    UZT_MODEL: [NONE or NERS or DICKMAN1993 or DICKMAN1993_PRINCIPAL
+                or DICKMAN1993_SHORT]
+    UZT_USE: [NONE or NERS or ADD or INTERPOLATE or SUBTRACT]
+    EROT_COMPAT: [NONE or NERS or CALC10 or NO_SANG]
+    PRECESSION_EXPRESSION: precession_model_name
+    NUTATION_EXPANSION: nutation_expansion_name
+    GEODESIC_NUTATION usage_flag
+    SOLID_EARTH_TIDES_ZERO_FREQ: Love_model_name
+    SOLID_EARTH_TIDES_2ND_DEGREE: Love_model_name
+    SOLID_EARTH_TIDES_3RD_DEGREE: Love_model_name
+    POLE_TIDE_MODEL: Love_model_name
+    MEAN_POLE_MODEL: expression_id
+    POSVAR_FIL: model_index  model_file_name
+    POSVAR_MOD: model_index  model_type
+    POSVAR_INT: model_index  interpolation_type
+    POSVAR_USE: model_index  usage_flag
+    AXIS_OFFSET_MODEL: usage_flag
+    ANTENNA_DEFORMATIONS_FILE: [NONE or agd_file]
+    ANTENNA_THERMAL_EXPANSION NONE or [MODEL antenna_information_file
+                                       INSITU [NONE or insitu_file]
+                                       TEMPERATURE [METEO or SPD]
+                                       LAG time_in_seconds]
+    METEO_DEF model
+    HYDROSTATIC_ZENITH_DELAY: [NONE or  zenith_delay_path_model_name or
+                                    MMF mmd_model_file ]
+    WET_ZENITH_DELAY: [NONE or zenith_delay_path_model_name]
+    HYDROSTATIC_MAPPING_FUNCTION: [NONE or mapping_function_name
+                                        or [MMF mmf_mode file] ]
+    WET_MAPPING_FUNCTION: [NONE or mapping_function_name
+                                or [MMF mmf_mode file]
+                                or external_delay_dir ]
+    ATMOSPHERE_TILT_PARTIALS: tilt_partials
+    SLANT_PATH_DELAY [SPD_3D or NONE]
+   ATMOSPHERE_PATH_DELAY_PARTIAL [NONE or NMW or NMF or IONO_350 or IONO_400 or
+                                  IONO_450 or IONO_500 or TOTAL_SCALE or
+                                  TOTAL_WATER or
+                                  (GAUSSIAN_LAYER [layer_height layer_fwhm])]
+    EXTERNAL_DELAY_DIR [NONE or directory_name]
+    EXTERNAL_DELAY_DIR_2ND [NONE or directory_name]
+    EXTERNAL_DELAY_DIR_3RD [NONE or directory_name]
+    EXTERNAL_DELAY_DIR_4TG [NONE or directory_name]
+    IONOSPHERE_MODEL: [NONE or GNSS_TEC_MAP]
+    IONOSPHERE_SCALE: value
+    SOU_DEBIAS_MODEL: [None value]
+    IONOSPHERE_DATA_FILE: [NONE or file name]
+    IONOSPHERE_DATA_FILE_2ND: [NONE or file_name]
+    IONOSPHERE_DATA_FILE_3RD: [NONE or file_name]
+    IONOSPHERE_DATA_FILE_4TH: [NONE or file_name]
+    IONOSPHERE_DATA_FILE_5TH: [NONE or file_name]
+    IONOSPHERE_DATA_FILE_6TH: [NONE or file_name]
+    IONOSPHERE_DATA_FILE_8TH: [NONE or file_name]
+    GRS_METRIC: metric_identifier
+    TROP_AXOF_COUPLING: usage_flag
+    TROP_GEOMETRIC_COUPLING: usage_flag
+    PARALLACTIC_ANGLE: usage_flag
+    GALACTIC_ABERRATION: usage_flag
+    GEOM_EXPR_FAR_ZONE: model_name
+    GEOM_EXPR_NEAR_ZONE: model_name
+    SOURCE_STRUCTURE: control_file_name
+    DOPPLER_EXPR: model_name
+    DELAY_RATE: YES or NONE
+ 
+Notation:
+~~~~~~~~~
+ 
+   The symbols used to describe the control file's syntax have the following
+meanings:
+ 
+     {}  - contents of braces are optional
+     []  - contents of brackets are mandatory
+ 
+ 
+Contact:
+~~~~~~~~
+ 
+Questions and comments about this guide should be directed to:
+ 
+Leonid Petrov ( http://astrogeo.org/petrov )
+ 

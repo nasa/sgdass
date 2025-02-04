@@ -1,0 +1,18 @@
+SPD_3D_CONF   Format version of 2014.09.11
+#
+#  Last updated 2014.12.22_22:52:27
+#
+REFR_EXPR:   W532_Ciddor_1996
+SPD_ALG:     straight
+FIL_STA:     /progs/spd_20141218/spd/share/surface_0.25x0.25deg_grid.inp
+FIL_GEOID:   /progs/malo_20140930/share/EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      /progs/malo_20140930/share/geosfpit_height_above_geoid.heb
+FIL_LEAPSEC: /vlbi/vtd_data/leapsec.dat
+FIL_DESC:    spd_desc.txt
+FIL_COMM:    spd_comm.txt
+FIL_FMT:     ephedisp_format.txt
+TIM_INTRV:   10800.0D0
+N_EL:        1
+N_AZ:        1
+SOB_ALG:     none
+N_FRQ:       0

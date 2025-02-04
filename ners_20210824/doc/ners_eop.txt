@@ -1,0 +1,262 @@
+Program ners_eop retrieves the Earth orientation parameters at the 
+specified epoch from the Network Earth Rotation Service (NERS)
+server and prints it in stdout.
+
+Usage:
+
+   ners_eop [-h] [-c config_file] [-p param] [-t date] [-v verb_level] [-r] [-i]
+
+-h              prints this file and exits.
+
+-c config_file  name of the ners client configuration file.
+                If omitted, ners_eop will first search $HOME/.ners_config
+                and if it does not find, uses file share/ners.config
+                in ners installation directory.
+
+-p param        EOP parameter(s) to  be displayed. Supported parameters:
+
+                deps     nutation in obliquity (rad)
+
+                depsr    rate of change of nutation in obliquity (rad/s)
+
+                dpsi     nutation in longitude (rad)
+
+                dpsir    rate of change of nutation in longitude (rad/s)
+
+                e1       Euler  angle with respect to axis 1 (rad)                                   
+
+                e1r      first  time derivative of the Euler angle with respect to axis 1 (rad/s)    
+
+                e1rr     second time derivative of the Euler angle with respect to axis 1 (rad/s**2)
+
+                e2       Euler  angle with respect to axis 2 (rad)                                   
+
+                e2r      first  time derivative of the Euler angle with respect to axis 2 (rad/s)    
+
+                e2rr     second time derivative of the Euler angle with respect to axis 2 (rad/s**2)
+
+                e3       Euler  angle with respect to axis 3 (rad)                                   
+
+                e3r      first  time derivative of the Euler angle with respect to axis 3 (rad/s)    
+
+                e3rr     second time derivative of the Euler angle with respect to axis 3 (rad/s**2)
+
+                e        three parameters:
+                           1: Euler  angle with respect to axis 1 (rad)
+                           2: Euler  angle with respect to axis 2 (rad)
+                           3: Euler  angle with respect to axis 3 (rad)
+
+                er       six parameters:
+                           1: Euler  angle with respect to axis 1 (rad)
+                           2: Euler  angle with respect to axis 2 (rad)
+                           3: Euler  angle with respect to axis 3 (rad)
+                           4: First  time derivative of the Euler angle with respect to axis 1 (rad/s)    
+                           5: First  time derivative of the Euler angle with respect to axis 2 (rad/s)    
+                           6: First  time derivative of the Euler angle with respect to axis 3 (rad/s)    
+
+                err       nine parameters:
+                           1: Euler  angle with respect to axis 1 (rad)
+                           2: Euler  angle with respect to axis 2 (rad)
+                           3: Euler  angle with respect to axis 3 (rad)
+                           4: First  time derivative of the Euler angle with respect to axis 1 (rad/s)    
+                           5: First  time derivative of the Euler angle with respect to axis 2 (rad/s)    
+                           6: First  time derivative of the Euler angle with respect to axis 3 (rad/s)    
+                           7: Second time derivative of the Euler angle with respect to axis 1 (rad/s)    
+                           8: Second time derivative of the Euler angle with respect to axis 2 (rad/s)    
+                           9: Second time derivative of the Euler angle with respect to axis 3 (rad/s)    
+
+                ezrr       nine parameters:
+                           1: Euler  angle with respect to axis 1 (rad)
+                           2: Euler  angle with respect to axis 2 (rad)
+                           3: Euler  angle with respect to axis 3 with the 
+! *                                  contribution of zonal tides removed (rad)
+                           4: First  time derivative of the Euler angle with respect to axis 1 (rad/s)    
+                           5: First  time derivative of the Euler angle with respect to axis 2 (rad/s)    
+                           6: First  time derivative of the Euler angle with respect to axis 3 
+                                     with the contribution of zonal tides removed (rad/s)    
+                           7: Second time derivative of the Euler angle with respect to axis 1 (rad/s**2)    
+                           8: Second time derivative of the Euler angle with respect to axis 2 (rad/s**2)    
+                           9: Second time derivative of the Euler angle with respect to axis 3 
+                                     with the contribution of zonal tides removed (rad/s**2)
+
+                eop3     three parameters:
+                               x   pole coordinate (arcsec)
+                               y   pole coordinate (arcsec)
+                               ut1 angle           (s)
+
+                eop3r    six parameters:
+                               x   pole coordinate (arcsec)
+                               y   pole coordinate (arcsec)
+                               ut1 angle           (s)
+                               rate of change of x   pole coordinate (arcsec/day)
+                               rate of change of y   pole coordinate (arsec/day)
+                               rate of change of ut1 angle           (s/day)
+
+                eop3zr   six parameters:
+                               x   pole coordinate (arcsec)
+                               y   pole coordinate (arcsec)
+                               ut1 angle with the contribution of zonal tides removed (s)
+                               rate of change of x   pole coordinate (arcsec/day)
+                               rate of change of y   pole coordinate (arsec/day)
+                               rate of change of ut1 angle with the contribution of zonal tides removed (s/day)
+
+                eops     eight parameters
+                               x   pole coordinate (arcsec)
+                               y   pole coordinate (arcsec)
+                               ut1 angle           (s)
+                               rate of change of x   pole coordinate (arcsec/day)
+                               rate of change of y   pole coordinate (arcsec/day)
+                               rate of change of ut1 angle           (s/day)
+                               dpsi nutation in longitude (arcsec)
+                               deps nutation in obliquity (arcsec)
+
+                eopzs     eight parameters
+                               x   pole coordinate (arcsec)
+                               y   pole coordinate (arcsec)
+                               ut1 angle with the contribution of zonal tides removed  (s)
+                               rate of change of x   pole coordinate (arcsec/day)
+                               rate of change of y   pole coordinate (arcsec/day)
+                               rate of change of ut1 angle with the contribution of zonal tides removed (s/day)
+                               dpsi nutation in longitude (arcsec)
+                               deps nutation in obliquity (arcsec)
+
+                h1       the contribution of the residual harmonic variation with respect to axis 1 (rad)                              
+
+                h1r      the first  time derivative of the contribution of the residual harmonic variation with respect to axis 1 (rad/s)
+
+                h1rr     the second time derivative of the contribution of the residual harmonic variation with respect to axis 1 (rad/s**2)
+
+                h2       the contribution of the residual harmonic variation with respect to axis 2 (rad)                              
+
+                h2r      the first  time derivative of the contribution of the residual harmonic variation with respect to axis 2 (rad/s)
+
+                h2rr     the second time derivative of the contribution of the residual harmonic variation with respect to axis 2 (rad/s**2)
+
+                h3       the contribution of the residual harmonic variation with respect to axis 3 (rad)                              
+
+                h3r      the first  time derivative of the contribution of the residual harmonic variation with respect to axis 3 (rad/s)
+
+                h3rr     the second time derivative of the contribution of the residual harmonic variation with respect to axis 3 (rad/s**2)
+
+                heo      three parameters
+                               the contribution of the residual harmonic variation with respect to axis 1 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 2 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 3 (rad)
+
+                heorr    nine  parameters
+                               the contribution of the residual harmonic variation with respect to axis 1 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 2 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 3 (rad)
+                               the first  time derivative of the contribution of the residual harmonic variation with respect to axis 1 (rad/s)
+                               the first  time derivative of the contribution of the residual harmonic variation with respect to axis 2 (rad/s)
+                               the first  time derivative of the contribution of the residual harmonic variation with respect to axis 3 (rad/s)
+                               the second time derivative of the contribution of the residual harmonic variation with respect to axis 1 (rad/s**2)
+                               the second time derivative of the contribution of the residual harmonic variation with respect to axis 2 (rad/s**2)
+                               the second time derivative of the contribution of the residual harmonic variation with respect to axis 3 (rad/s**2)
+
+                lod      the length of day (s/day)
+
+                mat      nine  parameters:
+                               element (1,1) of the Earth rotation matrix (rad)
+                               element (2,1) of the Earth rotation matrix (rad)
+                               element (3,1) of the Earth rotation matrix (rad)
+                               element (1,2) of the Earth rotation matrix (rad)
+                               element (2,2) of the Earth rotation matrix (rad)
+                               element (3,2) of the Earth rotation matrix (rad)
+                               element (1,3) of the Earth rotation matrix (rad)
+                               element (2,3) of the Earth rotation matrix (rad)
+                               element (3,3) of the Earth rotation matrix (rad)
+
+                matall   twenty seven parameters
+                               element (1,1) of the Earth rotation matrix (rad)
+                               element (2,1) of the Earth rotation matrix (rad)
+                               element (3,1) of the Earth rotation matrix (rad)
+                               element (1,2) of the Earth rotation matrix (rad)
+                               element (2,2) of the Earth rotation matrix (rad)
+                               element (3,2) of the Earth rotation matrix (rad)
+                               element (1,3) of the Earth rotation matrix (rad)
+                               element (2,3) of the Earth rotation matrix (rad)
+                               element (3,3) of the Earth rotation matrix (rad)
+                               element (1,1) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (2,1) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (3,1) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (1,2) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (2,2) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (3,2) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (1,3) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (2,3) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (3,3) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (1,1) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (2,1) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (3,1) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (1,2) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (2,2) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (3,2) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (1,3) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (2,3) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (3,3) of the second derivative of the Earth rotation matrix (rad/s**2)
+
+                matr     nine parameters:
+                               element (1,1) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (2,1) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (3,1) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (1,2) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (2,2) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (3,2) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (1,3) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (2,3) of the first  derivative of the Earth rotation matrix (rad/s)
+                               element (3,3) of the first  derivative of the Earth rotation matrix (rad/s)
+
+                matrr
+                               element (1,1) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (2,1) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (3,1) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (1,2) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (2,2) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (3,2) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (1,3) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (2,3) of the second derivative of the Earth rotation matrix (rad/s**2)
+                               element (3,3) of the second derivative of the Earth rotation matrix (rad/s**2)
+
+                nut      two parameters:
+                              nutation in longitude (rad)
+                              nutation in obliquity (rad)
+
+                nutr     four parameters
+                              nutation in longitude (rad)
+                              nutation in obliquity (rad)
+                              rate of change of nutation in longitude (rad/s)
+                              rate of change of nutation in obliquity (rad/s)
+
+                ut1mtai  Angle UT1 minus TAI (s)
+
+                ut1rat   Rate of change of UT1 minus TAI (s/s)
+
+                xpol     X pole coordinate (rad)
+
+                xpolr    rate of change of X pole coordinate (rad/s)
+
+                ypol     Y pole coordinate (rad)
+
+                ypolr    rate of change of Y pole coordinate (rad/s)
+
+                Default parameter: ut1mtai
+
+-t date         Date on TAI time scale.
+                     Format: YYYY.MM.DD-hh:mm:ss.sssssss
+                Default epoch: current moment
+
+-v verb_level   verbosity level.
+
+                0 -- silent
+                1 -- normal verbosity
+                2 -- verbose output
+                3 -- debugging mode
+
+-r              returns the time range for which the EOPs are available
+  
+-i              Prints information from the header of the NERS message about
+                the name of the local file with NERS message, its format,
+                age, URL, date of generation; names of the models, their
+                versions; URLs of input EOP and AAM series, date of their
+                last modification.

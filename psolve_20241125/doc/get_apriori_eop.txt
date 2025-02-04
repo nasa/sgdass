@@ -1,0 +1,169 @@
+                         User manual to get_apriori_eop
+ 
+ 
+                                Leonid Petrov
+ 
+ 
+                                2005.04.01
+ 
+ 
+                                Abstract
+ 
+   Program  get_apriori_eop  is for creation a priori Earth orientation files
+which can be used as input for Calc and Solve
+ 
+ 
+Questions and comments about this guide should be sent to:
+ 
+Leonid Petrov ( sgdass@lists.nasa.gov )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ Overview
+ 
+ 
+2 ................ How to use
+ 
+ 
+3 ................ Configuration file
+ 
+   3.1 ........... Format of configuration file
+   3.2 ........... Example of configuration file
+ 
+________________________________________________________________________________
+ 
+        1 Overview
+        ==========
+ 
+   Program  GET_APRIORI_EOP  retrieves the file with apriori, either
+file finals.all from the United States Naval Observatory (USNO) or
+IERS C04 from the International Earth Rotation Service using
+program wget for automatic files retrieval via ftp. Optionaly,
+it downloads the second external EOP file which overwrites the values
+defiend in the first exteronal EOP file. Optionally, it finds the
+differences between the retrieved EOP series and the  EOP series in
+erp format used by Solve as the Earth orientation mod-file, finds
+parameters of linear regression of the differences in UT1, X pole
+coordinates, Y pole coordinates, then (optionally) subtracts parameters
+of linear regression from the external EOP series of UT1 and polar
+motion. Finally, the subroutine get_apriori_eop re-formats resulting
+EOP file to 1) ut1pm.dat and to 2) erp-format for Calc and Solve
+for using it as an Earth orientation mod-file.
+ 
+Program requires a parameter: configuration file.
+ 
+        2 How to use
+        ============
+ 
+   Usage:  get_apriori_eop <configuration_file>
+ 
+   It is convenient to run get_apriori_eop scheduled by cron every night.
+ 
+        3 Configuration file
+        ====================
+ 
+  The configuration file controls the work of get_apriori_eop.
+It contains directives which are specific for you Analysis Center
+and assumed not to be changed frequently. The name of the
+configuration file is passed as an argument to get_apriori_eop.
+ 
+                3.1 Format of configuration file
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   Configuration file contains records of three type:
+1) comments: any line which beginning from ##
+ 
+2) directives for get_priori_eop: the line which starts from
+# and which is not a comment line.
+Directive consists of three or more words separated by one or more
+blanks.
+ 
+   Word1 -- symbol # -- directive attribute
+   Word2 -- keyword
+   Word3,4...  value(s) of the keyword.
+ 
+   Configuration file should contain definition of all keywords and
+   all variables listed in the next subsection.
+ 
+   Descriptions of directives of get_apriori_eop configuration file.
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+  EXTFMT:   Format of the external file.
+            One of USNO_FINALS or IERS_C04.
+            Comment: USNO_FINALS file contains *two* sort of parameters
+            grouped in left columns (1:134) and in right columns
+            (135:185). Get_apriori_eop gets parameters from the left
+            columns only.
+ 
+  URLEXT:   URL of the external file which is to be browsed.
+ 
+  URLEXT2:  URL of the second external file which is to be browsed.
+            The external EOP series may be represented by two files.
+            The second file overwrites the values defined in the
+            first. The values defined only in the second file are
+            kept untouched. THe length of the output file is
+            determined by the first file. If the EOP should be
+            represented with only one file, this field should be NONE.
+ 
+  FILEXT:   local name of the external file after it is browsed to
+            the local machine.
+ 
+  FILEXT2:  local name of the second external file after it is
+            browsed to the local machine. If URLEXT2 is NONE, then
+            FILEXT2 should be NONE as well.
+ 
+  FILERP:   File name of the reference erp file. This erp file should
+            be in erp modfile format.
+ 
+  FILOUT:   local name of the output file in erp modfile format.
+ 
+  FILUPM:   local name of the output file in binary ut1pm format.
+            Program Calc, dbedit and apriori can use files in this
+            format.
+ 
+  WGET_EXE: Filename with path of program wget. Program wget should
+            be installed before calling get_apriori_eop.
+ 
+  FL_ROT:   Flag whether to apply transformation of the external
+            file. The value is one of TRUE or FALSE.
+ 
+  ROT_FROM: Date of the left boundary of the dates range for which
+            computation of linear regression is done. The right
+            boundary is the date of the last observation which has
+            been reference used for deriving reference EOP series.
+            Format: yyyy.dd.mm, for example 2000.01.29 for
+            January 29, year 2000.
+ 
+  WEIGHTS:  Flag: which weights should be used for computation of
+            regression coefficients. One of EQUAL or IN are allowed.
+            EQUAL means that all weighs are 1. IN means that the
+            weight is 1/DSQRT ( sig_x**2 + sig_r**2 ) where sig_f
+            stands for formal uncertainty of external EOP and sig_r
+            stands for formal uncertainty of reference EOP.
+ 
+                3.2 Example of configuration file
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+#############################################################################
+##                                                                         ##
+##  Configuration file for retrieving USNO finals Earth orientation        ##
+##  parameter series to the Goddard Space Flight Center from the United    ##
+##  States Naval observatory.                                              ##
+##                                                                         ##
+##                                       Last update: 01-APR-2005 16:35:06 ##
+##                                                                         ##
+#############################################################################
+# URLEXT:   ftp://maia.usno.navy.mil/ser7/finals.all
+# URLEXT2:  ftp://maia.usno.navy.mil/ser7/finals.daily
+# FILEXT:   /tmp/usno_finals.fil
+# FILEXT2:  /tmp/usno_daily.fil
+# FILOUT:   /data1/save_files/last_usno_final.erp
+# FILERP:   /data1/save_files/last.erp
+# FILUPM:   /data1/save_files/ut1pm.dat
+# WGET_EXE: /users/pet/bin/wget
+# FL_ROT:   TRUE
+# ROT_FROM: 2000.01.01
+# WEIGHTS:  IN
+ 

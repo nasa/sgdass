@@ -1,0 +1,113 @@
+Programs ners_eopser generates the Earth orientation parameters time series 
+for the specified range of epochs with the specified step using the Network 
+Earth Rotation Service server and prints it in stdout.
+
+Usage:
+
+   ners_eopser [-h] [-c config_file] -p param_name -b start date -e stop date 
+               -s time_step [-v verbosity] [-r ]
+
+-h              prints this file and exits.
+
+-c config_file  name of the ners client configuration file.
+                If omitted, ners_eop will first search $HOME/.ners_config
+                and if it does not find, uses file share/ners.config
+                in ners installation directory.
+
+-p param_name   EOP parameter(s) to  be displayed. Supported parameters:
+
+                euler    three parameters:
+
+                               Euler angle with respect to axis 1 (rad)
+                               Euler angle with respect to axis 2 (rad)
+                               Euler angle with respect to axis 3 (rad)
+
+                euler_r  six parameters:
+
+                               Euler angle with respect to axis 1 (rad)
+                               Euler angle with respect to axis 2 (rad)
+                               Euler angle with respect to axis 3 (rad)
+                               First time derivative of the Euler angle with respect to axis 1 (rad/s)    
+                               First time derivative of the Euler angle with respect to axis 2 (rad/s)    
+                               First time derivative of the Euler angle with respect to axis 3 (rad/s)    
+
+                heo      three parameters:   
+
+                               the contribution of the residual harmonic variation with respect to axis 1 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 2 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 3 (rad)
+
+                heo_r    six parameters:   
+
+                               the contribution of the residual harmonic variation with respect to axis 1 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 2 (rad)
+                               the contribution of the residual harmonic variation with respect to axis 3 (rad)
+                               the first time derivative of the contribution of the residual harmonic variation with respect to axis 1 (rad/s)
+                               the first time derivative of the contribution of the residual harmonic variation with respect to axis 2 (rad/s)
+                               the first time derivative of the contribution of the residual harmonic variation with respect to axis 3 (rad/s)
+
+                polu      three parameters:
+
+                               x   pole coordinate (rad)
+                               y   pole coordinate (rad)
+                               ut1 angle           (s)
+
+                poluz     three parameters:
+
+                               x   pole coordinate (rad)
+                               y   pole coordinate (rad)
+                               ut1 angle with the contribution of zonal tides removed (s)
+
+                polu_r    six parameters:
+
+                               x   pole coordinate (rad)
+                               y   pole coordinate (rad)
+                               ut1 angle           (s)
+                               rate of change of x   pole coordinate (rad/s)
+                               rate of change of y   pole coordinate (rad/s)
+                               rate of change of ut1 angle           (s/s)
+
+                poluz_r   six parameters:
+
+                               x   pole coordinate (rad)
+                               y   pole coordinate (rad)
+                               ut1 angle with the contribution of zonal tides removed (s)
+                               rate of change of x   pole coordinate (rad/s)
+                               rate of change of y   pole coordinate (rad/s)
+                               rate of change of ut1 angle with the contribution of zonal tides removed (s/s)
+
+                nut      two parameters:
+                              nutation in longitude (rad)
+                              nutation in obliquity (rad)
+
+                ut1ctai  Angle UT1 minus TAI (s)
+
+
+-b date         Start date of the EOP series on TAI time.
+                     Format: YYYY.MM.DD-hh:mm:ss.sssssss
+
+-e date         End date of the EOP series on TAI time.
+                     Format: YYYY.MM.DD-hh:mm:ss.sssssss
+             
+                or 
+                    now -- the end epoch is the midnight of the current day
+             
+                or
+                    futureXXXd where XXX is an integer in a range of 1 to 90 --
+                           the end epoch is the midnight of the current day plus
+                           XXX days
+
+                Examples:  now, future5d, future30d
+
+
+-s step         Step of the time series in s.
+
+-v verb_level   verbosity level.
+
+                0 -- silent
+                1 -- normal verbosity
+                2 -- verbose output
+                3 -- debugging mode
+
+-r              returns the time range for which the EOPs are available
+  

@@ -1,0 +1,11 @@
+Library GVH provides a set of routines that implement the database 
+handler for analysis of group delays computed from processing 
+geodetic and absolute astronomy VLBI observtions.
+
+In addition to that, several executables are provided for
+transformation of database files from binary to ascii and
+from ascii to binary representation, and for some other 
+useful manulipations with database files that are needed
+for data analysis.
+
+See doc subdirectory for a detailed documentation.

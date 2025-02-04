@@ -1,0 +1,202 @@
+ELIM                                                       ELIM  Ver. 2007.07.18
+ 
+       Description of observation suppression strategy.
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Current (starting from f-SOLVE-MAY98) suppression strategy is the following:
+
+   Each observation has three statuses: 
+   1) "automatic suppression status" -- it is calculated for each 
+       observation automatically and takes into account individual 
+       characteristics of the observations, such as quality code and global 
+       settings such as suppression strategy, usage of ionosphere and so on.
+   2) "user action for suppression" -- it is set by user individually and 
+       may supersede automatic suppression status.
+   3) "eventual suppression status" -- it is set by taking into account 
+       automatic suppression status and user action for suppression. 
+       It includes
+      a) USED-status. If .TRUE. then the observation is used in estimation 
+         and calculation of statistics.
+      b) RECO-status. If .TRUE. then not USED-observation is allowed to change 
+         its status to USED. Otherwise it can never be used in solution in
+         according with used strategy.
+
+    Automatic suppression status may be:
+
+    |---------------|  |-------------------|   |--------------------|
+    | unrecoverable |  | conditionally bad |   | conditionally good |
+    |_______________|  |___________________|   |____________________|
+
+    "Unrecoverable" status means that observation had so severe problems that
+       it may not be used in solutions by no means. 
+
+    "Conditionally bad" status means that this observation considered as bad 
+       under conditions taken into account in current suppression scheme and 
+       under current global settings.
+
+    "Conditionally good" status means that characteristics of the observations 
+       don't indicate any obstacles against using this observations in 
+       solution.
+
+    User actions for suppression is 
+
+    1) not to do anything;
+    2) suppress despite observation is marked as conditionally good;
+    3) use in solution despite the observation is marked as conditionally 
+       bad.
+
+    User action for suppression is set for group delay and phase delay 
+    solutions separately.
+
+    Implementation.
+    ~~~~~~~~~~~~~~~
+
+    Bit filed SUPSTAT keeps status of the observation. Its bits are defined
+    in gbsfc.i:
+
+      PARAMETER  (  BQCX__SPS =  1 ) ! Bad quality code for X-band  -- quality
+                 code is less that QUALCODE_GOOD_LIM. QUALCODE_GOOD_LIM  is
+                 set interactively by GAMB, ELIM. It is set in global solution
+                 in $SETUP section
+      PARAMETER  (  BQCS__SPS =  2 ) ! Bad quality code for S-band. Some 
+                    databases don't have quality code for S-band. This flag
+                    cannot be set up for such databases.
+      PARAMETER  (  NOFX__SPS =  3 ) ! No fringes for X-band
+      PARAMETER  (  NOFS__SPS =  4 ) ! No fringes for S-band. Some 
+                    databases don't have quality code for S-band. This flag
+                    cannot be set up for such databases.
+      PARAMETER  (  CUEL__SPS =  5 ) ! Observation made below cut off limit
+      PARAMETER  (  DSBS__SPS =  6 ) ! Observation at deselected baseline
+      PARAMETER  (  DSSO__SPS =  7 ) ! Observation of deselected source
+      PARAMETER  (  BWVR__SPS =  8 ) ! Bad WVR mask
+      PARAMETER  (  BPRN__SPS =  9 ) ! No parangle correction available
+
+            All GION-like codes are set up only if group ionosphere calibration
+            is applied for observation of this baseline
+      PARAMETER  (  GION__SPS = 10 ) ! GION calibration is not available
+      PARAMETER  (  GIO1__SPS = 11 ) ! GION calibration is bad: matching 
+                    observation was downweighted or matching observation 
+                    didn't have fringes
+      PARAMETER  (  GIO2__SPS = 12 ) ! GION calibration is bad: matching 
+                    observation didn't have fringes
+      PARAMETER  (  GIO3__SPS = 13 ) ! GION calibration is bad: matching 
+                    observation didn't have fringes, since GIONSG=0
+      PARAMETER  (  GIO4__SPS = 14 ) ! GION calibration is bad: matching 
+                    observation didn't have fringes
+            All PION-like codes are set up only if group ionosphere calibration
+            is applied for observation of this baseline
+      PARAMETER  (  PION__SPS = 15 ) ! PION calibration is not available
+      PARAMETER  (  PIO1__SPS = 16 ) ! PION calibration is bad: : matching 
+                    observation was downweighted or matching observation 
+                    didn't have fringes
+      PARAMETER  (  PIO2__SPS = 17 ) ! PION calibration is bad: matching 
+                    observation didn't have fringes
+      PARAMETER  (  PIO3__SPS = 18 ) ! PION calibration is bad: matching 
+                    observation didn't have fringes, since PIONS=0
+      PARAMETER  (  PIO4__SPS = 19 ) ! PION calibration is bad: matching 
+                    observation didn't have fringes
+      PARAMETER  (  XAMB__SPS = 21 ) ! X-band phase ambiguity not resolved
+      PARAMETER  (  SAMB__SPS = 22 ) ! S-band phase ambiguity not resolved
+      PARAMETER  (  IUNW__SPS = 23 ) ! IUNW code is not zero
+      PARAMETER  (  WPAS__SPS = 24 ) ! Wrong phase delay ambiguity spacings
+
+      These flags are set in according with values of variables 
+      IUNW, IUNWP, LQUAL, LQUALXS, ICORR, GIONSG, PHIONS, IWVBIT1, ISITE, 
+      JSITI, ITT, ISTAR, ELEV, KIONO
+
+      Automatic suppression status is set using these flags and value of 
+      variable SUPMET (SUPpression METhod). Suppression method determines
+      which flags to take into account when set status: a) unrecoverable,
+      b) conditionally bad. 
+
+      5 suppression methods are supported:
+
+      PRE98
+      PRE91
+      COMB1
+      SNGBA
+      META
+
+      Flags which are taken into account are determined in 
+      $MK5_ROOT/libs/cutil/supuse_set.f as
+
+
+                    UNRECOVERABLE            CONDITIONALLY BAD
+                  group delay  phase delay   group delay  phase delay
+
+      --------------------------------------------------------------
+      PRE98:      NOFX__SPS    NOFX__SPS     BQCX__SPS    BQCX__SPS
+                               WPAS__SPS     CUEL__SPS    CUEL__SPS
+                                             DSBS__SPS    DSBS__SPS
+                                             DSSO__SPS    DSSO__SPS
+                                             BWVR__SPS    BWVR__SPS
+                                                          BPRN__SPS
+                                             GION__SPS    PION__SPS
+                                             GIO1__SPS    PIO1__SPS
+                                             GIO2__SPS    PIO2__SPS
+                                             GIO3__SPS    PIO3__SPS
+                                             GIO4__SPS    PIO4__SPS
+      --------------------------------------------------------------
+      PRE91:                                 CUEL__SPS    CUEL__SPS
+                                             DSBS__SPS    DSBS__SPS
+                                             DSSO__SPS    DSSO__SPS
+                                             BWVR__SPS    BWVR__SPS
+                                                          BPRN__SPS
+                                             GION__SPS    PION__SPS
+                                             GIO1__SPS    PIO1__SPS
+                                             GIO2__SPS    PIO2__SPS
+                                             GIO3__SPS    PIO3__SPS
+                                             GIO4__SPS    PIO4__SPS
+                                             IUNW__SPS    IUNW__SPS
+      --------------------------------------------------------------
+      COMB1-a:    NOFX__SPS     NOFX__SPS    BQCX__SPS    BQCX__SPS
+                  NOFS__SPS     NOFS__SPS    BQCS__SPS    BQCS__SPS
+                                WPAS__SPS    CUEL__SPS    CUEL__SPS    
+                                             DSBS__SPS    DSBS__SPS
+                                             DSSO__SPS    DSSO__SPS
+                                             BWVR__SPS    BWVR__SPS
+                                             XAMB__SPS
+                                             SAMB__SPS
+      --------------------------------------------------------------
+      COMB1-b:    NOFX__SPS     NOFX__SPS    BQCX__SPS    BQCX__SPS
+                  NOFS__SPS     NOFS__SPS    BQCS__SPS    BQCS__SPS
+                                WPAS__SPS    CUEL__SPS    CUEL__SPS    
+                                             DSBS__SPS    DSBS__SPS
+                                             DSSO__SPS    DSSO__SPS
+                                             BWVR__SPS    BWVR__SPS
+                                             XAMB__SPS
+                                             SAMB__SPS
+                                             PION__SPS    GION__SPS
+                                             PIO2__SPS    GIO2__SPS
+      --------------------------------------------------------------
+      SNGBA:      NOFX__SPS     NOFX__SPS    BQCX__SPS    BQCX__SPS
+                                WPAS__SPS    CUEL__SPS    CUEL__SPS
+                                             DSBS__SPS    DSBS__SPS    
+                                             DSSO__SPS    DSSO__SPS
+                                                          BPRN__SPS
+
+
+
+      Comments: 
+        1) PRE98 method emulates interactive SOLVE version 98APR.
+        2) PRE91 suppression method is maintained only to provide backward
+           compatibility with old databases. Long-long time ago SOLVE 
+           allowed to restore observations without fringes or with severe
+           problems detected in post-correlation processing what led to setting
+           letter-type of quality codes. PRE91 suppression method allows
+           to use them in solution. PRE91 method emulates batch SOLVE 
+           version 98APR.
+        3) COMB1-a is used for two-bands solution types when ionosphere 
+           calibration is calculated on the fly.
+        4) COMB1-b is used for all other solution types.
+        5) SNGBA is used for single band solution types when only one band
+           is in use and no ionosphere calibration is applied.
+         
+        When user suppresses conditionally good observation then flag 
+      "suppress good observation" is set. When user recovers conditionally 
+      good observation this flag is set off. When user recovers conditionally 
+      bad observation then flag "restore" bad observation is set. User is not 
+      able to recover "unrecoverable observation".
+
+        Change of the supprssion scheme may change eventual status of the 
+      observation.

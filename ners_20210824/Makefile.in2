@@ -1,0 +1,215 @@
+build:	
+	@echo "Building ners started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"` |& tee   > $(BUILD_LOG)
+	@echo " "                                                                           |& tee  -a $(BUILD_LOG)
+        ifeq ($(PETOOLS_PREFIX),NO)
+		cd  ners_petools;     source ../support/ners_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+		cd  ners_lapack;      source ../support/ners_vars; umask 0002; make -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+        endif
+	cd  src;     source ../support/ners_vars; umask 0002; make ners_lib -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	cd  src;     source ../support/ners_vars; umask 0002; make ners_bin -j $(NUM_PROC)  |& tee  -a $(BUILD_LOG)
+	@echo " "                                                                           |& tee  -a $(BUILD_LOG)
+	@echo "Building ners finihsed at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"` |& tee  -a  $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+.PHONY: example
+example:
+	cd  example; source ../support/ners_vars; make -j $(NUM_PROC)
+	@echo "=== Building ners is completed ==="
+
+# python3 setup.py sdist bdist_wheel
+.PHONY: install
+install:
+	cd  src;     source ../support/ners_vars; make -j $(NUM_PROC)
+	if ( -d $(NERS_PREFIX)     == 0           ) mkdir -p $(NERS_PREFIX)
+	if ( -d $(NERS_PREFIX)/bin == 0           ) mkdir    $(NERS_PREFIX)/bin 
+	if ( -d $(NERS_PREFIX)/lib == 0           ) mkdir    $(NERS_PREFIX)/lib
+	if ( -d $(NERS_PREFIX)/include == 0       ) mkdir    $(NERS_PREFIX)/include
+	if ( -d $(NERS_PREFIX)/share == 0         ) mkdir    $(NERS_PREFIX)/share
+        ifneq ($(NERS_PYTHON),NO)
+	     if ( -d $(NERS_PYTHON)     == 0      ) mkdir -p $(NERS_PYTHON)
+        endif
+	if ( -d $(NERS_PREFIX)/doc == 0           ) mkdir    $(NERS_PREFIX)/doc
+        ifeq ($(NERS_OS),Linux)
+	      cp $(NERS_ROOT)/lib/libners.so.1.0           $(NERS_PREFIX)/lib/libners.so.1.0
+	      if ( -l $(NERS_PREFIX)/lib/libners.so   ) rm $(NERS_PREFIX)/lib/libners.so
+	      ln -s $(NERS_PREFIX)/lib/libners.so.1.0      $(NERS_PREFIX)/lib/libners.so   
+        endif
+        ifeq ($(NERS_OS),Darwin)
+	      cp $(NERS_ROOT)/lib/libners.1.dylib           $(NERS_PREFIX)/lib/libners.1.dylib
+	      if ( -l $(NERS_PREFIX)/lib/libners.dylib ) rm $(NERS_PREFIX)/lib/libners.dylib 
+	      ln -s   $(NERS_PREFIX)/lib/libners.1.dylib    $(NERS_PREFIX)/lib/libners.dylib 
+	      install_name_tool -id  $(NERS_PREFIX)/lib/libners.1.dylib $(NERS_PREFIX)/lib/libners.dylib
+        endif
+	cp $(NERS_ROOT)/include/ners.i                $(NERS_PREFIX)/include/ners.i
+	cp $(NERS_ROOT)/include/ners.h                $(NERS_PREFIX)/include/ners.h
+	cp $(NERS_ROOT)/include/ners_local.i          $(NERS_PREFIX)/include/ners_local.i
+	cp $(NERS_ROOT)/lib/libners.a                 $(NERS_PREFIX)/lib/libners.a               
+	cp $(NERS_ROOT)/bin/ners_eop                  $(NERS_PREFIX)/bin/ners_eop
+	cp $(NERS_ROOT)/bin/ners_eopser               $(NERS_PREFIX)/bin/ners_eopser
+	cp $(NERS_ROOT)/bin/utcmtai                   $(NERS_PREFIX)/bin/utcmtai
+	cp $(NERS_ROOT)/bin/ut1mtai                   $(NERS_PREFIX)/bin/ut1mtai
+	cp $(NERS_ROOT)/bin/ners_azelha               $(NERS_PREFIX)/bin/ners_azelha
+        ifneq ($(NERS_PYTHON),NO)
+	       cat $(NERS_ROOT)/python/ners/ners.py | \
+                   sed "s|@@@@@@|$(NERS_PREFIX)|g"  | \
+                   sed "s|%%%%%%|$(NERS_VERSION)|g" | \
+                   sed "s|~~~~~~|$(NERS_PYTHON)|g"    \
+                   > $(NERS_PYTHON)/ners.py
+	       cat $(NERS_ROOT)/example/ners_python_get_eop_example.py | \
+                   sed "s|@@@@@@|$(NERS_PREFIX)|g"  | \
+                   sed "s|%%%%%%|$(NERS_VERSION)|g" | \
+                   sed "s|~~~~~~|$(NERS_PYTHON)|g"    \
+                   > $(NERS_PYTHON)/ners_python_get_eop_example.py
+	       cat $(NERS_ROOT)/example/ners_python_azelha_example.py | \
+                   sed "s|@@@@@@|$(NERS_PREFIX)|g"  | \
+                   sed "s|%%%%%%|$(NERS_VERSION)|g" | \
+                   sed "s|~~~~~~|$(NERS_PYTHON)|g"    \
+                   > $(NERS_PYTHON)/ners_python_azelha_example.py
+	       cat $(NERS_ROOT)/example/ners_python_utc_to_tai_example.py | \
+                   sed "s|@@@@@@|$(NERS_PREFIX)|g"  | \
+                   sed "s|%%%%%%|$(NERS_VERSION)|g" | \
+                   sed "s|~~~~~~|$(NERS_PYTHON)|g"    \
+                   > $(NERS_PYTHON)/ners_python_utc_to_tai_example.py
+	       cat $(NERS_ROOT)/example/ners_python_transform_example.py | \
+                   sed "s|@@@@@@|$(NERS_PREFIX)|g"  | \
+                   sed "s|%%%%%%|$(NERS_VERSION)|g" | \
+                   sed "s|~~~~~~|$(NERS_PYTHON)|g"    \
+                   > $(NERS_PYTHON)/ners_python_transform_example.py
+	       -chmod o+rx,g+rx,u+rx $(NERS_PYTHON)/ners_python_get_eop_example.py 
+	       -chmod o+rx,g+rx,u+rx $(NERS_PYTHON)/ners_python_azelha_example.py 
+	       -chmod o+rx,g+rx,u+rx $(NERS_PYTHON)/ners_python_utc_to_tai_example.py 
+	       -chmod o+rx,g+rx,u+rx $(NERS_PYTHON)/ners_python_transform_example.py 
+        endif
+	cp $(NERS_ROOT)/support/export_ners_vars      $(NERS_PREFIX)/bin/ners_vars
+	cp $(NERS_ROOT)/doc/ners_api.txt              $(NERS_PREFIX)/doc/ners_api.txt 
+	cp $(NERS_ROOT)/doc/ners_azelha.txt           $(NERS_PREFIX)/doc/ners_azelha.txt 
+	cp $(NERS_ROOT)/doc/ners_configure.txt        $(NERS_PREFIX)/doc/ners_configure.txt 
+	cp $(NERS_ROOT)/doc/ners_eop.txt              $(NERS_PREFIX)/doc/ners_eop.txt
+	cp $(NERS_ROOT)/doc/ners_eopser.txt           $(NERS_PREFIX)/doc/ners_eopser.txt
+	cp $(NERS_ROOT)/doc/ners_forecast_message.txt $(NERS_PREFIX)/doc/ners_forecast_message.txt 
+	cp $(NERS_ROOT)/doc/ners_python.txt           $(NERS_PREFIX)/doc/ners_python.txt
+	cp $(NERS_ROOT)/doc/ners_user_guide.html      $(NERS_PREFIX)/doc/ners_user_guide.html 
+	cp $(NERS_ROOT)/doc/ut1mtai.txt               $(NERS_PREFIX)/doc/ut1mtai.txt
+	cp $(NERS_ROOT)/doc/utcmtai.txt               $(NERS_PREFIX)/doc/utcmtai.txt
+	if ( -f $(NERS_PREFIX)/share/ners.fcs )    rm $(NERS_PREFIX)/share/ners.fcs
+	cp $(NERS_ROOT)/share/ners.fcs                $(NERS_PREFIX)/share/ners.fcs
+	cp $(NERS_ROOT)/share/ners.leapsec            $(NERS_PREFIX)/share/ners.leapsec
+	cp $(NERS_ROOT)/share/de403_earth_spline.dat  $(NERS_PREFIX)/share/de403_earth_spline.dat
+	-chmod o+r,g+rw $(NERS_PREFIX)/share/ners.fcs
+	-chmod o+r,g+rw $(NERS_PREFIX)/share/ners.leapsec
+	-chmod o+r,g+rw $(NERS_PREFIX)/share/de403_earth_spline.dat
+	cat ${NERS_ROOT}/share/ners_config_templ | \
+            sed -e "s|@F|$(NERS_PREFIX)/share/ners.fcs|g" | \
+            sed -e "s|@L|$(NERS_PREFIX)/share/ners.leapsec|g" \
+            > $(NERS_PREFIX)/share/ners.config
+	-chmod o+r,g+rw $(NERS_PREFIX)/share/ners.config
+	if ( -f /usr/bin/touch ) /usr/bin/touch -t 201806150000 $(NERS_PREFIX)/share/ners.fcs
+	if ( -f /bin/touch     ) /bin/touch     -t 201806150000 $(NERS_PREFIX)/share/ners.fcs
+	@echo "=== Installation of ners is completed ==="
+
+uninstall:
+	cd  src;  source ../support/ners_vars
+	if ( -f $(NERS_PREFIX)/lib/libners.a	             ) rm $(NERS_PREFIX)/lib/libners.a
+	if ( -l $(NERS_PREFIX)/lib/libners.so                ) rm $(NERS_PREFIX)/lib/libners.so
+	if ( -f $(NERS_PREFIX)/lib/libners.so.1.0            ) rm $(NERS_PREFIX)/lib/libners.so.1.0
+	if ( -l $(NERS_PREFIX)/lib/libners.dylib             ) rm $(NERS_PREFIX)/lib/libners.dylib
+	if ( -f $(NERS_PREFIX)/lib/libners.1.dylib           ) rm $(NERS_PREFIX)/lib/libners.1.dylib
+	if ( -f $(NERS_PREFIX)/include/ners.i                ) rm $(NERS_PREFIX)/include/ners.i
+	if ( -f $(NERS_PREFIX)/include/ners.h                ) rm $(NERS_PREFIX)/include/ners.h
+	if ( -f $(NERS_PREFIX)/include/ners_local.i          ) rm $(NERS_PREFIX)/include/ners_local.i
+	if ( -f $(NERS_PREFIX)/bin/ners_eop 	             ) rm -f $(NERS_PREFIX)/bin/ners_eop
+	if ( -f $(NERS_PREFIX)/bin/ners_eopser 	             ) rm -f $(NERS_PREFIX)/bin/ners_eopser
+	if ( -f $(NERS_PREFIX)/bin/ners_azelha               ) rm -f $(NERS_PREFIX)/bin/ners_azelha
+	if ( -f $(NERS_PREFIX)/bin/utcmtai                   ) rm -f $(NERS_PREFIX)/bin/utcmtai
+	if ( -f $(NERS_PREFIX)/bin/ut1mtai                   ) rm -f $(NERS_PREFIX)/bin/ut1mtai
+	if ( -f $(NERS_PREFIX)/bin/ners_azelha               ) rm -f $(NERS_PREFIX)/bin/ners_azelha
+	if ( -f $(NERS_PREFIX)/bin/ners_vars                 ) rm -f $(NERS_PREFIX)/bin/ners_vars
+        ifneq ($(NERS_PYTHON),NO)
+	       if ( -f $(NERS_PYTHON)/ners.py                           ) rm -f $(NERS_PYTHON)/ners.py                
+	       if ( -f $(NERS_PYTHON)/ners_python_get_eop_example.py    ) rm -f $(NERS_PYTHON)/ners_python_get_eop_example.py    
+	       if ( -f $(NERS_PYTHON)/ners_python_azelha_example.py     ) rm -f $(NERS_PYTHON)/ners_python_azelha_example.py
+	       if ( -f $(NERS_PYTHON)/ners_python_utc_to_tai_example.py ) rm -f $(NERS_PYTHON)/ners_python_utc_to_tai_example.py 
+	       if ( -f $(NERS_PYTHON)/ners_python_transform_example.py  ) rm -f $(NERS_PYTHON)/ners_python_transform_example.py
+        endif
+	if ( -f $(NERS_PREFIX)/doc/ners_api.txt              ) rm -f $(NERS_PREFIX)/doc/ners_api.txt 
+	if ( -f $(NERS_PREFIX)/doc/ners_azelha.txt           ) rm -f $(NERS_PREFIX)/doc/ners_azelha.txt 
+	if ( -f $(NERS_PREFIX)/doc/ners_configure.txt        ) rm -f $(NERS_PREFIX)/doc/ners_configure.txt 
+	if ( -f $(NERS_PREFIX)/doc/ners_eop.txt              ) rm -f $(NERS_PREFIX)/doc/ners_eop.txt
+	if ( -f $(NERS_PREFIX)/doc/ners_eopser.txt           ) rm -f $(NERS_PREFIX)/doc/ners_eopser.txt
+	if ( -f $(NERS_PREFIX)/doc/ners_forecast_message.txt ) rm -f $(NERS_PREFIX)/doc/ners_forecast_message.txt 
+	if ( -f $(NERS_PREFIX)/doc/ners_python.txt           ) rm -f $(NERS_PREFIX)/doc/ners_python.txt 
+	if ( -f $(NERS_PREFIX)/doc/ners_user_guide.html      ) rm -f $(NERS_PREFIX)/doc/ners_user_guide.html 
+	if ( -f $(NERS_PREFIX)/doc/ut1mtai.txt               ) rm -f $(NERS_PREFIX)/doc/ut1mtai.txt
+	if ( -f $(NERS_PREFIX)/doc/utcmtai.txt               ) rm -f $(NERS_PREFIX)/doc/utcmtai.txt
+	if ( -f $(NERS_PREFIX)/share/ners.fcs                ) rm -f $(NERS_PREFIX)/share/ners.fcs
+	if ( -f $(NERS_PREFIX)/share/ners.leapsec            ) rm -f $(NERS_PREFIX)/share/ners.leapsec
+	if ( -f $(NERS_PREFIX)/share/ners.config             ) rm -f $(NERS_PREFIX)/share/ners.config
+	if ( -f $(NERS_PREFIX)/share/de403_earth_spline.dat  ) rm -f $(NERS_PREFIX)/share/de403_earth_spline.dat
+
+clean:	
+        ifeq ($(PETOOLS_PREFIX),NO)
+		cd  ners_petools;     source ../support/ners_vars; make clean
+		cd  ners_lapack;      source ../support/ners_vars; make clean
+        endif
+	cd  src;     source ../support/ners_vars; make clean
+	cd  example; source ../support/ners_vars; make clean
+
+distclean:	clean
+	./reconfigure -d > /tmp/ners_last_configure.txt ; chmod 666 /tmp/ners_last_configure.txt
+	cd  src;  source $(NERS_ROOT)/support/ners_vars;   make clean
+	if ( -f temp/conf.log                  ) rm -f temp/conf.log
+	if ( -f temp/build.log                 ) rm -f temp/build.log
+	find src/ -name "*.o*" -exec rm {} \;
+	find ners_lapack/  -name "*.o*" -exec rm {} \;
+	find ners_petools/ -name "*.o*" -exec rm {} \;
+	cd  src;  source $(NERS_ROOT)/support/ners_vars; 
+	if ( -f $(NERS_ROOT)/Makefile             ) rm -f $(NERS_ROOT)/Makefile
+	if ( -f $(NERS_ROOT)/support/ners_vars    ) rm -f $(NERS_ROOT)/support/ners_vars
+	if ( -f $(NERS_ROOT)/temp/conf.log        ) rm -f $(NERS_ROOT)/temp/conf.log
+	if ( -f $(NERS_ROOT)/include/ners_local.i ) rm -f $(NERS_ROOT)/include/ners_local.i 
+	if ( -f $(NERS_ROOT)/module/ners.mod      ) rm -f $(NERS_ROOT)/module/ners.mod
+	@support/purge $(NERS_ROOT)/temp
+	@support/purge $(NERS_ROOT)/bin
+	@support/purge $(NERS_ROOT)/python/ners
+	@support/purge $(NERS_ROOT)/src
+	@support/purge $(NERS_ROOT)/ners_petools
+	@support/purge $(NERS_ROOT)/ners_lapack
+	@support/purge $(NERS_ROOT)/doc
+	@support/purge $(NERS_ROOT)/share
+	@support/purge $(NERS_ROOT)/support
+	@support/purge $(NERS_ROOT)/include
+	@support/purge $(NERS_ROOT)/util
+	@support/purge $(NERS_ROOT)/example
+	@support/purge $(NERS_ROOT)/
+
+NERS_BASENAME = `basename $(NERS_ROOT)`
+tar:	distclean
+	cd  src;  source $(NERS_ROOT)/support/ners_vars; make -f ../support/check_cfitsio_version.mak clean
+	if ( -f $(NERS_ROOT)/support/ners_vars ) rm -f $(NERS_ROOT)/support/ners_vars
+	if ( -f /tmp/ners-$(NERS_VERSION).tar.bz2 ) rm -f /tmp/ners-$(NERS_VERSION).tar.bz2 
+	cd ../; tar --exclude="*obsolete*" -cf - ners_$(NERS_VERSION) | \
+                lbzip2 -c > /tmp/ners-$(NERS_VERSION).tar.bz2 
+	echo "Tar-file /tmp/ners-$(NERS_VERSION).tar.bz2" 
+	cp /tmp/ners-$(NERS_VERSION).tar.bz2  /earthrotation.net/ners/
+	cp -p doc/eop_explained.html          /earthrotation.net/ners/doc/
+	cp -p doc/ners_api.txt                /earthrotation.net/ners/doc/
+	cp -p doc/ners_azelha.txt             /earthrotation.net/ners/doc/
+	cp -p doc/ners_configure.txt          /earthrotation.net/ners/doc/
+	cp -p doc/ners_config_file.txt        /earthrotation.net/ners/doc/
+	cp -p doc/ners_eopser.txt             /earthrotation.net/ners/doc/
+	cp -p doc/ners_eop.txt                /earthrotation.net/ners/doc/
+	cp -p doc/ners_examples.txt           /earthrotation.net/ners/doc/
+	cp -p doc/ners_forecast_message.txt   /earthrotation.net/ners/doc/
+	cp -p doc/ners_how.html               /earthrotation.net/ners/doc/
+	cp -p doc/ners_python.txt             /earthrotation.net/ners/doc/
+	cp -p doc/ners_user_guide.html        /earthrotation.net/ners/doc/
+	cp -p doc/ut1mtai.txt                 /earthrotation.net/ners/doc/
+	cp -p doc/utcmtai.txt                 /earthrotation.net/ners/doc/
+	cp -p README                          /earthrotation.net/ners/doc/ners_readme.txt
+	cp -p INSTALL                         /earthrotation.net/ners/doc/ners_install.txt
+	cp -p CHANGES                         /earthrotation.net/ners/doc/ners_changes.txt
+	sync
+	echo "The tar-file is uploaded to the Web"
+	scp       /earthrotation.net/ners/ners-$(NERS_VERSION).tar.bz2 ml:/earthrotation.net/ners/
+	rsync -a /earthrotation.net/ners/doc/                          ml:/earthrotation.net/ners/doc/
+	echo "The tar-file and documenation are uploaded to the earthrotation.net"

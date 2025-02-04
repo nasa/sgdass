@@ -1,0 +1,103 @@
+!
+! >>>>> INCLUDE-BLOCK with definitions for the optimal performance of
+!       matvec library tuned for Celeron 800MHz processor
+!       Parameters defined below control work of the optimized algorithms
+!
+!       matvec.i  
+!
+!       WHO  WHEN         WHAT
+!       pet  2001.04.11   creation
+!       pet  2001.04.16   transformed to the template form
+!       pet  2002.09.02   Added DB1__MUL_MM_SV_V                    
+!       pet  2002.09.21   Added DB3__MUL_MM_SI_I, DB3__MUL_MM_IS_I  
+!       pet  2002.09.28   Added DB3__MUL_MM_ST_I, DB3__MUL_MM_TS_I  
+!       pet  2002.10.05   Added DB3__MUL_MM_SS_I                    
+!       pet  2002.10.12   Added DB3__MUL_MM_SS_S, DB3__MUL_MM_II_S, 
+!                               DB3__MUL_MM_IT_S, DB3__MUL_MM_IT_S  
+!       pet  2002.10.19   Added MFLOP__PEAK
+!       pet  2002.11.30   Added DB__INVMAT_MIN, DB__INVMAT_MAX, 
+!                               DB__INVMAT_DIR, DB__INVMAT_EPS
+!       pet  2003.11.11   Added Increased DB__INVMAT_MAX from 24 to 32
+!       
+!
+      INTEGER*4   MAX__DIM
+      INTEGER*4   DB__DP_VV_V,      DB__ADD_RCT,      &
+     &            DB__MUL_MM_II_I,  DB__MUL_MM_IT_I,  &
+     &            DB__MUL_MM_TI_I,  DB__MUL_MM_TT_I,  &
+     &            DB1__MUL_MM_II_S, DB2__MUL_MM_II_S, DB3__MUL_MM_II_S, &
+     &            DB1__MUL_MM_IT_S, DB2__MUL_MM_IT_S, DB3__MUL_MM_IT_S, &
+     &            DB1__MUL_MM_TI_S, DB2__MUL_MM_TI_S, DB3__MUL_MM_TI_S, &
+     &            DB1__MUL_MM_SI_I, DB2__MUL_MM_SI_I, DB3__MUL_MM_SI_I, &
+     &            DB1__MUL_MM_ST_I, DB2__MUL_MM_ST_I, DB3__MUL_MM_ST_I, &
+     &            DB1__MUL_MM_IS_I, DB2__MUL_MM_IS_I, DB3__MUL_MM_IS_I, &
+     &            DB1__MUL_MM_TS_I, DB2__MUL_MM_TS_I, DB3__MUL_MM_TS_I, &
+     &            DB1__MUL_MM_SS_I, DB2__MUL_MM_SS_I, DB3__MUL_MM_SS_I, &
+     &            DB1__MUL_MM_SS_S, DB2__MUL_MM_SS_S, DB3__MUL_MM_SS_S, &
+     &            DB1__MUL_MV_SV_V,                                     &
+     &            DB__INVMAT_MIN,   DB__INVMAT_MAX,   DB__INVMAT_DIR,   &
+     &            DB__DPPSL
+      REAL*8    MFLOP__PEAK
+      REAL*8    RC_REF, MIN_VAL
+      PARAMETER  ( RC_REF  = 1.D16  )    ! Reference conditional number
+      PARAMETER  ( MIN_VAL = 1.D-30 )    ! Minimum allowed value
+!
+      PARAMETER ( MAX__DIM = 512*1024 )  ! maximum matrix dimension
+!                                        
+      REAL*8      DB__INVMAT_EPS
+&V&   DB__INVMAT_EPS
+!                                        
+      REAL*8      COND__MAX
+&V&   COND__MAX
+!
+&V&   DB__DP_VV_V     
+&V&   DB__ADD_RCT     
+&V&   DB__MUL_MM_II_I 
+&V&   DB__MUL_MM_IT_I 
+&V&   DB__MUL_MM_TI_I 
+&V&   DB__MUL_MM_TT_I 
+!
+&V&   DB1__MUL_MM_II_S 
+&V&   DB2__MUL_MM_II_S 
+&V&   DB3__MUL_MM_II_S 
+!
+&V&   DB1__MUL_MM_IT_S 
+&V&   DB2__MUL_MM_IT_S 
+&V&   DB3__MUL_MM_IT_S 
+!
+&V&   DB1__MUL_MM_TI_S 
+&V&   DB2__MUL_MM_TI_S 
+&V&   DB3__MUL_MM_TI_S 
+!
+&V&   DB1__MUL_MM_SI_I 
+&V&   DB2__MUL_MM_SI_I 
+&V&   DB3__MUL_MM_SI_I 
+!
+&V&   DB1__MUL_MM_ST_I 
+&V&   DB2__MUL_MM_ST_I 
+&V&   DB3__MUL_MM_ST_I 
+!
+&V&   DB1__MUL_MM_IS_I 
+&V&   DB2__MUL_MM_IS_I 
+&V&   DB3__MUL_MM_IS_I 
+!
+&V&   DB1__MUL_MM_TS_I 
+&V&   DB2__MUL_MM_TS_I 
+&V&   DB3__MUL_MM_TS_I 
+!
+&V&   DB1__MUL_MM_SS_I 
+&V&   DB2__MUL_MM_SS_I 
+&V&   DB3__MUL_MM_SS_I 
+!
+&V&   DB1__MUL_MM_SS_S 
+&V&   DB2__MUL_MM_SS_S 
+&V&   DB3__MUL_MM_SS_S 
+!
+&V&   DB1__MUL_MV_SV_V 
+!
+      PARAMETER ( DB__INVMAT_MAX = 32 ) 
+&V&   DB__INVMAT_DIR 
+&V&   DB__INVMAT_MIN
+!
+&V&   DB__DPPSL 
+!
+&V&   MFLOP__PEAK

@@ -1,0 +1,34 @@
+# VLBI station parameters Format 2022.04.03
+#
+# rms over azimith:   2.8 s
+# rms over elevation: 6.4 s
+#
+# 2018.01.24 Slewing rate and settle time is adjusted according to epa001 experiment
+# 2018.03.02 Changed EL_MIN, EM_MAX from 5, 85  to 10, 80
+# 2024.02.22 Converted to format 2022.04.03
+#
+SHORT_NAME:   ZELENCHK  char      Zc
+LAST_UPDATE:  ZELENCHK  chat      2024.02.22
+COORD:        ZELENCHK  meters    3451207.870   3060375.195   4391914.928   
+MOUNT:        ZELENCHK  char       ALTAZ
+SLEW_AZ:      ZELENCHK  deg/sec    1.05
+SLEW_EL:      ZELENCHK  deg/sec    0.49
+ACCL_AZ:      ZELENCHK  deg/sec^2  0.05
+ACCL_EL:      ZELENCHK  deg/sec^2  0.18
+TSETTLE_AZ:   ZELENCHK  sec       10.0
+TSETTLE_EL:   ZELENCHK  sec       26.0
+EL_MIN:       ZELENCHK  deg       10.0
+EL_MAX:       ZELENCHK  deg       80.0
+AZ_RANGE:     ZELENCHK  deg      -78.0   78.0  282.0  438.0
+RECORDER:     ZELENCHK  char      mark5
+BACKEND:      ZELENCHK  char      mark4
+SETMODE:      ZELENCHK  sec         4.0
+PREOB:        ZELENCHK  sec       10.0
+POSTOB:       ZELENCHK  sec        2.0
+HOR_AZIM:     ZELENCHK  deg       0   360 
+HOR_ELEV:     ZELENCHK  deg       7   7  
+STOW_AZIM:    ZELENCHK  deg       80.0
+STOW_ELEV:    ZELENCHK  deg       80.0
+#
+CLOCK_DATES:  ZELENCHK  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: ZELENCHK  sec        0.0E06

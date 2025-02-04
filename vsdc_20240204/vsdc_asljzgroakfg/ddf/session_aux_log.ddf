@@ -1,0 +1,18 @@
+# CDDIS file definition  Version 1.0  of 2019.10.22
+#
+# 2020.06.01  Dirk Behrend   updated
+#
+Short_description:    Station log file
+Long_description:     Station log file for a VLBI session
+Format_file_name:     /vlbi/ivsformats/station_log.txt
+Reference:            n/a
+DOI:                  n/a
+Filenaming_scheme:    @{date{%Y}}/@{sess}/@{sess}@{sta}.log
+File_location:        /vlbi/ivsdata/aux
+Product_ID:           VLBI_SESSION_AUX_STA_LOG
+Data_type:            VLBI
+Data_content_type:    Misc
+Data_format:          ascii
+Validate_proc:        session_log.py
+Magic:                None
+Compression_type:     none

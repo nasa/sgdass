@@ -1,0 +1,29 @@
+      tty                               who  DATE   DATE   PURPOSE
+**********************************************************************
+* NORJR p8  /data15/jwr_mk4/bin/   NORML
+*ELIPE     /users/pet/temps/temp7 ELIM  pet  021108        SOLVE (16)  
+***************************************************************************
+PRGII = Program name, with user initials in positions 4 and 5
+tty??? = last 2 or 3 characters of device name of terminal to be used
+       for debug output (characters following 'tty' in response to
+       the UNIX 'who' command).
+TEST_DIR = Directory where test version is to be found
+*************************
+To run test version:
+     enter xx glbnnn 0 0 -1
+            or
+     solve xx 0 0 0 -1
+where xx are user initials.
+
+NOTE: To run debug on a particular program, you must first start xdb
+and quit before running enter or solve. (e.g. xdb ../../bin/PROC)
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!                                                                           !!
+!! Please NEVER change the last line, otherwise all SOLVE-processes will     !!
+!! stop during 1 minute!                                                     !!
+!! It is used as an indicator of the end of SOLMOD file.                     !!
+!!                                                                           !!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+SOLMOD SOLMOD SOLMOD SOLMOD SOLMOD SOLMOD SOLMOD SOLMOD SOLMOD SOLMOD SOLMOD

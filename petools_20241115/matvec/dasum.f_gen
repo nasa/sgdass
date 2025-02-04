@@ -1,0 +1,16 @@
+      double precision function dasum(n,dx,incx)
+      implicit none
+c
+c     takes the sum of the absolute values.
+c     jack dongarra, linpack, 3/11/78.
+c     mwh, 730 vis 1/27/92
+c     note: incx must be non-negative
+c
+      double precision dx(1),vec_$dasum_i
+      integer incx,n
+c
+      dasum = 0.0d0
+      if(n.le.0)return
+      dasum = vec_$dasum_i(dx,incx,n)
+      return
+      end

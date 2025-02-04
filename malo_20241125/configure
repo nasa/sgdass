@@ -1,0 +1,227 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of malo. It creates the Makefile.*
+# *                                                                      *
+# *  ###  12-OCT-2012   configure    v1.4 (c) L. Petrov 05-JAN-2024 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv MALO_VERSION           "20241125"
+setenv PETOOLS_VERSION_MIN    "20241115"
+setenv NERS_VERSION_MIN       "20210824"
+setenv VTD_VERSION_MIN        "20241125"
+setenv SPD_CLIENT_VERSION_MIN "20241125" 
+setenv FOURPACK_VERSION_MIN   "20200501"
+#
+setenv PETOOLS_PREFIX       $HOME
+setenv SPD_CLIENT_DIR       $HOME
+setenv FOURPACK_PREFIX      $HOME
+setenv VTD_PREFIX           $HOME
+setenv NERS_PREFIX          $HOME
+setenv FFTW_DIR             $HOME
+setenv NETCDF_PREFIX        $HOME/netcdf
+setenv HDF5_PREFIX          $HOME/hdf5
+setenv HDF4_PREFIX          $HOME/hdf4
+setenv W3_PREFIX            $HOME/w3
+setenv VTD_CFITSIO_PREFIX   $HOME/cfitsio
+#
+setenv MALO_PREFIX          $HOME
+setenv MALO_ROOT            `dirname $0`
+setenv MALO_SHARE           ""
+setenv MALO_SCRIPT          ""
+setenv MALO_MODEL           " "
+setenv MALO_DEV_MODEL       " "
+if ( $MALO_ROOT == '.' )    setenv MALO_ROOT `pwd -L`
+setenv CONF_LOG             ${MALO_ROOT}/temp/conf.log
+setenv malo_debug            0
+#
+setenv MALO_BACKUP_DIR /t0/data_backup
+setenv MALO_WEB_DIR    /astrogeo.org/malo
+setenv MALO_WEB_EXE    /astrogeo.org/web_exec
+#
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_debug=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_debug > 0 ) then
+          setenv malo_debug 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv MALO_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_share=`echo $arg | awk '{print index ($1,"--share")}'`
+     if ( $match_share > 0 ) then
+          setenv MALO_SHARE `echo $arg | awk '{printf substr($1,9)}'`
+          set find_option = 1
+     endif
+#
+     set match_script=`echo $arg | awk '{print index ($1,"--script")}'`
+     if ( $match_script > 0 ) then
+          setenv MALO_SCRIPT `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_cfitsio=`echo $arg | awk '{print index ($1,"--with-cfitsio")}'`
+     if ( $match_cfitsio > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,16)}'`
+	  setenv VTD_CFITSIO_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_PREFIX "$str"
+          set find_option = 1
+     endif
+#
+     set match_spd_client=`echo $arg | awk '{print index ($1,"--with-spd_client")}'`
+     if ( $match_spd_client > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,19)}'`
+	  setenv SPD_CLIENT_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_ners=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_ners > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv NERS_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-vtd")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv VTD_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_fourpack=`echo $arg | awk '{print index ($1,"--with-fourpack")}'`
+     if ( "$match_fourpack" > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,17)}'`
+	  setenv FOURPACK_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_fftw=`echo $arg | awk '{print index ($1,"--with-fftw")}'`
+     if ( $match_fftw > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv FFTW_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_netcdf=`echo $arg | awk '{print index ($1,"--with-netcdf")}'`
+     if ( $match_netcdf > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,15)}'`
+	  setenv NETCDF_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_hdf5=`echo $arg | awk '{print index ($1,"--with-hdf5")}'`
+     if ( $match_hdf5 > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv HDF5_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_hdf4=`echo $arg | awk '{print index ($1,"--with-hdf4")}'`
+     if ( $match_hdf4 > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv HDF4_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_w3=`echo $arg | awk '{print index ($1,"--with-w3")}'`
+     if ( $match_w3 > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,11)}'`
+	  setenv W3_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_shared=`echo $arg | awk '{print index ($1,"--enable-shared")}'`
+     if ( $match_shared > 0 ) then
+	  setenv MALO_SHARED "YES"
+          set find_option  = 1
+     endif
+#
+     set match_noshared=`echo $arg | awk '{print index ($1,"--disbable-shared")}'`
+     if ( $match_noshared > 0 ) then
+	  setenv MALO_SHARED "NO"
+          set find_option  = 1
+     endif
+#
+     set match_model=`echo $arg | awk '{print index ($1,"--model")}'`
+     if ( $match_model > 0 ) then
+          setenv MALO_MODEL `echo $arg | awk '{printf substr($1,9)}'`
+          set find_option = 1
+     endif
+#
+     set match_dev_model=`echo $arg | awk '{print index ($1,"--dev_model")}'`
+     if ( $match_dev_model > 0 ) then
+          setenv MALO_DEV_MODEL `echo $arg | awk '{printf substr($1,13)}'`
+          set find_option = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $MALO_ROOT/doc/malo_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "malo: $MALO_VERSION"
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if ( $MALO_SHARE  == "" ) setenv MALO_SHARE $MALO_PREFIX/share
+if ( $MALO_SCRIPT == "" ) setenv MALO_SHARE $MALO_PREFIX/script
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+echo "malo config  $date_stamp  on  $host_name" >! $CONF_LOG
+echo $0 $argv >> $CONF_LOG
+if ( $malo_debug == 0 ) then
+     support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+  else
+     csh -x support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run make static"
+     echo "        make shared"
+     echo "        make install"
+     echo "        make install_data"
+     exit 0
+  else
+     echo "Error in configuration."
+     exit $config_status
+endif

@@ -1,0 +1,10 @@
+SITLIST Format  Version 2003.07.31
+#
+#  The list contains positions of 202 VLBI stations.
+#
+#
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP
+#                                                                                                 
+KVNTN    -3171731.480  4292677.37   3481040.458 2010.09.30 end        R
+KVNUS    -3287268.156  4023449.120  3687380.179 2010.09.30 end        R
+KVNYS    -3042278.256  4045902.809  3867376.143 2009.12.01 end        R

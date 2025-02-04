@@ -1,0 +1,254 @@
+LOG = $(SPD_ROOT)/temp/build.log
+
+build:	
+	@echo "Building spd started..."
+	@date "+%d-%h-%Y %H:%M:%S" | tr "[a-z]" "[A-Z]" >> $(LOG)
+	cd  src; source $(SPD_ROOT)/support/spd_vars; umask 0002; make -j $(PETOOLS_NUM_PROC) | tee -a $(LOG)
+	@date "+%d-%h-%Y %H:%M:%S" | tr "[a-z]" "[A-Z]" >> $(LOG)
+	@echo "Finsihed building spd"
+	@echo "Compilation log is in  temp/build.log"
+
+.PHONY: install
+install:
+	if ( -d $(SPD_PREFIX)            == 0 ) mkdir $(SPD_PREFIX)
+	if ( -d $(SPD_PREFIX)/lib        == 0 ) mkdir $(SPD_PREFIX)/lib
+	if ( -d $(SPD_PREFIX)/bin        == 0 ) mkdir $(SPD_PREFIX)/bin
+	if ( -d $(SPD_PREFIX)/include    == 0 ) mkdir $(SPD_PREFIX)/include
+	if ( -d $(SPD_PREFIX)/spd        == 0 ) mkdir $(SPD_PREFIX)/spd
+	if ( -d $(SPD_PREFIX)/spd/share  == 0 ) mkdir $(SPD_PREFIX)/spd/share
+	if ( -d $(SPD_PREFIX)/spd/script == 0 ) mkdir $(SPD_PREFIX)/spd/script
+	if ( -d $(SPD_PREFIX)/spd/doc    == 0 ) mkdir $(SPD_PREFIX)/spd/doc
+#
+	cp $(SPD_ROOT)/bin/bspd_util                    $(SPD_PREFIX)/bin/bspd_util
+	cp $(SPD_ROOT)/bin/merge_spd                    $(SPD_PREFIX)/bin/merge_spd
+	cp $(SPD_ROOT)/bin/spd_3d                       $(SPD_PREFIX)/bin/spd_3d
+	cp $(SPD_ROOT)/bin/spd_3d_static                $(SPD_PREFIX)/bin/spd_3d_static
+	cp $(SPD_ROOT)/bin/spd_3d_inq                   $(SPD_PREFIX)/bin/spd_3d_inq
+	cp $(SPD_ROOT)/bin/spd_3d_toser                 $(SPD_PREFIX)/bin/spd_3d_toser
+	cp $(SPD_ROOT)/bin/spd_inq                      $(SPD_PREFIX)/bin/spd_inq
+	cp $(SPD_ROOT)/bin/spd_resp                     $(SPD_PREFIX)/bin/spd_resp
+	cp $(SPD_ROOT)/bin/spd_show                     $(SPD_PREFIX)/bin/spd_show
+	cp $(SPD_ROOT)/bin/sob_show                     $(SPD_PREFIX)/bin/sob_show
+	cp $(SPD_ROOT)/bin/spd_cli_example              $(SPD_PREFIX)/bin/spd_cli_example
+	cp $(SPD_ROOT)/bin/spd_server                   $(SPD_PREFIX)/bin/spd_server
+	cp $(SPD_ROOT)/bin/spd_daemon                   $(SPD_PREFIX)/bin/spd_daemon
+	cp $(SPD_ROOT)/bin/pd_2point                    $(SPD_PREFIX)/bin/pd_2point
+	cp $(SPD_ROOT)/bin/zendel_grid_heb              $(SPD_PREFIX)/bin/zendel_grid_heb 
+	cp $(SPD_ROOT)/bin/zpd_to_ascii                 $(SPD_PREFIX)/bin/zpd_to_ascii                 
+# # # 
+	cp $(SPD_ROOT)/lib/libspd.a                     $(SPD_PREFIX)/lib
+        ifeq ($(SPD_OS),Linux)
+	      cp $(SPD_ROOT)/lib/libspd.so.1.0            $(SPD_PREFIX)/lib
+	      cd $(SPD_PREFIX)/lib; ln -sf libspd.so.1.0  $(SPD_PREFIX)/lib/libspd.so.1
+	      cd $(SPD_PREFIX)/lib; ln -sf libspd.so.1.0  $(SPD_PREFIX)/lib/libspd.so
+        endif
+        ifeq ($(SPD_OS),Darwin)
+	      cp $(SPD_ROOT)/lib/libspd.1.dylib          $(SPD_PREFIX)/lib
+	      if ( -l $(SPD_PREFIX)/lib/libspd.dylib  ) rm $(SPD_PREFIX)/lib/libspd.dylib
+	      cd      $(SPD_PREFIX)/lib; ln -sf libspd.1.dylib  $(SPD_PREFIX)/lib/libspd.dylib
+	      install_name_tool -id $(SPD_PREFIX)/lib/libspd.dylib   $(SPD_PREFIX)/lib/libspd.1.dylib   
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/bspd_util
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/merge_spd
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_3d
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_3d_inq
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_3d_toser
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_inq
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_resp
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_show
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/sob_show
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_cli_example
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_server
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/spd_daemon
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/pd_2point
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/zendel_grid_heb 
+	      install_name_tool -change $(SPD_ROOT)/lib/libspd.1.dylib $(SPD_PREFIX)/lib/libspd.dylib $(SPD_PREFIX)/bin/zpd_to_ascii                 
+#
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/bspd_util
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/merge_spd
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/spd_3d
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/spd_3d_toser
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/spd_resp
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/spd_show
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/sob_show
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/spd_cli_example
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/spd_server
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/spd_daemon
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/pd_2point
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/zendel_grid_heb
+	      install_name_tool -change @rpath/libjpeg.62.dylib $(SPD_PREFIX)/lib/libjpeg.dylib $(SPD_PREFIX)/bin/zpd_to_ascii
+        endif
+	cp $(SPD_ROOT)/include/spd.i                       $(SPD_PREFIX)/include/spd.i
+	cp $(SPD_ROOT)/include/spd_local.i                 $(SPD_PREFIX)/include/spd_local.i 
+	cp $(SPD_ROOT)/include/spd_common.i                $(SPD_PREFIX)/include/spd_common.i 
+#
+	cp $(SPD_ROOT)/spd/share/geosfp_spd_vlbi.cnf       $(SPD_PREFIX)/spd/share/geosfp_spd_vlbi.cnf
+	cp $(SPD_ROOT)/spd/share/geosfpit_spd_vlbi.cnf     $(SPD_PREFIX)/spd/share/geosfpit_spd_vlbi.cnf
+	cp $(SPD_ROOT)/spd/share/merra_spd_vlbi.cnf        $(SPD_PREFIX)/spd/share/_merra_spd_vlbi.cnf
+	cp $(SPD_ROOT)/spd/share/spd_comm.txt              $(SPD_PREFIX)/spd/share/spd_comm.txt
+	cp $(SPD_ROOT)/spd/share/spd_desc.txt              $(SPD_PREFIX)/spd/share/spd_desc.txt
+	cp $(SPD_ROOT)/spd/share/spd_merra_desc.txt        $(SPD_PREFIX)/spd/share/spd_merra_desc.txt
+	cp $(SPD_ROOT)/spd/share/spd_stat_service.conf     $(SPD_PREFIX)/spd/share/spd_stat_service.conf
+	cp $(SPD_ROOT)/spd/share/geosit_opa_spd_vlbi.cnf        $(SPD_PREFIX)/spd/share/geosit_opa_spd_vlbi.cnf
+	cp $(SPD_ROOT)/spd/share/geosfpit_opa_spd_vlbi.cnf      $(SPD_PREFIX)/spd/share/geosfpit_opa_spd_vlbi.cnf
+	cp $(SPD_ROOT)/spd/share/opa_spd_stat_service.conf      $(SPD_PREFIX)/spd/share/opa_spd_stat_service.conf
+	cp $(SPD_ROOT)/spd/share/vlbi_20240101.inp              $(SPD_PREFIX)/spd/share/vlbi_20240101.inp
+	cp $(SPD_ROOT)/spd/share/vlbi_20250101.inp              $(SPD_PREFIX)/spd/share/vlbi_20250101.inp
+	cp $(SPD_ROOT)/spd/share/astrogeo_spd_geosfpit.conf     $(SPD_PREFIX)/spd/share/astrogeo_spd_geosfpit.conf
+	cp $(SPD_ROOT)/spd/share/astrogeo_opa_spd_geosfpit.conf $(SPD_PREFIX)/spd/share/astrogeo_opa_spd_geosfpit.conf
+	cp $(SPD_ROOT)/spd/share/astrogeo_opa_spd_geosit.conf   $(SPD_PREFIX)/spd/share/astrogeo_opa_spd_geosit.conf
+	cp $(SPD_ROOT)/spd/share/aws_frontend_opa_spd_geosit.conf   $(SPD_PREFIX)/spd/share/aws_frontend_opa_spd_geosit.conf
+	cp $(SPD_ROOT)/spd/share/aws_frontend_opa_spd_geosfpit.conf $(SPD_PREFIX)/spd/share/aws_frontend_opa_spd_geosfpit.conf
+	cp $(SPD_ROOT)/spd/share/deva_spd_geosfpit.conf         $(SPD_PREFIX)/spd/share/deva_spd_geosfpit.conf
+	cp $(SPD_ROOT)/spd/share/deva_opa_spd_geosfpit.conf     $(SPD_PREFIX)/spd/share/deva_opa_spd_geosfpit.conf
+	cp $(SPD_ROOT)/spd/share/deva_opa_spd_geosit.conf       $(SPD_PREFIX)/spd/share/deva_opa_spd_geosit.conf
+	cp $(SPD_ROOT)/spd/share/sagitta_opa_spd_geosfpit.conf  $(SPD_PREFIX)/spd/share/sagitta_opa_spd_geosfpit.conf
+	cp $(SPD_ROOT)/spd/share/sagitta_opa_spd_geosit.conf    $(SPD_PREFIX)/spd/share/sagitta_opa_spd_geosit.conf
+	cp $(SPD_ROOT)/spd/share/example_01.shs            $(SPD_PREFIX)/spd/share/example_01.shs
+	cp $(SPD_ROOT)/spd/share/mab_example.txt           $(SPD_PREFIX)/spd/share/mab_example.txt
+	cp $(SPD_ROOT)/spd/share/spd_cli_example.cnf       $(SPD_PREFIX)/spd/share/spd_cli_example.cnf
+#
+	cp $(SPD_ROOT)/spd/script/spd_all.csh              $(SPD_PREFIX)/spd/script/spd_all.csh
+	cp $(SPD_ROOT)/spd/script/merra_year.csh           $(SPD_PREFIX)/spd/script/merra_year.csh
+	cp $(SPD_ROOT)/spd/script/merra_all.csh            $(SPD_PREFIX)/spd/script/merra_all.csh
+	cp $(SPD_ROOT)/spd/script/spd_all.py               $(SPD_PREFIX)/spd/script/spd_all.py
+	cp $(SPD_ROOT)/spd/script/spd_update.py            $(SPD_PREFIX)/spd/script/spd_update.py
+	cp $(SPD_ROOT)/spd/script/spd_frontend_update.py   $(SPD_PREFIX)/spd/script/spd_frontend_update.py
+#
+	cp $(SPD_ROOT)/spd/doc/spd_3d_format.txt           $(SPD_PREFIX)/spd/doc/spd_3d_format.txt        
+#
+	cp $(SPD_ROOT)/m/spd_cli_init.m                    $(SPD_PREFIX)/spd/script/spd_cli_init.m
+	cp $(SPD_ROOT)/m/spd_cli_quit.m                    $(SPD_PREFIX)/spd/script/spd_cli_quit.m
+	cp $(SPD_ROOT)/m/spd_cli_get_2pd.m                 $(SPD_PREFIX)/spd/script/spd_cli_get_2pd.m
+	cp $(SPD_ROOT)/include/spc.h                       $(SPD_PREFIX)/include/spc.h
+	cp $(SPD_ROOT)/spd/share/service_spd_geosfpit.conf $(SPD_PREFIX)/spd/share/
+	cp $(SPD_ROOT)/spd/share/service_spd_merra.conf    $(SPD_PREFIX)/spd/share/
+#
+	@if ( `whoami` == "root" ) ldconfig
+
+uninstall_include:
+	if ( -f $(SPD_PREFIX)/include/spd.i          ) rm -f $(SPD_PREFIX)/include/spd.i
+	if ( -f $(SPD_PREFIX)/include/spd_local.i    ) rm -f $(SPD_PREFIX)/include/spd_local.i
+	if ( -f $(SPD_PREFIX)/include/spd_common.i   ) rm -f $(SPD_PREFIX)/include/spd_common.i
+
+uninstall: uninstall_include
+	if ( -f $(SPD_PREFIX)/lib/libspd.a              ) rm -f $(SPD_PREFIX)/lib/libspd.a
+        ifeq ($(MALO_OS),Linux)
+              if ( -f $(SPD_PREFIX)/lib/libspd.so       ) rm -f $(SPD_PREFIX)/lib/libspd.so
+              if ( -f $(SPD_PREFIX)/lib/libspd.so.1     ) rm -f $(SPD_PREFIX)/lib/libspd.so.1
+              if ( -f $(SPD_PREFIX)/lib/libspd.so.1.0   ) rm -f $(SPD_PREFIX)/lib/libspd.so.1.0
+        endif
+        ifeq ($(MALO_OS),Darwin)
+	      if ( -f $(SPD_PREFIX)/lib/libspd.dylib    ) rm -f $(SPD_PREFIX)/lib/libspd.dylib
+              if ( -f $(SPD_PREFIX)/lib/libspd.1.dylib  ) rm -f $(SPD_PREFIX)/lib/libspd.1.dylib
+        endif
+	if ( -f $(SPD_PREFIX)/bin/bspd_util          ) rm -f $(SPD_PREFIX)/bin/bspd_util
+	if ( -f $(SPD_PREFIX)/bin/merge_spd          ) rm -f $(SPD_PREFIX)/bin/merge_spd
+	if ( -f $(SPD_PREFIX)/bin/spd_3d             ) rm -f $(SPD_PREFIX)/bin/spd_3d
+	if ( -f $(SPD_PREFIX)/bin/spd_3d_static      ) rm -f $(SPD_PREFIX)/bin/spd_3d_static
+	if ( -f $(SPD_PREFIX)/bin/spd_3d_inq         ) rm -f $(SPD_PREFIX)/bin/spd_3d_inq
+	if ( -f $(SPD_PREFIX)/bin/spd_3d_toser       ) rm -f $(SPD_PREFIX)/bin/spd_3d_toser
+	if ( -f $(SPD_PREFIX)/bin/spd_inq            ) rm -f $(SPD_PREFIX)/bin/spd_inq
+	if ( -f $(SPD_PREFIX)/bin/spd_resp           ) rm -f $(SPD_PREFIX)/bin/spd_resp
+	if ( -f $(SPD_PREFIX)/bin/spd_show           ) rm -f $(SPD_PREFIX)/bin/spd_show
+	if ( -f $(SPD_PREFIX)/bin/sob_show           ) rm -f $(SPD_PREFIX)/bin/sob_show
+	if ( -f $(SPD_PREFIX)/bin/spd_cli_example    ) rm -f $(SPD_PREFIX)/bin/spd_cli_example
+	if ( -f $(SPD_PREFIX)/bin/spd_server         ) rm -f $(SPD_PREFIX)/bin/spd_server
+	if ( -f $(SPD_PREFIX)/bin/spd_daemon         ) rm -f $(SPD_PREFIX)/bin/spd_daemon
+	if ( -f $(SPD_PREFIX)/bin/pd_2point          ) rm -f $(SPD_PREFIX)/bin/pd_2point
+	if ( -f $(SPD_PREFIX)/bin/zendel_grid_heb    ) rm -f $(SPD_PREFIX)/bin/zendel_grid_heb 
+	if ( -f $(SPD_PREFIX)/bin/zpd_to_ascii       ) rm -f $(SPD_PREFIX)/bin/zpd_to_ascii                 
+#
+	if ( -f $(SPD_PREFIX)/spd/share/geosfp_spd_vlbi.cnf        ) rm -f $(SPD_PREFIX)/spd/share/geosfp_spd_vlbi.cnf
+	if ( -f $(SPD_PREFIX)/spd/share/geosit_spd_vlbi.cnf        ) rm -f $(SPD_PREFIX)/spd/share/geosit_spd_vlbi.cnf
+	if ( -f $(SPD_PREFIX)/spd/share/geosfpit_spd_vlbi.cnf      ) rm -f $(SPD_PREFIX)/spd/share/geosfpit_spd_vlbi.cnf
+	if ( -f $(SPD_PREFIX)/spd/share/geosfpit_opa_spd_vlbi.cnf  ) rm -f $(SPD_PREFIX)/spd/share/geosfpit_opa_spd_vlbi.cnf
+	if ( -f $(SPD_PREFIX)/spd/share/merra_spd_vlbi.cnf         ) rm -f $(SPD_PREFIX)/spd/share/merra_spd_vlbi.cnf
+	if ( -f $(SPD_PREFIX)/spd/share/spd_comm.txt               ) rm -f $(SPD_PREFIX)/spd/share/spd_comm.txt
+	if ( -f $(SPD_PREFIX)/spd/share/spd_desc.txt               ) rm -f $(SPD_PREFIX)/spd/share/spd_desc.txt
+	if ( -f $(SPD_PREFIX)/spd/share/spd_merra_desc.txt         ) rm -f $(SPD_PREFIX)/spd/share/spd_merra_desc.txt
+	if ( -f $(SPD_PREFIX)/spd/share/spd_stat_service.conf      ) rm -f $(SPD_PREFIX)/spd/share/spd_stat_service.conf
+	if ( -f $(SPD_PREFIX)/spd/share/opa_spd_stat_service.conf  ) rm -f $(SPD_PREFIX)/spd/share/opa_spd_stat_service.conf
+	if ( -f $(SPD_PREFIX)/spd/share/vlbi_20240101.inp          ) rm -f $(SPD_PREFIX)/spd/share/vlbi_20240101.inp
+	if ( -f $(SPD_PREFIX)/spd/share/vlbi_20250101.inp          ) rm -f $(SPD_PREFIX)/spd/share/vlbi_20250101.inp
+	if ( -f $(SPD_PREFIX)/spd/share/astrogeo_spd_geosfpit.conf     ) rm -f $(SPD_PREFIX)/spd/share/astrogeo_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/astrogeo_opa_spd_geosfpit.conf ) rm -f $(SPD_PREFIX)/spd/share/astrogeo_opa_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/astrogeo_opa_spd_geosit.conf   ) rm -f $(SPD_PREFIX)/spd/share/astrogeo_opa_spd_geosit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/aws_frontend_opa_spd_geosit.conf   ) rm -f $(SPD_PREFIX)/spd/share/aws_frontend_opa_spd_geosit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/aws_frontend_opa_spd_geosfpit.conf ) rm -f $(SPD_PREFIX)/spd/share/aws_frontend_opa_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/deva_spd_geosfpit.conf     ) rm -f $(SPD_PREFIX)/spd/share/deva_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/deva_opa_spd_geosfpit.conf ) rm -f $(SPD_PREFIX)/spd/share/deva_opa_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/deva_opa_spd_geosit.conf   ) rm -f $(SPD_PREFIX)/spd/share/deva_opa_spd_geosit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/sagitta_opa_spd_geosfpit.conf ) rm -f $(SPD_PREFIX)/spd/share/sagitta_opa_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/sagitta_opa_spd_geosit.conf   ) rm -f $(SPD_PREFIX)/spd/share/sagitta_opa_spd_geosit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/example_01.shs             ) rm -f $(SPD_PREFIX)/spd/share/example_01.shs
+	if ( -f $(SPD_PREFIX)/spd/share/mab_example.txt            ) rm -f $(SPD_PREFIX)/spd/share/mab_example.txt
+	if ( -f $(SPD_PREFIX)/spd/share/spd_cli_example.cnf        ) rm -f $(SPD_PREFIX)/spd/sharespd_cli_example.cnf
+#
+	if ( -f $(SPD_PREFIX)/spd/script/spd_all.csh               ) rm -f $(SPD_PREFIX)/spd/script/spd_all.csh
+	if ( -f $(SPD_PREFIX)/spd/script/merra_year.csh            ) rm -f $(SPD_PREFIX)/spd/script/merra_year.csh
+	if ( -f $(SPD_PREFIX)/spd/script/merra_all.csh             ) rm -f $(SPD_PREFIX)/spd/script/merra_all.csh
+	if ( -f $(SPD_PREFIX)/spd/script/spd_all.py                ) rm -f $(SPD_PREFIX)/spd/script/spd_all.py
+	if ( -f $(SPD_PREFIX)/spd/script/spd_update.py             ) rm -f $(SPD_PREFIX)/spd/script/spd_update.py
+	if ( -f $(SPD_PREFIX)/spd/script/spd_frontend_update.py    ) rm -f $(SPD_PREFIX)/spd/script/spd_frontend_update.py
+#
+	if ( -f $(SPD_PREFIX)/spd/doc/spd_3d_format.txt            ) rm -f $(SPD_PREFIX)/spd/doc/spd_3d_format.txt
+	if ( -f $(SPD_PREFIX)/spd/share/spd_cli_example.cnf        ) rm -f $(SPD_PREFIX)/spd/share/spd_cli_example.cnf
+	if ( -f $(SPD_PREFIX)/spd/share/spd_cli_example.dat        ) rm -f $(SPD_PREFIX)/spd/share/spd_cli_example.dat
+#
+	if ( -f $(SPD_PREFIX)/spd/script/spd_cli_init.m            ) rm -f $(SPD_PREFIX)/spd/script/spd_cli_init.m
+	if ( -f $(SPD_PREFIX)/spd/script/spd_cli_quit.m            ) rm -f $(SPD_PREFIX)/spd/script/spd_cli_quit.m
+	if ( -f $(SPD_PREFIX)/spd/script/spd_cli_get_2pd.m         ) rm -f $(SPD_PREFIX)/spd/script/spd_cli_get_2pd.m
+	if ( -f $(SPD_PREFIX)/include/spc.h                        ) rm -f $(SPD_PREFIX)/include/spc.h                
+	if ( -f $(SPD_PREFIX)/spd/share/service_opa_spd_geosfpit.conf ) rm -f $(SPD_PREFIX)/spd/share/service_opa_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/service_spd_geosfpit.conf     ) rm -f $(SPD_PREFIX)/spd/share/service_spd_geosfpit.conf
+	if ( -f $(SPD_PREFIX)/spd/share/service_spd_merra.conf        ) rm -f $(SPD_PREFIX)/spd/share/service_spd_merra.conf
+#
+	rmdir $(SPD_PREFIX)/spd/script
+	rmdir $(SPD_PREFIX)/spd/share
+	rmdir $(SPD_PREFIX)/spd/doc
+	rmdir $(SPD_PREFIX)/spd
+
+clean:	
+	@cd  src; source $(SPD_ROOT)/support/spd_vars; make clean
+	if ( -f $(SPD_ROOT)/temp/build.log         ) rm -f $(SPD_ROOT)/temp/build.log
+	if ( -f $(SPD_ROOT)/support/sun_preproc.o  ) rm -f $(SPD_ROOT)/support/sun_preproc.o
+
+
+distclean:	clean 
+	if ( -f $(SPD_ROOT)/temp/conf.log          ) rm -f $(SPD_ROOT)/temp/conf.log
+	if ( -f $(SPD_ROOT)/support/spd_vars       ) rm -f $(SPD_ROOT)/support/spd_vars     
+	if ( -f $(SPD_ROOT)/include/spd_local.i    ) rm -f $(SPD_ROOT)/include/spd_local.i
+	if ( -f $(SPD_ROOT)/Makefile               ) rm -f $(SPD_ROOT)/Makefile
+	@support/purge temp
+	@support/purge bin
+	@support/purge src
+	@support/purge spd/doc
+	@support/purge spd/share
+	@support/purge spd/script
+	@support/purge spd/
+	@support/purge support
+	@support/purge obsolete
+	@support/purge include
+	@support/purge ./
+	@echo "spd distribution tree is cleaned"
+
+SPD_BASENAME = `basename $(SPD_ROOT)`
+tar:	distclean
+	@if ( -f temp/conf.log                  ) rm -f temp/conf.log
+	@if ( -f $(SPD_ROOT)/support/spd_vars ) rm -f $(SPD_ROOT)/support/spd_vars 
+	@if ( -f /tmp/malo-$(SPD_VERSION).tar.bz2 ) rm -f /tmp/malo-$(SPD_VERSION).tar.bz2 
+	cd ../; tar -cf - --exclude "*ngvla*" --exclude "*25deg*" spd_$(SPD_VERSION) | \
+                pbzip2 -c > /tmp/spd-$(SPD_VERSION).tar.bz2 
+	cd ../; tar -cf - --exclude "*ngvla*" --exclude "*25deg*" spd_$(SPD_VERSION) | \
+                pbzip2 -c > /tmp/spd-$(SPD_VERSION).tar.bz2 
+	cd ../; find spd_$(SPD_VERSION) -name "*" | grep "ngvla\|25deg" > /tmp/make__temp
+	cd ../; tar -c --files-from=/tmp/make__temp | \
+                pbzip2 -c > /tmp/spd_share-$(SPD_VERSION).tar.bz2 
+	@rm /tmp/make__temp 
+	@echo "Tar-file /tmp/spd-$(SPD_VERSION).tar.bz2 is created" 
+	@if ( -d /astrogeo.org/spd ) cp -p README  /astrogeo.org/spd/README.txt
+	@if ( -d /astrogeo.org/spd ) cp -p INSTALL /astrogeo.org/spd/INSTALL.txt
+	@if ( -d /astrogeo.org/spd ) cp -p /tmp/spd-$(SPD_VERSION).tar.bz2 /astrogeo.org/spd/
+	@if ( -d /astrogeo.org/spd ) cp -p /tmp/spd_share-$(SPD_VERSION).tar.bz2 /astrogeo.org/spd/
+	@sync
+	@if ( -d /astrogeo.org/spd ) echo "Files /tmp/spd-$(SPD_VERSION).tar.bz2 README INSTALL are copied to /astrogeo.org/spd" 

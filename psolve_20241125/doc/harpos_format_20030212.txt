@@ -1,0 +1,156 @@
+   Specifications of HARPOS format version of 2002.12.12
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   HARPOS format is for describing site displacements which can 
+be represented by a finite set of harmonic components.
+
+   A file in HARPOS format consists of records of variable length in 
+ASCII coding. The records are separated by a character with decimal 
+code 13. The records of the following types are supported:
+
+1) Header record;
+2) Harmonic definition records;
+3) Site definition records;
+4) Displacement definition records;
+5) Trailer record.
+
+   Records which start from # character are considered as comments.
+
+   Each valid file in HARPOS format has the first header record, one 
+or more harmonic definition records, one or more site definition 
+records and one or more displacement definition records. The last 
+record is a trailer record. All harmonic definition records should 
+precede site definition records. All site definition records should 
+precede displacement definition records.
+
+   Records format:
+
+1) A header record contains the string
+   "HARPOS Format version of 2002.12.12"
+
+   The header record allows to distinguish the valid file in the 
+   HARPOS format from files in other formats.
+
+2) A harmonic definition record defines the argument of the harmonic in 
+   the form {phase + freq*(t-t0) + 1/2*accel*(t-t0)**2}  where t is 
+   time in TDT time scale and t0 is the reference epoch J2000.0, 
+   01 January 2000, 12 hours TDT. The file cannot contain more than one 
+   definition of the same harmonic.
+
+Format of an H-record:
+----------------------
+
+Field  1:1   A1     -- Records ID: letter H (decimal code 72).
+field  2:3   a2     -- delimiters: blanks.
+Field  4:11  A8     -- 8-letter long harmonic name. May contain any 
+                       characters with decimal codes 32-255, but blanks 
+                       are allowed only at the end of the harmonic name.
+                       This field should not necessarily have a special 
+                       meaning. Parsing software should not try to 
+                       interpret this name.
+field 12:13  a2     -- delimiters: blanks.
+Field 14:26  D13.6  -- Phase of the harmonic in float format.
+                       Units: rad.
+field 27:28  a2     -- delimiters: blanks.
+Field 29:47  D19.12 -- Frequency of the harmonic in float format.
+                       Units: rad/sec.
+field 48:49  a2     -- delimiters: blanks.
+Field 50:59  D10.3  -- Acceleration of the harmonic in float format.
+                       Units: rad/sec**2.
+field 60:80  a21    -- delimiters: blanks.
+
+3) A site definition record defines the site identifier and site
+   coordinates in a crust-fixed reference frame. The file cannot 
+   contain more than one definition of the same site.
+
+Format of an S-record:
+----------------------
+
+Field  1:1   A1     -- Record ID. Should be letter S (decimal code 83)
+Field  2:3   A2     -- Delimiters: blanks.
+Field  4:11  A8     -- 8-letter long site identifier. May contain 
+                       any characters with decimal codes 32-255, but 
+                       blanks are allowed only at the end of the site 
+                       identifier. This site identifier should be 
+                       unique among S-records. This field should not 
+                       necessarily have a special meaning. Parsing 
+                       software should not try to interpret it.
+field 12:13  a2     -- delimiters: blanks.
+Field 14:26  F13.4  -- Site X coordinate in a crust fixed reference 
+                       frame. Units: meters.
+field 27:27  a1     -- delimiters: blanks.
+Field 28:40  F13.4  -- Site Y coordinate in a crust fixed reference 
+                       frame. Units: meters.
+field 41:41  a1     -- delimiters: blanks.
+Field 42:54  F13.4  -- Site Z coordinate in a crust fixed reference 
+                       frame. Units: meters.
+field 55:56  a2     -- delimiters: blanks.
+Field 57:64  F8.4   -- Site geocentric latitude, positive to north, 
+                       in degrees. This field is for information only. 
+                       Parsing software MUST ignore it.
+field 65:65  a1     -- delimiters: blanks.
+Field 66:73  F8.4   -- Site longitude, positive towards east, 
+                       in degrees. This field is for information only. 
+                       Parsing software MUST ignore it.
+field 74:74  a1     -- delimiters: blanks.
+Field 75:80  F6.1   -- Site height above the reference ellipsoid 
+                       in meters. This field is for information only. 
+                       Parsing software MUST ignore it.
+
+4) A data record specifies the site, the harmonic and 6 amplitudes of 
+   displacements: Up cosine, East cosine, North cosine, Up sine, 
+   East sine, North sine. A file cannot contain more than one data 
+   record for the same harmonic, the same site. The site and the 
+   harmonic referred in a data record must be defined in the preceding 
+   site and harmonic definition records.
+
+   Notation "Up cosine" and "Up sine" amplitudes of the displacement 
+   means that the radial component of the topocentric vector of the 
+   displacement, which is parallel to the vector from the geocenter to 
+   the site, depends on time in the following way: 
+
+   D_up= Ampl_cos_up * cos {phase + freq*(t-t0) + 1/2*accel*(t-t0)**2} +
+         Ampl_sin_up * sin {phase + freq*(t-t0) + 1/2*accel*(t-t0)**2}
+
+   Analogously, "East cosine", "East sine" amplitudes define time 
+   dependence of the east component of the displacement vector, and 
+   "North cosine", "North sine" define time dependence of the north
+   component.
+
+Format of a D-record:
+---------------------
+
+Field  1:1   A1     -- Record ID: letter D (decimal code 68).
+field  2:3   a2     -- delimiters: blanks.
+Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name 
+                       must be defined in a preceding H-record.
+field 12:13  a2     -- delimiters: blanks.
+Field 14:21  A8     -- 8-letter long site identifier. The site 
+                       identifier must be defined in a preceding 
+                       S-record.
+field 22:24  a3     -- delimiters: blanks.
+Field 25:32  F8.5   -- Cosine amplitude of the Up component of the 
+                       displacement vector. Up direction is along the 
+                       vector from the geocenter to the site. 
+                       Units: meters.
+field 33:33  A1     -- delimiter: blank.
+Field 34:41  F8.5   -- Cosine amplitude of the East component of the 
+                       displacement vector. Units: meters.
+field 42:42  a1     -- delimiter: blank.
+Field 43:50  F8.5   -- Cosine amplitude of the North component of the 
+                       displacement vector. Units: meters.
+field 51:53  a3     -- delimiter: blanks.
+Field 54:61  F8.5   -- Sine amplitude of the Up component of the 
+                       displacement vector. Up direction is along the 
+                       vector from the geocenter to the site. 
+                       Units: meters.
+field 62:62  a1     -- delimiter: blank.
+Field 63:70  F8.5   -- Sine amplitude of the East component of the 
+                       displacement vector. Units: meters.
+field 71:71  a1     -- delimiter: blank.
+Field 72:79  F8.5   -- Sine amplitude of the North component of the 
+                       displacement vector. Units: meters.
+field 80:80  a1     -- delimiter: blank.
+
+
+5) Trailer record is the same as the header record.

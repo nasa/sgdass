@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 07-OCT-2024 pet Created
+# 
+SHORT_NAME:    FORTLEZA  char       Ft
+LAST_UPDATE:   FORTLEZA  char       2024.10.07_09:59:43
+COORD:         FORTLEZA  meters     4985370.037    -3955020.320     -428472.286
+MOUNT:         FORTLEZA  char       ALTAZ   
+SLEW_AZ:       FORTLEZA  deg/sec       0.666
+SLEW_EL:       FORTLEZA  deg/sec       0.333
+ACCL_AZ:       FORTLEZA  deg/sec^2     0.5
+ACCL_EL:       FORTLEZA  deg/sec^2     0.5
+TSETTLE_AZ:    FORTLEZA  sec           0.0
+TSETTLE_EL:    FORTLEZA  sec           0.0
+EL_MIN:        FORTLEZA  deg           5.0
+EL_MAX:        FORTLEZA  deg          88.0
+AZ_RANGE:      FORTLEZA  deg        -189.0 -11.0 171.0 349.0
+RECORDER:      FORTLEZA  char       mark5b   
+BACKEND:       FORTLEZA  char       mark4
+SETMODE:       FORTLEZA  sec         4.0
+PREOB:         FORTLEZA  sec           0.2
+POSTOB:        FORTLEZA  sec           0.0
+HOR_AZIM:      FORTLEZA  deg           0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:      FORTLEZA  deg           5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0
+STOW_AZIM:     FORTLEZA  deg        80.0
+STOW_ELEV:     FORTLEZA  deg        80.0
+#
+CLOCK_DATES:   FORTLEZA  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  FORTLEZA  sec        0.0
+# 

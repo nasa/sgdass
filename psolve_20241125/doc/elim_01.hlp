@@ -1,0 +1,161 @@
+ELIM/MILE                                                  ELIM  Ver. 2007.07.18
+
+       Procedure for automatic outliers elimination/restoration
+
+       Description of menu items.
+       같같같같같같같같같같같같�
+
+(H) -- Put on-line help on the screen, which you are reading just now.
+
+(A) -- Set acceleration factor ( greater than 0 ). This option allows to speed
+       up the process of elimination/restoration by the expense of some 
+       worsening performance: residuals are updated after N operations of
+       elimination/restoration, where N is the acceleration factor. Best choice
+       is N=1, but it may lead to too slow work for session with tens of
+       thousands observations. Increasing acceleration factors decreases 
+       computation time approximately by N times, but it may lead not the 
+       optimal choice of the outlier/candidate_in_restoration. It is not
+       recommended to use acceleration factor more than 1 unless computational
+       expenses appear really intolerable.
+
+(X) -- Set upper limit for formal uncertainty. Observations with formal 
+       uncertainty (full sigma: correlator supplied and reweight) exceeding
+       the limit will be marked as outliers in ELIM mode and will not be 
+       considered eligible for restoration in MILE mode. If the limit is set 
+       to zero then this criteria will not be taken into account.
+
+(E) -- EQM speed-up. Toggles flag of whether to save equations of conditions 
+       in memory. Saving equations of conditions in memory speeds up 
+       computation considerably. However, it may appear that it is not enough 
+       operating memory to keep all equations of conditions. Then this flag 
+       should be lifted. EQM speed-up flag can be reset only before processing 
+       the first observation.
+
+(U) -- Set upper threshold (in psec) for detection of outlier. Each observation
+       will be passed through two tests: threshold test and n-sigmas cutoff 
+       test. If (unweighted) residual of the observation used in solution 
+       exceeds in modulo the absolute value of the specified threshold,
+        this observation is marked as outlier in ELIM mode. If (unweighted) 
+       residual of not used in solution but recoverable observation is less 
+       in modulo than the absolute value of the specified threshold then this 
+       observation is marked as a candidate to restoration in MILE mode. 
+       If the value of threshold is set up to zero, then threshold criterion 
+       will not be used. The threshold criteria may be negative. The sign of
+       the threshold criteria is used when both the threshold and cutoff 
+       criteria are used (see below).
+
+(C) -- Set upper level of cutoff limit for detection of outlier using n-sigma
+       criterion. Each observation is passed through two tests: threshold 
+       test and n-sigmas cutoff test. If normalized residual of the observation 
+       used in solution exceeds in module the specified cutoff limit then this 
+       observation is marked as outlier in ELIM mode. If normalized 
+       residual of the recoverable but not used in solution observation is less
+       in module than the specified cutoff limit then this observation is
+       marked as a candidate to restoration in MILE mode. If the value of 
+       cutoff is set up as zero then n-sigmas cutoff criterion will not be 
+       used. 
+
+       If both the threshold and n-sigma criteria are used in ELIM mode 
+       and the threshold is positive, then an observation is considered as
+       a candidate for outlier if its residual EITHER greater than the 
+       threshold OR its normalized residual greater than the cutoff criteria.
+       The observation with the maximal in modulo normalized residual among 
+       those which satisfy either criterion is marked as the best candidate
+       for elimination.
+
+       If both the threshold and n-sigma criteria are used in ELIM mode 
+       and the threshold is negative then an observation is considered as
+       a candidate for outlier if its residual greater than the absolute 
+       value of the threshold AND its normalized residual is greater than 
+       the cutoff criteria. The observation with the maximal in modulo 
+       normalized residual among those which satisfy both criteria is 
+       marked as the best candidate for elimination.
+
+       If both the threshold and n-sigma criteria are used in MILE mode and
+       the threshold is positive, then an observation is considered as
+       a candidate for restoration if its residual is EITHER less than the 
+       threshold OR its normalized residual is less than the cutoff criteria.
+       The observation with the minimal in modulo normalized residuals among 
+       those which satisfy either criterion is marked as the best candidate 
+       for restoration.
+
+       If both the threshold and n-sigma criteria are used in MILE mode and
+       the threshold is negative, then an observation is considered as
+       a candidate for restoration if its residual is less than the 
+       absolute value of the threshold AND its normalized residual is less 
+       than the cutoff criteria. The observation with minimal in modulo 
+       normalized residuals among those which satisfy both criteria is 
+       marked as the best candidate for restoration.
+
+(Y) -- Normalization of "normalized postfit residuals" may be done in two 
+       modes: 'global' mode when dispersion of postfit residuals used for 
+       normalization is calculated for all used observations of the database 
+       or in 'baseline' mode when this dispersion is calculated for used 
+       observations made at the same baseline as the considered observation.
+     
+(Q) -- Quality code limit sets the minimal quality code acceptable for the 
+       observation considered as candidate in restoration. All observations
+       with quality code less than specified limit are considered as 
+       unrecoverable ones and cannot be restored by MILE. Quality code limit 
+       may have values in the range [1, 9].
+       
+(D) -- Statistics of the solution is not calculated automatically when ELIM is
+       called. Entering D you can initialize ELIM/MILE and update statistics
+       of the solution.
+       
+(M) -- Try to resolve ambiguity. If YES then MILE tries to resolve ambiguities
+       on the fly. It checks whether the observation is a good candidate for
+       restoration after getting rid from the ambiguities. If the observation
+       with ambiguities is the best candidate for restoration them MILE 
+       restores it, changes ambiguities of this observation and possibly 
+       changes ambiguities of others suppressed observations of the same scan
+       in order to keep misclosure. MILE will not restore observation if the
+       change of ambiguities with conservation of misclosure would require 
+       changes of ambiguities of used observations.
+      
+(I) -- Ionosphere for ambiguities. Forces MILE to uses effective ionosphere
+       free ambiguities spacing when it tries to resolve ambiguities on the 
+       fly. Should be always used when the option (M) is YES except some
+       specific cases.
+
+(R) -- Refresh the screen.
+
+(-) -- Change singularity check (ref. documentation for SET_SNGCHK). 
+       Singularity check action REPARAMETERIZE is recommended to be used 
+       in order to avoid abnormal termination caused by normal matrix 
+       singularity which may give rise due to elimination too many 
+       observations.
+
+(') -- Change suppression method. Codes of supported suppression methods will 
+       be displayed and used may select appropriate suppression method. 
+       Suppression method influence on the status of observations and on 
+       possibility to suppress them.
+
+(V) -- Verbosity level. Two values are allowed: 0 what means silent mode or
+       1 -- verbose mode. Some messages will appear at the screen in verbose
+       mode indicating the current work of the program. Only error message will
+       printed out in silent mode.
+
+(N) -- Toggle confirmation mode. Confirmation will be inquired before each 
+       operation elimination or restoration in confirmation mode. User can 
+       reply Y, N, A, S in a response. "Y" means yes, "N" means no, "A" means 
+       yes and not to ask further confirmation, "S" means to stop further 
+       elimination or restoration and coming to the main menu ELIM. Switching 
+       confirmation mode "on" sets automatically verbosity level to 1.
+
+(S) -- Save results of the work (to rewrite them from temporary data 
+       structures to scratch file), show the listing of parameter estimation by
+       calling CRES and to return to OPTIN.
+
+(O) -- Return to OPTIN without saving results.
+
+(P) -- Start doing outliers elimination or restoration.
+
+(T) -- Toggle mode between ELIM (outliers elimination) and MILE (restoration 
+       of suppressed observations).
+
+(W) -- Call utility UPWEI (ref. documentation for UPWEI) for updating weights.
+       Additive baseline-dependent (or baseline-independent) corrections to 
+       the weights will be found using iterative procedure. After having 
+       quadratically added to the a priori weights the ratio of the chi-square 
+       to its mathematical expectation become near to unity.

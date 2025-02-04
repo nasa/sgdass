@@ -1,0 +1,50 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2020.10.13 nh created
+# 2022.04.03 pet Added peculiar clock offset
+# 2024.02.14 pet Added definition for the backend and setmode
+# 
+SHORT_NAME:   YARRA12M  char       Yg
+LAST_UPDATE:  YARRA12M  char       2020.10.13_13:36:11
+COORD:        YARRA12M  meters        -2388895.618    5043349.923   -3078591.425
+MOUNT:        YARRA12M  char       ALTAZ   
+SLEW_AZ:      YARRA12M  deg/sec       5.0
+SLEW_EL:      YARRA12M  deg/sec       1.0
+ACCL_AZ:      YARRA12M  deg/sec^2     1.3
+ACCL_EL:      YARRA12M  deg/sec^2     1.3
+TSETTLE_AZ:   YARRA12M  sec           0.0
+TSETTLE_EL:   YARRA12M  sec           0.0
+EL_MIN:       YARRA12M  deg           5.0
+EL_MAX:       YARRA12M  deg          88.0
+AZ_RANGE:     YARRA12M  deg        -270.0 -90.0  90.0  90.0
+RECORDER:     YARRA12M  char        flexbuff_reforder
+BACKEND:      YARRA12M  char        dbbc3
+SETMODE:      YARRA12M  sec         4.0
+PREOB:        YARRA12M  sec           0.2
+POSTOB:       YARRA12M  sec           0.0
+HOR_AZIM:     YARRA12M  deg           0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:     YARRA12M  deg           5.0  10.0  12.0  18.0  15.0   5.0   2.0   0.1   0.1   3.0   3.0  30.0  20.0
+STOW_AZIM:    YARRA12M  deg          80.0
+STOW_ELEV:    YARRA12M  deg          80.0
+#
+CLOCK_DATES:  YARRA12M  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: YARRA12M  sec        2.278E-6
+# 
+TSYS_DATES:   YARRA12M  char       2017.07.17  2017.07.18
+TSYS_ELEVS:   YARRA12M  deg           3.0   5.0  10.0  20.0  30.0  40.0  80.0  90.0
+TSYS_FREQS:   YARRA12M  GHz           2.1   2.4
+TSYS_POLVALS: YARRA12M  K     R     131.350 130.798 128.166 116.520 117.887 112.863 101.446  96.661
+TSYS_FREQS:   YARRA12M  GHz           7.9   9.1
+TSYS_POLVALS: YARRA12M  K     R      86.324  84.945  81.053  72.795  70.572  69.303  63.317  61.851
+#
+BPSS_DATES:   YARRA12M  char       2000.01.01   2020.07.01
+BPSS_BWIDTH:  YARRA12M  MHz          16
+BPSS_BETA:    YARRA12M  d/l        1.00
+BPSS_BWIDTH:  YARRA12M  MHz          32
+BPSS_BETA:    YARRA12M  d/l        1.00
+#
+GAIN_DATES:   YARRA12M  char       2004.12.31 2025.01.01
+GAIN_FREQS:   YARRA12M  GHz           7.9   9.1
+GAIN_ELEVS:   YARRA12M  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS: YARRA12M  K/Jy  R     0.022 0.023 0.024 0.024 0.025 0.024 0.024
+GAIN_POLVALS: YARRA12M  K/Jy  L     0.022 0.023 0.024 0.025 0.025 0.025 0.024

@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+#  2020.07.11  pet Adjusted AZ_RANGE
+#
+SHORT_NAME:  YEBES40M  Ys
+LAST_UPDATE: YEBES40M  2020.07.11_09:52:35
+COORD:       YEBES40M  meters     4848761.965  -261484.497  4123084.827
+MOUNT:       YEBES40M  char       ALTAZ
+SLEW_AZ:     YEBES40M  deg/sec    1.0
+SLEW_EL:     YEBES40M  deg/sec    1.0
+ACCL_AZ:     YEBES40M  deg/sec^2  0.5
+ACCL_EL:     YEBES40M  deg/sec^2  0.5
+TSETTLE_AZ:  YEBES40M  sec       15.0
+TSETTLE_EL:  YEBES40M  sec       15.0
+EL_MIN:      YEBES40M  deg        5.0
+EL_MAX:      YEBES40M  deg       89.0
+AZ_RANGE:    YEBES40M  deg      -40.0 40.0 320.0 400.0
+RECORDER:    YEBES40M  char      flexbuf
+PREOB:       YEBES40M  sec       10.0
+POSTOB:      YEBES40M  sec        2.0

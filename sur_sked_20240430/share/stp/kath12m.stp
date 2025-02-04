@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+#  2018.04.12  pet Created
+#  2024.02.14  pet Updated. NB: Faked hor-mask!
+#
+SHORT_NAME:   KATH12M   char       Ke
+LAST_UPDATE:  KATH12M   char       2024.02.14
+COORD:        KATH12M   meters    -4147354.147  4581542.629 -1573303.903
+MOUNT:        KATH12M   char       ALTAZ
+SLEW_AZ:      KATH12M   deg/sec    5.0
+SLEW_EL:      KATH12M   deg/sec    1.0
+ACCL_AZ:      KATH12M   deg/sec^2  1.3
+ACCL_EL:      KATH12M   deg/sec^2  1.3
+TSETTLE_AZ:   KATH12M   sec        2.0
+TSETTLE_EL:   KATH12M   sec        2.0
+EL_MIN:       KATH12M   deg        5.0
+EL_MAX:       KATH12M   deg       88.0
+AZ_RANGE:     KATH12M   deg      -270.0 -90.0  90.0 270.0
+RECORDER:     KATH12M   char      flexbuff_recorder
+BACKEND:      KATH12M   char      dbbc3
+SETMODE:      KATH12M   sec         4.0
+PREOB:        KATH12M   sec       10.0
+POSTOB:       KATH12M   sec        2.0
+HOR_AZIM:     KATH12M   deg        0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:     KATH12M   deg        8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0
+STOW_AZIM:    KATH12M   deg        80.0
+STOW_ELEV:    KATH12M   deg        80.0
+#
+CLOCK_DATES:  KATH12M   sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: KATH12M   sec        2.278E-6

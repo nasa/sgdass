@@ -1,0 +1,17 @@
+SPD_3D_CONF   Format version of 2013.11.20
+#
+#  Last updated 2014.06.25_23:09:07
+#
+REFR_EXPR:   W532_Ciddor_1996
+SPD_ALG:     y_nonloc
+FIL_STA:     /progs/spd_20161117/spd/share/lrr.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      geosfpit_height_above_geoid.heb
+FIL_LEAPSEC: /apr/eop/leapsec.dat
+FIL_DESC:    spd_desc.txt
+FIL_COMM:    spd_comm.txt
+FIL_FMT:     ephedisp_format.txt
+TIM_INTRV:   10800.0D0
+LAG:         5400.0
+N_EL:        16
+N_AZ:        12

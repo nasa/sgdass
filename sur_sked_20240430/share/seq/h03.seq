@@ -1,0 +1,90 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+#  Frequency sequence used by Haystack in 2017-2021
+#
+#  Astronomical convention is used for band definition
+#  For instance notation 2004.1 32.0 means the band
+#  that covers range [2004.1, 2036.1] MHz
+#
+#  Last updated by L. Petrov on 2024.02.26_11:47:49
+#
+#  16Gbps range 3
+#
+HDS_NAME  h01
+MOD_NAME  h03
+#
+STATION GGAO12M   Gs  udc_01
+STATION KOKEE12M  K2  udc_01
+STATION MACGO12M  Mg  udc_01
+STATION RAEGYEB   Yj  udc_01
+#
+#
+#  Bnd Low_frq bandwidh Sub
+#
+BAND  A  3960.4  32.0    U
+BAND  A  3992.4  32.0    U
+BAND  A  4024.4  32.0    U
+BAND  A  4056.4  32.0    U
+BAND  A  4088.4  32.0    U
+BAND  A  4120.4  32.0    U
+BAND  A  4152.4  32.0    U
+BAND  A  4184.4  32.0    U
+BAND  A  4216.4  32.0    U
+BAND  A  4248.4  32.0    U
+BAND  A  4280.4  32.0    U
+BAND  A  4312.4  32.0    U
+BAND  A  4344.4  32.0    U
+BAND  A  4376.4  32.0    U
+BAND  A  4408.4  32.0    U
+BAND  A  4440.4  32.0    U
+#
+BAND  B  7960.4  32.0    U
+BAND  B  7992.4  32.0    U
+BAND  B  8024.4  32.0    U
+BAND  B  8056.4  32.0    U
+BAND  B  8088.4  32.0    U
+BAND  B  8120.4  32.0    U
+BAND  B  8152.4  32.0    U
+BAND  B  8184.4  32.0    U
+BAND  B  8216.4  32.0    U
+BAND  B  8248.4  32.0    U
+BAND  B  8280.4  32.0    U
+BAND  B  8312.4  32.0    U
+BAND  B  8344.4  32.0    U
+BAND  B  8376.4  32.0    U
+BAND  B  8408.4  32.0    U
+BAND  B  8440.4  32.0    U
+#
+BAND  C  8472.4  32.0    U
+BAND  C  8504.4  32.0    U
+BAND  C  8536.4  32.0    U
+BAND  C  8568.4  32.0    U
+BAND  C  8600.4  32.0    U
+BAND  C  8632.4  32.0    U
+BAND  C  8664.4  32.0    U
+BAND  C  8696.4  32.0    U
+BAND  C  8728.4  32.0    U
+BAND  C  8760.4  32.0    U
+BAND  C  8792.4  32.0    U
+BAND  C  8824.4  32.0    U
+BAND  C  8856.4  32.0    U
+BAND  C  8888.4  32.0    U
+BAND  C  8920.4  32.0    U
+BAND  C  8952.4  32.0    U
+#
+BAND  D  8984.4  32.0    U
+BAND  D  9016.4  32.0    U
+BAND  D  9048.4  32.0    U
+BAND  D  9080.4  32.0    U
+BAND  D  9112.4  32.0    U
+BAND  D  9144.4  32.0    U
+BAND  D  9176.4  32.0    U
+BAND  D  9208.4  32.0    U
+BAND  D  9240.4  32.0    U
+BAND  D  9272.4  32.0    U
+BAND  D  9304.4  32.0    U
+BAND  D  9336.4  32.0    U
+BAND  D  9368.4  32.0    U
+BAND  D  9400.4  32.0    U
+BAND  D  9432.4  32.0    U
+BAND  D  9464.4  32.0    U

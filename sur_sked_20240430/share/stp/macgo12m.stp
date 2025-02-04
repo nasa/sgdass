@@ -1,0 +1,38 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2021.06.09  L. Petrov Created
+#
+# 2021.06.30 pet  Set slewing speed, acceleration, and tsettle to be the same as results of k20001
+# 2021.07.02 pet  Added STOW_AZIM and STOW_ELEV fields
+# 2021.07.20 pet  Improved slewing parameters after processing mg0001 SDE
+# 2022.01.28 pet  Added BACKEND definition
+# 2022.04.03 pet  Added peculiar clock offset
+# 
+SHORT_NAME:    MACGO12M  char       Mg
+LAST_UPDATE:   MACGO12M  char       2022.04.03
+COORD:         MACGO12M  meters     -1330788.244  -5328106.522   3236427.559
+MOUNT:         MACGO12M  char       ALTAZ   
+###
+SLEW_AZ:       MACGO12M  deg/sec      12.0
+SLEW_EL:       MACGO12M  deg/sec       6.1
+ACCL_AZ:       MACGO12M  deg/sec^2     3.43
+ACCL_EL:       MACGO12M  deg/sec^2     2.58
+TSETTLE_AZ:    MACGO12M  sec           5.6
+TSETTLE_EL:    MACGO12M  sec           5.3
+EL_MIN:        MACGO12M  deg           2.0
+EL_MAX:        MACGO12M  deg          88.2
+AZ_RANGE:      MACGO12M  deg        -177.5   2.3   182.5  362.3
+RECORDER:      MACGO12M  char       mark6
+BACKEND:       MACGO12M  char       rdbe
+SETMODE:       MACGO12M  sec 	       4.0
+###
+PREOB:         MACGO12M  sec           3.0
+POSTOB:        MACGO12M  sec           0.0
+###
+HOR_AZIM:      MACGO12M  deg           0  70  75  80  85  95 105 145 150 155 165 185 190 195 360
+HOR_ELEV:      MACGO12M  deg           5   6   7   8   9   8   6   7   8   9  10   8   7   5   5
+STOW_AZIM:     MACGO12M  deg          36.0
+STOW_ELEV:     MACGO12M  deg          89.0
+#
+CLOCK_DATES:   MACGO12M  sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  MACGO12M  sec        0.174E-6

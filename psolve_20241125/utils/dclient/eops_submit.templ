@@ -1,0 +1,48 @@
+#!/bin/csh
+# ************************************************************************
+# *                                                                      *
+# *   C-Shell program db_submit provides a short interface to dclient    *
+# *   for submitting EOP series rom the 24 hours experiments to the IVS  *
+# *   Data Center.                                                       *
+# *                                                                      *
+# *   It uses customisation file for dclient. This file is sought in     *
+# *   the $MK5_ROOT/local directory under name eops.lcl .                *
+# *   Environment variable EOPS_CONFIG overrides this  name.             *
+# *                                                                      *
+# *   Usage: eops_client <database_name>                                 *
+# *                                                                      *
+# *  ###  21-SEP-2000  eops_submit  v1.2 (c) L. Petrov  16-JUL-2003 ###  *
+# *                                                                      *
+# ************************************************************************
+if ($#argv == 0) then 
+    echo "Usage: eops_submit <eops_filename>"
+    exit -1
+endif
+#
+# --- Determine center code
+#
+if ( $?MK5_ROOT == 0 ) then
+    echo "---  eops_sumbit:  environment variable MK5_ROOT was not defined  ---"
+    exit ( 1 )
+endif
+#
+# --- Setting site specific environment variables unless environment variable
+# --- EOPS_CONFIG has not been defined earlier
+#
+if ( $?EOPS_CONFIG == 0 ) then
+     set EOPS_CONFIG = ${MK5_ROOT}/local/eops.lcl
+endif
+if (-r $EOPS_CONFIG ) then
+   else
+     echo "File $EOPS_CONFIG has not been found. You should have file "
+     echo "$EOPS_CONFIG which contains local customisation of dclient"
+     echo "for sending EOP series to the IVS data center. Refer to "
+     echo "CALC/SOLVE installation instruction for details"
+     exit ( -2 )
+endif
+#
+cd $MK5_ROOT/bin
+#
+# --- Call dclient for submitting database
+#
+${MK5_ROOT}/bin/dclient -t EOPS -c $EOPS_CONFIG -f $1

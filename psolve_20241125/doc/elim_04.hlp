@@ -1,0 +1,136 @@
+ELIM                                                       ELIM  Ver. 2007.07.18
+ 
+       Hints of using ELIM.
+       ~~~~~~~~~~~~~~~~~~~~
+
+  Care should be taken with setting values of threshold and cutoff criterion 
+at the early stages of data analysis. Usually session contains 2-20% bad data.
+Setting up tough criterion for outliers detection may lead to marking good 
+points as outliers.
+
+  When chi/ndg (ratio of square root of weighted residuals to its mathematical
+expectation or chi-square per degree of freedom) is too high (more than 5-10) 
+then cutoff criterion is losing sense -- too many good points may be marked
+as outliers. Threshold criterion should be used instead.
+
+  If the data at different baselines have substantially different quality then
+baseline-dependent reweighting is desirable before using ELIM/MILE.
+
+  ELIM eliminates points from up to low: starting from the most significant
+outliers and ending by marginally detected. Postfit residual of the eliminated 
+observation is changing -- usually slightly increasing. Considerable increasing
+postfit residuals after elimination indicates on sensitivity of solution to 
+outliers. It is normal for huge outlier (d>6), but if such a behavior is 
+detected for not significant outliers (d=3-4) it may indicate that solution 
+handles too many parameters.
+
+  MILE works in opposite direction: from low to up -- starting from the 
+recoverable observations with minimal normalized residuals it looks at the 
+points with the more considerable normalized residuals. Postfit residual of the
+restored observation is changing -- usually slightly decreasing. Since the 
+residuals are changing after elimination or restoration, the status of the 
+observation (downweight flag) is not firm near the boundary of outlier 
+detection. The number of included points may slightly depend on the order of 
+operations: elimination/restoration.
+
+  Reweighting changes the weights of the observations what leads to changes 
+of normalized postfit residuals what leads to changes the cutoff boundary when
+the cutoff limit is used. Reweighting and outliers elimination/restoration 
+process are in some sense competitive processes. If the session contains
+strong unsuppressed outliers then reweighting decreases all weights for the
+observations from that baseline and makes them more uniform. As a result
+cutoff criterion may not detect them. For this reason the following strategy
+has some advantages: at the first stage of the data analysis to put more stiff
+criterion for outliers detection, to let ELIM throw away not only bad 
+observations but some amount of good points, then make baseline dependent 
+reweighting, after then again launch ELIM, then MILE, then again reweighting 
+and etc. The process is converging quickly. Operations: reweighting, 
+elimination/restoration are not in general permutative!
+
+  MILE has an option to resolve ambiguities on the fly when the option 
+(M) Try to resolve ambiguity is set YES. This option is supports solution
+types G_GXS__DTP, P_PXS__DTP, PX_GX__DTP, PX_GS__DTP PS_GS__DTP. MILE tries
+to resolve ambiguity for each suppressed recoverable observation. If the 
+observation after resolving ambiguities appears to be the best candidate for 
+restoration then its restored and number of ambiguities is updated. Group 
+delay ambiguities are resolved when a solution type is G_GXS__DTP, phase delay 
+ambiguities are resolved in other cases. NB: option (I) Ionosphere for 
+ambiguities should also be set to YES when option (M) is in use. If option (M)
+is NO then nominal ambiguity spacing is used. If option (I) is YES then
+an effective ambiguity spacing for the combination of observable will be used.
+Since change of ambiguity changes ionosphere contribution, ionosphere free
+linear combination of observables is changed by the quantity slightly different
+from nominal ambiguity spacing. Thus option (I) should be always set to YES.
+
+  When MILE resolves ambiguities on the fly it traces whether the ambiguities
+misclosure is conserved. It is assumed that there is no violation of 
+ambiguities misclosure. Usually change of ambiguity of one observation leads
+to change of ambiguity of another observation(s) of the same scan in order
+to keep misclosure. MILE will allow to restore the observation with ambiguity 
+change only if ambiguities are to be changed for the suppressed observations. 
+This option of MILE is valuable for refining ambiguity resolution.
+
+  Case when coordinates of some sources are being estimated brings some 
+additional headache. The number of observations of those sources should be no 
+less than 2. If the number of observations will become less, then normal matrix 
+may appear to be singular. One way to prevent inversion failure is to impose 
+weak source constraints (option "Z" in OPTIN). Alternative way is to set up 
+parameter "min_obs for one source" for singularity check to the value 2 or 
+more and set up singularity action "REPARAMETERIZE". ELIM will trace the 
+number of used observations of all sources whose coordinates are estimated 
+in that case. In the case when the number of used observations for the certain 
+source appear less than the specified minimum then coordinates of that source 
+will not be estimated more. 
+
+   Analogously if singularity check action is set up "REPARAMETERIZE" then
+the number of used observations at each baseline/station will be checked after
+elimination of each observation. And if the number of observations appeared to
+be less than the specified limits, then baselines will be deselected from
+solution.
+
+   The situation is possible when the observations of the certain source are so 
+valuable that user may not wish to remove them despite they spoil entire 
+solution. ELIM may be launched in confirmation mode for that case and user 
+is able to forbid elimination of the certain pet observations manually.
+
+  MILE may change the status of ionosphere flag when the observation was 
+suppressed by IONO only because the observation at the opposite band had the 
+quality code less than 8. Therefore running IONO after MILE may change 
+downweight status of some points from "used" to "manually suppressed" if
+archaic suppression method SUPMET__PRE98 is used.
+
+  There is an option "Acceleration factor" in menu. Residuals are updated not 
+after each observation but only after each N observations, where N is an 
+acceleration factor. Computational expenses are approximately reciprocal to N.
+But deferring updates of the residuals may worsen results since not the best 
+candidates in elimination/restoration will be taken. It is not essential when 
+the data are "strong" enough and several outliers doesn't change solution 
+substantially. But overparameterized solution may appear sensitive to the 
+outliers and then not optimal strategy for outliers determination may lead to 
+wrong choice of candidate in elimination/restoration. Iterations 
+elimination/restoration put outliers and good observations at their places but 
+not completely, since operations elimination/restoration are not in general 
+permutative, especially for "weak" data. For this reason it is recommended to 
+set N always 1, except the cases when low speed of elimination/restoration 
+process become intolerable.
+
+  Change of quality code limit or suppression method may result in changes
+of suppression status of some observation. If observation was not used, since
+it was conditionally bad, but it become conditionally good due to change of 
+suppression method or quality code limit, it is marked as manually suppressed.
+Then it potentially may be restored. Otherwise, if the observation was 
+conditionally good but became conditionally bad due to change of suppression 
+method or quality code limit, it may not be restored.
+
+  It is recommended always to set EQM speed-up flag in order to save equations 
+of conditions in memory. Saving equations of conditions in memory speeds up 
+computation considerably. However, it may appear that it s not enough operating 
+memory to keep all equations of conditions. Then this flag should be lifted. 
+EQM speed-up flag can be reset only before processing the first observation.
+  
+  ELIM/MILE prints a line with changed color in when it ends operation.
+hpterm has a bug and it may destroy the current window if it is not enough 
+colors in color-table. If it happens you can get read of color-greedy 
+applications (f.e. Netscape) or to forbid to change colors. If environment
+variable TERM_COLOR is "NO" then SOLVE will not to try to change colors of the
+symbols or background of the lines.

@@ -1,0 +1,313 @@
+Example of installation of PIMA
+
+Prerequisites:
+==============
+
+Processor architecture: x86_64
+Operating system:       Linux, kernel 4.16.0
+
+1) gfortran, gcc 8.1.0  installed in /opt64 directory
+2) tcsh 6.18.01 is installed in /bin
+3) Directories /dist /incoming /opt64 /scr are created and permission
+   mask allows to read/write for a user
+4) CPU frequency scaling is disabled.
+
+Directories:
+
+/incoming  # used for keeping tar-balls with distributions
+/dist      # used for keeping uncompressed distributions and for building
+/opt64     # used as an installation directory
+/scr/pima  # used as a scratch area for PIMA
+
+These two environment variables are defined:
+
+PATH=/home/lpetrov/bin:/opt64/bin:/sbin:/bin:/usr/bin:/usr/local/bin
+LD_LIBRARY_PATH=/opt64/lib:/opt64/lib64
+
+Installation:
+=============
+
+ 1) Installed ncurses-6.1
+    cd /incoming
+    wget  http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz
+    cd /dist
+    tar -zxvf /incoming/ncurses-6.1.tar.gz
+    cd ncurses-6.1
+    ./configure --prefix=/opt64 \
+                --with-shared \
+                --without-debug \
+                --without-ada \
+                --enable-overwrite
+    make -j 5
+    make install
+
+
+ 2) Installed readline-7.0
+    cd /incoming
+    wget ftp://ftp.cwru.edu/pub/bash/readline-7.0.tar.gz
+    cd /dist
+    tar -zxvf /incoming/readline-7.0.tar.gz 
+    cd readline-7.0
+
+    ./configure --prefix=/opt64 \
+                --libdir=/opt64/lib
+    make -j 5
+    make install
+ 
+
+ 3) Installed fftw-3.7.0
+    cd /incoming
+    http://www.fftw.org/fftw-3.7.0.tar.gz
+    cd /dist
+    tar -zxvf /incoming/fftw-3.7.0.tar.gz
+    cd  fftw-3.7.0
+
+    # NB: I have a 20-core computer, that is why I use "-j 21" in configuration.
+    # adjust according to your needs. This options makes compilation faster
+    # bot does not affect run-time performance.
+    # Run-time parallelization is speciifed in the PIMA control file
+
+    # for double precision
+      ./configure --prefix=/opt64 \
+            --enable-openmp \
+            --enable-shared \
+            --enable-sse2 \
+            --enable-fma \
+            CC=/usr/bin/gcc \
+            CFLAGS="-m64 -Ofast -fomit-frame-pointer -malign-double -fstrict-aliasing -fno-stack-protector -march=native" \
+            F77=/usr/bin/gfortran \
+            FFLAGS="-m64 -fno-underscoring -Ofast -fomit-frame-pointer -malign-double -fstrict-aliasing -fno-stack-protector -march=native"
+       make -j 20
+       make install
+       make check
+     ###############################################################
+     #                                                             #
+     # IMPORTANT! make check is mandatory. If it passes the test,  #
+     # stop, and try to change options.                            #
+     #
+     ###############################################################
+
+     /dist/fftw-3.3.7/tests/bench -owisdom -onthreads=1 cif1024x1024
+     /dist/fftw-3.3.7/tests/bench -owisdom -onthreads=20 cif1024x1024
+
+# for  sinle precision
+       make distclean
+       ./configure --prefix=/opt64 \
+                   --enable-single \
+                   --enable-openmp \
+                   --enable-shared \
+                   --enable-sse    \
+                   --enable-avx-128-fma \
+                   CC=/usr/bin/gcc \
+                   CFLAGS="-m64 -Ofast -fomit-frame-pointer -malign-double -fstrict-aliasing -fno-stack-protector -march=native" \
+                   F77=/usr/bin/gfortran \
+                   FFLAGS="-m64 -fno-underscoring -Ofast -fomit-frame-pointer -malign-double -fstrict-aliasing -fno-stack-protector -march=native"
+       make -j 20
+       make install
+       make check
+     ###############################################################
+     #                                                             #
+     # IMPORTANT! make check is mandatory. If it passes the test,  #
+     # stop, and try to change options.                            #
+     #
+     ###############################################################
+ 
+     /dist/fftw-3.3.7/tests/bench -owisdom -onthreads=1 cif1024x1024
+     /dist/fftw-3.3.7/tests/bench -owisdom -onthreads=20 cif1024x1024
+
+ 4) Install Pythoon-3.6.5 or newer
+    https://www.python.org/ftp/python/3.5.1/Python-3.5.1.tar.xz
+    CXX="/opt64/bin/g++"
+    ./configure --prefix=/opt64     \
+                --enable-shared     \
+                --with-system-expat \
+                --with-system-ffi   \
+                --without-ensurepip
+    sed -i "s@OPT=		-DNDEBUG /opt64@OPT=		-DNDEBUG@g" Makefile
+    make
+    make install
+
+ 5) Installed atlas 3.11.38
+    cd /incoming
+    wget -O altas_3.11.38.tar.bz2 'http://downloads.sourceforge.net/project/math-atlas/Developer%20%28unstable%29/3.11.38/atlas3.11.38.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fmath-atlas%2Ffiles%2FDeveloper%2520%2528unstable%2529%2F3.11.38%2F&ts=1418915953&use_mirror=superb-dca3'
+    wget  http://www.netlib.org/lapack/lapack-3.6.0.tgz
+    cd /dist
+    tar -jxvf /incoming/altas_3.11.38.tar.bz2 
+    mv ATLAS atlas-3.11.38
+    cd atlas-3.11.38
+
+    # NB: I have a 20-core computer, that is why I use "-t 20" in configuration.
+    # adjust according to your needs
+
+    mkdir build_64
+    cd build_64
+      ../configure \
+         --prefix=/opt64 \
+         --shared \
+         --with-netlib-lapack-tarfile=/incoming/lapack-3.8.0.tgz \
+         -Si latune 1 \
+	 -t 20 \
+         -b 64 \
+         -Fa alg -fPIC \
+         -F ic "-DNoChange" \
+         -F gc "-DNoChange" \
+         -C ic /usr/bin/gcc \
+         -C if /usr/bin/gfortran \
+         -F if "-ffixed-form -fno-underscoring -fPIC -O3" \
+         -v 2 \
+         >& configure.log
+
+      sed -i 's@soname $(LIBINSTdir)/@soname @g' lib/Makefile
+      date > make_log.txt; make            >>& make_log.txt;  date >> make_log.txt
+      date > check_log.txt; make check     >>& check_log.txt; date >> check_log.txt
+      date > ptcheck_log.txt; make ptcheck >>& ptcheck_log.txt; date >> ptcheck_log.txt
+      date > time_log.txt; make time       >>& time_log.txt;  date >> time_log.txt
+      cd lib
+      make shared    >>& ../make_log.txt
+      make ptshared  >>& ../make_log.txt
+
+      cd ../
+      make install    >& install.log
+      rm /tmp/file*
+
+    # NB: atlas installation can take from 15 minutes to 18 hours even
+    # at a fast computer. ATLAS not only builds the library, but tunes 
+    # it by checkinig many combinations of blocking parameters.
+
+
+ 6) Installed cfitsio-3.37
+    
+    ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3370.tar.gz
+    http://astrogeo.org/pet_inc/cfitsio-3.26.patch
+    mv cfitsio cfitsio-3.37
+    cd cfitsio-3.37
+    patch -Np0 -i /inlcude/cfitsio-3.26.patch
+    ./configure --prefix=/opt64 \
+                  --enable-reentrant \
+                  --enable-ssse3 \
+                    CC=gcc \
+                    FC=gfortran \
+                    CFORTRANFLAGS="-fno-underscoring" \
+                    CFLAGS="-DNoUnderscoreAppend -DGNU -m64"
+    make -j 21
+    make install
+    gcc -shared -Wl,--whole-archive -Wl,-soname,libcfitsio.so.1 -o /opt64/lib/libcfitsio.so.1.0 /opt64/lib/libcfitsio.a -Wl,-no-whole-archive
+    rm /opt64/lib/libcfitsio.so
+    ln -sf /opt64/lib/libcfitsio.so.1.0 /opt64/lib/libcfitsio.so.1
+    ln -sf /opt64/lib/libcfitsio.so.1.0 /opt64/lib/libcfitsio.so
+
+
+ 7) Installed petools-20171120
+    cd /incoming
+    wget http://astrogeo.org/petools/petools-20171120.tar.bz2
+    cd /dist
+    tar -jxvf /incoming/petools-20171120.tar.bz2
+    cd petools-20171120
+
+    ./configure --prefix=/opt64 \
+                --with-blas="-L/opt64/lib -lsatlas" \
+                --with-ncurses=/opt64 \
+                --with-readline=/opt64 \
+                --bits=64 \
+                FC=/opt64/bin/gfortran
+    make
+    make install
+    source /opt64/bin/petools_vars
+  
+    Added the line above to my $HOME/.cshrc file.
+    NB: you have to execute source /opt64/bin/petools_vars
+        in order to continue the installation process.
+        You also need it if you woujld like to upgrade PIMA
+        and its dependencies in the future.
+
+ 8) Installed ners-20180531
+    cd /incoming
+    wget http://earthrotation.net/ners/ners-20180531.tar.bz2
+    cd /dist
+    tar -jxvf /incoming/ners-20180531.tar.bz2
+    cd ners-20180531
+    ./configure --prefix=/opt64          \
+                --with-petools=/opt64
+    make
+    make install
+
+ 9) Installed spd_client-20171027
+    cd /incoming
+    wget http://astrogeo.org/vtd/spd_client-20171027.tar.bz2
+    cd /dist
+    tar -jxvf /incoming/spd_client-20171027.tar.bz2
+    cd spd_client_20171027
+    ./configure --prefix=/opt64          \
+                --with-petools=/opt64
+    make
+    make install
+
+10) Installed vtd-20180531
+    cd /incoming
+    wget http://astrogeo.org/vtd/vtd-20160229.tar.bz2
+    cd /dist
+    tar -jxvf /incoming/vtd-20160229.tar.bz2
+    cd vtd_20160229
+    ./configure --prefix=/opt64          \
+                --with-petools=/opt64    \
+                --with-cfitsio=/opt64    \
+                --with-spd_client=/opt64 \
+                --data=/opt64/share/vtd  
+    make
+    make install
+
+
+11) Installed fourpack-20140628
+
+    cd /incoming
+    wget http://astrogeo.org/fourpack/fourpack-20140628.tar.bz2
+    cd /dist
+    tar -jxvf /incoming/fourpack-20140628.tar.bz2
+    cd fourpack_20140628
+    ./configure --prefix=/opt64 \
+                --with-petools=/opt64 \
+                --with-fftw=/opt64 \
+                --without-mkl
+    make
+    make install
+
+12) Installed gvh-20171217
+    cd /incoming
+    wget http://astrogeo.org/gvh/gvh-20171217.tar.bz2
+    cd /dist
+    tar -jxvf /incoming/gvh-20171217.tar.bz2
+    cd gvh_20171217
+    ./configure --prefix=/opt64 \
+                --with-petools=/opt64 \
+                --with-vtd=/opt64 
+    make
+    make install
+
+12) Installed pima-20180601
+    cd /incoming
+    wget http://astrogeo.org/pima/pima-20180601.tar.bz2
+    cd /dist
+    tar -jxvf /incoming/pima-20180601.tar.bz2
+    cd pima_20160229
+    ./configure --prefix=/opt64                       \
+                --with-petools=/opt64                 \
+                --with-spd_client=/opt64              \
+                --with-cfitsio=/opt64                 \
+                --with-ners=/opt64                    \
+                --with-vtd=/opt64                     \
+                --with-fourpack=/opt64                \
+                --with-gvh=/opt64                     \
+                --with-solve=/mk5                     \
+                --with-difmap=/opt64                  \
+                --pima-fits=/scr/pima/r1447           \
+                --pima-scratch=/scr/pima              \
+                --stable-share=/vlbi/solve/save_files
+    make 
+    make install
+  
+    Downloaded example in directory: /scr/pima/r1447
+
+    cd /scr/pima/r1447
+    wget http://astrogeo.org/s0/corr_fits/r1447/2010_09_07_r1447_01.fits
+
+    NB: VTD/Solve has already be4en installed in directory /mk5

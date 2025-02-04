@@ -1,0 +1,116 @@
+SPD_3D_CONF   Format version of 2024.01.11
+#
+#  Last updated 2024.01.13_15:27:46
+#
+REFR_EXPR:   Radio_Aparicio_2011
+SPD_ALG:     y_nonloc
+FIL_STA:     /opt64/spd/share/vlbi_20240101.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      geosfpit_height_above_geoid.heb
+FIL_LEAPSEC: /apr/eop/leapsec.dat
+FIL_DESC:    /opt64/spd/share/spd_desc.txt
+FIL_FMT:     /opt64/spd/doc/spd_3d_format.txt
+TIM_INTRV:   10800.0D0
+N_EL:        16
+N_AZ:        12
+SOB_ALG:     rte_bent_1az
+COMPRESS:    lbzip2
+N_FRQ:         90
+#
+#  Frequencies  1-90    within 1.0 -- 360.0 GHz are for interpolation of continuum
+#                       atmospheric absorption/emission.
+#                       The Oxygen absorption line 57-63 GHz is not well sampled.
+#                       These frequencies are used for spline interpolation within
+#                       the range of 1.0 -- 360.0 GHz. 
+#
+#
+FREQ:          1.0D9
+FREQ:          2.0D9
+FREQ:          5.0D9
+FREQ:          8.0D9
+FREQ:         12.0D9
+FREQ:         15.0D9
+FREQ:         17.0D9
+FREQ:         19.0D9
+FREQ:         21.0D9
+FREQ:         22.0D9
+FREQ:         22.5D9
+FREQ:         24.0D9
+FREQ:         26.5D9
+FREQ:         28.0D9
+FREQ:         31.0D9
+FREQ:         36.0D9
+FREQ:         41.0D9
+FREQ:         45.0D9
+FREQ:         49.0D9
+FREQ:         51.0D9
+FREQ:         52.0D9
+FREQ:         53.0D9
+FREQ:         54.0D9
+FREQ:         56.0D9
+FREQ:         64.0D9
+FREQ:         66.0D9
+FREQ:         67.0D9
+FREQ:         69.0D9
+FREQ:         71.0D9
+FREQ:         72.0D9
+FREQ:         74.0D9
+FREQ:         81.0D9
+FREQ:         90.0D9
+FREQ:        102.0D9
+FREQ:        107.0D9
+FREQ:        111.0D9
+FREQ:        114.0D9
+FREQ:        115.0D9
+FREQ:        116.0D9
+FREQ:        117.0D9
+FREQ:        118.0D9
+FREQ:        120.0D9
+FREQ:        121.0D9
+FREQ:        122.0D9
+FREQ:        124.0D9
+FREQ:        125.0D9
+FREQ:        128.0D9
+FREQ:        133.0D9
+FREQ:        147.0D9
+FREQ:        160.0D9
+FREQ:        167.0D9
+FREQ:        170.0D9
+FREQ:        173.0D9
+FREQ:        176.0D9
+FREQ:        179.0D9
+FREQ:        181.0D9
+FREQ:        182.5D9
+FREQ:        183.5D9
+FREQ:        184.5D9
+FREQ:        185.5D9
+FREQ:        186.5D9
+FREQ:        188.0D9
+FREQ:        191.0D9
+FREQ:        194.0D9
+FREQ:        196.0D9
+FREQ:        201.0D9
+FREQ:        204.0D9
+FREQ:        211.0D9
+FREQ:        220.0D9
+FREQ:        252.0D9
+FREQ:        284.0D9
+FREQ:        300.0D9
+FREQ:        308.0D9
+FREQ:        312.0D9
+FREQ:        317.0D9
+FREQ:        320.0D9
+FREQ:        321.0D9
+FREQ:        323.0D9
+FREQ:        324.0D9
+FREQ:        325.0D9
+FREQ:        326.5D9
+FREQ:        328.0D9
+FREQ:        329.0D9
+FREQ:        330.0D9
+FREQ:        332.0D9
+FREQ:        335.0D9
+FREQ:        340.0D9
+FREQ:        348.0D9
+FREQ:        355.0D9
+FREQ:        360.0D9

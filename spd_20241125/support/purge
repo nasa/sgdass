@@ -1,0 +1,8 @@
+#!/bin/csh -f
+rm $1/.*~   >& /dev/null
+rm $1/*~    >& /dev/null
+rm $1/\#*   >& /dev/null
+rm $1/.\#*  >& /dev/null
+rm $1/.\#*  >& /dev/null
+rm $1/core  >& /dev/null
+exit 0

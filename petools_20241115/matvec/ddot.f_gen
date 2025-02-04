@@ -1,0 +1,20 @@
+      double precision function ddot(n,dx,incx,dy,incy)
+      implicit none
+c
+c     forms the dot product of two vectors.
+c     uses unrolled loops for increments equal to one.
+c     jack dongarra, linpack, 3/11/78.
+c     mwh, 730 vis, 1/27/92
+c
+      double precision dx(1),dy(1),vec_$ddot_i
+      integer incx,incy,ix,iy,n
+c
+      ddot = 0.0d0
+      if(n.le.0)return
+      ix = 1
+      iy = 1
+      if(incx.lt.0)ix = (-n+1)*incx + 1
+      if(incy.lt.0)iy = (-n+1)*incy + 1
+      ddot = vec_$ddot_i(dx(ix),incx,dy(iy),incy,n)
+      return
+      end

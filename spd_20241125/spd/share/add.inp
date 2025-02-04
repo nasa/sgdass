@@ -1,0 +1,145 @@
+SITLIST Format  Version 2003.07.31
+#
+#  The list contains positions of 202 VLBI stations.
+#
+#  Created:      2004.02.20_19:56:29
+#
+#  Last update:  2018.03.04_15:32:41
+#
+#  Revisions:
+#
+#  2005.01.20  METSHOVI  end date was changed to "end"
+#  2005.01.20  MIYAZAKI  activity ranges was changed to 1986.10.04 1993.12.20
+#  2005.05.11  added METSAHOV, TORUN,   WSTRBOR7, WSTRBORK, JODRELL2, JODRELL1,
+#                    CAMBRIDG, ARECIBO  
+#  2005.05.11  added ATCA_014, CEDUNA, DARNHALL, MOPRA, PICOVEL
+#  2005.05.13  added VERAIRIK, VERAISGK, VERAOGSW -- e-mail from Jike-san
+#                    of 13 May 2005 21:37:02 +0900. Changed X coordiante
+#                    of stations VERAIRIK from -3857241.8449 to -3521719.400  
+#                    from http://ivs.nict.go.jp/mirror/publications/gm2002/tamura/
+#  2005.12.29  added BADARY and ZELENCHK. Private communicatio nfrom S. Kurdubov, 2005.12.20
+#  2008.04.30  Replaced ATCA_014 with ATCA-104; updated coordinates of 
+#                       ATCA_014, CEDUNA, MOPRA
+#  2010.09.03  Added  ASKAP, TAMNA, ULSAN, WARKWORT, YONSEI
+#  2011.11.09  Added  KATH12M, KUNMING, UCHINOUR, YARRA12M
+#  2014.05.13  Added  TIANMA65, MIYUN, SEJONG
+#  2016.11.30  Added  IRBENE16, IRBENE32
+#  2018.03.04  Added  DSS36
+#
+#  Format description:
+#  1) File consists of records fixed length.
+#     Records can be one of three types:
+#     a) File format identification: the first record;
+#     b) Comment: the record which starts from # character;
+#     c) Data records.
+#
+#  2) Format of the data record:
+#     Field  1:8  -- Station name.
+#     Field 10:21 -- X coordinate of the site in meter.
+#     Field 23:34 -- X coordinate of the site in meter.
+#     Field 36:47 -- Z coordinate of the site in meter.
+#     Field 49:58 -- Date when the site produced first observation worth
+#                    analyzing in format YYYY.MM.DD
+#     Field 60:69 -- Date when the site produced last observation worth
+#                    analyzing in format YYYY.MM.DD or end for sites which
+#                    are deemed as active.
+#     Field 71:71 -- Technique code: 
+#                    R for VLBI, 
+#                    S for SLR,
+#                    G for GPS,
+#                    D for DORIS,
+#                    Technique code means that the site coordinate 
+#                    are related to coordinates of the reference point 
+#                    of the station of that technique.
+#     Field 73:81 -- Alternative station name.
+#     Field 83:92 -- Comment
+#     Field 95:98 -- CDP number of the station which defines coordinates
+#                    of the site.
+#
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP
+#                                                                                                 
+#ASKAP-07 -2556738.503  5097433.930 -2847734.450 2014.06.03 end        R
+#ASKAP-32 -2558275.339  5095027.067 -2850681.153 2014.06.03 end        R
+#ATCA-109 -4751601.233  2791766.381 -3200491.155 2007.06.22 end        R
+#BADRT13V  -838326.334  3865797.228  4987598.328 2015.01.01 end        R 
+#DSS54     4849434.880  -360723.8999 4114618.835 2015.01.01 end        R 
+#GGAO12M   1130686.515 -4831353.021  3994110.924 2014.01.01 end        R 
+#ISHIOKA  -3959636.017  3296825.538  3747042.562 2015.02.15 end        R
+#KALYAZIN  2731190.445  2126198.279  5339535.645 1970.01.01 end        R
+#PDBURE    4523987.558   468042.192  4460318.148 1970.01.01 end        R
+#PICOVEL   5088967.745  -301681.186  3825012.206 1970.01.01 end        R
+#RAEGSMAR  4618523.481 -2166020.705  3816269.147 2015.06.01 end        R
+#RAEGYEB   4848831.283  -261629.840  4122976.311 2015.02.16 end        R
+#SEJONG   -3110079.686  4082066.663  3775076.910 2014.09.25 end        R
+#WARK30M  -5115425.663   477880.309 -3767042.892 2015.12.14 ebd        R
+#WETTZ13N  4075627.926   931774.140  4801552.221 2015.01.01 end        R 
+#WETTZ13S  4075659.100   931824.640  4801516.180 2015.01.01 end        R 
+#ZELRT13V  3451257.496  3060268.081  4391933.089 2015.01.01 end        R 
+#CEBREROS  4846734.575  -370174.775  4116875.899 1970.01.01 end        R 
+#MALARGUE  1823335.046 -4850440.877 -3708957.261 1970.01.01 end        R 
+#NWNORCIA -2414066.794  4907869.356 -3270604.555 1970.01.01 end        R 
+#SARDINIA  4865151.200   791904.368  4035064.105 2014.01.01 end        R
+#
+#AGGO       2765116.669 -4449233.645 -3626420.764 2018.07.01 end        R
+#APEX       2225039.530 -5441197.629 -2479303.360 1970.01.01 end        R 
+#AROSMT    -1828796.200 -5054406.800  3427865.200 1970.01.01 end        R 
+#ATCA-100  -4751671.001  2791647.599 -3200491.078 2007.06.22 end        R
+#DSS35     -4461273.083  2682568.922 -3674152.088 2018.03.12 end        R
+#DSS36     -4461168.654  2682814.908 -3674084.483 2007.09.13 end        R
+#IRBENE16   3183295.000  1276276.000  5359611.000 1970.01.01 end        R 
+#IRBENE32   3183661.000  1276902.000  5359291.000 1970.01.01 end        R 
+#JCMT      -5464580.868 -2493009.124  2150643.974 1970.01.01 end        R 
+#JIAMIS66  -2872641.683  3331389.066  4603414.150 1970.01.01 end        R 
+#KASHI35    1150056.615  4870665.389  3943037.030 1970.01.01 end        R 
+LMT        -768715.632 -5988507.072  2063354.852 1970.01.01 end        R 
+#
+#  New 28 stations in 2024.01.01:
+#
+AMT        5627857.426  1638239.676  2512266.994 begin      end        R           Wei Yu et al., Galaxies 2023, 11, 7 
+ARVI       1665690.000  5792699.0000 2079156.000 begin      end        R           email of S. Dhar on 2023.06.19
+BOSSCHA   -1917234.531  6037455.561  -753071.483 begin      end        R           email of I. Huda  on 2023.11.28
+CARMA     -2397378.600 -4482048.700  3843513.200 begin      end        R           Akiyama_2019_ApJL_875_L2
+CHANGBAI  -2903142.082  3745407.089  4256163.466 begin      end        R           email of Weimin Zheng of 2024.01.01
+CSO       -5464520.000 -2493145.000  2150610.600 begin      end        R           Akiyama_2019_ApJL_875_L2
+DSS56      4849421.781  -360549.755  4114646.971 begin      end        R
+FAST500   -1668557.207  5506838.527  2744934.966 begin      end        R           https://arxiv.org/pdf/2012.08359.pdf
+HAOPIN40  -1802619.544  4966241.616  3563123.490 begin      end        R           ?? form Google map: 34_10_29.9, 109_56_58.6 1080.
+KHULGAI    -754411.937  3886532.696  4987701.230 begin      end        R           google map
+IIST       1415041.000  6145756.000   950356.000 begin      end        R           email of S. Dhar on 2023.06.19
+IITK       968912.589   5628137.140  2830684.910 begin      end        R           email of S. Dhar on 2023.06.19
+JELEB13M  -1331208.304  6228638.144   337420.803 begin      end        R           email of Juan Carlos Algaba of 2023.12.13
+JILIN12M  -2730771.745  3713280.153  4394196.325 begin      end        R           email of Y. Wu    on 2023.11.29
+KASHI12    1190830.462  4786201.485  4032514.380 begin      end        R           email of Yuanwei Wu of 2023.11.30
+KP12M     -1995954.400 -5037389.400  3357044.300 begin      end        R           Akiyama_2019_ApJL_875_L2
+KVNPC     -3149263.153  3966361.557  3864937.254 begin      end        R           ??
+MABU       1726086.000  5540757.000  2639439.000 begin      end        R           email of S. Dhar on 2023.06.19
+METSA13M   2892637.660  1311853.934  5512579.633 begin      end        R  00 00 00 email of N. Zubko on 2023.10.23
+QTT          25642.613  4627356.239  4377310.960 begin      end        R           email of Lang Cui of 2023.12.29
+SHIGATSE    133085.198  5573747.295  3095800.937 begin      end        R           email of Weimin Zheng of 2024.01.01
+SIRINDHO  -1631185.765  5936665.714  1660942.605 begin      end        R
+SONGKHLA  -1165685.218  6220521.324   789386.950 begin      end        R
+SPART     -3871061.020  3428327.240  3723784.270 begin      end        R           Wei Yu et al., Galaxies 2023, 11, 7 
+SPT            809.800     -816.900 -6359568.700 begin      end        R           Akiyama_2019_ApJL_875_L2
+TIMAU     -3512941.142  5218512.481 -1056555.283 begin      end        R           email of I. Huda  on 2023.11.28
+TNRT       -967131.240  5960079.920  2049286.670 begin      end        R           email of N. Sakai on 2023.12.11
+WATPHRA    -912436.234  5982800.578  2007549.778 begin      end        R
+############
+MK-VLBA  -5464074.965 -2495249.118  2148296.845 1950.01.01 2049.12.31 R
+################################################
+#SANYA
+#UBON
+#CHONBURI
+#CHIANGMAI13
+#FAST300
+#SKZT
+#CBST
+#JDT
+#
+# 2024.11.21_20:56:07 Waiting: 
+# 
+#
+    CHONBURY
+    JATILUHUR
+    NAKHORN
+    SRIRACHA 
+    UBON

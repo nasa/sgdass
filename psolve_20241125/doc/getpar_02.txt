@@ -1,0 +1,687 @@
+                             User manual to getpar
+ 
+ 
+                                Leonid Petrov
+ 
+ 
+                                2003.08.12
+ 
+ 
+                                Abstract
+ 
+   This document is a user manual for program getpar.
+ 
+ 
+Questions and comments about this guide should be sent to:
+ 
+Leonid Petrov ( sgdass@lists.nasa.gov )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ Overview
+ 
+ 
+2 ................ Usage
+ 
+ 
+3 ................ Formats description
+ 
+   3.1 ........... .sta -file
+   3.2 ........... .vel -file
+   3.3 ........... .sou -file
+   3.4 ........... .eop -file
+   3.5 ........... .nut -file
+   3.6 ........... .crl -file
+   3.7 ........... .lso -file
+   3.8 ........... .lst -file
+   3.9 ........... .bas -file
+   3.10 .......... .eob -file
+   3.11 .......... .trp -file
+   3.12 .......... .erm -file
+   3.13 .......... .heo -file
+   3.14 .......... .npv -file
+   3.15 .......... .hps -file
+   3.16 .......... .bsp -file
+   3.17 .......... .rms -file
+ 
+________________________________________________________________________________
+ 
+        1 Overview
+        ==========
+ 
+Program getpar parses a spool file of the listing of Solve solution,
+extracts information from there, formats it and writes down in the
+set of output files.
+ 
+        2 Usage
+        =======
+ 
+  Usage: getpar <spool_file> <prefix>
+ 
+where
+  spool_file is the name of Solve spool file of global solution in
+                either complete or back mode;
+  prefix     is the main portion of the output filenames including path.
+             The actual names of the output files are results of concatenation
+             of prefix with extension.
+ 
+        3 Formats description
+        =====================
+ 
+   Each output file has first two lines comments. The comment lines contains
+character # as the first character in the line. The first comment line,
+and therefore the first line of the file always holds the name of the format,
+its version and date of format revision:
+ 
+# GETPAR_XXX format version 1.0  of 2001.05.25
+ 
+  where XXX is (in capital letter) extension of the file, for example,
+ 
+# GETPAR_STA format version 1.0  of 2001.05.25
+ 
+  The second line, so-called header comment, contains the full path name of
+the spool file. Since the format of getpar output files is the subject
+of changes it is a good practice to check the format version each time when you
+parse getpar output files.
+ 
+ 
+                3.1 .sta -file
+                ~~~~~~~~~~~~~~
+ 
+   .sta file contains estimates of positions of global stations and the formal
+uncertainties of these estimates. The list of station positions is sorted in
+alphabetic order of station names. Stations before and after episodic motions
+are treated as different stations. Correlations between station positions and
+velocities are also written.
+ 
+   File contains lines of four types:
+ 
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Cartesian components of the vector of station position. The first
+   8 characters of this line are STA_GCX:
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: STA_GCX:
+   11-25   A15    --    station name. Station name consist of 8-letters station
+                        acronym and 6-letter epoch in format yymmdd. Epoch
+                        is attached to the name only if the station had episodic
+                        motion. Fields between the last letter of the station
+                        name and the first letter of epoch are filled by _.
+                        If the station didn't have episodic name then the space
+                        after the last letter of the station name is left blank.
+   28-29   A2     --    component identifier. One of "X:", "Y:" or "Z:"
+   31-45   F15.2  mm    value of X-component of station position.
+   50-59   F10.3  mm    formal uncertainty of X-component of station position.
+   65-79   F15.2  mm    value of Y-component of station position.
+   84-93   F10.3  mm    formal uncertainty of Y-component of station position.
+   99-113  F15.2  mm    value of Z-component of station position.
+   118-127 F10.3  mm    formal uncertainty of Z-component of station position.
+   139-145 I7     --    the number of observations of this station used in
+                        solution.
+   156-162 I7     --    total number of observations of this station.
+   174-178 I5     --    the number of sessions with this station used in
+                        solution.
+   189-193 I5     --    total number of sessions of this station.
+   205-214 A10 	  --    the date of the first session with this station used
+                        in solution. format: yyyy.mm.dd (as integer numbers)
+   226-235 A10 	  --    the date of the last session with this station used
+                        in solution. format: yyyy.mm.dd (as integer numbers)
+ 
+3) Local topocentric components of the vector of station position: Up, East,
+   North. The first 8 characters of this line are STA_GCU:
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: STA_GCU:
+   11-25   A15    --    station name. Station name consist of 8-letters station
+                        acronym and 6-letter epoch in format yymmdd. Epoch
+                        is attached to the name only if the station had episodic
+                        motion. Fields between the last letter of the station
+                        name and the first letter of epoch are filled by _.
+                        If the station didn't have episodic name then the space
+                        after the last letter of the station name is left blank.
+   28-29   A2     --    component identifier. One of "U:", "E:" or "N:"
+   31-45   F15.2  mm    value of U-component of station position.
+   50-59   F10.3  mm    formal uncertainty of U-component of station position.
+   65-79   F15.2  mm    value of E-component of station position.
+   84-93   F10.3  mm    formal uncertainty of E-component of station position.
+   99-113  F15.2  mm    value of N-component of station position.
+   118-127 F10.3  mm    formal uncertainty of N-component of station position.
+ 
+4) Correlations between station positions and velocities. Correlation matrix
+   is defined as the matrix of 6x6 in the upper triangle representation without
+   the main diagonal which. Elements in the columns or rows of the matrix are
+   in the order: X-position, Y-position, Z-position, X-velocity, Y-velocity,
+   Z-velocity.
+ 
+   1-8     A8     --    record type identifier: STA_CRL:
+   11-25   A15    --    station name. Station name consist of 8-letters station
+                        acronym and 6-letter epoch in format yymmdd. Epoch
+                        is attached to the name only if the station had episodic
+                        motion. Fields between the last letter of the station
+                        name and the first letter of epoch are filled by _.
+                        If the station didn't have episodic name then the space
+                        after the last letter of the station name is left blank.
+   31-36   F6.3   d/l   Correlation between X-position and Y-position
+   38-43   F6.3   d/l   Correlation between X-position and Z-position
+   45-50   F6.3   d/l   Correlation between Y-position and Z-position
+   52-57   F6.3   d/l   Correlation between X-position and X-velocity
+   59-64   F6.3   d/l   Correlation between Y-position and X-velocity
+   66-71   F6.3   d/l   Correlation between Z-position and X-velocity
+   73-78   F6.3   d/l   Correlation between X-position and Y-velocity
+   80-85   F6.3   d/l   Correlation between Y-position and Y-velocity
+   87-92   F6.3   d/l   Correlation between Z-position and Y-velocity
+   94-99   F6.3   d/l   Correlation between X-velocity and Y-velocity
+   101-106 F6.3   d/l   Correlation between X-position and Z-velocity
+   108-113 F6.3   d/l   Correlation between Y-position and Z-velocity
+   115-120 F6.3   d/l   Correlation between Z-position and Z-velocity
+   122-127 F6.3   d/l   Correlation between X-velocity and Z-velocity
+   129-134 F6.3   d/l   Correlation between Y-velocity and Z-velocity
+ 
+                3.2 .vel -file
+                ~~~~~~~~~~~~~~
+ 
+   .vel file contains values estimates of velocities of global stations and the
+formal uncertainties of these estimates. The list of the estimates is sorted in
+alphabetic order of station names. Stations before and after episodic motions
+are treated as different stations. Correlations between station positions and
+velocities are also written.
+ 
+   File contains lines of three types:
+ 
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Cartesian components of the vector of station velocity. The first
+   8 characters of this line are STA_GVX:
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: STA_GVX:
+   11-18   A8     --    station name.
+   24-32   F9.2   mm/yr value of X-component of station velocity.
+   37-44   F8.3   mm/yr formal uncertainty of X-component of station velocity.
+   50-58   F9.2   mm/yr value of Y-component of station velocity.
+   63-70   F8.3   mm/yr formal uncertainty of Y-component of station velocity.
+   76-84   F9.2   mm/yr value of Z-component of station velocity.
+   89-96   F8.3   mm/yr formal uncertainty of Z-component of station velocity.
+ 
+3) Local topocentric components of the vector of station velocity: Up, East,
+   North. The first 8 characters of this line are STA_GVU:
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: STA_GVU:
+   11-18   A8     --    station name.
+   24-32   F9.2   mm/yr value of U-component of station velocity.
+   37-44   F8.3   mm/yr formal uncertainty of U-component of station velocity.
+   50-58   F9.2   mm/yr value of E-component of station velocity.
+   63-70   F8.3   mm/yr formal uncertainty of E-component of station velocity.
+   76-84   F9.2   mm/yr value of N-component of station velocity.
+   89-96   F8.3   mm/yr formal uncertainty of N-component of station velocity.
+ 
+                3.3 .sou -file
+                ~~~~~~~~~~~~~~
+ 
+   .sou file contains estimates of right ascension and declination of
+global sources, as well as formal their uncertainties and correlations between
+right ascension and declination of the same source.
+ 
+   File contains lines of two types:
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Estimates.
+ 
+   Field   Format Units  Meaning
+   1-8     A8     --     record type identifier: SOU_GCO:
+   11-18   A8     --     IVS source name.
+   25-26   I2     hours  right ascension. hours part
+   27-27   A1     --     separator "_"
+   28-29   I2     min.   right ascension. minutes part
+   30-30   A1     --     separator "_"
+   31-41   F11.8  sec.   right ascension. seconds part
+   46-55   F10.4  mas    formal error of right ascension
+   62-64   I3     deg.   declination. degrees part.
+   65-65   A1     --     separator "_"
+   66-67   I2     arcmin declination. arcminutes part.
+   68-68   A1     --     separator "_"
+   69-78   F10.7  arcsec declination. arcseconds part.
+   83-92   F10.4  mas    formal uncertainty of declination
+   99-104  F6.4   d/l    correlation between the estimates of right ascension
+                         and declination.
+   116-122 I7     --     the number of observations of this source used in
+                         solution.
+   133-139 I7     --     total number of observations of this source.
+   151-155 I5     --     the number of sessions of this source used in
+                         solution.
+   166-170 I5     --     total number of sessions with this source.
+   182-191 A10 	  --     the date of the first session with this source used
+                         in solution. format: yyyy.mm.dd (as integer numbers)
+   203-212 A10 	  --     the date of the last session with this source used
+                         in solution. format: yyyy.mm.dd (as integer numbers)
+ 
+ 
+                3.4 .eop -file
+                ~~~~~~~~~~~~~~
+ 
+   .eop file contains estimates of X pole coordinate, Y pole coordinate, UT1-TAI
+angle, UT1 rate and UT1 acceleration as well as their formal uncertainties.
+Estimates are obtained using all observations of the specific session.
+.eop file contains also database names and time-tags.
+ 
+   File contains lines of two types:
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Estimates.
+ 
+   Field   Format Units     Meaning
+   1-8     A8     --        record type identifier: EOP_LOC:
+   11-20   A10    --        database name with leading dollar sign
+   23-25   I3     --        database version number
+   34-49   A16    calend    EOP time tag in Solve format: YYYY.MM.DD-hh:mm
+                            Time scale is not defined. Adjustments are at TDB
+                            time scale, a priori EOP are at unknown time scale.
+   58-63   I6     --        number of observation used for getting these EOP
+                            estimates.
+   69-79   F11.4  mas       estimate of X-pole coordinate
+   84-93   F10.2  muas      formal uncertainty of X-pole coordinate
+   99-109  F11.4  mas       estimate of Y-pole coordinate
+   114-123 F10.2  muas      formal uncertainty of Y-pole coordinate
+   129-139 F11.4  msec      estimates of UT1-TAI
+   144-153 F10.2  musec     formal uncertainty of UT1-TAI
+   159-169 F11.4  mas/day   estimates of X pole rate
+   174-183 F10.2  muas/day  formal uncertainties of X pole rate
+   189-199 F11.4  msec/day  estimates of Y pole rate
+   204-213 F10.2  msec/day  formal uncertainties of Y pole rate
+   219-229 F11.4  msec/day  estimates of UT1-TAI rate
+   234-243 F10.2  musec/day formal uncertainties of UT1-TAI rate
+   249-259 F11.4  ms/day**2 estimates of UT1-TAI acceleration
+   264-273 F10.2  ms/day**2 formal uncertainties of UT1-TAI acceleration
+ 
+    If the specific parameter was not estimated in this experiment, the field
+for its value and formal uncertainty is replaced by filler: $$$$$$. The filler
+takes entire field.
+ 
+                3.5 .nut -file
+                ~~~~~~~~~~~~~~
+ 
+   .nut file contains estimates of daily offset of nutation in longitude and
+nutation in obliquity as well as their formal uncertainties. .nut file contains
+also database names and time-tags.
+ 
+   File contains lines of two types:
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Estimates.
+ 
+   Field   Format Units     Meaning
+   1-8     A8     --        record type identifier:  NUT_LOC:
+   11-20   A10    --        database name with leading dollar sign
+   23-25   I3     --        database version number
+   37-46   F10.5  years     time tag
+   53-59   I6     --        the number of used observations
+   64-74   F11.3  mas       estimate of nutation in longitude
+   79-88   F10.1  muas      formal uncertainty of nutation in longitude
+   94-104  F11.3  mas       estimate of nutation in obliquity
+   109-118 F10.1  muas      formal uncertainty of nutation in obliquity
+ 
+                3.6 .crl -file
+                ~~~~~~~~~~~~~~
+ 
+   .crl file contains off-diagonal coefficients of correlations between
+the estimates of EOP at the same experiment. Correlations are ordered in
+according the order of elements of a symmetric matrix in low-triangular
+representation without the main diagonal. Order of rows/columns: X_pole,
+X_pole rate, Y_pole, Y_pole rate, UT1, UT1 rate, Nutation in longitude,
+Nutation in obliquity
+ 
+   File contains lines of two types:
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Correlations.
+ 
+   Field   Format Units     Meaning
+   1-8     A8     --        record type identifier:  CRL_LOC:
+   11-20   A10    --        database name with leading dollar sign
+   23-25   I3     --        database version number
+   29-34   F6.4   d/l       correlation between X_pole rate and X_pole
+   36-41   F6.4   d/l       correlation between Y_pole and X_pole
+   43-48   F6.4   d/l       correlation between Y_pole and X_pole rate
+   50-55   F6.4   d/l       correlation between Y_pole rate and X_pole
+   57-62   F6.4   d/l       correlation between Y_pole rate and X_pole rate
+   64-69   F6.4   d/l       correlation between Y_pole rate and Y_pole
+   71-76   F6.4   d/l       correlation between UT1 and X_pole
+   78-83   F6.4   d/l       correlation between UT1 and X_pole rate
+   85-90   F6.4   d/l       correlation between UT1 and Y_pole
+   92-97   F6.4   d/l       correlation between UT1 and Y_pole rate
+   99-104  F6.4   d/l       correlation between UT1 rate and X-pole
+   106-111 F6.4   d/l       correlation between UT1 rate and X-pole rate
+   113-118 F6.4   d/l       correlation between UT1 rate and Y-pole
+   120-125 F6.4   d/l       correlation between UT1 rate and Y-pole rate
+   127-132 F6.4   d/l       correlation between UT1 rate and UT1
+   134-139 F6.4   d/l       correlation between Nutation Psi and X_pole
+   141-146 F6.4   d/l       correlation between Nutation Psi and X_pole rate
+   148-153 F6.4   d/l       correlation between Nutation Psi and Y_pole
+   155-160 F6.4   d/l       correlation between Nutation Psi and Y_pole rate
+   162-167 F6.4   d/l       correlation between Nutation Psi and UT1
+   169-174 F6.4   d/l       correlation between Nutation Psi and UT1 rate
+   176-181 F6.4   d/l       correlation between Nutation Eps and X_pole
+   183-188 F6.4   d/l       correlation between Nutation Eps and X_pole rate
+   190-195 F6.4   d/l       correlation between Nutation Eps and Y_pole
+   197-202 F6.4   d/l       correlation between Nutation Eps and Y_pole rate
+   204-209 F6.4   d/l       correlation between Nutation Eps and UT1
+   211-216 F6.4   d/l       correlation between Nutation Eps and UT1 rate
+   218-223 F6.4   d/l       correlation between Nutation Eps and Nutation Psi
+ 
+                3.7 .lso -file
+                ~~~~~~~~~~~~~~
+ 
+   .lso file file contains estimates of right ascension and declination of
+local sources, as well as formal their uncertainties and correlations between
+right ascension and declination of the same source. It contains also the time
+tag of the estimates of right ascension and declination. File is sorted in
+order of sessions and in order of appearance of local sources in the session.
+ 
+   File contains records of two types:
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Estimates.
+ 
+   Field   Format Units  Meaning
+   1-8     A8     --     record type identifier: SOU_LSO:
+   11-18   A8     --     IVS source name.
+   21-30   A10    --     database name with leading dollar sign
+   33-35   I3     --     database version number
+   47-56   F10.5  years  time tag: time of the middle epoch of the observing
+                         session in Julian years since 0000.01.01_00:00
+   63-64   I2     hours  right ascension. hours part
+   65-65   A1     --     separator "_"
+   66-67   I2     min.   right ascension. minutes part
+   68-68   A1     --     separator "_"
+   69-79   F11.8  sec.   right ascension. seconds part
+   84-93   F10.4  mas    formal error of right ascension
+   100-102 I3     deg.   declination. degrees part.
+   103-103 A1     --     separator "_"
+   104-105 I2     arcmin declination. arcminutes part.
+   106-106 A1     --     separator "_"
+   107-116 F10.7  arcsec declination. arcseconds part.
+   121-130 F10.4  mas    formal uncertainty of declination
+   138-144 F7.4   --     Correlation between right ascension and declination
+   151-154 I4     --     Number of used observations of this source
+   158-161 I4     --     Total number of observations of this source
+ 
+                3.8 .lst -file
+                ~~~~~~~~~~~~~~
+ 
+   .lst file contains estimates of positions of local stations and the formal
+uncertainties of these estimates. The list of station positions is sorted in
+the order of sessions and then in the alphabetic order of station names.
+Total estimates of station positions in crust-fixed XYZ coordinates system and
+adjustments to the apriori positions in topocentric system are presented.
+ 
+   File contains lines of three types:
+ 
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Cartesian components of the vector of station position. The first
+   8 characters of this line are STA_LCX:
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: STA_LCX:
+   21-30   A10    --    database name with leading dollar sign
+   33-35   I3     --    database version number
+   47-56   F10.5  years time tag
+   59-60   A2     --    component identifier: X:
+   62-76   F15.2  mm    value of X-component of station position.
+   81-90   F10.3  mm    formal uncertainty of X-component of station position.
+   93-94   A2     --    component identifier: X:
+   96-110  F15.2  mm    value of Y-component of station position.
+   115-124 F10.3  mm    formal uncertainty of Y-component of station position.
+   127-128 A2     --    component identifier: Z:
+   130-144 F15.2  mm    value of Z-component of station position.
+   149-158 F10.3  mm    formal uncertainty of Z-component of station position.
+ 
+3) Topocentric components of the vector of adjustments to the apriori station
+   position. The first 8 characters of this line are STA_LCU:
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: STA_LCU:
+   21-30   A10    --    database name with leading dollar sign
+   33-35   I3     --    database version number
+   47-56   F10.5  years time tag
+   59-60   A2     --    component identifier: U:
+   62-76   F15.2  mm    value of U-component of station position.
+   81-90   F10.3  mm    formal uncertainty of U-component of station position.
+   93-94   A2     --    component identifier: E:
+   96-110  F15.2  mm    value of E-component of station position.
+   115-124 F10.3  mm    formal uncertainty of E-component of station position.
+   127-128 A2     --    component identifier: N:
+   130-144 F15.2  mm    value of N-component of station position.
+   149-158 F10.3  mm    formal uncertainty of N-component of station position.
+ 
+                3.9 .bas -file
+                ~~~~~~~~~~~~~~
+ 
+   .bas file contains series of the estimates of the components of baseline
+vectors of the stations whose positions were estimated as local parameters
+as well as formal uncertainties of these these estimates. The list of the
+estimates of baseline vectors is sorted in the order of sessions and then in
+the alphabetic order of station names forming a baseline. All three component:
+baseline length, transversal and and normal components are computed.
+ 
+   File contains lines of two types:
+ 
+1) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+2) Cartesian components of the vector of station position. The first
+   8 characters of this line are BAS_LCL:
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: BAS_LCL:
+   11-20   A10    --    database name with leading dollar sign
+   23-25   I3     --    database version number
+   35-44   F10.5  years time tag
+   46-53   A8     --    the name of the first station of the baseline
+   54-54   A1     --    delimiter: "/"
+   55-62   A8     --    the name of the second station of the baseline
+   64-77   F14.2  mm    baseline length
+   78-83   F6.2   mm    formal uncertainty of baseline length determination
+   85-94   F10.2  mm    transversal (horizontal) component of baseline vector
+   96-102  F7.2   mm    formal uncertainty of transversal comp. of baseline
+   104-114 F11.2  mm    normal (vertical) component of baseline vector
+   116-122 F7.2   mm    formal uncertainty of normal comp. of baseline vector
+ 
+                3.10 .eob -file
+                ~~~~~~~~~~~~~~~
+ 
+   .eob file contains series of the estimates of X pole coordinate,
+Y pole coordinate, UT1-TAI angle, UT1 rate, daily offsets of nutation angles
+as well as their formal uncertainties and correlations. Time tag and database
+name is attached to each line. .EOB format is an extension of the IERS EOP
+format.
+ 
+   File contains lines of three types:
+1) Comment. The first character is #. Header comments contain some information
+   about solution.
+ 
+2) Header. The first two symbols are blank. Header lines contain titles of the
+   columns
+ 
+3) Estimates.
+ 
+ 
+  1    1-1    A1     ---     Usage flag
+  2    3-14   F12.6  days    Modified Julian date of the TDT time tag for
+                             pole coordinates and UT1
+  3   16-25   A10    ---     Database name
+  4   27-32   A6     ---     IVS session code (if available)
+  5   34-41   F8.6   arcsec  The estimate of X pole coordinate
+  6   43-50   F8.6   arcsec  The estimate of Y pole coordinate
+  7   52-62   F11.7  sec     The UT1-TAI function
+  8   64-71   F8.3   mas     Adjustment of the nutation in longitude angle with
+                                        respect to IAU 1980 nutation expansion
+  9   73-80   F8.3   mas     Adjustment of the nutation in obliquity angle with
+                                        respect to IAU 1980 theory
+ 10   82-90   F9.6   asc/day The estimate of X pole rate
+ 11   92-100  F9.6   asc/day The estimate of Y pole rate
+ 12  102-108  F7.4   ms/day  The estimate of UT1 rate
+ 13  110-117  F8.6   arcsec  Formal uncertainty of X pole coordinate
+ 14  119-126  F8.6   arcsec  Formal uncertainty of Y pole coordinate
+ 15  128-136  F9.7   sec     Formal uncertainty of UT1-UTC function
+ 16  138-144  F7.3   mas     Formal uncertainty of nutation in longitude angle
+ 17  146-152  F7.3   mas     Formal uncertainty of nutation in obliquity angle
+ 18  154-162  F9.6   asc/day Formal uncertainty of X pole rate
+ 19  164-172  F9.6   asc/day Formal uncertainty of Y pole rate
+ 20  174-180  F7.4   asc/day Formal uncertainty of UT1 rate
+ 21  182-187  F6.4   --      Correlation between the estimates of X-pole
+                                          positions and Y-pole position
+ 22  189-194  F6.4   --      Correlation between the estimates of X-pole
+                                         positions and UT1-TAI angle
+ 23  196-201  F6.4   --      Correlation between the estimates of Y-pole
+                                         positions and UT1-TAI angle
+ 24  203-208  F6.4   --      Correlation between the estimates of nutation in
+                                         longitude and nutation in obliquity
+ 25  210-215  F6.4   --      Correlation between the estimates of X-pole
+                                          positions and UT1 rate
+ 26  217-222  F6.4   --      Correlation between the estimates of Y-pole
+                                         positions and UT1-TAI date
+ 27  224-229  F6.4   --      Correlation between the estimates of
+                                         UT1-TAI angle UT1 rate
+ 28  231-235  F5.2   hours   Session duration
+ 29  237-243  F7.2   psec    Weighted root mean square of postfit residuals
+ 30  245-250  I6     --      Number of used observations in the session
+ 31  252-263  F12.6  days    Modified Julian date for nutation at TDT time
+                             scale
+ 32  265-328  A64    --      The network configuration line. Consists of
+                             two characters IVS station codes listed
+                             in alphabetic order for stations that participated
+                             in the experiment and supplied the data that have
+                             been used in processing this experiment.
+ 
+    If the specific parameter was not estimated in this experiment, the field
+for its value and formal uncertainty is replaced by filler: $$$$$$. The filler
+takes entire field.
+ 
+ 
+                3.11 .trp -file
+                ~~~~~~~~~~~~~~~
+ 
+   .trp file contains apriori zenith path delay, adjustments of zenith
+path delay, totals (apriori+adjustments) and formal uncertainties of
+adjustments for each session, each station. In the case if zenith apriori path
+delays were not written into the spool file, then apriori zenith path delays
+are reported as zeroes.
+ 
+   Field   Format Units Meaning
+   1-8     A8     --    record type identifier: TRP_SEG:
+   11-20   A10    --    database name with leading dollar sign
+   23-25   I3     --    database version number
+   32-50   A19    --    time tag of the estimates of troposphere path delay
+                        in Solve format
+   32-35   I4     --    year number
+   37-38   I2     --    month number
+   40-41   I2     --    day number
+   43-44   I2     hours hour
+   46-47   I2     min   minutes
+   49-50   I2     sec   seconds
+   56-63   A8     ---   IVS station name
+   69-82   F14.3  psec  apriori troposphere zenith path delay
+   88-101  F14.3  psec  adjustment of troposphere zenith path delay
+  107-120  F14.3  psec  total troposphere zenith path delay
+  126-139  F14.3  psec  formal uncertainty of troposphere path delay
+ 
+                3.12 .erm -file
+                ~~~~~~~~~~~~~~~
+ 
+    .erm file contains numerical values of the coefficients of expansion
+of the perturbation vector of the Earth rotation over the B-spline basis.
+ 
+    Document is under preparation.
+ 
+                3.13 .heo -file
+                ~~~~~~~~~~~~~~~
+ 
+   .heo file contains numerical values of the harmonic model of Earth's
+orientation. Refer to document
+http://vlbi.gsfc.nasa.gov/solve_root/help/heo_format.txt
+for further details.
+ 
+                3.14 .npv -file
+                ~~~~~~~~~~~~~~~
+ 
+    .erm file contains numerical values of the coefficients of expansion
+of the site position expansion over B-spline and Fourier basis, as well as
+covariance matrix of its estimates.
+ 
+    Document is under preparation.
+ 
+                3.15 .hps -file
+                ~~~~~~~~~~~~~~~
+ 
+   .heo file contains numerical values of the harmonic model of site
+position displacements. Refer to document
+http://vlbi.gsfc.nasa.gov/solve_root/help/harpos_format.txt
+for further details.
+ 
+                3.16 .bsp -file
+                ~~~~~~~~~~~~~~~
+ 
+   .bsp file contains numerical values of the coefficients of expansion
+of site position evolution over the B-spline basis.
+Refer to document
+http://vlbi.gsfc.nasa.gov/solve_root/help/bsppos_format.txt
+for further details.
+ 
+                3.17 .rms -file
+                ~~~~~~~~~~~~~~~
+ 
+   .rms file contains overall weighted root means square of postfit residuals
+for all observations and a series of wrms of postfit residual for each
+individual session. File is ordered in decreasing wrms.
+ 
+   File contains lines of three types:
+ 
+1) Global statistics. Fields 11-17 are Global:
+ 
+   Field   Format Units    Meaning
+   1-8     A8     --       record type identifier: RMS_DEL:
+   11-17   A7     --       record subtype identifier: Global:
+   22-28   I7     --       Number of observations used in solution
+   36-45   F10.3  psec     overall wrms of postfit delay residuals
+   50-59   F10.3  psec/sec overall wrms of postfit delay rate residuals.
+                           Exception: the line with subtype identifier Global
+                           does not have rate, but has chi/ndg in fields
+                           62-71
+ 
+ 
+2) Comment. The first character is #. Header comment contain the full name of
+   the spool file.
+ 
+3) Local statistics.
+ 
+   if ( GETPAR_RMS format version 1.0  of 2001.05.25 ) then
+ 
+   Field   Format   Units  Meaning
+   1-8     A8       --     record type identifier: RMS_DEL:
+   11-20   A10      --     database name with leading dollar sign
+   22-28   I7       --     Number of observations used in solution
+   30:41   I12/F3.1 psec   wrms of delay in psec *
+                           If WRMS > 10 psec then format is I12,
+                           otherwise is F3.1
+   46:55   I10      fs/s   wrms of delay rate.
+ 
+   if ( GETPAR_RMS format version 2.0  of 2003.08.12 ) then
+ 
+   1-8     A8       --     record type identifier: RMS_DEL:
+   11-20   A10      --     database name with leading dollar sign
+   22-28   I7       --     Number of observations used in solution
+   30:41   F12.3    psec   wrms of delay.
+   47:58   I12      fs/s   wrms of delay rate.

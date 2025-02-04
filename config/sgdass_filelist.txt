@@ -1,0 +1,103 @@
+#
+# Last time updated on 2024.05.17_14:30:09
+#
+petools                     20241115    .tar.bz2   sgdass       /astrogeo.org/petools
+ners                        20210824    .tar.bz2   sgdass       /earthrotation.net/ners
+tle                         20230331    .tar.bz2   sgdass       /astrogeo.org/tle
+vtd                         20241125    .tar.bz2   sgdass       /astrogeo.org/vtd
+spd_client                  20241125    .tar.bz2   sgdass       /astrogeo.org/spd
+gvh                         20231222    .tar.bz2   sgdass       /astrogeo.org/gvh
+fourpack                    20220220    .tar.bz2   sgdass       /astrogeo.org/fourpack
+pima                        20250107    .tar.bz2   sgdass       /astrogeo.org/pima
+vex_parser                  20210707    .tar.bz2   sgdass       /astrogeo.org/vex_parser
+psolve                      20241125    .tar.bz2   sgdass       /astrogeo.org/psolve
+sur_sked                    20240430    .tar.bz2   sgdass       /astrogeo.org/sur_sked
+atp                         20240507    .tar.bz2   sgdass       /astrogeo.org/atp
+malo                        20241125    .tar.bz2   sgdass       /astrogeo.org/malo
+spd                         20241125    .tar.bz2   sgdass       /astrogeo.org/spd
+vsdc                        20240204    .tar.bz2   sgdass       /astrogeo.org/vsdc
+#
+malo_share                  20241125    .tar.bz2   data         /t0/data_backup     
+spd_client_example          20241125    .tar.bz2   data         /astrogeo.org/spd   
+#
+autoconf                    2.71        .tar.gz    third_party  https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+automake                    1.16.5      .tar.gz    third_party  https://ftp.gnu.org/gnu/automake/automake-1.16.5.tar.gz
+bison                       3.8.2       .tar.gz    third_party  https://ftp.gnu.org/gnu/bison/bison-3.8.2.tar.gz
+bzip2                       1.0.8       .tar.gz    third_party  https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+cfitsio                     01          .patch     patch        local
+cfitsio                     4.4.0       .tar.gz    third_party  https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.4.0.tar.gz
+cmake                       01          .patch     patch        local
+cmake                       3.23.1      .tar.gz    third_party  https://github.com/Kitware/CMake/releases/download/v3.27.9/cmake-3.27.9.tar.gz
+curl                        8.7.1       .tar.bz2   third_party  https://curl.se/download/curl-8.7.1.tar.gz
+difmap                      01          .patch     patch        local
+difmap                      02          .patch     patch        local
+difmap                      2.5o        .tar.gz    third_party  ftp://ftp.astro.caltech.edu/pub/difmap/difmap2.5o.tar.gz  Gone ftp://ftp.astro.caltech.edu/pub/difmap/difmap2.5q.tar.gz  
+fftw                        3.3.10      .tar.gz    third_party  https://www.fftw.org/fftw-3.3.10.tar.gz
+flex                        2.6.4       .tar.gz    third_party  https://toolchains.bootlin.com/downloads/releases/sources/flex-2.6.4/flex-2.6.4.tar.gz
+hdf                         01          .patch     patch        local
+hdf                         4.2.16      .tar.gz    third_party  https://github.com/HDFGroup/hdf4/releases/download/hdf-4_2_16/hdf-4_2_16.tar.gz
+hdf5                        1.12.2      .tar.bz2   third_party  https://github.com/HDFGroup/hdf4/archive/refs/tags/hdf-4_2_16-2.tar.gz
+lbzip2                      01          .patch     patch        local
+lbzip2                      2.5         .tar.bz2   third_party  https://fossies.org/linux/privat/lbzip2-2.5.tar.gz
+libjpeg-turbo               3.0.1       .tar.gz    third_party  https://ftp.osuosl.org/pub/blfs/conglomeration/libjpeg-turbo/libjpeg-turbo-2.1.3.tar.gz
+libpng                      1.6.37      .tar.gz    third_party  https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz
+libpng                      01          .patch     patch        local
+libtirpc                    1.3.2       .tar.bz2   third_party  https://ftp.osuosl.org/pub/blfs/conglomeration/libtirpc/libtirpc-1.3.2.tar.bz2
+libtool                     2.4.7       .tar.gz    third_party  https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.gz
+log2ant                     0.8.3       .tar.gz    third_pary   https://download.sourceforge.net/log2ant/log2ant-0.8.3.tar.gz
+lzlib                       1.13        .tar.gz    third_party  https://download-mirror.savannah.gnu.org/releases/lzip/lzlib/lzlib-1.13.tar.gz
+m4                          1.4.19      .tar.gz    third_party  https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz
+nasm                        2.16.01     .tar.bz2   third_party  https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/nasm-2.16.01.tar.bz2
+ncurses                     6.4         .tar.gz    third_party  https://ftp.gnu.org/gnu/ncurses/ncurses-6.4.tar.gz
+netcdf-c                    4.9.2       .tar.gz    third_party  https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netcdf-c-4.9.2.tar.gz
+netcdf-fortran              4.6.1       .tar.gz    third_party  https://downloads.unidata.ucar.edu/netcdf-fortran/4.6.1/netcdf-fortran-4.6.1.tar.gz
+openldap                    01          .patch     patch        local
+openldap                    2.6.1       .tgz       third_party  https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.1.tgz
+openblas                    01          .patch     patch        local
+openblas                    0.3.28      .tar.gz    third_party  https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.28/OpenBLAS-0.3.28.tar.gz
+openssl                     1.1.1u      .tar.gz    third_party  https://ftp.openssl.org/source/old/1.1.1/openssl-1.1.1u.tar.gz
+patch                       2.7.6       .tar.gz    third_party  https://ftp.gnu.org/gnu/patch/patch-2.7.6.tar.gz
+parallel                    20230622    .tar.bz2   third_party  https://ftp.gnu.org/gnu/parallel/parallel-20230622.tar.bz2
+pgplot                      01          .patch     patch        local
+pgplot                      5.2         .tar.gz    third_party  ftp://ftp.astro.caltech.edu/pub/pgplot/pgplot5.2.tar.gz
+pkg-config                  0.29.2      .tar.gz    third_party  https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
+qt                          5.15.15     .tar.xz    third_party  https://download.qt.io/archive/qt/5.15/5.15.15/single/qt-everywhere-opensource-src-5.15.15.tar.xz 
+qt5                         01          .patch     patch        local 
+readline                    8.2         .tar.gz    third_party  https://ftp.gnu.org/pub/gnu/readline/readline-8.2.tar.gz
+w3lib                       01          .patch     patch        local
+w3lib                       02          .patch     patch        local
+w3lib                       2.0.6       .tar.bz2   third_party  http://www.nco.ncep.noaa.gov/pmb/codes/GRIB2/w3lib-2.0.6.tar  Gone  https://www.nco.ncep.noaa.gov/pmb/codes/GRIB2/w3lib-2.2.0.tar
+wget                        1.25.0      .tar.gz    third_party  https://ftp.gnu.org/gnu/wget/wget-1.25.0.tar.gz
+xz                          5.2.5       .tar.gz    third_party  https://xz.tukaani.org/xz-utils/files/xz-5.2.5.tar.gz
+zlib                        1.3.1       .tar.gz    third_party  https://www.zlib.net/fossils/zlib-1.2.12.tar.gz
+zstd                        01          .patch     patch        local
+zstd                        1.5.2       .tar.gz    third_party  https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz
+#
+gmp                         6.3.0       .tar.bz2   third_party  https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.bz2
+isl                         0.18        .tar.bz2   third_party  https://gcc.gnu.org/pub/gcc/infrastructure/isl-0.18.tar.bz2
+mpfr                        4.2.1       .tar.bz2   third_party  https://gcc.gnu.org/pub/gcc/infrastructure/mpfr-4.2.1.tar.bz2
+mpc                         1.3.1       .tar.gz    third_party  https://gcc.gnu.org/pub/gcc/infrastructure/mpc-1.3.1.tar.gz
+gcc                         01          .patch     patch        local
+gcc                         14.1.0      .tar.gz    third_party  https://ftp.gnu.org/gnu/gcc/gcc-14.1.0/gcc-14.1.0.tar.gz
+ecj                         4.9         .jar       third_party  https://archive.eclipse.org/eclipse/downloads/drops4/R-4.9-201809060745/download.php?dropFile=ecj-4.9.jar
+#
+README.txt                  n/a         n/a        documentation
+#
+LICENSE.pdf                 n/a         n/a        documentation
+COPYRIGHT                   n/a         n/a        documentation
+INSTALL                     n/a         n/a        documentation
+UPGRADE                     n/a         n/a        documentation
+CHANGES                     n/a         n/a        documentation
+brew_in_my_prefix.bash      n/a         n/a        install
+pet_misc.py                 n/a         n/a        install
+sgdass_install.py           n/a         n/a        install
+sgdass_update.py            n/a         n/a        install
+sgdass_filelist.txt         n/a         n/a        configure
+#
+example_gcc_darwin.cnf      n/a         n/a        configure
+example_gcc_linux.cnf       n/a         n/a        configure
+example_sgdass_darwin.cnf   n/a         n/a        configure
+example_sgdass_linux.cnf    n/a         n/a        configure
+gcc_mll_11.6.5.cnf          n/a         n/a        configure
+sgdass_mll_11.6.5.cnf       n/a         n/a        configure
+sgdass_vtd_only.cnf         n/a         n/a        configure

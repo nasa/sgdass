@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+# 2018.02.06 Increased preob time from 10 to 20 sec
+#
+SHORT_NAME:  URUMQI    Ur
+LAST_UPDATE: URUMQI    2018.02.06
+COORD:       URUMQI    meters      228310.720  4631922.785  4367063.969   
+MOUNT:       URUMQI    char       ALTAZ
+SLEW_AZ:     URUMQI    deg/sec    1.00
+SLEW_EL:     URUMQI    deg/sec    0.50
+ACCL_AZ:     URUMQI    deg/sec^2  0.50
+ACCL_EL:     URUMQI    deg/sec^2  0.50
+TSETTLE_AZ:  URUMQI    sec        2.0
+TSETTLE_EL:  URUMQI    sec        2.0
+EL_MIN:      URUMQI    deg        5.0
+EL_MAX:      URUMQI    deg       88.0
+AZ_RANGE:    URUMQI    deg      -80.0 90.0 280.0 450.0
+RECORDER:    URUMQI    char      mark5
+PREOB:       URUMQI    sec       20.0
+POSTOB:      URUMQI    sec        2.0

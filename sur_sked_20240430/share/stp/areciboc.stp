@@ -1,0 +1,32 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2022.07.28  L. Petrov created
+# 
+SHORT_NAME:    ARECIBOC  char       Ac
+LAST_UPDATE:   ARECIBOC  char       2022.07.28_16:43:53
+COORD:         ARECIBOC  meters     2390512.490 -5564470.174  1995124.185
+MOUNT:         ARECIBOC  char       ALTAZ   
+SLEW_AZ:       ARECIBOC  deg/sec       5.00
+SLEW_EL:       ARECIBOC  deg/sec       1.25
+ACCL_AZ:       ARECIBOC  deg/sec^2     1.33
+ACCL_EL:       ARECIBOC  deg/sec^2     1.33
+DECE_AZ:       ARECIBOC  deg/sec^2     1.33
+DECE_EL:       ARECIBOC  deg/sec^2     1.33
+TSETTLE_AZ:    ARECIBOC  sec           3.00
+TSETTLE_EL:    ARECIBOC  sec           3.00
+EL_MIN:        ARECIBOC  deg           6.0
+EL_MAX:        ARECIBOC  deg           88.0
+AZ_RANGE:      ARECIBOC  deg           -180.0 0.0 180.0 360.0
+RECORDER:      ARECIBOC  char          mark5b
+BACKEND:       ARECIBOC  char          vlba
+PREOB:         ARECIBOC  sec           0.0
+POSTOB:        ARECIBOC  sec           0.0
+HOR_AZIM:      ARECIBOC  deg           0.0  202.0  206.0 360.0
+HOR_ELEV:      ARECIBOC  deg           6.0   12.0   12.0   6.0
+STOW_AZIM:     ARECIBOC  deg           60.0
+STOW_ELEV:     ARECIBOC  deg           88.0
+SETMODE:       ARECIBOC  sec           4.0
+#
+CLOCK_DATES:   ARECIBOC  sec        2020.01.01   2049.12.31
+CLOCK_OFFSET:  ARECIBOC  sec        0.0
+# 

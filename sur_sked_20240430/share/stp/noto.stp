@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+# Station slew format of  2024.02.22_22:29:46
+#
+SHORT_NAME:    NOTO      char       Mc
+SHORT_NAME:    NOTO      char       Nt
+LAST_UPDATE:   NOTO      char       2018.01.20
+COORD:         NOTO      meters     4934563.122  1321201.261  3806484.497
+MOUNT:         NOTO      char       ALTAZ
+SLEW_AZ:       NOTO      deg/sec    0.71
+SLEW_EL:       NOTO      deg/sec    0.50
+ACCL_AZ:       NOTO      deg/sec^2  0.82
+ACCL_EL:       NOTO      deg/sec^2  0.31
+TSETTLE_AZ:    NOTO      sec        2.0
+TSETTLE_EL:    NOTO      sec        2.0
+EL_MIN:        NOTO      deg        9.0
+EL_MAX:        NOTO      deg       85.0
+AZ_RANGE:      NOTO      deg      -87.0 90.0 273.0 450.0
+RECORDER:      NOTO      char      mark5
+BACKEND:       NOTO      char      mark4
+SETMODE:       NOTO      sec         4.0
+PREOB:         NOTO      sec        10.0
+POSTOB:        NOTO      sec         2.0
+HOR_AZIM:      NOTO      deg         0.0  360.0
+HOR_ELEV:      NOTO      deg         5.0    5.0
+STOW_AZIM:     NOTO      deg       80.0
+STOW_ELEV:     NOTO      deg       80.0
+#
+CLOCK_DATES:   NOTO      sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  NOTO      sec        0.0E-6

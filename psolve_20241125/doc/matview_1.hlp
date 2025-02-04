@@ -1,0 +1,224 @@
+MATView  V2.3  21-SEP-97
+
+
+      I. Introduction.
+      ~~~~~~~~~~~~~~~~
+
+
+   It is not rare case when we need to look at the content of large matrices.
+In principle it is possible to print matrix element by element in text file
+and then try to understand what is what. But it is almost helpless venture
+for a large matrix (with dimension of hundred, thousands or tens of thousands 
+elements). MATView is the small set of routines which allows user to look at 
+the desirable elements of the matrix by painless way. MATView displays at the 
+screen the window with small portion of the matrix and allow user to move the
+window around the matrix and change the format of element representation.
+MATView is the set of SUBROUTINES and it is sufficient to add ONLY ONE OPERATOR
+in your program, to look at the matrix and then continue your calculations.
+
+
+     II. How to call MATView.
+     ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+  MATView has two interfaces: short and long.
+
+  Short interface:
+
+  1) MATVIEW_1 ( NV, NH, A )
+
+     Display at the screen the rectangular REAL*8 matrix A, declared in the 
+     main routine as REAL*8 (NV, NH). 
+     NV ( INTEGER*4 ) -- the number of rows of the matrix;
+     NH ( INTEGER*4 ) -- the number of columns of the matrix;
+
+  2) MATVIEW_2 ( N, A ) 
+
+     Display at the screen the square symmetric REAL*8 matrix A in upper 
+     triangular representation. Matrix should be declared in the main program 
+     as REAL*8 A(K), where K >= (N*(N+1))/2
+     Only elements located at and above the main diagonal will be displayed.
+
+     Long interface:
+
+  3) CALL MATVIEW ( MATYP, MV, MH, A, ZAG, FORM_I, IV, IH, IUER )
+                                                                           
+      --- Input parameters: ---
+                                                                           
+      MATYP ( INTEGER*4 ) -- Matrix type code. The following codes are
+                             supported:
+                  MATYP=1 -- Rectangular matrix in column-by-column 
+                             representation (standard way for FORTRAN).
+                  MATYP=2 -- Rectangular matrix in column-by-column 
+                             representation, bit the matrix to be transposed
+                             with respect to the initial matrix will be 
+                             displayed: each column will be displayed as row
+                             and vice verse. Array A will not be modified.
+                  MATYP=3 -- Square symmetric in upper triangular 
+                             representation. Only elements located at and above
+                             the main diagonal will be displayed.
+         MV ( INTEGER*4 ) -- The first dimension of the matrix. It should 
+                             correspond to the dimension used for declaration
+                             the matrix in calling routine!
+         MH ( INTEGER*4 ) -- The second dimension of the matrix. It should 
+                             correspond to the dimension used for declaration
+                             the matrix in calling routine! If MATYP=3 then
+                             MH should be equal 1.
+          A ( REAL*8    ) -- The matrix to be displayed
+        ZAG ( CHARACTER ) -- Line with title.
+       FORM ( CHARACTER ) -- Format of representation of one element of the
+                             matrix in accordance with rules of standard 
+                             FORTRAN. The following specifications are 
+                             acceptable: D, E, F, G, P, X. Multiplier may 
+                             precede X specification. Specifications should be 
+                             separated by comma.
+         IV ( INTEGER*4 ) -- First column which will be displayed near the left
+                             edge of the screen.
+         IH ( INTEGER*4 ) -- First row which will be displayed near the upper
+                             edge of the screen.
+                                                                           
+      --- Modified parameters: ---
+
+       IUER  ( INTEGER*4, OPT )  -- Universal error handler.
+               Input value: mode of error handing.
+
+           IUER>-1 -- Error code will be return.
+           IUER=-1 -- Error code IUER=0 will be returned in the case of 
+                      successful termination. Diagnostic error message will be
+                      displayed at the screen in the case of error.
+           If IUER parameter is missed (but the comma before it should NOT
+              be missed) then input value is assumed to be equal -1
+
+               Output value: error code (if IUER is accessible for writing)
+
+           IUER  =   0  --  Normal termination
+           IUER .NE. 0  --  Some error were detected.
+                                                                           
+
+     III. How to use MATView.
+     ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+     1) How to leave MATView and continue execution of calling programm.
+
+        hit E
+
+     2) How to move displaying window.
+      
+	There are two possibilities: 
+          a) to shift entire window at N columns or rows.
+             To do it merely hit one of the arrow keys: <LEFT>, <RIGHT>, <UP>,
+             <DOWN>. MATView will request you to specify the number of 
+             columns/rows for moving window.
+
+          b) to set new value of window boundary. To do it hit one of the
+             arrow keys simultaneously with key <SHIFT>:
+             <SHIFT><LEFT>, <SHIFT><RIGHT>, <SHIFT><UP>, <SHIFT><DOWN>.
+
+             (Comment: hitting <SHIFT><ARROW>  will produce the same code as
+              hitting <ARROW> at some keyboards. Alternative form <|><ARROW>
+              is supported by MATView and it is equivalent to <SHIFT><ARROW> )
+
+             Then MATView request you the new value of the corresponding 
+             boundary. The value of opposite boundary will be adjusted
+             automatically to fill entire screen.
+
+      3) How to change format.
+
+         hit F and enter the new format specification for one element by 
+         editing the previous specification.
+
+      4) Other commands.
+   
+         a) <ARROW/HOME> (or <HOME> at some keyboards) will change format and 
+            displaying window to the initial stature.
+
+         b) H -- displays short help message with brief description of the used 
+            commands.
+
+      5) MATView supports resizing the screen. It fills all available area of 
+         the screen. After changing the size of the window user should hit 
+         key <Enter> and MATView re-draw the output.
+
+      6) Hitting <Enter> key will cause re-drawing the window.
+
+      7) How to print the picture
+
+         a) Using standard way for printing window which X-window system 
+            provides;
+
+         b) Open alternative text window. Enter the command "cat > <file_name>"
+            Select area at MATView window. Paste the selected are at
+            alternative window. Enter <CNTRL/D> in alternative window. The 
+            content of MATView window will be rewritten into file <file_name>.
+            Print (or edit) <file_name>
+      
+      Comment: Vector is matrix with dimension of N*1 and therefore also may be
+               also displayed by MATView.
+   
+
+     IV. Additional goodies.
+     ~~~~~~~~~~~~~~~~~~~~~~~
+
+ 
+     There is capacity to write the matrix at disk file in MATView format and
+     then read it in your program for further displaying. Or merely display
+     the file with the matrix written in MATView format.
+
+     1) CALL MATVIEW_W ( FINAM, MATYP, MV, MH, MAT, ZAG, FORM, IV, IH, IUER )
+       
+        -- write matrix A in file FINAM. Meaning of all other parameters is
+           the same as in routine MATVIEW.
+
+     2) CALL MATVIEW_R ( M, FINAM, MATYP, MV, MH, MAT, ZAG, FORM, IV, IH, IUER )
+
+        -- read matrix A from the file FINAM. M -- maximal number of elements
+           expected in matrix A. Matrix A should be declared in main program
+           as REAL*8 array which contains not less then M elements. Meaning of 
+           all other parameters is the same as in routine MATVIEW.
+
+     3) Executable  "seemat <file_name>"  -- reads matrix written in MATView
+        format by MATVIEW_W in file <file_name> and displays it at the screen.
+      
+   
+
+     V. How to install MATView.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+     All required objects modules are in the library pet_util.a
+
+     It is located in directories
+
+        leo:/data11/pet_tree/mk3/src/solve/pet_util/ 
+        kuestner:/diskB5/mk3/src/solve/pet_util/ 
+
+        pet_util.a refers to the libraries lvec, lcurses, libU77
+
+     Thus, your makefile should contain the following line in the bottom:
+
+          <pet_util__directory>/pet_util.a   \
+          -libU77                            \
+          -lvec                              \
+          -lcurses
+
+     MATView seeks the file matview.hlp when it is going to print help message.
+     It looks the directory $HELP_DIR. This, environment variable HELP_DIR
+     should be set by proper way and file matview.hlp should be at its place.
+
+
+     VI. Restrictions.
+     ~~~~~~~~~~~~~~~~~
+
+
+     1) MATView will not work properly at the screen with dimensions less than
+        7x13 (although it will but blow up).
+
+     2) I tested it only for hpterm and I have no idea how it will work at 
+        other terminals. Some minor changes may be required.
+
+
+All comments, bug reports please send to author:
+Leonid Petrov ( sgdass@lists.nasa.gov )
+
+06-NOV-97 

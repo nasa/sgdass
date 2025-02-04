@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  KUNMING   Km
+LAST_UPDATE: KUNMING   2018.01.20
+COORD:       KUNMING   meters    -1281152.441  5640864.357  2682653.596   
+MOUNT:       KUNMING   char       ALTAZ
+SLEW_AZ:     KUNMING   deg/sec    1.00
+SLEW_EL:     KUNMING   deg/sec    0.50
+ACCL_AZ:     KUNMING   deg/sec^2  0.50
+ACCL_EL:     KUNMING   deg/sec^2  0.30
+TSETTLE_AZ:  KUNMING   sec        2.0
+TSETTLE_EL:  KUNMING   sec        2.0
+EL_MIN:      KUNMING   deg        5.0
+EL_MAX:      KUNMING   deg       90.0
+AZ_RANGE:    KUNMING   deg      -88.0 87.0 272.0 447.0
+RECORDER:    KUNMING   char      mark5
+PREOB:       KUNMING   sec       10.0
+POSTOB:      KUNMING   sec        2.0

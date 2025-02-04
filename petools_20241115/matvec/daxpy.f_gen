@@ -1,0 +1,20 @@
+      subroutine daxpy(n,da,dx,incx,dy,incy)
+      implicit none
+c
+c     constant times a vector plus a vector.
+c     uses unrolled loops for increments equal to one.
+c     jack dongarra, linpack, 3/11/78.
+c     mwh, 730 vis, 1/27/92
+c
+      double precision dx(1),dy(1),da
+      integer incx,incy,ix,iy,n
+c
+      if(n.le.0)return
+      if (da .eq. 0.0d0) return
+      ix = 1
+      iy = 1
+      if(incx.lt.0)ix = (-n+1)*incx + 1
+      if(incy.lt.0)iy = (-n+1)*incy + 1
+      call vec_$dmult_add_i(dy(iy),incx,dx(ix),incx,n,da,dy(iy),incy)
+      return
+      end

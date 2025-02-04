@@ -1,0 +1,125 @@
+Advanced user guide for DiaGI
+=============================
+
+   When you call DiaGI or MultiDiaGI with full interface you can exploit 
+advanced features.
+
+
+I. Calling DiaGI in batch mode.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   DiaGI__STRU has the following fields:
+
+          INTEGER*4  IDEV          ! DiaGI device type 
+          INTEGER*4  IBATCH        ! Code of batch mode. (0 for interactive)
+
+If you set 
+
+a) DIAGI_S.IBATCH = 1
+b) DIAGI_S.IDEV = non-interactive DiaGI device code in range [IBT__MIN,MDEV]
+
+   then DiaGI will make a hard copy of the plot and return control to the
+main program without requesting user input. Thus, DiaGI can be called in
+batch mode. If you define IDEV and IBATCH the same way in the first element
+of DIAIG_S objects array for MultiDiaGI then MulitDiaGI will also work
+in batch mode: produce the hardcopy without asking for user input.
+Refer to $MK4_ROOT/testware/diagiexe/duagu_batch.f to as an example.
+
+
+II. User DiaGI functions.
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+DIAGI__STRU  has the following fields.
+
+	  INTEGER*4  NUSER_FUNC      ! The number of user functions 
+	  INTEGER*4  USER_FUNC(MUSF) ! Addresses of user functions
+	  INTEGER*4  USER_ARG(0:MUSA,MUSF) ! Argument list for user functions
+	  CHARACTER  USER_CHR(MUSF)  ! Binding symbol of the user function
+
+Explanation.
+
+1) You can use from 0 to 32 user functions. The number of defined user 
+   functions should be placed in NUSER_FUNC field.
+
+2) Each function has
+   a) entry point. The address of the entry point is put in USER_FUNC(k)
+      Function name has to be defined as EXTERNAL in Fortran source code.
+
+   b) Argument list. The 0-th element of the argument list is the number
+      of arguments. Further elements of the array USER_ARG are the addresses
+      of the parameter. Keep in mind, that you user function has the arguments
+      of character type, then the actual number of arguments is larger by the
+      number of character arguments. The length of the character arguments
+      passed by value are considered as additional, hidden arguments.
+
+   c) binding key. Pgplot 5.2 returns character keys and A, D, X for mount 
+      events. Pgplot 5.22 + modifications made on 2002.08.02 supports also
+      <Alt> <Shift> <Control> modifiers combined with keyboard keys and mouse 
+      buttons as well as F1--F16 functional key. <Control> modifier reduces 
+      the key code by 32 (decimal), <Shift> modifier increases the code  by 
+      32, <Alt> increases the code by 128. All possible combinations
+      of <Alt> <Control> <Shift> are supported. Functional keys F1--F16 
+      return the code in range 190-215: 189+function_number. In order to 
+      exploit expanded code set, you should link your application with updated 
+      pgplot522 which is provided with Post SEP2002 version of Solve
+          
+   d) User function binding has a precedence over a DiaGI built-in function 
+      binding. Thus, you can re-define behavior of DiaGI. 
+
+   e) In the case of normal termination the user DiaGI function must return
+      INTEGER*4  value 1. Any other codes signal the error. In that case      
+      DiaGI will print the error message and return to the main program.
+
+Example:
+
+   You have  a function
+
+	FUNCTION   MY_PET_FUNCTION ( DIAGI, TITLE, WARNING )
+	INCLIDE   'diagi.i'
+        RECORD   / DIAGI__STRU / DAIGI_S
+	CHARACTER  TITLE*(*), WARNING*(*)
+	INTEGER*4  MY_PET_FUNCTION 
+
+	... some cool code
+ 
+        MY_PET_FUNCTION = 1
+        RETURN
+        END  !#!  MY_PET_FUNCTION  #!#
+
+  You bind it with key "K" by the following way.
+ 
+  DIAIG_S.NUSER_FUNC = 1
+  DIAGI_S.USER_FUNC(1) = LOC(MY_PET_FUNCTION)
+  DIAIG_S.USER_ARG(0,1) = 5             ! total number of arguments: 
+                                        ! 3 explicit + 2 hidden
+  DIAIG_S.USER_ARG(1,1) = LOC(DIAGI_S)  ! 1-st argument
+  DIAIG_S.USER_ARG(2,1) = LOC(TITLE)    ! 2-nd argument
+  DIAIG_S.USER_ARG(3,1) = LOC(WARNING)  ! 3-rd argument
+  DIAIG_S.USER_ARG(4,1) = LEN(TITLE)    ! Hidden argument: length of TITLE
+  DIAIG_S.USER_ARG(5,1) = LEN(WARNING)  ! Hidden argument: length of WARNING
+
+  DIAIG_S.USER_CHR(1) = 'K'  ! Binding symbol of the user function
+
+
+  MY_PET_FUNCTION has the argument DIAGI_S -- DiaGI object. It is hard to
+imaging usefulness this feature if this object is not available for a user
+function. User function MY_PET_FUNCTION has an access to internal plotting data 
+structure. You should understand rather well how DiaGI and pgplot works in 
+order to exploit this feature. Keep in mind that DiaGI does not check validity
+of user function entry point and argument address. The error in address usually
+result in process termination with strange system error messages.
+
+  User functions were design for the following tasks:
+
+1) to execute some operation under the point which the curor points at,
+   for example to provide more information this point. In this case
+   use function has access to cursor coordinates DIAGI_S.XC, DIAGI_S.YC
+   and internal plotting arrays DAIGI_S.ADR_X4,  DAIGI_S.ADR_Y4,  
+   DAIGI_S.ADR_E4
+
+2) to put additional infomartion on the plotting viewport. User DiaGI function
+   can have access to internal PGPLOT variables via PGPLOT inquire functions.
+
+In both cases user process interacts with internal DiaGI logic.
+
+  Detailed example can be found in $MK4_ROOT/testware/diagi_exe/diagi_user.f

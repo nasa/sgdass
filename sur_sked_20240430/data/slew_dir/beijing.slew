@@ -1,0 +1,19 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  BEIJING   Bj               
+USAGE:       BEIJING   all
+LAST_UPDATE: BEIJING   2018.01.20
+COORD:       BEIJING   meters   -2201000.000   4324000.000  4125000.000
+MOUNT:       BEIJING   char       ALTAZ 
+SLEW_AZ:     BEIJING   deg/sec    1.50  
+SLEW_EL:     BEIJING   deg/sec    1.50  
+ACCL_AZ:     BEIJING   deg/sec^2  1.0   
+ACCL_EL:     BEIJING   deg/sec^2  1.0   
+TSETTLE_AZ:  BEIJING   sec        2.0   
+TSETTLE_EL:  BEIJING   sec        2.0   
+EL_MIN:      BEIJING   deg        5.0   
+EL_MAX:      BEIJING   deg       88.0   
+AZ_RANGE:    BEIJING   deg      -78.0  90.0  282.0 450.0  
+RECORDER:    BEIJING   char       vera2000
+PREOB:       BEIJING   sec        10.0
+POSTOB:      BEIJING   sec         2.0

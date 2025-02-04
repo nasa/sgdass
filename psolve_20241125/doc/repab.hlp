@@ -1,0 +1,221 @@
+REPA - mouse and keybord usage
+
+<< RETURN TO DiaGi PLOT: PRESS "I" KEYBORD BUTTON TWO TIMES. >>
+Detailed information: see $HELP_DIR/repa_01.txt or $HELP_DIR/repa_01.html.
+
+INPUT FILES: NAMFXY, COMMXY, PARFXY OBSFXY, RESFXY (SOLVE workfiles)
+The program REPA uses some parameters which are available in the
+file $WORK_DIR/REPAXY (XY are the solve user initials). If this file is
+not available the program creates it with default parameter values.
+Later the user can edit this file for his/her preferences.
+MODIFIED FILES: OBSFXY, RESFXY
+
+The user can run REPA from the OPTIN menue by pressing "-" or in
+standalone mode by typing the run string "REPA XY".
+In the first case REPA uses WORK_DIR as work directory.
+In the case of standalone mode the program needs an environment
+variable REPA_WORK which contains the name of the work directory
+and all used workfiles have to be placed there.
+So it is possible to plot and modify experiment workfiles without running
+SOLVE. 
+
+User functions are available by pressing the headline buttons.
+The user has to initialize the buttons by one left mouse click somewhere in
+the plot.
+
+
+After a left mouse click on one of the function buttons the chosen functions
+are binded to the mouse. The remaining functions are binded to the
+keybord keys as listed below. The user can use keybord and mouse alternatively.
+--------------------------------------------------------------------------------
+keybord key   function
+--------------------------------------------------------------------------------
+   <          get information on observation --> displayed in bottom lines
+   ,          ambiguity shift of single observations "down"
+   #          suppress/recover single observation
+   .          ambiguity shift of single observations "up"
+   0          suppress groups of observations "outside" the curser position
+   1          recover groups of observations "inside" the curser position
+   *          ambiguity shift groups of observations
+   %          reset all ambiguities of current baseline
+   +          connect observations with the same source
+              click on observation or on source name
+   ~          user input of source name to connect observations 
+   -          intialize function buttons and source names,
+              disconnect connected observations
+   PgUp       next baseline plot
+   PgDn       previous baseline plot
+   CTTR/M     shrink baseline plot area to "good" observations
+
+Note! By default the PgUp decimal code is set 220 and PgDn to 221.
+      These codes can differ on different keybords.
+      The user can change it in the user parameter file $WORK_DIR/REPAXY.
+
+
+The following mouse binded groups of functions are possible. The other functions
+can be activated by pressing the connected keybord key.
+
+--------------------------------------------------------------------------------
+mouse     headline       function
+button    button
+--------------------------------------------------------------------------------
+LEFT      --INFO--       information on single point
+MIDDLE                   resize plot area (DiaGi functionality)
+RIGHT                    terminate DiaGi (DiaGi functionality)
+
+LEFT      SHIFT-DN       single point shift down
+MIDDLE    SUP--REC       suppress/recover single obs.
+RIGHT     SHIFT-UP       single point shift up
+
+LEFT      GR-SUPPR       group suppress
+MIDDLE                   resize plot area (DiaGi functionality)
+RIGHT     GR-RECOV       group recover
+
+LEFT      SHIFT-GR       shift obs. groups
+MIDDLE                   resize plot area (DiaGi functionality)
+RIGHT                    terminate DiaGi (DiaGi functionality)
+
+LEFT      AMBRESET       reset all ambiguities of current baseline
+MIDDLE                   resize plot area (DiaGi functionality)
+RIGHT                    terminate DiaGi (DiaGi functionality)
+
+LEFT      PNT-CONN       connect obs. with the same source
+MIDDLE                   resize plot area (DiaGi functionality)
+RIGHT                    terminate DiaGi (DiaGi functionality)
+
+LEFT      --INIT--       initialize buttons and source names, disconnect obs.
+MIDDLE                   resize plot area (DiaGi functionality)
+RIGHT                    terminate DiaGi (DiaGi functionality)
+
+Those mouse buttons which are activated by REPA are displayed in red colour
+in the upper left corner of the baseline plot.
+The other ones are binded to their DiaGi functionalities and appear in
+grey colour, that means if middle mouse button is not binded to a user function
+it can be used to resize the plot area and the left mouse button can be used
+to leave the plot by double left click.
+To resize the plot for displaying press "M". To get back to the starting size
+press "I". "M" and "I" are DiaGi functionalities. For more information on the
+available DiaGi functionalities press "?". There are information how to
+change active colour (observation type), how to choose styles etc..
+After pressing one of the function buttons an information how to continue
+appears in the bottom line.
+
+------------------------------------
+INFORMATION on a single observation:
+------------------------------------
+Choose "--INFO--" and left click on point or place curser close to a point
+and press "<" keybord key (if the mouse is not connected to the info function).
+
+The following information fields will be displayed in the bottom line:
+REC#   - record number
+IRUN   - suppress/recover status
+SOURCE - source name
+TIME   - time information (year/month/day/hour/minute)
+SNR    - signal to noise ratio
+QC     - quality code X- and S-band
+ICORR  - Octal value   Bit #   Meaning
+          0001           1     matching observation has quality code
+                               8 or 9, but was suppressed by SOLVE.
+          0002           2     no matching group data for GION (PHION)
+          0004           3     matching observation has quality 
+                               code of 1 to 7
+          0010           4     GION (PHION)  correction available
+          0020           5     suppress flag for GION (PHION) 
+                               (replaces IUNW=8)
+                               Can be reset by other programs only if
+                               bit 2 and 6 are not turned on.
+          0040           6     matching observation has quality code 0
+                               ('no fringes').
+VALUE  - value (residual etc.)
+FSIG   - full sigma
+CSIG   - correlator sigma
+AZ1    - source azimuth at first station
+AZ1    - source azimuth at second station
+E1     - source elevation at first station
+E2     - source elevation at second station
+ST     - GP - Good Point
+         MD - Manually Deleted (recoverable)
+         BP - Bad Point (not recoverable)
+         
+------------------
+SHIFT SINGLE POINT
+------------------
+Choose one of the buttons "SHIFT-DN", "SUP--REC", "SHIFT-UP" to activate
+the left and right mouse button for shifting down respectively up and
+click left resp. right close to the chosen observation point
+or use "," and "." (if the mouse is not connected to these functions)
+while the curser is placed close to the observation point which will
+be shifted down or up.
+
+----------------------------
+SUPPRESS/RECOVER OBSERVATION
+----------------------------
+Choose one of the buttons "SHIFT-DN", "SUP--REC", "SHIFT-UP" to activate
+the middle mouse button and click close to the observation point to
+suppress resp. recover the observation or use "#" (if the mouse is not
+connected to the function) while the curser is placed close to
+the observation point.
+In the bottom appears the information as described in section INFORMATION.
+
+----------------------
+GROUP SUPPRESS/RECOVER
+----------------------
+Choose one of the buttons "GR-SUPPR", "GR-RECOV" to activate
+the left and right mouse buttons.
+Left click causes the suppression of all "good" observations "outside"
+the curser position ( |Y(OBS)| > |Y(CURSOR)| ).
+Right click causes the recovering of all recoverable observations
+"inside" the cusor postion ( |Y(OBS)| < |Y(CURSOR)| ).
+"Bad" observations are not affected.
+Alternatively the keybord buttons "0" and "1" can be used while the curser
+is placed close to the observation, if these functions
+are not binded to the mouse.
+
+------------------------
+SHIFT OBSERVATION GROUPS
+------------------------
+Choose the button "SHIFT-GR" to activate the left mouse button.
+To move all observations in steps of current ambiguity click somewhere
+in the target area.
+Alternatively the keybord button "*" can be used, if this function
+is not binded to the mouse.
+
+-----------------
+RESET AMBIGUITIES
+-----------------
+Choose the button "AMBRESET" to activate the left mouse button.
+To reset all ambiguities of the current baseline press "AMBRESET".
+Alternatively the keybord button "%" can be used, if this function
+is not binded to the mouse.
+
+---------------
+CONNECT POINTS:
+---------------
+three modes:
+1) choose "PNT-CONN"
+   left mouse click on an observation point or on a source name
+   in right or left (if more then 50 sources) source name columns.
+2) if "PNT-CONN" is not active --> place the curser close to an observation
+   point or to a source name and press "+" keybord button
+3) press keybord button "~" --> user input of source name in the bottom line
+If the user like to get information about connected points she/he can
+move the curser close to the point and press keybord button "<" (if the
+information function is not binded to the mouse).
+In the 3rd mode (user input) it's possible to choose the button "--INFO--"
+and then to click (left) the points (in 1st and 2nd mode not possible).
+
+----------
+INITIALIZE
+----------
+Press this button to initialize the plot with source columns.
+Alternatively the keybord button "-" can be used, if this function
+is not binded to the mouse.
+
+--------
+??HELP??
+--------
+Press this button to get this helptext.
+
+Type "E" to leave the baseline plot.
+
+<< RETURN TO DiaGi PLOT: PRESS "I" KEYBORD BUTTON TWO TIMES. >>

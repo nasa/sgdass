@@ -1,0 +1,183 @@
+\documentstyle[11pt]{article}
+%%
+\input mace.tex
+\newcommand{\pid}   {\par\hangindent=2em\hangafter=-9\noindent}
+\newcommand{\ppid}  {\par\hangindent=4em\hangafter=-9\noindent}
+\newcommand{\pppid} {\par\hangindent=6em\hangafter=-9\noindent}
+\newcommand{\ppppid}{\par\hangindent=8em\hangafter=-9\noindent}
+%\newcommand{\nthr}[1]{ \multicolumn{3}{ @{} l }{#1} }
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+\newcommand{\dint}{\int\hspace{-0.25em}\int}
+\newcommand{\hh}{\hphantom}
+\newcommand{\hpp}{\hphantom+}
+\newcommand{\vex}{\vspace{1ex}}
+\newcommand{\den}{\Frac{1}{c}\Frac{1}{1 + \Frac{1}{c}\lp \vec{V_{\earth}}(t_1)\, + \dmat{E}(e(t_1))\,\vec{r}_2\rp} }
+
+\voffset    = -25mm
+\hoffset    = -15mm
+\textwidth  = 160mm
+\textheight = 230mm
+\tolerance  = 600
+\hfuzz      = 0.3mm
+
+\title {  \LARGE\bf Memo: Computation of a Doppler frequency shift for
+                          observations in the Solar system}
+\author{ {\large\sc L. Petrov} \\
+         {\small Leonid.Petrov@lpetrov.net }
+       }
+\date{Draft of 2007.01.11}
+
+\begin{document}
+
+
+\maketitle
+
+\section{Coarse expression}
+
+  It is deduced in the elementary coarse of physics that the ratio of the
+observed frequency $f_o$ of the electromagnetic wave to the frequency 
+$f_e$ emitted by a body moving with the speed $\vec{v}_e$ with respect to the 
+observer being at rest is
+%
+\beq
+     \Frac{f_o}{f_e} = 
+           \Frac{1 - \frac{1}{c} \, \vec{s}(t_e) \cdot \vec{v}_e(t_e)}
+                { \sqrt{ 1 - \frac{v_e^2}{c^2}} }
+\eeq{e:e1}
+
+  Here $\vec{s}(t_e)$ is the unit vector of the direction to the emitter at the
+moment of coordinate time $t_e$ when the light was emitted.
+
+  If the velocity of the emitter is given in the coordinate system at which
+the observer is not at rest, then the expression for the frequency ratio 
+is changed to 
+%
+\beq
+     \Frac{f_o}{f_e} = 
+           \Frac{1 - \frac{1}{c} \, \vec{s}(t_e) \cdot \vec{v}_e(t_e)}
+                {1 - \frac{1}{c} \, \vec{s}(t_o) \cdot \vec{v}_o(t_o)}
+           \, 
+           \Frac{\sqrt{ 1 - \frac{v_o^2}{c^2}}}
+                {\sqrt{ 1 - \frac{v_e^2}{c^2}}}
+\eeq{e:e2}
+%
+  where $t_o$ is the coordinate time of singal receving
+
+  Gravitating bodies also cause the frequency changes. Taking this effect into
+account and {\it assuming that the gravitating bodies are not moving}, modifies 
+the previous equation this way:
+%
+\beq
+     \Frac{f_o}{f_e} = 
+           \Frac{1 - \frac{1}{c} \vec{s}(t_e) \cdot \vec{v}_e(t_e)}
+                {1 - \frac{1}{c} \vec{s}(t_o) \cdot \vec{v}_o(t_o)}
+           \:\: 
+           \Frac{\sqrt{ 1 - \frac{v_o^2}{c^2}}}
+                {\sqrt{ 1 - \frac{v_e^2}{c^2}}}
+           \:\: 
+           \Frac{1 - \dss\sum_i^n \Frac{G m_i}
+                                  {c^2 \, |\vec{r}_i(t_i) - \vec{r}_e(t_e)|}}
+                   {1 - \dss\sum_i^n \Frac{G m_i}
+                                  {c^2 \, |\vec{r}_i(t_i) - \vec{r}_o(t_o)|}}
+\eeq{e:e3}
+%
+   where summation is done over all gravitating bodies. Assumption that 
+the gravitating bodies are not moving results in $t_i = t_o$. At the first 
+approximation taking into account motion of gravitating bodies 
+can be done in the form of setting $t_i$ to the retarded moment of time
+$t'_i$, which is a solution of the gravitation null-cone equation:
+
+\beq
+      t_i = t_o - \Frac{1}{c} 
+                   \biggl| \vec{r}_i(t_i) - \vec{r}_o(r_o) \biggr|
+\eeq{e:e4}
+
+   I do not have by hand estimates of errors of such an approximation.
+
+\section{Refined expression}
+
+  \cite{ks1999} derived a rigorous expression for the case when gravitating
+bodies have an arbitrary motion. 
+
+ [to be added in the future.]
+
+\section{Computation of the Doppler frequency shift using the coarse expression}
+
+  We can re-write expression \ref{e:e3} in this way:
+
+\beq
+  \Frac{f_o}{f_e} = \Frac{1-a_e}{1-a_o} \: 
+                    \Frac{\sqrt{1-b^2_o}}{\sqrt{1-b^2_e}} \:
+                    \Frac{1-c^2_e}{1-c^2_o} 
+\eeq{e:e5}
+%
+  where 
+\beq
+   \begin{array}{lcl}
+      a_k   & = & \frac{1}{c} \vec{s}(t_k) \cdot \vec{v}_k(t_k) \vex \\
+      b_k   & = & \frac{|v_k|}{c}                                 \vex \\
+      c^2_k & = & \dss\sum_i^n \Frac{G m_i}
+                  {c^2 \, |\vec{r}_i(t_i) - \vec{r}_k(t_k)|}
+   \end{array}
+\eeqn
+
+   Expand expression \ref{e:e5} discarding terms of $O(c^{-4})$:
+%
+\beq
+  \begin{array}{l} 
+  D = \Frac{f_o}{f_e} - 1 \enskip = \enskip
+      \hphantom{+} a_o - a_e 
+%
+      \\ \hphantom{D = \Frac{f_o}{f_e} - 1 \enskip = \enskip }
+      + a^2_o - a_e a_o - \frac{1}{2} b^2_o + \frac{1}{2} b^2_e -c^2_e + c^2_o 
+%
+      \vex \\ \hphantom{D = \Frac{f_o}{f_e} - 1 \enskip = \enskip }
+      + a^3_o - a_e a^2_o - \frac{1}{2} a_o b^2_o + \frac{1}{2} a_o b^2_e 
+      + \frac{1}{2} a_e b^2_o - \frac{1}{2} a_e b^2_e 
+      - a_o c^2_e + a_e c^2_e + a_o c^2_o - a_e c^2_o
+  \end{array}
+\eeq{e:e6}
+
+  According to \cite{bru91}, the velocity of the observer with repsect to 
+the geoctenter, $\vec{v}_g$, is related to its velocity with respect to 
+the barycenter, $\vec{v}_b$, as
+
+\beq
+    \vec{v}_b = \frac{ \sqrt{1 - \frac{V\earth^2}{c^2} } }
+                     { 1 + \frac{\vec{v}_g \cdot \vec{V}\earth}{c^2} }
+        \biggl\{ \vec{v}_g \: + \: \biggl[ \biggl( 
+                \frac{1}{\sqrt{1 - \frac{V\earth^2}{c^2}}} - 1 \biggr)
+                \, \Frac{\vec{v}_g \cdot \vec{V}\earth}{V\earth^2}
+                \: + \: \frac{1}{\sqrt{1 -\frac{V\earth^2}{c^2}}} 
+               \biggr] \vec{V}\earth
+        \biggr\}
+\eeq{e:e7}
+
+  Expanding the expression \ref{e:e7} in series over 1/c retaining
+terms of $1/c^2$ and adding contribution to the metric due to gravitational
+potential, we get the following transformation:
+%
+\beq
+    \vec{v}_o = \lp 1 - \lp \Frac{U\sun}{c^2} - L_b \rp - 
+                        \frac{1}{2} \Frac{V\earth^2}{c^2} \,
+          - \Frac{\vec{v}_g \cdot \vec{V}\earth}{c^2} \rp \vec{v}_g \: + \:
+          \lp 1 - \Frac{1}{2 c^2} \vec{v}_g \cdot \vec{V}\earth \rp
+          \vec{V}\earth \: + \:
+          O(c^{-4})
+\eeq{e:e8}
+%
+   where $L_b$ is the metric parameter, $L_b = \flo{1.55051976772}{-8}$, if the
+TDB metric is used.
+
+\begin{thebibliography}{1}
+
+\bibitem[Brunmberg, 1999]{bru91}
+   Brumberg, V.A., Essential relativistic mechanics, 274p, 1991.
+
+\bibitem[Kopeikin and  Shaeffer, 1999]{ks1999}
+   Kopeikin, S.M. and Shaeffer~G., Physical Review, D, vol. 50, 124002, 1999.
+
+\end{thebibliography}
+
+\end{document}

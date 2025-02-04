@@ -1,0 +1,60 @@
+      SUBROUTINE TIMEF(ETIME,TTIME,HRS,MINS,SECS,PERCENTS)
+      IMPLICIT NONE
+      INTEGER*4 ETIME,TTIME
+      CHARACTER*(*) HRS,MINS,SECS,PERCENTS
+!
+      INTEGER*4 TMSECS
+      INTEGER*2 IHRS,IMINS,ISECS,IPER,IWHOLE,IFRACT,ITMS
+      CHARACTER*4 PER
+      CHARACTER*5 SCS
+      CHARACTER*6 STRING,INTTODECIMALR
+!
+! allow a maximum of 5760:59:59.99 elapsed
+!
+      TMSECS=MIN0(2073959999,MAX0(ETIME,0))
+!      write(6,'("tmsecs = ",I12)') tmsecs
+      IHRS=TMSECS/360000
+      TMSECS=MOD(TMSECS,360000)
+!      write(6,'("tmsecs = ",I12)') tmsecs
+      IMINS=TMSECS/6000
+      TMSECS=MOD(TMSECS,6000)
+!      write(6,'("tmsecs = ",I12)') tmsecs
+      ISECS=TMSECS/100
+      ITMS=MOD(TMSECS,100)
+!      write(6,'("h,m,s = ",3I6)') ihrs,imins,isecs
+!
+      STRING=INTTODECIMALR(IHRS)
+      HRS=STRING(MAX(1,7-LEN(HRS)):6)
+!
+      STRING=INTTODECIMALR(IMINS)
+      MINS=STRING(MAX(1,7-LEN(MINS)):6)
+!
+      STRING=INTTODECIMALR(ISECS)
+      SCS(1:3)=STRING(5:6)//'.'
+      STRING=INTTODECIMALR(ITMS)
+      SCS(4:5)=STRING(5:6)
+      IF(SCS(4:4).EQ.' ') SCS(4:4)='0'
+      SECS=SCS(MAX(1,6-LEN(SECS)):5)
+!
+      IF(ETIME.LE.0.OR.TTIME.LE.0) THEN
+        IPER=0
+      ELSE IF(ETIME.GE.TTIME) THEN
+        IPER=1000
+      ELSE
+        IPER=(DBLE(ETIME)/DBLE(TTIME))*1000.0D0+0.5D0
+      ENDIF
+!
+      IF(IPER.EQ.1000) THEN
+        PER='100.'
+      ELSE
+        IWHOLE=IPER/10
+        IFRACT=MOD(IPER,INT2(10))
+        STRING=INTTODECIMALR(IWHOLE)
+        PER(1:3)=STRING(5:6)//'.'
+        STRING=INTTODECIMALR(IFRACT)
+        PER(4:4)=STRING(6:6)
+      ENDIF
+      PERCENTS=PER(MAX(1,5-LEN(PERCENTS)):4)
+!
+      RETURN
+      END

@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  SEJONG    Kv
+LAST_UPDATE: SEJONG    2018.01.20
+COORD:       SEJONG    meters    -3110079.686  4082066.663  3775076.910
+MOUNT:       SEJONG    char       ALTAZ
+SLEW_AZ:     SEJONG    deg/sec    5.00
+SLEW_EL:     SEJONG    deg/sec    5.00
+ACCL_AZ:     SEJONG    deg/sec^2  1.00
+ACCL_EL:     SEJONG    deg/sec^2  1.00
+TSETTLE_AZ:  SEJONG    sec        2.0
+TSETTLE_EL:  SEJONG    sec        2.0
+EL_MIN:      SEJONG    deg        5.0
+EL_MAX:      SEJONG    deg       89.0
+AZ_RANGE:    SEJONG    deg     -350.0 -10.0 10.0 350.0
+RECORDER:    SEJONG    char      mark5
+PREOB:       SEJONG    sec       10.0
+POSTOB:      SEJONG    sec        2.0

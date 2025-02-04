@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+# 2018.07.01  Updated slewing rate and acceleration
+#
+SHORT_NAME:  PARKES    Pa
+LAST_UPDATE: PARKES    2018.07.01
+COORD:       PARKES    meters    -4554231.996  2816758.959 -3454035.837   
+MOUNT:       PARKES    char       ALTAZ
+SLEW_AZ:     PARKES    deg/sec    0.366
+SLEW_EL:     PARKES    deg/sec    0.200
+ACCL_AZ:     PARKES    deg/sec^2  0.033
+ACCL_EL:     PARKES    deg/sec^2  0.017
+TSETTLE_AZ:  PARKES    sec        5.0
+TSETTLE_EL:  PARKES    sec        5.0
+EL_MIN:      PARKES    deg       30.8
+EL_MAX:      PARKES    deg       88.8
+AZ_RANGE:    PARKES    deg      -155.0 -65.0 205.0 295.0
+RECORDER:    PARKES    char      mark5c
+PREOB:       PARKES    sec       10.0
+POSTOB:      PARKES    sec        2.0

@@ -1,0 +1,53 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2020.10.13 nh created
+# 2022.04.03 pet Added peculiar clock offset
+# 
+SHORT_NAME:    ONSALA60  char       On
+LAST_UPDATE:   ONSALA60  char       2022.04.03
+COORD:         ONSALA60  meters         3370606.031     711917.485    5349830.746
+MOUNT:         ONSALA60  char       ALTAZ   
+SLEW_AZ:       ONSALA60  deg/sec       2.4
+SLEW_EL:       ONSALA60  deg/sec       1.0
+ACCL_AZ:       ONSALA60  deg/sec^2     0.5
+ACCL_EL:       ONSALA60  deg/sec^2     0.5
+DECE_AZ:       ONSALA60  deg/sec^2     0.5
+DECE_EL:       ONSALA60  deg/sec^2     0.5
+TSETTLE_AZ:    ONSALA60  sec           0.0
+TSETTLE_EL:    ONSALA60  sec           0.0
+EL_MIN:        ONSALA60  deg           5.0
+EL_MAX:        ONSALA60  deg          85.0
+AZ_RANGE:      ONSALA60  deg         -20.0  20.0 340.0 340.0
+RECORDER:      ONSALA60  char       mark5   
+BACKEND:       ONSALA60  char       mark4
+PREOB:         ONSALA60  sec           0.2
+POSTOB:        ONSALA60  sec           0.0
+HOR_AZIM:      ONSALA60  deg           0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:      ONSALA60  deg           5.0  10.0  12.0  18.0  15.0   5.0   2.0   0.1   0.1   3.0   3.0  30.0  20.0
+#
+CLOCK_DATES:   ONSALA60  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  ONSALA60  sec        1.866E-6
+# 
+TSYS_DATES:    ONSALA60  char       2016.07.06  2020.07.08
+TSYS_ELEVS:    ONSALA60  deg           3.0   5.0  10.0  20.0  30.0  40.0  80.0  90.0
+TSYS_FREQS:    ONSALA60  GHz           2.1   2.4
+TSYS_POLVALS:  ONSALA60  K     R     181.572 179.253 173.065 158.070 149.372 145.369 131.523 126.307
+TSYS_FREQS:    ONSALA60  GHz           7.9   9.1
+TSYS_POLVALS:  ONSALA60  K     R      86.011  84.709  77.930  66.398  60.845  59.806  53.004  49.847
+#
+BPSS_DATES:    ONSALA60  char       2000.01.01   2020.07.01
+BPSS_BWIDTH:   ONSALA60  MHz          16
+BPSS_BETA:     ONSALA60  d/l        1.00
+BPSS_BWIDTH:   ONSALA60  MHz          32
+BPSS_BETA:     ONSALA60  d/l        1.00
+#
+GAIN_DATES:    ONSALA60  char       2004.12.31 2025.01.01
+GAIN_FREQS:    ONSALA60  GHz           2.1   2.4
+GAIN_ELEVS:    ONSALA60  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  ONSALA60  K/Jy  R     0.030 0.030 0.030 0.030 0.030 0.030 0.030
+GAIN_POLVALS:  ONSALA60  K/Jy  L     0.030 0.030 0.030 0.030 0.030 0.030 0.030
+GAIN_DATES:    ONSALA60  char       2004.12.31 2025.01.01
+GAIN_FREQS:    ONSALA60  GHz           7.9   9.1
+GAIN_ELEVS:    ONSALA60  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  ONSALA60  K/Jy  R     0.042 0.044 0.047 0.048 0.050 0.050 0.046
+GAIN_POLVALS:  ONSALA60  K/Jy  L     0.042 0.044 0.047 0.048 0.050 0.050 0.046

@@ -1,0 +1,550 @@
+    User guide for REPA program (REsidual Plotting and Ambiguity resolution)
+ 
+ 
+                                Leonid Petrov
+ 
+ 
+                                2006.06.23
+ 
+ 
+                                Abstract
+ 
+This document describes the program REPA,
+the graphics tool for visualization of observables, residuals,
+manual ambiguity resolution and toggle observation suppression status.
+ 
+ 
+Questions and comments about this guide should be sent to:
+ 
+Leonid Petrov ( sgdass@lists.nasa.gov )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ Purpose
+ 
+ 
+2 ................ User interface
+ 
+   2.1 ........... Properties
+   2.2 ........... Multi_DiaGi Commands
+   2.3 ........... Additional DiaGi commands are supported:
+   2.4 ........... Mouse binding modes
+   2.5 ........... Configuration file
+   2.6 ........... Comments
+   2.7 ........... History
+ 
+________________________________________________________________________________
+ 
+        1 Purpose
+        =========
+ 
+REPA ( REsidual Plots and Ambiguities) is an interactive tool which
+plots residuals of a VLBI solution and allows the users:
+ 
+  --  to shift ambiguity of a single point (for delays only);
+ 
+  --  to toggle suppression status of a single point;
+ 
+  --  to shift ambiguities for all points at the baseline (for delays only);
+ 
+  --  to suppress all observations with residuals at the baseline greater
+      than the value which the cursor is pointing at;
+ 
+  --  to restore all observations with residuals at the baseline
+      greater than the value which the cursor is pointing at;
+ 
+  --  to plot delays, delay rates, their supported linear combinations,
+      meteorological parameters, station and baseline calibrations;
+ 
+  --  to use as an argument time, elevation angle, azimuth,
+      air temperature.
+ 
+  --  to plot delay, delay rate, station calibration and many other
+      parameters.
+ 
+  --  to display fringe plot by clicking at the point by the mouse;
+      [* not implemented]
+ 
+        2 User interface
+        ================
+ 
+   REPA displays plots of a one-dimension dependence VALUE(ARGUMENT).
+   ARGUMENT runs along the horizontal axis, VALUE runs along the
+   vertical axis. REPA supports many different types of ARGUMENT and
+   VALUE. REPA uses Multi_DiaGi interactive plotting utility.
+   Multi_DiaGi places a graphic window on the screen and provides
+   two-level user interface. At the upper level (Multi_DiaGi level)
+   a set of plots is displayed and the column of command buttons.
+   When in Multi_DiaGi level user positions the cursor on a plot and
+   hits the Left Mouse Button, it enters the lower level (DiaGi).
+   At DiaGi level only the plot for the specific baseline is displayed.
+   REPA supports of four modes of binding mouse keys: <DiaGI>,
+   <SngAmb>, <GrpTgl>, <GrpAmb>
+ 
+ 
+                2.1 Properties
+                ~~~~~~~~~~~~~~
+ 
+   Plots are determined by seven properties.
+     1) BASELINE_NAME. It specifies either the baseline name or ALL.
+        ALL means REPA is in the Multi_DiaGi mode.
+     2) PLOTTING_FRAME. It determines the plotted area. It may include
+        -- only good observations;
+        -- good and bad, but recoverable observations;
+        -- all observations: good, bad and unrecoverable.
+     3) ARGUMENT_TYPE. For instance, time.
+     4) VALUE_TYPE. For instance, delay
+     5) MOUSE MODE. The mode determines the use of three mouse buttons.
+        The following modes are supported:
+        ESC) DiaGI mode  -- native mode of DiaGi;
+        F1)  SngAmb mode -- single point ambiguity shift and toggle
+                            suppression status;
+        F2)  GrpAmb mode -- multiple points ambiguity shift;
+        F3)  GrpTgl mode -- multiple points toggle suppression status.
+     6) PAGE_INDEX. The index of the page displayed. Maximum 25 baselines
+        are displayed at one page. If the database has more than 25
+        baseline this property determines which
+     7) MARKED_SOURCE. Name of the marked source or "NO", if no source
+        is marked.
+ 
+   When the database is loaded, the default properties are set. When REPA
+is invoked, a user can change properties. The properties are stored in
+a scratch file.  When REPA is invoked the second time, stored properties
+will be used.
+ 
+   The configuration determines the user preferences: color of points,
+default baseline, default plotting box, default argument and value.
+The configuration is stored in the file REPAxx in WORK_DIR directory.
+solve_reset will copy REPA_TEMPLATE file to REPAxx if REPAxx file does not
+exist. If the file REPAxx exists, solve_install does not change it.
+ 
+   By default good points are displayed with green color, bad points are
+displayed with red color. Unrecoverable points are displayed with black
+circles. NB: CRES options invoked from OPTIN page by hittin g ? define
+whether bad and/or unrecoverable points should be shown. If this option
+is set "not to show unrecoverable points", then REPA will not show them
+at all.
+ 
+                2.2 Multi_DiaGi Commands
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+  Plots are displayed using the Multi_DiaGi utility. it displays up to 25
+plots in one page in the baseline mode "ALL". At the right hand side of the
+plot a column of buttons are displayed. Each button has a letter code.
+When a user hits the  key with the button letter code or position the cursor
+and hits the left mouse button, an operation associated with the box
+is executed.
+ 
+T Change      -- Change the argument. A new window will be invoked with the
+  Argument       list of supported arguments of the plot in a box menus mode.
+                 The current argument is drawn by darker color. A user moves
+                 the cursor to the box with desired argument and hits the
+                 Left Mouse Button for changing the argument. Hitting the
+                 Right Mouse Button causes REPA to apply the new argument,
+                 exit the menu and re-make the plot according to user
+                 preference.
+ 
+V Change   --    Change the value. A new window will be invoked with the
+  Argument       list of supported values of the plot in a box menus mode.
+                 The current argument is drawn by darker color. A user moves
+                 the cursor to the box with desired value and hits the
+                 Left Mouse Button for changing the argument. Hitting the
+                 Right Mouse Button causes REPA to apply the new argument,
+                 exit the menu and re-make the plot according to user
+                 preference.
+ 
+G Frame       -- Change the plotting frame for all plots to
+  good points    "good points only". REPA will show all points which are
+                 within the box which is determined as the box between
+                 minimal and maximal values of all arguments and all values
+                 of good points.
+ 
+B Frame       -- Change the plotting frame for all plots to
+good&bad points  "good and bad points only". REPA will show all points which
+                 are within the box which is determined as the box between
+                 minimal and maximal values of all arguments and all values
+                 of good and bad points.
+ 
+L Frame       -- Change the plotting frame for all plots to
+  all points     "good, bad and unrecoverable points". REPA will show all
+                 points which are within the box which is determined as
+                 the box between minimal and maximal values of all
+                 arguments and all values of all points. NB: even if
+                 unrecoverable points are not shown, REPA will account them
+                 in determining the bounding box.
+ 
+S Set box     -- Set the plotting frame in such a way that Ymin = -Ymax,
+  symmetric      and Ymax is the maximum of absolute values over all
+                 points, either good or good&bad depending on previous
+                 setting. The bounding box will look symmetric with respect
+                 to the horizontal line that comes through zero.
+ 
+R Set box     -- Set the plotting frame in such a way that the lower
+  around all     boundary is a little be upper than Ymin, and the upper
+                 boundary is a little bit lower than Ymax. Ymin and Ymax
+                 are computed over all points, either good or good&bad
+                 depending on previous setting. The bounding box will not
+                 necessarily look symmetric with respect to the horizontal line
+                 that comes through zero.
+ 
+M Mark        -- Invokes the screen and invites a user to mark a source.
+  a source       The screen for source selection shows boxes. Each box
+                 corresponds to one source. Inside source box three values
+                 are printed:
+                 a) source name -- big black sources;
+                 b) number of good points -- green digits in the lower left
+                                             corner;
+                 c) number of bad  points -- red digits in the lower right
+                                             corner.
+                 At the end of the box set, an additional box "Unmark"
+                 is displayed. The current selection is shown with brighter
+                 color.
+ 
+                 In order to mark a source a user position the cursor to the
+                 a box with the name of that box and hits either left or
+                 central mouse button. In order to unmark the source,
+                 a user should position the cursor to the box with name
+                 "Unmarked" and hits either left or central mouse button.
+                 In order to leave the selection screen, a user hits either
+                 the right mouse button or the key X.
+ 
+Exit          -- exits REPA and calls OPTIN.
+ 
+Prior Page    -- the same as PageUp key. Displays the prior page. If the
+                 current page is the first one, REPA will display the last
+                 page. NB: This button is shown only if the total number of
+                 baselines exceeds 25.
+ 
+Next Page     -- the same as PageDown key. Displays the next page. If the
+                 current page is the last one, REPA will display the first
+                 page. NB: This button is shown only if the total number of
+                 baselines exceeds 25.
+ 
+ 
+ 
+                2.3 Additional DiaGi commands are supported:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
+  At the DiaGi level REPA in addition to the DiaGi plot layout shows four
+boxes with supported mouse modes: ESC, F1, F2, and F3. The box with the
+current mouse mode is displayed with the darker color.
+ 
+The following commands are supported:
+ 
+ key         Command
+ 
+{Q]       -- quit plot and exit to OPTIN level;
+{X]       -- quit plot and exit to Multi_DiaGi level;
+[ESC]     -- sets the current mouse mode to "native DiaGi";
+[F1]      -- sets the current mouse mode to "SngAmb";
+[F2]      -- sets the current mouse mode to "GrpAmb";
+[F3]      -- sets the current mouse mode to "GrpTgl";
+ 
+[PgUp]    -- move to the next baseline;
+[PgDn]    -- move to the prior baseline;
+[Home]    -- applies changes in observables (ambiguities and
+             suppression status), exits REPA and calls OPTIN;
+[F10]     -- Interrupt: does not apply changes in observables (ambiguities
+             and suppression status) and changes the baseline mode to ALL;
+[M]       -- set plotting frame for this baseline all observations: good,
+             bad and unrecoverable;
+[Alt/M]   -- set plotting frame for this baseline good and bad observations;
+[Cntrl/M] -- set bounding box around good observations only;
+[Alt/M]   -- set plotting frame for this baseline good and bad observations;
+[Cntrl/N] -- set symmetric bounding box around good observations only;
+[Alt/N]   -- set symmetric plotting frame for this baseline good
+             and bad observations;
+[Cntrl/Left_mouse] -- show information about the point which is the closest
+                      to the cursor. Information includes observation index,
+                      baseline name, source name, suppression status,
+                      argument, value, error (if applicable). If the value type
+                      is delay or delay rate, SNR and  quality codes for both
+                      bands are shown.
+[Backspace]  -- undo. The sequence of operation ambiguity shift and toggle
+             suppressions status is stored in the stack. Operation undo
+             reverses the effect of the previous command written in the
+             stack and decrements the stack counter;
+ 
+[Cntrl/Right_mouse] -- display fringe plot of the X-band observation.
+[Alt/Right_mouse]   -- display fringe plot of the S-band observation.
+ 
+ 
+                2.4 Mouse binding modes
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
+{ESC} -- native DiaGi mode:
+         ------------------
+ 
+         [Left_mouse]    -- Inquire of the coordinate of the point
+                            where cursor is pointed. Information is
+                            printed in DiaGi mode: argument, value and
+                            error.
+ 
+         [Central_mouse] -- Changes of the boundary of the plotting
+                            box nearest to the cursor;
+ 
+         [Right_mouse]   -- Terminate execution of DiaGI, the same as quit.
+                            REPA applies changes in observables (ambiguities
+                            and suppression status), and enter the upper
+                            level of interface, Multi_DiaGi mode.
+ 
+         [Cntrl/Right_mouse] -- display fringe plot of the X-band observation.
+ 
+         [Alt/Right_mouse]   -- display fringe plot of the S-band observation.
+ 
+ 
+{F1}  -- "SngAmb" mode:
+         --------------
+ 
+         [Left_mouse]    -- Decrements  the ambiguity counter for the point
+                            which is the closest to the cursor and moves the
+                            point one ambiguity down. Makes no effect, if the
+                            value is not the delay for which the operation
+                            of ambiguity changes is defined.
+ 
+         [Central_mouse] -- Toggles suppression status of the point. Changes
+                            the color of the point. Makes no effect if the
+                            point has the status unrecoverable.
+ 
+         [Right_mouse]   -- Increments the ambiguity counter for the point
+                            which is the closest to the cursor and moves the
+                            point one ambiguity up. Makes no effect if the
+                            value is not the delay for which the operation
+                            of ambiguity changes is defined.
+ 
+         [Cntrl/Right_mouse] -- display fringe plot of the X-band observation.
+ 
+         [Alt/Right_mouse]   -- display fringe plot of the S-band observation.
+ 
+ 
+{F2}  -- "GrpAmb" mode:
+         --------------
+ 
+         [Central_mouse] -- Resolves ambiguities in such a ways that all
+                            points are shifted in order to be within
+                            [-0.5, -0.5] ambiguity spacing with respect to
+                            the cursor position. Makes no effect, if the
+                            value is not the delay for which the operation
+                            of ambiguity changes is defined,
+ 
+{F3}  -- "GrpTgl" mode:
+         --------------
+ 
+         [Left_mouse]    -- Suppresses all points with residuals by module
+                            greater than the value which corresponds to
+                            the current cursor position.
+ 
+         [Right_mouse]   -- Restores all recoverable points with
+                            residuals by module less than the value which
+                            corresponds to the current cursor position.
+ 
+                2.5 Configuration file
+                ~~~~~~~~~~~~~~~~~~~~~~
+ 
+  Example of the configuration file REPAxx:
+ 
+REPA Configuration file. Format version of 2006.06.01
+#
+#  Template REPA Configuration
+#
+#  Last update: 25-MAY-2006 10:41:59
+#
+Good_Color:          1        ! "green"
+Bad_Color:           3        ! "red"
+Unrc_Color:         13        ! "black"
+Marked_Color:       13        ! "black"
+Box_plot:           Good
+Default_Baseline:   All
+Default_Argument:   Time
+Default_Value:      Delay
+Default_Mode:       DiaGi
+Box_Symmetric:      No
+Inquiry_Data:       OBS_TYPE, OBS_INDEX, BAS_NAME, SOUR_NAME, TIME_LONG, OBSERVABLE, QUAL_CODE, SNR
+Marked_Source:      No
+ 
+  Currently, a configuration file should contain 12 keywords. The syntax
+is, keyword, colon, one ore more whitespaces, value, comment which follows
+exclamation sign. First 4 keywords define colors. Colors are coded with
+an integer number in the range [1, 32]. An axillary program diagi_dec
+displays supported colors.
+ 
+Good_color    defines the color index for good points used in the solution.
+ 
+Bad_color     defines the color index for bad, but recoverable points not used
+              in the solution. NB: unrecoverable points will be shown
+              if a special option in CRES menu "(B) To show conditionally
+              bad observations" is set to yes. Default: yes
+ 
+Unrc_Color    defines the color index for unrecoverable points not used in the
+              solution. NB: unrecoverable points will be shown if a special
+              option in CRES menu "(U) To show unrecoverable observations"
+              is set to yes. Default: No
+ 
+Marked_Color  defines the color index for the circle which is drawn around
+              the marked sour.
+ 
+Box_plot:           Supported values "Good", "Bad&Good" and "All"
+                    "Good"      means that the bounding box will be drawn
+                                around good points only;
+                    "Bad&Good"  means that the bounding box will be drawn
+                                around bad and good points;
+                    "All"       means that the bounding box will be drawn
+                                bad, good, and unrecoverable  points.
+Default_Baseline:   Name of the base line in the form STATION1/STATION2 or All
+                    Tells to REPA plots of which baseline to show.
+                    If All is selected than the preview page of up to 25
+                    baselines is shown. IF the experiment has more than 25
+                    baselines, the previous page will show the first 25
+                    baselines, and the user will be able to list pages by
+                    using keys PgDn and PgUp.
+Default_Argument:   Argument of the plots. Supported values:
+ 
+                    "Time    " -- Time in hours from the nominal session start;
+                    "Del_Err " -- Delay re-weighted error;
+                    "Elev_St1" -- Elevation at station #1;
+                    "Elev_St2" -- Elevation at station #2;
+                    "Azim_St1" -- Azimuth at station #1;
+                    "Azim_St2" -- Azimuth at station #2;
+                    "Temp_St1" -- Air temperature at station #1;
+                    "Temp_St2" -- Air temperature at station #2;
+ 
+Default_Value:      Value of plots. Supported values:
+ 
+                    "Delay   " -- Time delay residual;
+                    "Rate    " -- Delay date residual;
+                    "SNR_X   " -- SNR at X-band;
+                    "SNR_S   " -- SNR at S-band;
+                    "Temp_St1" -- Air temperature at station #1;
+                    "Temp_St2" -- Air temperature at station #2;
+                    "Pres_St1" -- Air pressure at station #1;
+                    "Pres_St2" -- Air pressure at station #2;
+                    "GrIon_Dl" -- Contribution of the ionosphere to group delay;
+                    "PhIon_Dl" -- Contribution of the ionosphere to phase delay;
+                    "SpAmb_Gx" -- Group delay ambiguity spacings at X-band;
+                    "SpAmb_Gs" -- Group delay ambiguity spacings at S-band;
+                    "SpAmb_Px" -- Phase delay ambiguity spacings at X-band;
+                    "SpAmb_Ps" -- Phase delay ambiguity spacings at S-band;
+                    "Cal1_St1" -- The first station calibration at site #1;
+                    "Cal1_St2" -- The first station calibration at site #2;
+                    "Cal2_St1" -- The second station calibration at site #1;
+                    "Cal2_St2" -- The second station calibration at site #2;
+                    "Cal3_St1" -- The third station calibration at site #1;
+                    "Cal3_St2" -- The third station calibration at site #2;
+                    "Cal4_St1" -- The fourth station calibration at site #1;
+                    "Cal4_St2" -- The fourth station calibration at site #2;
+                    "Cal5_St1" -- The fifth station calibration at site #1;
+                    "Cal5_St2" -- The fifth station calibration at site #2;
+                    "Cal6_St1" -- The sixth station calibration at site #1;
+                    "Cal6_St2" -- The sixth station calibration at site #2;
+                    "Cal7_St1" -- The seventh  station calibration at site #1;
+                    "Cal7_St2" -- The seventh  station calibration at site #2;
+                    "Cal8_St1" -- The eighth station calibration at site #1;
+                    "Cal8_St2" -- The eighth station calibration at site #2;
+ 
+Default_Mode:      The first mode from which REPA will start to work.
+                   Four modes are supported:
+ 
+                   DiaGi  -- generic DiaGi mode;
+                   SngAmb -- Mode for toggling suppression status and
+                             changing ambiguity for a single point;
+                   GrpAmb -- Mode for changing ambiguity for all points
+                             at a baseline;
+                   GrpTgl -- Mode for toggling suppression status for all
+                             points at a baseline.
+ 
+Box_Symmetric:     Supported values: Yes or No .
+                   Yes -- then the bounding box is set in such a way that
+                          Ymin = -Ymax, symmetric  and Ymax is the maximum of
+                          absolute values over all points. The bounding box will
+                          look symmetric with respect to the horizontal line
+                          that comes through zero.
+                   No  -- then the bounding box will be drawn around all
+                          points, and the box will not be necessarily symmetric
+                          with respect to the horizontal line that comes
+                          through zero.
+ 
+Inquiry_Data:      A line with codes of quantities which will be shown in
+                   in the inquiry status line. Currently 11 codes are
+                   supported. The value of the Inquiry_Data keyword may have
+                   any number of codes separated by comma.
+ 
+                   OBS_TYPE   -- Observable type: G -- good points, B -- band
+                                 point, U -- unrecoverable point;
+                   OBS_INDEX  -- Index of the observation in the experiment;
+                   BAS_NAME   -- Baseline name in the form STATION1/STATION2
+                   SOUR_NAME  -- IVS source name
+                   TIME_LONG  -- Time tag in long form: YYYY.MM.DD-hh:mm:ss.sss
+                   TIME_SHORT -- Time tag in short form DD-hh:mm:ss
+                                 where DD here is the number of days elapsed
+                                 from the midnight, preceding to the
+                                 observation, to the midnight, preceding
+                                 the session nominal start.
+                   OBSERVABLE -- Value of the point on the plot
+                   QUAL_CODE  -- Quality code in the form Q/ q were Q is
+                                 one-letter quality code at the upper band,
+                                 and 1 is the one-letter quality code at
+                                 the low band;
+                   SNR        -- Signal to noise ratio at both bands
+                   ELEV_DEG   -- Elevation of the source at station #1 and
+                                 at station #2 in degrees.
+                   AZIM_DEG   -- Azimuth of the source at station #1 and
+                                 at station #2 in degrees.
+ 
+Marked_Source:     Either the name of the marked source or "No"
+                   If the value of this keyword is not "No", then it is
+                   interpreted as the name of the marked source. A circle will
+                   be plotted around the point of the marked source.
+			
+ 
+                2.6 Comments
+                ~~~~~~~~~~~~
+ 
+ 1. In order to display fringe plots, first, the Mark4/5 correlator fringe
+    output should be downloaded. Then the name of the fringe root directory
+    should be defined in CRES ( option "?" from the OPTIN menue ). Third,
+    PostsScript viewer should be checked. The name of the viewer is
+    determined in $Mk5_ROOT/include/glbc4.i . The name of the viewer can
+    be overridden by environment variable SOLVE_PS_VIEWER.
+ 
+ 2. Only superfiles created after 2005.01.31 contains information about
+    fringe file names. If you have old super files, use databases or
+    use utility AOB for transferring S-band data related information to
+    the X-band.
+ 
+ 3. Only databases processed after 2005.01.31 contains information about
+    S-band fringe file. If you would like to see S-band fringe files, you
+    either need to load the X band database, then S-band database, then run
+    either GAMB or IONO. Alternative is to use utility AOB for transferring
+    S-band data related information to the X-band.
+ 
+ 4. Currently, fringe plots of the experiments processed only with
+    Mark-4/Mark-5 correlator can be displayed.
+ 
+ 
+                2.7 History
+                ~~~~~~~~~~~
+ 
+When        Who            What
+ 
+2003.02.12  V. Thorandt    Developed the original version of REPA
+            G. Engelhardt
+ 
+2004.12.01  L. Petrov   -- REPA  0.0  REPA forked into two branches:
+                                      REPAB developed by V. Thorandt,
+                                      G. Engelhardt and REPA developed
+                                      by L. Petrov.
+ 
+2004.12.16  L. Petrov   -- REPA  1.0  Release of the first version or REPA.
+ 
+2005.01.28  L. Petrov   -- REPA  1.1  Implemented displaying fringe plots.
+                                      Fixed several bugs.
+ 
+2006.06.23  L. Petrov   -- REPA  1.2  Added several features:
+                                      a) ability to customize inquire line;
+                                      b) support of "set symmetric box"
+                                         function;
+                                      c) support of "mark a source" function.

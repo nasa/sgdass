@@ -1,0 +1,70 @@
+The Library tle_YYYYMMDD processes TLE files and converts the information
+from them to state vectors, [X, XDOT] at a given epoch. Most of the
+routines for the ingestion are taken directly from Vallado. Each such
+routine credits the author, and explicitly states any changes made from
+their original text. The ingestion of the files and conversion is based
+on two articles:
+     1.  Hoots, F. R. and Roehrich, R. L. (1980), "Models for Propagation 
+         of NORAD Elements", Spacetrack Report No. 3.
+     2.  Hoots, F. R., Schumacher Jr, P. W., and Glover, R. A., (2004).
+         "History of Analytical Orbit Modeling in the U.S. Space 
+         Surveillance System", Journal of Guidance, Control, and Dynamics,
+	 Vol. 27, No. 2, p 174-185, doi:10.2514/1.9161
+
+The following source codes are included, with their general functionality
+described:
+
+dpper            -- Through this routine, the current values of the orbital
+                    elements are passed to the deep-space subroutine which
+		    in turn adds the appropriate deep- space lunar and solar
+		    periodics to the orbital elements.
+
+dscom            -- Provides the deep space common variables used both by the
+                    secular and periodic subroutines
+
+dsinit
+
+dspace           -- provides any third body contributions to deep space objects
+
+getgravconst
+
+gstime
+
+initl
+
+newtonnu  
+
+rv2coe
+
+sgp4
+
+sgp4init
+
+tle_angle   
+
+tle_asinh
+
+tle_cross
+
+tle_days2mdhms   -- Converts tle days to month, day, hours, mins, and secs
+
+tle_dot
+
+tle_driver
+
+tle_invjday
+
+tle_jday
+
+tle_mag
+
+tle_parser
+
+tle_to_crs
+
+tle_to_trs
+
+tledate_to_mjdsec
+
+twoline2rvsgp4
+
