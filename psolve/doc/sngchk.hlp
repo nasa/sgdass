@@ -1,0 +1,70 @@
+                          Singularity check                            07/09/98
+                          ~~~~~~~~~~~~~~~~~
+
+  Singularity check provides the mechanism which allows to detect possible
+singularity of normal matrix due to wrong parameterization. 
+Parameterization is checked after creation of normal matrix.
+3 tests are made:
+
+  1) Does the number of USED in estimation observations of either
+     source exceed the specified limit (SNGCHK_SOUMIN) if source
+     dependent parameters for this source are estimated. If SNGCHK_SOUMIN
+     is zero then the test is not carried out.
+
+  2) Does the number of USED in estimation observations of either
+     station exceed the specified limit (SNGCHK_STAMIN). If SNGCHK_STAMIN
+     is zero then the test is not carried out.
+
+  3) Does the number of USED in estimation observations of the
+     baseline exceed the specified limit (SNGCHK_BASMIN) if
+     baseline-dependent parameters such as baseline-dependent
+     clocks are estimated for this baseline. If SNGCHK_BASMIN is zero then 
+     the test is not carried out.
+
+  If at least one of these criterion is true the test considered as failed.
+One of the actions will be done if the test is failed:
+
+     None               -- Nothing
+
+     Warning            -- Error message is issued to screen, in spool-file
+                           and in error-file. The messages contains the 
+                           reason of failure and names of the sources,
+                           stations, baselines caused the problem. Execution
+                           continues after issuing error message.
+
+     Reparameterization -- Error message is issued to screen, in spool-file
+                           and in error-file. The messages contains the 
+                           reason of failure and names of the sources,
+                           stations, baselines caused the problem. Then
+                           estimation model is changed. 
+
+                           If the number of observations of some source(s) 
+                           whose coordinates are estimated appears less than
+                           the specified limit, then flags "estimate right
+                           ascension and declination" of this source are 
+                           lifted.
+
+                           If the number of observations of some station(s) 
+                           or baseline(s) appears less than the specified 
+                           limit, then these baselines are deselected from the
+                           solution.
+
+                           Then the number and the place of the parameters to
+                           be estimated is recomputed and normal matrix is
+                           calculated anew.
+
+     Stop               -- Execution will be terminated.
+     Skip               -- is equivalent to "Stop" in interactive mode.
+                           The database will be skipped from both forward and
+                           backward run if the test is done in B1B3D mode when
+                           global parameters were estimated.
+
+   Singularity check is set up in $SETUP section of the control file when 
+SOLVE run in batch mode. Singularity check is set up from the last page of
+OPTIN, from ELIM or PAMB when SOLVE is run in interactive mode. Initial values
+of the global variables SNGCHK_ACTION, SNGCHK_SOUMIN, SNGCHK_STAMIN, 
+SNGCHK_BASMIN are set in according with system-wide defaults and environment
+variables with the same names when new database is read in interactive SOLVE.
+
+   RESTRICTIONS: SNGCHK_ACTION REPARAMETERIZE is compatible only with 
+                 FAST_MODE B1B3D when global solution is requested.

@@ -1,0 +1,75 @@
+!
+! NERS forecast consists of static variables:
+!
+! a) declaration (character strings)
+! b) dimensions  (integer numbers)
+! c) initial epochs (real*8 numbers. Epochs are defined as number of seconds elapsed since 2001.01.01_00:00:00.0 TAI)
+!
+! and dynamic arrays of real*8 numbers with dimensions declared above:
+!
+! d) arrays of arguments for B-spline, harmonic, and cross-harmonic expansions
+! e) arrays of coefficients of B-spline, harmonic or cross-harmonic expansions
+!
+! Static variables
+! ================
+!
+             CHARACTER  NERS_FMT*64      !! An ascii string with format version
+             CHARACTER  EOP_FCS_VERS*32  !! An ascii string with format version 
+             CHARACTER  NUT_APR_MOD*16   !! Name of the a priori nutation expansion
+             CHARACTER  PRC_APR_MOD*16   !! Name of the a priori precession expansion
+             CHARACTER  HEO_MOD*32       !! Name of the expansion of high-frequency EOP variations, not covered with nutation and precession
+             CHARACTER  HEO_ID*24        !! Name of the ad hoc expansion of high-frequency EOP variations in addition to a priori expansions
+             CHARACTER  EANG_MOD*32      !! Name of the model for the angular momentum
+             CHARACTER  LTP_MOD*32       !! Name of the model for the long-term forecast
+             CHARACTER  NERS_URL*128     !! The URL with NERS host
+!
+             CHARACTER  URL_C*128        !! URL of the C04 EOP series
+             CHARACTER  URL_U*128        !! URL of the IGS Ultra-rapid EOP series
+             CHARACTER  URL_R*128        !! URL of the IGS Rapid EOP series
+             CHARACTER  URL_I*128        !! URL of the IVS Intensive EOP series
+             CHARACTER  URL_J*128        !! URL of the IAA Intensive EOP series
+             CHARACTER  URL_S*128        !! URL of the 24 hour IVS EOP series
+             CHARACTER  URL_F*128        !! URL of the final IGS series
+             CHARACTER  URL_A*128        !! URL of the AAM forecast data
+             CHARACTER  URL_L*128        !! URL of the the long-term forecast
+!
+    REAL*8     TAI_GEN          !! Time of the moment of the forecast generation
+    REAL*8     TAI_LAST_HEO     !! Time of the last epoch for observations used for harmonic EOP expansion generation
+    REAL*8     TAI_HEO_EPOCH    !! Time for the reference epoch for the ad hoc harmonic EOP expansion
+    REAL*8     TAI_LAST_EOPS_C  !! Time for the last epoch of C04 EOP series
+    REAL*8     TAI_LAST_EOPS_U  !! Time for the last epoch of IGS Ultra-rapid EOP series
+    REAL*8     TAI_LAST_EOPS_R  !! Time for the last epoch of the IGS Rapid EOP series
+    REAL*8     TAI_LAST_EOPS_I  !! Time for the last epoch of the IVS Intensive EOP series
+    REAL*8     TAI_LAST_EOPS_J  !! Time for the last epoch of the IAA Intensive EOP series
+    REAL*8     TAI_LAST_EOPS_S  !! Time for the last epoch of the 24 hour IVS EOP series
+    REAL*8     TAI_LAST_EOPS_F  !! Time for the last epoch of the final IGS series.
+    REAL*8     TAI_LAST_EOPS_A  !! Time for the last epoch of the AAM forecast data
+    REAL*8     TAI_LAST_EOPS_A_ASS  !! Time for the last epoch of the AAM assimilation data
+    REAL*8     TAI_LAST_EOPS_L  !! Time for the last epoch of the long-term forecast
+!  
+    INTEGER*4  NK_12            !! Number of knots for Euler angle 1 and 2 forecast
+    INTEGER*4  NK_3             !! Number of knots for Euler angle 3 forecast
+    INTEGER*4  NC               !! Number of knots of the past best EOP series
+    INTEGER*4  NL               !! Number of knots of the long-term EOP prediction series
+    INTEGER*4  NJ               !! Number of epochs of UTC minus TAI jumps
+    INTEGER*4  L_HEO            !! Number of constituents of harmonic EOP variations
+    INTEGER*4  L_HEOR           !! Number of constituents of cross-harmonics EOP variations
+!
+    INTEGER*4  NERS_STATUS      !! Ners status
+!
+! Dynamic variables
+!
+    REAL*8,    POINTER :: ARG_12(:)        !! Arguments for B-spline expansion of EOP forecast for Euler angle components 1,2. Unit: s since 2000.01.01_00:00:00.0 TAI. Dimension: NK_12
+    REAL*8,    POINTER :: ARG_3(:)         !! Arguments for B-spline expansion of EOP forecast for Euler angle component  3.   Unit: s since 2000.01.01_00:00:00.0 TAI. Dimension: NK_3
+    REAL*8,    POINTER :: ARG_C(:)         !! Arguments for Spline expansion of EOP C04 series. Unit: s since 2000.01.01_00:00:00.0 TAI. Dimension: NC
+    REAL*8,    POINTER :: ARG_L(:)         !! Arguments for B-spline expansion of EOP long-term forecast. Unit: s since 2000.01.01_00:00:00.0 TAI. Dimension: NC
+    REAL*8,    POINTER :: HEO_ARG(:,:)     !! Arguments for a posteriori harmonic Earth Orientation Parameters expansion. Dimension: [L_HEO,3]. The 2nd dimension runs over phase at epoch 2000.01.01_00:00:00.0 TAI in rad, rate in rad/s, and acceleration in rad/s^2
+    REAL*8,    POINTER :: ARG_UTC_M_TAI(:) !! Arguments for UTC-M-TAI function. Units: s since 2000.01.01_00:00:00 in s. Dimension: NJ.
+!
+    REAL*8,    POINTER :: BSPL_E12(:,:)     !! B-spline coefficients for EOP forecast, components 1,2. Units: rad. Dimension: [-2:NK_12-1]
+    REAL*8,    POINTER :: BSPL_E3(:)        !! B-spline coefficients for EOP forecast, component 3.    Units: rad. Dimension: [-2:NK_3-1]
+    REAL*8,    POINTER :: BSPL_C(:,:)       !! B-spline coefficients for EOP C04 series. Units: rad. Dimension: [-2:NC-1,3]. The second dimension runs over Euler angle components.
+    REAL*8,    POINTER :: BSPL_L(:,:)       !! B-spline coefficients for EOP C04 series. Units: rad. Dimension: [-2:NC-1,3]. The second dimension runs over Euler angle components.
+    REAL*8,    POINTER :: BSPL_UTC_M_TAI(:) !! Value of UTC_M_TAI function on epochs UTC_M_TAI.  Units: s. Dimension: NJ.
+    REAL*8,    POINTER :: HEO_AMP(:,:,:)    !! Coefficients of the harmonic EOP expansion. Units: rad. Dimension: [L_HEO,4]. The 2nd dimension runs over 1) cosine constituent of polar motion; 2) since constituent of polar motion; 3) cosine constituent of the axial component; 4) sine constituent of the axial component.
+    REAL*8,    POINTER :: HEOR_AMP(:,:,:)   !! Coefficients of the cross-harmonic EOP expansion. Units: rad. Dimension: [L_HEOR,4]. The 2nd dimension runs over 1) cosine constituent of polar motion; 2) since constituent of polar motion; 3) cosine constituent of the axial component; 4) sine consituent of the axial component.

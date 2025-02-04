@@ -1,0 +1,55 @@
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$HOME]
+  --data=DATA             directory where data files should be installed.
+                          [PREFIX/share/vtd]
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+Optional Packages:
+  --with-PACKAGE[=ARG]       use PACKAGE [ARG=yes]
+  --without-PACKAGE          do not use PACKAGE (same as --with-PACKAGE=no)
+
+
+  --with-petools=[dir name]  specifies directory names where package petools
+                             is installed (default $HOME/petools )
+
+  --with-fourpack=[dir name] specifies directory names where package fourpack
+                             is installed (default: $HOME )
+
+  --with-malo=[dir name]     specifies directory names where package malo
+                             is installed (default: $HOME )
+
+  --with-cfitsio=[dir name]  specifies directory names where package cfitsio
+                             is installed (default: $HOME )
+
+  --with-vtd=[dir name]      specifies directory names where package vtd
+                             is installed (default: $HOME )
+
+  --with-ners=[dir name]     specifies directory names where package ners
+                             is installed (default: $HOME )
+
+  --with-netcdf=[dir name]   specifies directory names where package netcdf
+                             is installed (default: $HOME/netcdf )
+
+  --with-hdf5=[dir name]     specifies directory names where package hdf5
+                             is installed (default: $HOME/hdf5 )
+
+  --with-jpeg=[dir name]     specifies directory names where library jpeg
+                             is installed (default: system directory)
+
+  --with-z=[dir name]        specifies directory names where library zlib
+                             is installed (default: system directory)

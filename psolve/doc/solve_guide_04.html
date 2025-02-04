@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov 2015.11.01_16:19:03 !-->
+
+<B> THIS SECTION IS APPLICABLE ONLY FOR GROUP DELAYS
+PRODUCED BY FOURFIT!!</B>
+
+<H4> Using GAMB (for delays derived with Fourfit only)</H4>
+
+  GAMB is a complicated program which solves simultaneously four problems. It
+<OL>
+     <LI> resolves group delay ambiguities at all baselines at both bands; 
+          </LI><BR>
+     <LI> determines preliminary parameters of clock polynomial model;
+          </LI><BR>
+     <LI> rejects outliers;
+          </LI><BR>
+     <LI> computes ionosphere calibration;
+          </LI><BR>
+</OL>
+
+  Refer to <A HREF="#references"> documentation of GAMB </A> for details.
+<P>
+
+  Default GAMB setup is as follows: 
+<UL TYPE=CIRCLE>
+    <LI> (B) Which band ? <TT><B> X-band and S-band both </B></TT>
+         </LI>
+
+    <LI> (G) Use only good or all observations ? <TT><B> All </B></TT>
+         </LI>
+
+    <LI> (S) Save information about ambiguities and outliers? <TT><B> Yes 
+         </B></TT> </LI>
+
+    <LI> (I) Calculate group delay ionosphere correction after ? <TT><B> Yes 
+         </B></TT> </LI>
+
+    <LI> (M) Minimal acceptable number of good observations at one baseline: 
+         <TT><B> 8 </B></TT> </LI>
+
+    <LI> (C) Ambiguity spacing constant: <TT><B> as saved in database </B></TT>
+         </LI>
+
+    <LI> (L) Cutoff limit: <TT><B> 8.0 nsec </B></TT>
+         </LI>
+
+    <LI> (Q) Quality code limit: <TT><B> 5 </B></TT>
+         </LI>
+
+    <LI> (V) Verbosity mode: <TT><B> 2 </B></TT>
+         </LI>
+
+</UL>
+
+   Before using GAMB check once more that calibration status for the
+X-band and S-band databases is exactly the same. Then hit key <B>(A)</B> 
+in order to initiate GAMB. In many cases it is enough for resolving 
+ambiguities. In other cases GAMB issues you a warning. If GAMB doesn't issue
+a warning you can be sure that ambiguities were resolved correctly. Warning 
+usually means excessive noise or presence of observations with sub-ambiguities.
+But GAMB may honestly confess that ambiguity resolution was unreliable or 
+it may refuse to process the session at all.
+
+  <H5> Troubleshooting </H5>
+
+<UL>
+     <LI> It may occur that there are baselines which have less than 8 used 
+          observations. Ambiguity resolution becomes unstable for the baselines
+          with few observations since GAMB uses statistical criteria. You can 
+          try to reduce the limit of the number of observations, but you cannot
+          set it less than 4. If the number of used observations at some
+          baseline after GAMB processing becomes less than the limit, GAMB 
+          suppresses all observations on that baseline and deselects that 
+          baseline. As a rule of thumb it is not worth it to try to restore the 
+          baseline with such a small number of observations. But if you find 
+          that it is necessary to keep those observations you can restore that 
+          baseline and then resolve ambiguities on that baseline manually.
+          </LI><P>
+
+     <LI> Group delay ambiguity spacings are different for different baselines.
+          This situation may occur when some channels were dropped in fringing 
+          due to hardware problems. GAMB refuses to process such an experiment. 
+          There are two ways to overcome this problem. The easiest way is to
+          reduce the group delay ambiguity spacing by dividing it by an integer
+          number, e.g. 2. Be cautious! It is a dangerous option. An alternative
+          way is to process the session in several steps:
+          <P>
+          <OL>
+                <LI> Split baselines onto 2 (maybe more) sets with the same 
+                     group delay ambiguities.
+                     </LI><P>
+
+                <LI> First deselect all baselines of the second set and leave 
+                     the baselines of the first set only. The program SLVEB
+                     does it. To call it hit <B>(B)</B> from the OPTIN menu.
+                     Then use GAMB. GAMB will resolve ambiguities on the 
+                     selected baselines and will not see deselected baselines 
+                     and therefore will not complain.
+                     </LI><P>
+
+                <LI> Deselect all baselines of the first set and leave 
+                     the baselines of the second set only. Then use GAMB
+                     again. 
+                     </LI><P>
+
+                <LI> Then select all baselines, make a solution and check 
+                     whether the permanent ambiguities at S-band and X-band 
+                     remain. Since GAMB resolved ambiguities for several 
+                     subnetworks independently, group delay closure may not 
+                     be conserved for the baselines from different subnetworks. 
+                     It is necessary to check first S-band, then the X-band 
+                     and if the estimates of baseline clocks shows misclosure, 
+                     then correct ambiguities. 
+                     (<A HREF="#redistribution"> See below </A>)
+                     </LI><P>
+          </OL>
+          
+          </LI>
+</UL>
+
+<H4> Procedure for manual group delay ambiguity resolution suggested by A. Nothnagel
+(for Fourfit genereated delays only) </H4>
+
+  Manual group delay ambiguity resolution is an alternative technique. It is
+rather more time consuming and it is recommended only if you failed to resolve 
+ambiguities automatically.
+
+<P>
+<B><I> Steps of manual ambiguities resolution: </I></B>
+
+<UL>
+    <LI> Toggle the flag [Use normally (W)eighted delays] to [Down-(W)eighted
+         delays by 1.D9] by hitting <B>(W)</B> in the last SETFL page. This 
+         option reduces the weights of the delays by 1.D9 and forces the least 
+         squares fit to get its deterministic only from the delay rates which 
+         are not affected by the group delay ambiguities. However, the 
+         residuals for the group delays are still calculated.
+         </LI><P>
+
+    <LI> By typing <B>(B)</B> we now enter the Baseline page where we select 
+         the baselines of which data will be used in the least squares fit. 
+         All baselines marked by the symbol 'X' will be used. You should 
+         include only the independent baselines which are formed with the 
+         reference station selected on the Site pages (for example, 
+         WETTZELL-MATERA, WETTZELL/MEDICINA, WETTZELL/MATERA ...). All other 
+         baselines should be excluded by hitting the space bar on the 
+         respective line. 
+         <B>NB:</B> There should be a good number of observations on each of 
+         these baselines. If there are no observations (e.g. at the baseline 
+         KOKEE/HARTRAO with length 98% of Earth's diameter) or only very few 
+         on a baseline, you have to select another baseline which connects 
+         the remote station to the reference station independently.
+         </LI> <P>
+
+    <LI> Make solution by hitting <B>(Q)</B>. 
+         </LI> <P>
+
+    <LI> When the adjustment is finished we can analyze the residuals by typing
+         <B>(P)</B> on the OPTIN menu. In the case where there is only one 
+         database loaded we see the list of baselines immediately, otherwise 
+         we still have to select the database we want to examine before the 
+         baselines to be plotted are displayed.
+         <P>
+ 
+         Start with the first of the baselines which contains the reference 
+         station which you select from the list of baselines by moving the 
+         cursor there and click in the left mouse button. When the plot of 
+         residuals appears we may see several vertical lines with observations 
+         separated by n * the ambiguity spacing which is indicated in the 
+         second dialog window from the top (for example 50, 100 or 200 nsec, 
+         this is the so-called ambiguity spacing). Move the mouse pointer onto 
+         the dialog window field 'Shift All ambiguities', click the left mouse 
+         button and move the cursor to the vertical line of residuals which is 
+         closest to 0. Sometimes there may not even be any residuals at this 
+         ambiguity level. The vertical position of the cursor does not matter, 
+         only the horizontal. Press the left mouse button and all residuals are 
+         shifted to that ambiguity level. Click 'CNPLT baseline page' and 
+         select the next baseline containing the reference station. Repeat the
+         ambiguity shifting for all baselines with the reference station and  
+         run the solution again. Do not bother to look at the non-independent 
+         baselines at this stage.
+         </LI> <P>
+
+    <LI> When all the independent baselines are fixed up have a look at the
+         non-independent baselines with the plot routine as well and fix up any
+         ambiguities. Here the residuals must now all be centered around zero! 
+         There may, however, still be some drift in the residuals.
+         </LI><P>
+
+    <LI> If you think you have eliminated all ambiguities press <B>(Q)</B> 
+         again to check. Look at the RMS delay residuals which should be below 
+         10 ns at X-band and below about 30 ns at S-band. Repeat the plots and 
+         check carefully. The next step is to go to the SETFL last page by
+         hitting <B>(L)</B> from the main OPTIN menu and switching to 
+         'Normally weighted delays' by hitting <B>(W)</B>. Repeat the least 
+         squares fit and look at the residuals again. They should be much 
+         smaller (< 2 - 3 nsec) now and any drifts in the residuals should 
+         have vanished.
+         </LI><P>
+
+    <LI> Now we do the S-band with the same procedure as the X-band. For this 
+         switch back to 'Down-weighted delays by 1.D9' in the SETFL last page, 
+         then hit <B>(X)</B> on the OPTIN menu and set up the S band database 
+         for the solution toggling the yes/no flags. Do not use both, 
+         S and X band, in the fit simultaneously! When you want to plot 
+         the residuals you have of course to look at the S-band data!
+         <P>
+
+         Hit <B>(X)</B> at the OPTIN menu and select the setup as follows:
+         <P>
+ 
+         Include in "Solution Generate residuals"
+
+         <LISTING>
+            X-band Yes Yes
+            S-band No Yes
+         </LISTING>
+
+         In this setup the deterministic of the S-band residuals are not 
+         determined by the S-band rates but by the X-band delays which have, 
+         of course, to be free of any ambiguities.
+         </LI><P>
+
+    <LI> Type <B>(Q)</B> for making solution and examine the residuals of the 
+         S-band database and shift ambiguities as you did with the X-band 
+         data. For a test adjustment after you have shifted the S-band 
+         ambiguities switch off the X-band database completely in the "X" 
+         page. Do not use both S- and X-band in the fit simultaneously.
+         </LI><P>
+
+    <LI> After both databases have been corrected for ambiguities manually 
+         you have to store the contribution to the group delay due to 
+         ionosphere. This contribution is used for some solution types. 
+         <B>NB:</B> you don't need to do it when you resolve ambiguities 
+         automatically, since GAMB computes and stores the ionosphere 
+         contribution for all observations.
+         <P>
+
+         To start the computation of S/X ionosphere contribution, return 
+         to the main OPTIN page and invoke the program IONO by hitting 
+         <B>([)</B>. The program lists the databases which reside in the 
+         scratch files. We do not calibrate the S-band database. Normally 
+         everything is set up properly and you just type <B>(P)</B>
+         to continue.
+         </LI><P>
+
+    <LI> Set again databases status. Hit <B>(X)</B> in OPTIN menu. Set YES in 
+         fields <TT>Include in solution?</TT>, <TT>Generate residuals?</TT> 
+         for X-band databases and set NO for S-band database.
+         </P>
+</UL>
+
+  <BIG><I> Group delay ambiguities are resolved. </I></BIG>
+<P>
+
+  The next step is to inspect residuals. Set estimation of baseline-dependent 
+clocks: hit <B>(C)</B> from the menu of the last SETFL page. Menu of the 
+program BCLOK will be displayed. First set all baselines by hitting <B>(W)</B>,
+then deselect a clock reference station by hitting the station code.
+<P>
+
+  Make a solution by hitting <B>(Q)</B>. Look at the listing. Normally the 
+total wrms should be in the range [500, 1500] psec. If it exceeds 2000 psec, 
+it means that probably either ambiguity resolution was not successful or 
+there are clock breaks at one or more stations.
+<P>
+  
+  You should check estimates of baseline-dependent clocks. If the estimates 
+exceed 1 nsec, it is an indication of remaining permanent ambiguities at
+that baseline, i.e there are no jumps in ambiguities among observations at
+all baselines but all observations at some baselines have incorrect 
+ambiguities what causes triangle misclosures to be a multiple of the ambiguity 
+spacing. You have to get rid of permanent ambiguities.
+<P>
+
+<A NAME="redistribution">
+<H5> Manual re-distribution of permanent group delay ambiguities </H5>
+
+  First you have to decide which band is affected by permanent ambiguities.
+If baseline-dependent clocks has an adjustment by a multiple of the group delay 
+ambiguity spacing at X-band -- then X-band. A permanent ambiguity at S-band
+will contribute by <TT>f<SUB>X</SUB>/f<SUB>S</SUB> = 12 </TT> times less.
+Thus, if you see baseline-dependent clock estimates less than one group delay
+ambiguity spacing but still larger than 1 nsec, it is an indication that
+there are S-band permanent ambiguities.
+<P>
+
+  Set solution type <TT><B>X-band only</B></TT> or <TT><B>S-band only</B></TT>
+on the last SETFL page in accordance with the band affected by permanent 
+ambiguities. Make a solution. Look at the list of baseline-dependent clocks.
+Find the first baseline with the estimate of the baseline-dependent clocks
+to be a multiple of group delay ambiguity spacing. Make plot of residuals of 
+that baseline by hitting <B>(P)</B> at the OPTIN menu. Then use the function 
+<TT>Set amb. shift</TT>. Set the correct sign of ambiguities: the sign should
+be the same as the sign of the baseline-dependent clock adjustments if the 
+order of stations in the baseline both in the listing and in CNPLT is the same.
+The sign is opposite if the order of stations in  the listing and in CNPLT is 
+different. Then use the function <TT>Shift multi pts</TT>. CNPLT will ask you 
+to point to the <TT>Starting point</TT> and then the <TT>End point</TT>. Click 
+at the point in the very bottom of the plot in order to mark the "Starting 
+point", then click the point in the very top of the plot in order to mark the
+"end point". Then you make a solution once more. Repeat this procedure if 
+needed with the next baseline. Don't forget to set the solution type back to 
+<TT>G-GXS combination</TT> after all these manipulations.
+<P>
+
+  Sometime you have observations with ambiguities less than the group delay 
+ambiguity spacing. These are sub-ambiguities and they are caused by a wring 
+choice of maximum in the delay resolution function.  There is no way to resolve 
+sub-ambiguities in Solve. You have to suppress all observations with 
+sub-ambiguities. It is still possible to recover at least part of such 
+observations by running the program mk4fit for those observations, but this 
+topic goes beyond this manual.
+<P>
+
+<H5> Inspection of residuals </H5>
+
+  Now you have to inspect residuals baseline by baseline. The purpose is
+to check quality of data, check whether the ambiguities were resolved correctly
+and check whether clock breaks have to be inserted. Call program CNPLT
+by hitting <B>(P)</B> from the OPTIN menu. (<B>NB:</B> CNPLT conflicts with 
+some X-applications which grabs colors, like Netscape. You should close such
+applications before running CNPLT.)
+<P>
+
+  If you find a jump in the plot of residuals you may try to insert a clock
+break. Be sure that it is not a jump in ambiguities at X- or S-band. In order
+to insert a clock break hit <B>(E)</B> in the main OPTIN menu, then 
+list station's pages by hitting <B>(N)</B> or <B>(P)</B> till you find the 
+station where you are going to insert clock breaks. Then hit <B>(*)</B> several 
+times until you see a line <TT>insert</TT>. Then hit <B>(C)</B> and enter 
+the time tag of the clock break. Then a new epoch for clock polynomial appears 
+at the SETFL page for that station. Set the first three flags to 1 for the new 
+clock break. Then make a new solution and check the listing and residual plots.
+Keep in mind that there should be enough observations between the start of 
+the session, clock break(s) and the end of the session. There should be no less 
+than 4 observations, otherwise your solution will be unstable or singular. 
+If it seems to you that the session has many clock breaks, it may indicate 
+another serious problems unrelated to clock behavior.
+<P>
+
+  If you have a station with too few good observations (less than 5 at each
+baseline), or you have a station with postfit residual scatter larger than 
+5 nsec you can deselect it. But it is a last resort. In general you should try
+to keep as many stations/baselines as possible in the initial and intermediary
+solutions, and to leave the final decision to the time of the final solution.
+An analyst is able to select/deselect station/baseline in any time during 
+further solutions including batch runs, however the data should be edited 
+properly, otherwise selecting the baselines which have been suppressed during
+the initial solution might degrade the solution due to the presence of 
+outliers.
+
+
+</BODY>
+</HTML>
+
+<HR SIZE="2">
+<EM>
+     This document was prepared by
+    <A HREF="mailto:sgdass@lists.nasa.gov" > Leonid Petrov </A> 
+    <P>
+
+     Last update: 01-MAY-2000 12:23:00
+</EM>

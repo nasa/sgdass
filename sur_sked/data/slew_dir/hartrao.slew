@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  HARTRAO   Hh
+LAST_UPDATE: HARTRAO   2018.01.20
+COORD:       HARTRAO   meters     5085442.780  2668263.490 -2768697.014    
+MOUNT:       HARTRAO   char       EQUAT
+SLEW_AZ:     HARTRAO   deg/sec    0.50
+SLEW_EL:     HARTRAO   deg/sec    0.50
+ACCL_AZ:     HARTRAO   deg/sec^2  0.07
+ACCL_EL:     HARTRAO   deg/sec^2  0.07
+TSETTLE_AZ:  HARTRAO   sec       20.0
+TSETTLE_EL:  HARTRAO   sec       20.0
+EL_MIN:      HARTRAO   deg      -83.0
+EL_MAX:      HARTRAO   deg       45.0
+AZ_RANGE:    HARTRAO   deg      -87.8 -87.8 87.8 87.8
+RECORDER:    HARTRAO   char      mark5
+PREOB:       HARTRAO   sec       10.0
+POSTOB:      HARTRAO   sec        2.0

@@ -1,0 +1,222 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program solve launches either interactive or Solve.        *
+# *                                                                      *
+# *   Usage: solve <Solve_initials> [<control_file>] [verbosity_level]   *
+# *                [processor_index] [number_of_processors]
+# *                                                                      *
+# *   If only one argument is supplied then interactive Solve under      *
+# *   solve user initials specified by the first argument is launched.   *
+# *                                                                      *
+# *   If two or three arguments are supplied then batch Solve under      *
+# *   solve user initials supplied by the first argument is launched.    *
+# *   The second argument specifies the name of the control file.        *
+# *                                                                      *
+# *   The third argument can take values:                                *
+# *     "verbose" -- (Default) Solve prints some information messages.   *
+# *     "silent"  -- Solve doesn't prints information messages.          *
+# *     "verbose-autorestart" -- The same as "verbose". If restart is    *
+# *                              possible, it will be done automatically *
+# *                              without dialogue with                   *
+# *     "silent-autorestart"  -- The same as "silent". If restart is     *
+# *                              possible, it will be done automatically *
+# *                              without dialogue with                   *
+# *     "verbose-norestart"   -- The same as "verbose". Solution         *
+# *                              will start a new regardless, whether    *
+# *                              restart is possible or not.             *
+# *     "silent-norestart"    -- The same as "solent". Solution          *
+# *                              will start a new regardless, whether    *
+# *                              restart is possible or not.             *
+# *                                                                      *
+# *   C-shell program returns                                            *
+# *   0 if solve terminated successfully. "successfully" means that no   *
+# *     error status was set. It does not mean whether Solve actually    *
+# *     produced good solution. Moreover, in many cases Solve doesn't    *
+# *     set error code. IT means that Solve successfully started. Check  *
+# *     $WORK_DIR/STATxx file if you need more information about Solve   *
+# *     success or failure.                                              *
+# *   1 if no parameters were supplied.                                  *
+# *   2 is not enough parameters were supplied.                          *
+# *   3 wring third parameter.                                           *
+# *  64 unrecognized error.                                              *
+# *                                                                      *
+# *  [processor_index] -- index of the processor used for the batch      *
+# *                       Solve run in the independent mode. Should be   *
+# *                       in the range [0, number_of_processors].        *
+# *                       if set, Solve processes not all sessions in    *
+# *                       the list but only one out of N, where N is     *
+# *                       [number_of_processors]: mod(i,N), where "i" is *
+# *                       the session index.                             *
+# *                                                                      *
+# *  [number_of_processors] -- The total number of processors which      *
+# *                            Solve knows of.                           *
+# *                                                                      *
+# *  ### 26-JUL-2000      solve    v2.4 (c)  L. Petrov  30-JUL-2007 ###  *
+# *                                                                      *
+# ************************************************************************
+&C0& SOLVE_PROG_DIR
+if ( $?SOLVE_DIR == 0 ) then
+     set MK5_BIN = $SOLVE_PROG_DIR
+  else
+     set MK5_BIN = $SOLVE_DIR
+endif
+set solve_status = 64
+#
+switch ( $#argv )
+  case 0:
+#
+# -- Noi arguments
+#
+     echo "Usage: solve <Solve_initials> [<control_file>] [ind_proc] [num_proc] [verbosity_level]"
+     set solve_status = 1
+     breaksw
+  case 1:
+#
+# -- Only one argument: user initialis -- it means interactive run
+#
+     ${MK5_BIN}/enter $1 0 0 f 0 1 1
+     set solve_status = $status
+     breaksw
+  case 2:
+#
+# -- Two arguments: user initials and control file -- it means batch run
+#
+     if (-f $2) then
+         echo "batch SOLVE started on " \
+             `uname -n` " at " `date '+%H:%M:%S %d-%h-%Y' | tr "[a-z]" "[A-Z]"` 
+         echo "Control file $2 "
+         ${MK5_BIN}/enter $1 $2 0 b 0 1 1
+         set solve_status = $status
+      else
+        echo "Control file $2 was not found"
+        set solve_status = 2
+     endif
+     breaksw
+  case 3:
+#
+# -- Three arguments: user initials, control file and a flag (silent mode)
+#
+     if ( "$3" != "verbose"             && \
+          "$3" != "silent"              && \
+          "$3" != "verbose-autorestart" && \
+          "$3" != "silent-autorestart"  && \
+          "$3" != "verbose-norestart"   && \
+          "$3" != "silent-norestart"       ) then
+#
+          echo "solve: yours 3d artument is $3"
+          echo "solve: only values verbose, silent, verbose-autorestart, silent-autorestart, verbose-norestart, silent-norestart are allowed in the third argument"
+          set solve_status = 3
+          breaksw
+     endif
+#
+     if (-f $2) then
+         switch ( $3 )
+           case "verbose":
+              setenv BATCH_SILENT NO
+              ${MK5_BIN}/enter $1 $2 0 b 0 1 1
+              set solve_status = $status
+              breaksw
+           case "silent":
+              setenv BATCH_SILENT YES
+              ${MK5_BIN}/enter $1 $2 0 b 0 1 1
+              set solve_status = $status
+              breaksw
+           case "verbose-autorestart":
+              setenv BATCH_SILENT NO
+              ${MK5_BIN}/enter $1 $2 0 a 0 1 1
+              set solve_status = $status
+              breaksw
+           case "silent-autorestart":
+              setenv BATCH_SILENT YES
+              ${MK5_BIN}/enter $1 $2 0 a 0 1 1
+              set solve_status = $status
+              breaksw
+           case "verbose-norestart":
+              setenv BATCH_SILENT NO
+              ${MK5_BIN}/enter $1 $2 0 n 0 1 1
+              set solve_status = $status
+              breaksw
+           case "silent-norestart":
+              setenv BATCH_SILENT YES
+              ${MK5_BIN}/enter $1 $2 0 n 0 1 1
+              set solve_status = $status
+              breaksw
+         endsw
+      else
+        echo "Control file $2 was not found"
+        set solve_status = 2
+     endif
+     breaksw
+  case 4:
+#
+# -- Four arguments: user initials, control file, processor index, number of processors
+#
+     if (-f $2) then
+         ${MK5_BIN}/enter $1 $2 0 b 0 $3 $4
+         set solve_status = $status
+      else
+        echo "Control file $2 was not found"
+        set solve_status = 2
+     endif
+     breaksw
+  case 5:
+#
+# -- Five arguments: user initials, control file, processor index, number of processors and a flag (silent mode)
+#
+     if ( "$5" != "verbose"             && \
+          "$5" != "silent"              && \
+          "$5" != "verbose-autorestart" && \
+          "$5" != "silent-autorestart"  && \
+          "$5" != "verbose-norestart"   && \
+          "$5" != "silent-norestart"       ) then
+          echo "solve: yours 5d artument is $3"
+          echo "solve: only values verbose and silent are allowed in the fifth argument"
+          set solve_status = 3
+          breaksw
+     endif
+#
+     if (-f $2) then
+         switch ( $5 )
+           case "verbose":
+              setenv BATCH_SILENT NO
+              ${MK5_BIN}/enter $1 $2 0 b 0 1 1
+              set solve_status = $status
+              breaksw
+           case "silent":
+              setenv BATCH_SILENT YES
+              ${MK5_BIN}/enter $1 $2 0 b 0 1 1
+              set solve_status = $status
+              breaksw
+           case "verbose-autorestart":
+              setenv BATCH_SILENT NO
+              ${MK5_BIN}/enter $1 $2 0 a 0 1 1
+              set solve_status = $status
+              breaksw
+           case "silent-autorestart":
+              setenv BATCH_SILENT YES
+              ${MK5_BIN}/enter $1 $2 0 a 0 1 1
+              set solve_status = $status
+              breaksw
+           case "verbose-norestart":
+              setenv BATCH_SILENT NO
+              ${MK5_BIN}/enter $1 $2 0 n 0 1 1
+              set solve_status = $status
+              breaksw
+           case "silent-norestart":
+              setenv BATCH_SILENT YES
+              ${MK5_BIN}/enter $1 $2 0 n 0 1 1
+              set solve_status = $status
+              breaksw
+         endsw
+      else
+        echo "Control file $2 was not found"
+        set solve_status = 2
+     endif
+     breaksw
+  default:
+     echo "Usage: solve <Solve_initials> [<control_file>] [verbosity_level]"
+     set solve_status = 1
+     breaksw
+endsw
+exit $solve_status 

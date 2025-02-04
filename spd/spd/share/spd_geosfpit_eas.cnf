@@ -1,0 +1,24 @@
+SPD_3D_CONF   Format version of 2015.01.06
+#
+#  Last updated 2014.12.22_16:09:53
+#
+REFR_EXPR:   Radio_Aparicio_2011
+SPD_ALG:     y_nonloc
+FIL_STA:     /progs/spd_20151111/spd/share/eas.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      geosfpit_height_above_geoid.heb
+FIL_LEAPSEC: /progs/spd_20151111/data/leapsec.dat
+FIL_DESC:    spd_desc.txt
+FIL_FMT:     /progs/spd_20151111/spd/doc/spd_3d_format.txt
+TIM_INTRV:   10800.0D0
+N_EL:        4
+N_AZ:        4
+SOB_ALG:     rte_bent
+N_FRQ:       7
+FREQ:          5000000000.000  # Ind_frq:    1 
+FREQ:          8400000000.000  # Ind_frq:    2 
+FREQ:         22235000000.00   # Ind_frq:    3 
+FREQ:         32000000000.00   # Ind_frq:    4 
+FREQ:         43000000000.00   # Ind_frq:    5 
+FREQ:         86000000000.00   # Ind_frq:    6 
+FREQ:        129000000000.00   # Ind_frq:    7 

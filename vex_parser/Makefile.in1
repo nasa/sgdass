@@ -1,0 +1,15 @@
+#######################################################################
+#								      #
+#	Make file for building vex_parser                             #
+#						     		      #
+#  %%%  03-JUN-2020  makefile   v1.0  (c) L. Petrov  03-JUN-2020 %%%  #
+#								      #
+#######################################################################
+.SUFFIXES:
+.SUFFIXES:	.f	.c	.o	.opt_o	.a	.d
+#
+SHELL = /bin/csh -f -c 'umask 0002; eval "$2"'
+
+DATE = `date '+%Y.%m.%d-%H:%M:%S'`
+
+

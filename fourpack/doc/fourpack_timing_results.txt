@@ -1,0 +1,72 @@
+Timing results of spherocal harmonics tranform.
+===============================================
+
+CPU: 2x10 core E5-2660-v3 
+RAM: 128Gb
+
+Timing results is given in seconds.
+Timing test was performed using 1 thread (1 thr) and 16 threads (16 thr)
+Two version of spherical harmonics transform were used: F-version
+that uses conventional double precision arithmetic and  X-versino that
+uses X-algebra. The F-version gives correct results only for degree 2700.
+Fourpack switches for X-versino code automatically if dimension of 
+the transform is equal or greater than 2700.
+
+
+1) Direct spherical harmonics transform (SPHE_DIR_2NN):
+                                                                        
+                      F-version          X-version                       
+                      CPU time           CPU time        Wall time 
+       Lat    Deg     1-thr  16-thr      1-thr  16-thr   16-thr  16-thr
+                                                              f       x  
+                                                                         
+      1024    511     0.32    0.036       0.60    0.048    0.328   0.059 
+      2048   1023     2.88    0.25        4.37    0.39     0.49    0.54    
+      4096   2047    21.31    2.19       34.74    3.02     4.54    3.48  
+      5400   2699    48.15    5.32       81.91    9.20     9.11    9.09  
+      8192   4095      -       -        278.78   23.14      -     29.5   
+     10800   5399      -       -        716.03   58.68      -     66.8         
+     16384   8191      -       -       2188.0   182.78      -    229.4   
+     18000   8999      -       -                262.69      -    330.4   
+     21600  10799      -       -                493.0       -    522.8   
+     43200  21599      -       -               4105.6           3812.6   
+                                                                        
+
+2) Inverse spherical harmonics transform (SPHE_INV_2NN):
+
+
+                      F-version          X-version                       
+                      CPU time           CPU time        Wall time 
+       Lat    Deg     1-thr  16-thr      1-thr  16-thr   16-thr  16-thr
+                                                              f       x  
+                                                                         
+      1024    511     0.30    0.34        0.73    0.51     0.035   0.057 
+      2048   1023     2.38    0.21        5.54    0.35     0.22    0.42  
+      4096   2047    19.34    1.65       44.85    5.35     1.70    5.60  
+      5400   2699    43.23    3.45      100.89    6.53     3.33    6.50  
+      8192   4095      -       -        334.33   22.65      -     28.75  
+     10800   5399      -       -        834.3    71.67      -     66.02  
+     16384   8191      -       -       2926.7   176.36      -    245.6   
+     18000   8999      -       -                330.86      -    488.6                      
+     21600  10799      -       -                661.63      -    680.5   
+     43200  21599      -       -               4307.0       -   4331.5   
+                                                                         
+
+
+3) Inverse vector spherical harmonics transform (SPHE_INV_2NN_VEC):
+
+
+                      F-version          X-version                       
+                      CPU time           CPU time        Wall time 
+       Lat    Deg     1-thr  16-thr      1-thr  16-thr   16-thr  16-thr
+                                                              f       x  
+                                                                         
+      1025    511     1.35    0.29        1.82    0.27      0.30    0.35 
+      2049   1023     8.23    0.94       11.74    0.77      1.08    1.4  
+      4097   2047    60.00    5.40       81.80    4.43      7.0     7.5  
+      5401   2699   129.52   11.08      178.1     9.08     14.7    16.9  
+      8193   4095                       736.5    30.25       -     59.0  
+     10801   5399                      1338.4    65.01       -    119.5  
+     16385   8191                      4917.0   239.53       -    450.0  
+     21601  10799                               518.43            879.6  
+     43201  21599                              8853.4            8853.4  

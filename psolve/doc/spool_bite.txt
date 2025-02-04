@@ -1,0 +1,40 @@
+   Program  SPOOL_BITE is for extraction of a small portion from
+Solve spool file. Since Solve spool files are very large, they may
+have more than a million lines, a set of tools is necessary for
+working with such kind of files. SPOOL_BITE is one of the tools.
+It "bites" the file and returns a portion.
+
+   Usage:  spool_bite spool_file (-d <database> | -glo | -bas |
+           -ove |  -sou ) [-o <output_file>]
+
+     where spool_file -- is the name of the spool file which Solve
+   generated. Then one of the option should follow:
+
+     -d <database>  -- extract the portion of spool file with listing
+                       for this database. Database name should be in
+                       the same syntax as it appears in arc-file.
+
+     -glo           -- section of the spool file with the estimates
+                       of global parameters will be extracted and
+                       written to the output file.
+
+     -bas           -- section of the spool file with baseline
+                       statistics will be extracted and written into
+                       the output file.
+
+     -ove           -- section of the spool file with overall
+                       statistics will be extracted and written into
+                       the output file.
+
+     -sou           -- section of the spool file with source
+                       statistics will be extracted and written into
+                       the output file.
+
+     -o <output_file>  -- sets the name of the output file. If the
+                          output_file is omitted then SPOOL_BITE
+                          write its output in /tmp/out.spl . It the
+                          output filename is '-' then correlations
+                          are written in standard output device
+                          (screen).
+
+  NB: you can specify only one option.

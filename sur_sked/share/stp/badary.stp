@@ -1,0 +1,70 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2024.02.22 pet Created
+# 
+SHORT_NAME:   BADARY    char       Bd
+LAST_UPDATE:  BADARY    char       2024.02.22
+COORD:        BADARY    meters    -838200.657   3865751.551  4987670.933   
+MOUNT:        BADARY    char       ALTAZ
+SLEW_AZ:      BADARY    deg/sec    1.00
+SLEW_EL:      BADARY    deg/sec    0.50
+ACCL_AZ:      BADARY    deg/sec^2  0.05
+ACCL_EL:      BADARY    deg/sec^2  0.18
+TSETTLE_AZ:   BADARY    sec        5.0
+TSETTLE_EL:   BADARY    sec        5.0
+EL_MIN:       BADARY    deg       10.0
+EL_MAX:       BADARY    deg       80.0
+AZ_RANGE:     BADARY    deg      -78.0   78.0  282.0  438.0
+RECORDER:     BADARY    char      mark5
+BACKEND:      BADARY    char      mark4
+SETMODE:      BADARY    sec         4.0
+PREOB:        BADARY    sec         0.2
+POSTOB:       BADARY    sec         0.0
+HOR_AZIM:     BADARY    deg       0   9  10  19  20  49  50  59  60  99 100 129 130 229 230 259 260 269 270 279 280 289 290 299 300 309 310 339 340 349 350 360
+HOR_ELEV:     BADARY    deg       7   7   5   5   4   4   2   2   1   1   2   2   3   3   2   2   4   4   5   5   6   6   7   7   8   8   9   9   8   8   7   7
+STOW_AZIM:    BADARY    deg       80.0
+STOW_ELEV:    BADARY    deg       80.0
+#
+CLOCK_DATES:  BADARY   sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: BADARY   sec        0.0E06
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

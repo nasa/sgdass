@@ -1,0 +1,279 @@
+Description of SPD_ASCII format.
+
+   A file in the SPD_ASCII format contains results of computing slant path 
+delay of electromagnetic wave propagation through the 3D, continuous, 
+heterogeneous atmosphere from the outer space to a list of stations. 
+The results include 1) slant path delay at an elevation-azimuth grid; 
+b) surface atmospheric pressure; c) surface air temperature; d) (optionally) 
+optical thickness of the atmosphere at a station at the specified 
+frequencies; e) (optionally) atmosphere brightness temperature at a station 
+at specified frequencies.
+
+   The path delay is defined as a difference in the propagation time between 
+the emitter and the receiver through the atmosphere and the propagation 
+between these two points along the geodetic line in vacuum. The path delay 
+is computed for a set of stations for a certain epoch at a grid 
+of azimuths and elevations. The grid is equidistant at azimuths and 
+non-equidistant at elevation angles. The values of path delays computed 
+on a grid can be used for computing coefficients of the interpolating 
+functions that enable us to compute the path delay in an arbitrary direction.
+
+   A file in the SPD_ASCII format consists of records of variable
+length in ASCII coding. The records are separated by a character with
+decimal code 13. The records are grouped into sections. Sections follow
+in this order:
+
+ 1) Header record -- the first record should have a signature:
+                     SPD_ASCII  Format version of 2008.11.30
+
+                     The header record allows to distinguish a valid
+                     file in the SPD_ASCII  format from files in other
+                     formats.
+
+ 2) N-record -- defines the number of records in further other
+                sections.
+
+ 3) M-record -- provides text with a very brief algorithm description and
+                options used during computations.
+
+ 4) I-record -- provides text with a brief description of the numeric
+                model of the atmosphere used during computation.
+
+ 5) U-record -- defines which components of the path delay have been computed.
+
+ 6) T-record -- defines the time epoch of the path delay.
+
+ 7) F-record -- defines frequencies for atmosphere optical thickness
+                and brightness temperature computation.
+                NB: F-record may be missing.
+
+ 8) S-record -- defines name and coordinates of stations for which path
+                delay have been computed.
+
+ 9) E-record -- defines elevations for which path delay is computed.
+
+10) A-record -- defines azimuths for with the path delay is computed.
+
+11) P-record -- defines the atmospheric pressure and air temperature
+                for each stations.
+
+12) D-record -- defines the path delay for each component and each station.
+
+13) O-record -- defines the optical thickness of the atmosphere and 
+                atmosphere brightness as seen at each station.
+                NB: O-record may be missing.
+
+14) Trailer record -- the last record is the same as the header record.
+
+
+Format of an N-record:
+----------------------
+
+Field  1:1   A1    -- Record ID: letter "N". 
+field  2:3   a2       delimiter: blank.
+Field  4:7   I4    -- Number of M-records in the file. i.e. brief algorithm
+                      description and options used during computations.
+field  8:9   a2       delimiter: blank.
+field 10:13  I4    -- Number of I-records in the file, i.e. the number of
+                      lines with a brief description of the numeric
+                      model of the atmosphere used during computation.
+field 14:15  a1       delimiter: blank.
+field 16:21  I7    -- Number of S-records in the file, i.e. the number
+                      of stations.
+field 22:23  a2       delimiter: blank.
+field 24:27  I4    -- Number of E-records in the file, i.e. the number
+                      elevations in the grid.
+field 28:29  a2       delimiter: blank.
+field 30:33  I4    -- Number of A-records in the file, i.e. the number
+                      azimuths in the grid.
+field 34:35  a2       delimiter: blank.
+field 36:39  I4    -- Number of F-records in the file, i.e. the number
+                      frequencies. It may be zero.
+
+
+Format of an M-record:
+----------------------
+
+Field  1:1   A1    -- Record ID: letter "M".
+field  2:3   a2       delimiter: blank.
+Field  4:7   I4    -- Index of the current M-records counted from 1.
+field  8:9   a2       delimiter: blank.
+Field 10:73  A64   -- arbitrary characters in the range 32-255 (decimal).
+
+
+Format of an I-record:
+----------------------
+
+Field  1:1   A1    -- Record ID: letter "I".
+field  2:3   a2       delimiter: blank.
+Field  4:7   I4    -- Index of the current M-records counted from 1.
+field  8:9   a2       delimiter: blank.
+Field 10:73  A64   -- arbitrary characters in the range 32-255 (decimal).
+
+
+Format of a U-record:
+---------------------
+
+Field  1:1   A1    -- Record ID: letter "U".
+field  2:3   a2       delimiter: blank.
+field  4:6   A3    -- Code of the first component of delay.
+                      One of TOT, WAT
+field  7:8   a2       delimiter: blank.
+field  9:11  A3    -- Code of the second component of delay.
+                      One of TOT, WAT
+field 12:13  a2       delimiter: blank.
+field 14:16  A3    -- Code of the third component of delay.
+                      One of TOT, WAT or blank.
+
+Meaning of components codes:
+
+        TOT -- total path delay.
+
+        WAT -- Path delay due to contribution of partial pressure of
+               water vapor.
+
+Format of a T-record:
+---------------------
+
+Field  1:1   A1    -- Record ID: letter "T".
+field  2:3   a2       delimiter: blank.
+field  3:27  A27   -- Date and time for path delay in TAI.
+                      Format of the date : YYYY.MM.DD-hh:mm:ss.ffff
+                      where YYYY -- integer year
+                              MM -- integer month;
+                              DD -- integer day of the month;
+                              hh -- integer hour;
+                              mm -- integer minute after the hour;
+                              ss -- integer second after the minute;
+                            ffff -- integer second fraction.
+
+
+Format of an F-record:
+----------------------
+
+Field  1:1   A1    -- Record ID: letter "F".
+field  2:3   a2       delimiter: blanks.
+field  4:7   I4    -- frequency index.
+field  8:9   a2       delimiter: blanks.
+field 10:24  F15.2 -- Frequency of electromagnetic wave.
+
+
+Format of an S-record:
+----------------------
+
+Field  1:1   A1    -- Record ID: letter "S".
+field  2:3   a1       delimiter: blanks.
+field  4:9   I7    -- station index
+field 10:11  a2       delimiter: blanks.
+Field 12:19  A8    -- 8-letter long site identifier. May contain
+                      any characters with decimal codes 32-255, but
+                      blanks are allowed only at the end of the site
+                      identifier. This site identifier should be unique
+                      among S-records. This field should not
+                      necessarily have a special meaning. Parsing
+                      software SHOULD NOT TRY TO INTERPRET it.
+field 20:21  a2       delimiter: blanks.
+Field 22:33  F12.3 -- X site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 34:34  a1       delimiter: blank.
+Field 35:46  F13.4 -- Y site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 47:47  a1       delimiter: blank.
+Field 48:59  F13.4 -- Z site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 60:61  a2       delimiter: blanks.
+Field 62:69  F8.4  -- Site geocentric latitude, positive to north,
+                      in degrees. This field is for information only.
+                      Parsing software MUST ignore it.
+field 70:70  a1       delimiter: blank.
+Field 71:78  F8.4  -- Site longitude, positive towards east,
+                      in degrees. This field is for information only.
+                      Parsing software MUST ignore it.
+field 79:80  a2       delimiter: blank.
+Field 81:86  F6.1  -- Site height above the reference ellipsoid in
+                      meters. This field is for information only.
+                      Parsing software MUST ignore it.
+field 87:87  a1       delimiter: blank.
+Field 88:93  F6.1  -- Site height above the geoid in meters. This field
+                      is for information only.
+                      Parsing software MUST ignore it.
+
+
+Format of an E-record:
+----------------------
+
+Field  1:1   A1    -- Record ID: letter "E".
+field  2:3   a2       delimiter: blanks.
+field  4:7   I4    -- elevation record index.
+field  8:9   a2       delimiter: blanks.
+field 10:19  F10.6 -- elevation angle above the horizon in degrees:
+                      the angle between the direction to the emitter,
+                      undisturbed by refraction and the plane perpendicular
+                      to the normal to the reference ellipsoid.
+
+
+Format of an A-record:
+----------------------
+
+Field  1:1   A1    -- Record ID: letter "A".
+field  2:3   a2       delimiter: blanks.
+field  4:7   I4    -- azimuth record index.
+field  8:9   a2       delimiter: blanks.
+field 10:19  F10.6 -- azimuth of the emitter in degrees, undisturbed by
+                      refraction, counted from North to East.
+
+
+Format of an P-record:
+----------------------
+
+
+Field  1:1   A1    -- Record ID: letter "P".
+field  2:3   a1       delimiter: blanks.
+field  4:9   I7    -- station index
+field 10:11  a2       delimiter: blanks.
+field 12:19  F8.1  -- atmospheric pressure at the station in Pa.
+field 20:21  a2       delimiter: blanks.
+field 22:29  F8.2  -- partial pressure of water vapor at the station in Pa.
+field 30:31  a2       delimiter: blanks.
+field 32:36  F5.1  -- air temperature at the station in Kelvin.
+
+
+Format of a D-record:
+---------------------
+
+Field  1:1   A1    -  - Record ID: letter "F".
+field  2:3   a1         delimiter: blanks.
+field  4:9   I7      -- station index
+field 10:11  a2         delimiter: blanks.
+field 12:15  I4      -- elevation index
+field 16:17  a2         delimiter: blanks.
+field 18:21  I4      -- azimuth index
+field 22:23  a2         delimiter: blanks.
+field 24:35  1PD12.6 -- path delay, first component, in sec.
+field 36:37  a2         delimiter: blanks.
+field 38:49  1PD12.6 -- path delay, second component, in sec.
+
+NB:  fields 38:49 can be omitted
+
+
+Format of a O-record:
+---------------------
+
+Field  1:1   A1    -  - Record ID: letter "F".
+field  2:3   a1         delimiter: blanks.
+field  4:9   I7      -- station index
+field 10:11  a2         delimiter: blanks.
+field 12:15  I4      -- elevation index
+field 16:17  a2         delimiter: blanks.
+field 18:21  I4      -- azimuth index
+field 22:23  a2         delimiter: blanks.
+field 24:27  I4      -- frequency index
+field 28:29  a2         delimiter: blanks.
+field 30:35  F6.4    -- Atmosphere optical thickness, i.e. natural
+                        logarithm of the ratio of the brightness temperature
+                        of a source at the top of the atmosphere to the
+                        brightness temperature at the station.
+field 36:37  a2         delimiter: blanks.
+field 38:43  F6.2    -- Brightness of the atmosphere at the station in K.
+
+NB: record O may be missing.

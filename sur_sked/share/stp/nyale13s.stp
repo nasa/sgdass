@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2022.04.26   pet Prelimary version
+# 2023.06.28   pet Updated horizon mask and the elevation limit
+# 
+SHORT_NAME:    NYALE13S  char       Ns
+LAST_UPDATE:   NYALE13S  char       2023.06.28
+COORD:         NYALE13S  meters         1202462.754     252734.395    6237766.038
+MOUNT:         NYALE13S  char       ALTAZ   
+SLEW_AZ:       NYALE13S  deg/sec      12.0
+SLEW_EL:       NYALE13S  deg/sec       6.0
+ACCL_AZ:       NYALE13S  deg/sec^2     2.0
+ACCL_EL:       NYALE13S  deg/sec^2     2.0
+TSETTLE_AZ:    NYALE13S  sec           2.0
+TSETTLE_EL:    NYALE13S  sec           2.0
+EL_MIN:        NYALE13S  deg          15.0
+EL_MAX:        NYALE13S  deg          89.7
+AZ_RANGE:      NYALE13S  deg         -89.0  90.0 270.0 449.0
+RECORDER:      NYALE13S  char       mark5_recorder
+BACKEND:       NYALE13S  char       mark5b
+SETMODE:       NYALE13S  sec 	       4.0
+PREOB:         NYALE13S  sec           6.0
+POSTOB:        NYALE13S  sec           5.0
+HOR_AZIM:      NYALE13S  deg           0.00  360.00
+HOR_ELEV:      NYALE13S  deg          15.00   15.00
+STOW_AZIM:     NYALE13S  deg          90.0
+STOW_ELEV:     NYALE13S  deg          50.0
+#
+CLOCK_DATES:   NYALE13S  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  NYALE13S  sec        1.879E-6

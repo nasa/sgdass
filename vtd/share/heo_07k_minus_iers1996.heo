@@ -1,0 +1,1424 @@
+HEO  Format version of 2004.03.12 
+#
+# Created by nut_res
+#       run by Leonid Petrov ( lpetrov@lacerta.miz.nao.ac.jp )
+#           on lacerta at 2006.01.27-11:23:30 local time
+#
+# Result of VLBI solution heo_07k
+#
+#============================ Beginning of format description: =================
+#
+#    Specifications of HEO format version of 2004.03.12
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  
+#    HEO format is for describing small harmonic variations in the Earth
+# orientation. "Small" means that the squares of the rotation angles
+# can be neglected.
+#  
+#    A file in HEO format consists of records of variable length in
+# ASCII coding. The records are separated by a character with decimal
+# code 13. The records of the following types are supported:
+#  
+# 1) Header record;
+# 2) Model name record;
+# 3) Time epoch record;
+# 4) Harmonic definition records;
+# 5) Amplitude definition records;
+# 6) Velocities definition records;
+# 7) Trailer record.
+#  
+#    Records which start from # character are considered as comments.
+#  
+#    The first record of a valid file in HEO format is the header record.
+# It is followed by the model name record, time epoch record and then by one
+# or more harmonic definition records and one or more harmonic definition
+# records. The last record is a trailer record. All harmonic definition records
+# should precede amplitude and velocity definition records. Names of a harmonic
+# in the amplitude or velocity records should be defined in the harmonic
+# definition record. The number of velocity records can be less than the number
+# of amplitude records, and the number of amplitude records can be less than
+# the number of harmonic records. If a harmonic is not defined in an amplitude
+# records, its amplitude is considered to be zero. If a harmonic is not defined
+# in a velocity records, the rate of change of the amplitude of that harmonic
+# is considered to be zero.
+#  
+#    Records format:
+#  
+# 1) A header record contains the string
+#    "HEO  Format version of 2004.03.12"
+#  
+#    The header record allows to distinguish the valid file in the
+#    HEO format from files in other formats and tells to a parsing software
+#    that is the version of the format.
+#  
+#  
+# 2) A name record defines the name of the model of the harmonic Earth
+#    orientation variations.
+#  
+# Format of an N-record:
+# ----------------------
+#  
+# Field  1:1   A1     -- Records ID: letter N (decimal code 78).
+# field  2:3   a2     -- delimiters: blanks.
+# Field  4:80  A77    -- 77-letter long model name. May contain any
+#                        characters in the decimal range [32, 255].
+#  
+# 3) An epoch record defines the epoch of the expansion.
+#    An expansion may have mixed terms (t-t0)*sin(at+p), (t-t0)*cos(at+p),
+#    where t is time. The E-record defines the epoch t0 in mixed terms.
+#    If an expansion does not have mixed terms, then the epoch defined in
+#    this record is not used. Time scale TDT is used for defining the
+#    reference epoch.
+#  
+# Format of a E-record:
+# ---------------------
+#  
+# Field  1:1   A1     -- Records ID: letter E (decimal code 69).
+# field  2:2   a2     -- delimiters: blanks.
+# Field  4:7   I4     -- Year
+# field  8:8   a1     -- delimiter: letter . (decimal code 46).
+# Field  9:10  I2     -- The index of the month in the year in the range [1,12]
+# field 11:11  a1     -- delimiter: letter . (decimal code 46).
+# Field 12:13  I2     -- The index of the day in the month in the range [1,31]
+# field 14:14  a1     -- delimiter: letter - (decimal code 45).
+# Field 15:16  I2     -- Hour in the range [0,23]
+# field 17:17  a1     -- delimiter: letter : (decimal code 58).
+# Field 18:19  I2     -- Minute in the range [0,23]
+# field 20:20  a1     -- delimiter: letter : (decimal code 58).
+# Field 21:24  F4.1   -- Seconds in the range [0.0, 59.9]
+#  
+#  
+# 4) A harmonic definition record defines the argument of the harmonic in
+#    the form {phase + freq*(t-tr) + 1/2*accel*(t-tr)**2}  where t is
+#    time in TDT time scale and tr is the reference epoch J2000.0,
+#    01 January 2000, 12 hours TDT. The file cannot contain more than one
+#    definition of the same harmonic.
+#  
+#  
+# Format of an H-record:
+# ----------------------
+#  
+# Field  1:1   A1     -- Records ID: letter H (decimal code 72).
+# field  2:3   a2     -- delimiters: blanks.
+# Field  4:11  A8     -- 8-letter long harmonic name. May contain any
+#                        characters with decimal codes 32-255, but blanks
+#                        are allowed only at the end of the harmonic name.
+#                        This field should not necessarily have a special
+#                        meaning. Parsing software should not try to
+#                        interpret this name.
+# field 12:13  a2     -- delimiters: blanks.
+# Field 14:25  F11.9  -- Phase of the harmonic in float format.
+#                        Units: rad.
+# field 26:27  a2     -- delimiters: blanks.
+# Field 28:46  D19.12 -- Frequency of the harmonic in float format.
+#                        Units: rad/sec.
+# field 47:48  a2     -- delimiters: blanks.
+# Field 49:59  D11.4  -- Acceleration of the harmonic in float format.
+#                        Units: rad/sec**2.
+# field 60:60  a1     -- delimiters: blanks.
+# field 61:80  A20    -- Comment. Parser ignores contents of this field.
+#  
+#  
+# 5) An amplitude record specifies the harmonic and 4 amplitudes of
+#    the variation of the Earth orientation: in phase polar motion
+#    (PM_amp_cos), out_of_phase polar motion (PM_amp_sin), in_phase
+#    rotation around E3 axis (E3_amp_cos), out_of_phase rotation around
+#    E3 axis (E3_amp_sin). A file cannot contain more than one amplitude
+#    record for the same harmonic. The harmonic referred in an amplitude record
+#    must be defined in the preceding harmonic definition record.
+#  
+#    These amplitudes allows to define instantaneous small Euler angles of
+#    the perturbations in the Earth rotation with respect to an apriori model
+#    in this way:
+#  
+#    E1 = [ PM_amp_cos + PM_vel_cos*(t-t0) ] *
+#         cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+#       + [ PM_amp_sin + PM_vel_sin*(t-t0) ] *
+#         sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+#  
+#    E2 = [ PM_amp_cos + PM_vel_cos*(t-t0) ] *
+#         sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+#       - [ PM_amp_sin + PM_vel_sin*(t-t0) ] *
+#         cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+#  
+#    E3 = [ E3_amp_cos + E3_vel_cos*(t-t0) ] *
+#         cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+#       + [ E3_amp_sin + E3_vel_sin*(t-t0) ] *
+#         sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+#  
+#    Where
+#  
+#    E1 -- rotation around 1 axis (+Y angle of the polar motion)
+#    E2 -- rotation around 2 axis (+X angle of the polar motion)
+#    E3 -- rotation around 3 axis (-Ut1 angle of the Earth's rotation)
+#  
+#    t-tr  -- The interval of time in scale TDT elapsed since
+#             01 January 2000, 12 hours TDT, in seconds
+#    t-t0  -- The interval of time in scale TDT elapsed since the reference
+#             epoch for the expansion defined in the E-record, in seconds.
+#  
+#  
+# Format of a A-record
+# ---------------------
+#  
+# Field  1:1   A1     -- Record ID: letter A (decimal code 65).
+# field  2:3   a2     -- Delimiters: blanks.
+# Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+#                        must be defined in a preceding H-record.
+# field 12:13  a2     -- Delimiters: blanks.
+# Field 14:25  F12.0  -- PM_amp_cos -- cosine amplitude of the small angle
+#                        of polar motion. Units: prad.
+# field 26:26  a1     -- delimiter: blank.
+# Field 27:38  F12.0  -- PM_amp_sin -- sine amplitude of the small angle
+#                        of polar motion. Units: prad.
+# field 39:39  a2     -- Delimiters: blanks.
+# Field 41:52  F12.0  -- E3_amp_cos -- cosine amplitude of the small angle
+#                        of the Earth rotation around 3 axis. Units: prad.
+# field 53:53  a1     -- Delimiter: blank.
+# Field 54:65  F12.0  -- E3_amp_sin -- sine amplitude of the small angle
+#                        of the Earth rotation around 3 axis. Units: prad.
+#  
+#  
+# 6) A velocity record specifies rates of changes of the amplitudes of
+#    the harmonic of the variation of the Earth orientation: in phase polar
+#    motion (PM_vel_cos), out_of_phase polar motion (PM_vel_sin), in_phase
+#    rotation around E3 axis (E3_vel_cos), out_of_phase rotation around
+#    E3 axis (E3_vel_sin). A file cannot contain more than one velocity
+#    record for the same harmonic. The harmonic referred in an velocity record
+#    must be defined in the preceding harmonic definition record.
+#  
+#  
+# Format of a V-record
+# ---------------------
+#  
+# Field  1:1   A1     -- Record ID: letter A (decimal code 65).
+# field  2:3   a2     -- Delimiters: blanks.
+# Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+#                        must be defined in a preceding H-record.
+# field 12:13  a2     -- Delimiters: blanks.
+# Field 14:25  F12.0  -- PM_vel_cos -- rate of change of the cosine amplitude
+#                        of the small angle of polar motion.
+#                        Units: 10^{-21} rad/sec.
+# field 26:26  a1     -- delimiter: blank.
+# Field 27:38  F12.0  -- PM_amp_sin -- rate of change of the sine amplitude
+#                        of the small angle of polar motion.
+#                        Units: 10^{-21} rad/sec.
+# field 39:39  a2     -- Delimiters: blanks.
+# Field 41:52  F12.0  -- E3_amp_cos -- rate of change of the cosine amplitude
+#                        of the small angle of the Earth rotation around 3 axis.
+#                        Units: 10^{-21} rad/sec.
+# field 53:53  a1     -- Delimiter: blank.
+# Field 54:65  F12.0  -- E3_amp_sin -- rate of change of the sine amplitude
+#                        of the small angle of the Earth rotation around
+#                        3 axis. Units: 10^{-21} rad/sec.
+#  
+#  
+# 7) Trailer record is the same as the header record.
+#
+#============================ End of format description: =======================
+#
+#  Name of the model
+#
+N  VLBI solution heo_07k                                                          produced at 2006.01.14-08:03:03 
+#
+# Epoch for the model (TAI)
+#
+E  1995.01.01-00:00:00.0
+#
+#
+#  Harmonic   Phase        Frequency             Acceleration  Comment          
+#             rad          rad/sec               rad/sec^2                      
+#
+H  Term_001  1.388224095   -3.649757900000D-04   0.0000D+00                     
+H  Term_002  1.388224095   -3.649157900000D-04   0.0000D+00                     
+H  Term_003  1.388224095   -3.643657900000D-04   0.0000D+00                     
+H  Term_004  1.388224095   -3.641557900000D-04   0.0000D+00                     
+H  Term_005  1.388224095   -3.637303100000D-04   0.0000D+00                     
+H  Term_006  1.388224095   -3.636903100000D-04   0.0000D+00                     
+H  Term_007  1.388224095   -3.636203100000D-04   0.0000D+00                     
+H  Term_008  1.388224095   -3.634603100000D-04   0.0000D+00                     
+H  Term_009  1.388224095   -3.634403100000D-04   0.0000D+00                     
+H  Term_010  1.388224095   -3.634203100000D-04   0.0000D+00                     
+H  Term_011  1.388224095   -2.917346300000D-04   0.0000D+00                     
+H  Term_012  1.388224095   -2.917146300000D-04   0.0000D+00                     
+H  Term_013  1.388224095   -2.916946300000D-04   0.0000D+00                     
+H  Term_014  1.388224095   -2.916746300000D-04   0.0000D+00                     
+H  Term_015  1.388224095   -2.914846300000D-04   0.0000D+00                     
+H  Term_016  1.388224095   -2.912146300000D-04   0.0000D+00                     
+H  Term_017  1.388224095   -2.910246300000D-04   0.0000D+00                     
+H  Term_018  1.388224095   -2.909182500000D-04   0.0000D+00                     
+H  Term_019  1.388224095   -2.908982500000D-04   0.0000D+00                     
+H  Term_020  1.388224095   -2.879700000000D-04   0.0000D+00                     
+H  Term_021  1.388224095   -2.190734800000D-04   0.0000D+00                     
+H  Term_022  1.388224095   -2.190534800000D-04   0.0000D+00                     
+H  Term_023  1.388224095   -2.190434800000D-04   0.0000D+00                     
+H  Term_024  1.388224095   -2.189534800000D-04   0.0000D+00                     
+H  Term_025  1.388224095   -2.189034800000D-04   0.0000D+00                     
+H  Term_026  1.388224095   -2.187934800000D-04   0.0000D+00                     
+H  Term_027  1.388224095   -2.187834800000D-04   0.0000D+00                     
+H  Term_028  1.388224095   -2.187634800000D-04   0.0000D+00                     
+H  Term_029  1.388224095   -2.187434800000D-04   0.0000D+00                     
+H  Term_030  1.388224095   -2.186734800000D-04   0.0000D+00                     
+H  Term_031  1.388224095   -2.186334800000D-04   0.0000D+00                     
+H  Term_032  1.388224095   -2.185734800000D-04   0.0000D+00                     
+H  Term_033  1.388224095   -2.185534800000D-04   0.0000D+00                     
+H  Term_034  1.388224095   -2.184634800000D-04   0.0000D+00                     
+H  Term_035  1.388224095   -2.183434800000D-04   0.0000D+00                     
+H  Term_036  1.388224095   -2.182461900000D-04   0.0000D+00                     
+H  Term_037  1.388224095   -2.181161900000D-04   0.0000D+00                     
+H  Term_038  1.388224095   -2.180261900000D-04   0.0000D+00                     
+H  Term_039  1.388224095   -2.180061900000D-04   0.0000D+00                     
+H  Term_040  1.388224095   -2.169800000000D-04   0.0000D+00                     
+H  Term_041  4.417253402   -2.107783540565D-04   0.0000D+00                     
+H  Term_042  0.489624095   -2.081391510038D-04   0.0000D+00                     
+H  Term_043  1.388224095   -1.599700000000D-04   0.0000D+00                     
+H  Term_044  1.388224095   -1.599500000000D-04   0.0000D+00                     
+H  Term_045  3.991352402   -1.484922171179D-04   0.0000D+00                     
+H  Term_046  1.808913402   -1.484815201555D-04   0.0000D+00                     
+H  Term_047  1.388224095   -1.462423200000D-04   0.0000D+00                     
+H  Term_048  1.388224095   -1.460523200000D-04   0.0000D+00                     
+H  Term_049  1.388224095   -1.460023200000D-04   0.0000D+00                     
+H  Term_050  1.388224095   -1.459123200000D-04   0.0000D+00                     
+H  Term_051  1.388224095   -1.458923200000D-04   0.0000D+00                     
+H  Term_052  2.246161402   -1.458637110275D-04   0.0000D+00                     
+H  Term_053  0.063723095   -1.458530140651D-04   0.0000D+00                     
+H  Term_054  4.164468402   -1.458423171028D-04   0.0000D+00                     
+H  Term_055  1.388224095   -1.458223200000D-04   0.0000D+00                     
+H  Term_056  1.388224095   -1.458123200000D-04   0.0000D+00                     
+H  Term_057  1.388224095   -1.457723200000D-04   0.0000D+00                     
+H  Term_058  1.388224095   -1.457523200000D-04   0.0000D+00                     
+H  Term_059  1.388224095   -1.457023200000D-04   0.0000D+00                     
+H  Term_060  1.388224095   -1.456823200000D-04   0.0000D+00                     
+H  Term_061  4.572942402   -1.456432012082D-04   0.0000D+00                     
+H  Term_062  1.388224095   -1.455823200000D-04   0.0000D+00                     
+H  Term_063  1.388224095   -1.455623200000D-04   0.0000D+00                     
+H  Term_064  1.388224095   -1.455023200000D-04   0.0000D+00                     
+H  Term_065  1.388224402   -1.454441043329D-04   0.0000D+00                     
+H  Term_066  1.388224095   -1.454023200000D-04   0.0000D+00                     
+H  Term_067  1.388224095   -1.453723200000D-04   0.0000D+00                     
+H  Term_068  1.388224095   -1.453341200000D-04   0.0000D+00                     
+H  Term_069  1.388224095   -1.453041200000D-04   0.0000D+00                     
+H  Term_070  1.345099095   -1.452450074576D-04   0.0000D+00                     
+H  Term_071  2.419278402   -1.432138110124D-04   0.0000D+00                     
+H  Term_072  0.236839095   -1.432031140500D-04   0.0000D+00                     
+H  Term_073  3.262424402   -1.431806099036D-04   0.0000D+00                     
+H  Term_074  0.004823095   -1.431581057571D-04   0.0000D+00                     
+H  Term_075  0.602187095   -1.428049012801D-04   0.0000D+00                     
+H  Term_076  5.545097402   -1.407179995796D-04   0.0000D+00                     
+H  Term_077  5.501972402   -1.405189027044D-04   0.0000D+00                     
+H  Term_078  0.177940095   -1.405082057420D-04   0.0000D+00                     
+H  Term_079  2.317254402   -1.403198058291D-04   0.0000D+00                     
+H  Term_080  2.957743402   -1.401656982274D-04   0.0000D+00                     
+H  Term_081  1.388224095   -1.400600000000D-04   0.0000D+00                     
+H  Term_082  0.976979095   -1.382329041286D-04   0.0000D+00                     
+H  Term_083  1.574342402   -1.378796996516D-04   0.0000D+00                     
+H  Term_084  2.533495402   -1.378690026892D-04   0.0000D+00                     
+H  Term_085  1.458334402   -1.378571955051D-04   0.0000D+00                     
+H  Term_086  1.388224095   -1.360000000000D-04   0.0000D+00                     
+H  Term_087  3.332534402   -1.355937010758D-04   0.0000D+00                     
+H  Term_088  3.929898402   -1.352404965989D-04   0.0000D+00                     
+H  Term_089  5.688090402   -1.329544980231D-04   0.0000D+00                     
+H  Term_090  1.388224095   -1.023196200000D-04   0.0000D+00                     
+H  Term_091  1.388224095   -1.023096200000D-04   0.0000D+00                     
+H  Term_092  1.388224095   -1.022296200000D-04   0.0000D+00                     
+H  Term_093  1.388224095   -1.021496200000D-04   0.0000D+00                     
+H  Term_094  1.388224095   -1.020496200000D-04   0.0000D+00                     
+H  Term_095  1.388224095   -1.019796200000D-04   0.0000D+00                     
+H  Term_096  1.388224095   -1.018996200000D-04   0.0000D+00                     
+H  Term_097  1.388224095   -1.017808900000D-04   0.0000D+00                     
+H  Term_098  1.388224095   -1.017708900000D-04   0.0000D+00                     
+H  Term_099  1.388224095   -1.016708900000D-04   0.0000D+00                     
+H  Term_100  1.388224095   -9.094257700000D-05   0.0000D+00                     
+H  Term_101  1.388224095   -9.081257700000D-05   0.0000D+00                     
+H  Term_102  1.388224095   -9.079257700000D-05   0.0000D+00                     
+H  Term_103  1.388224095   -9.075257700000D-05   0.0000D+00                     
+H  Term_104  1.388224095   -9.073257700000D-05   0.0000D+00                     
+H  Term_105  1.388224095   -9.068257700000D-05   0.0000D+00                     
+H  Term_106  1.388224095   -9.067257700000D-05   0.0000D+00                     
+H  Term_107  1.388224095   -8.770539000000D-05   0.0000D+00                     
+H  Term_108  1.388224095   -8.762539000000D-05   0.0000D+00                     
+H  Term_109  1.388224095   -8.759539000000D-05   0.0000D+00                     
+H  Term_110  1.388224095   -8.756539000000D-05   0.0000D+00                     
+H  Term_111  1.388224095   -8.751539000000D-05   0.0000D+00                     
+H  Term_112  1.388224095   -8.736539000000D-05   0.0000D+00                     
+H  Term_113  1.388224095   -8.730539000000D-05   0.0000D+00                     
+H  Term_114  1.388224095   -8.728539000000D-05   0.0000D+00                     
+H  Term_115  1.388224095   -8.727539000000D-05   0.0000D+00                     
+H  Term_116  1.388224095   -8.723647400000D-05   0.0000D+00                     
+H  Term_117  1.388224095   -8.722647400000D-05   0.0000D+00                     
+H  Term_118  1.388224095   -8.719647400000D-05   0.0000D+00                     
+H  Term_119  1.388224095   -8.711647400000D-05   0.0000D+00                     
+H  Term_120  1.388224095   -8.706647400000D-05   0.0000D+00                     
+H  Term_121  2.047040968   -8.581967459751D-05  -1.0786D-24                     
+H  Term_122  6.147787075   -8.580897763545D-05  -8.3538D-24                     
+H  Term_123  5.987672445   -8.354437298342D-05  -3.7247D-23                     
+H  Term_124  3.805233245   -8.353367602136D-05  -4.4523D-23                     
+H  Term_125  1.622794045   -8.352297905930D-05  -5.1798D-23                     
+H  Term_126  0.301850759   -8.319116850644D-05   3.7235D-23                     
+H  Term_127  4.402596866   -8.318047154438D-05   2.9960D-23                     
+H  Term_128  2.220157666   -8.316977458231D-05   2.2685D-23                     
+H  Term_129  5.129734738   -8.312476628880D-05  -4.9672D-23                     
+H  Term_130  5.727098359   -8.277156181181D-05   2.4811D-23                     
+H  Term_131  2.060043036   -8.090516993029D-05  -6.2087D-24                     
+H  Term_132  6.160789143   -8.089447296823D-05  -1.3484D-23                     
+H  Term_133  3.978349943   -8.088377600616D-05  -2.0759D-23                     
+H  Term_134  2.787180908   -8.084946467471D-05  -8.5841D-23                     
+H  Term_135  0.604741708   -8.083876771265D-05  -9.3116D-23                     
+H  Term_136  3.935224766   -8.068467913093D-05  -2.1298D-23                     
+H  Term_137  2.657406657   -8.055196545331D-05   6.8274D-23                     
+H  Term_138  0.474967457   -8.054126849124D-05   6.0999D-23                     
+H  Term_139  4.575713564   -8.053057152918D-05   5.3724D-23                     
+H  Term_140  3.384544529   -8.049626019773D-05  -1.1358D-23                     
+H  Term_141  1.202105329   -8.048556323566D-05  -1.8633D-23                     
+H  Term_142  5.302851436   -8.047486627360D-05  -2.5909D-23                     
+H  Term_143  4.532588387   -8.033147465394D-05   5.3185D-23                     
+H  Term_144  1.158980152   -8.028646636042D-05  -1.9172D-23                     
+H  Term_145  3.981908150   -8.014305572074D-05   6.3125D-23                     
+H  Term_146  1.799468950   -8.013235875868D-05   5.5849D-23                     
+H  Term_147  1.635796113   -7.860847439208D-05  -5.6928D-23                     
+H  Term_148  5.736542220   -7.859777743001D-05  -6.4203D-23                     
+H  Term_149  2.276284911   -7.845436679033D-05   1.8093D-23                     
+H  Term_150  0.093845711   -7.844366982827D-05   1.0818D-23                     
+H  Term_151  3.003422783   -7.839866153475D-05  -6.1539D-23                     
+H  Term_152  0.314852827   -7.827666383922D-05   3.2105D-23                     
+H  Term_153  4.415598934   -7.826596687716D-05   2.4830D-23                     
+H  Term_154  2.233159734   -7.825526991509D-05   1.7555D-23                     
+H  Term_155  0.050720534   -7.824457295303D-05   1.0280D-23                     
+H  Term_156  5.142736806   -7.821026162158D-05  -5.4802D-23                     
+H  Term_157  2.960297606   -7.819956465951D-05  -6.2078D-23                     
+H  Term_158  0.777858406   -7.818886769745D-05  -6.9353D-23                     
+H  Term_159  3.600786404   -7.804545705777D-05   1.2944D-23                     
+H  Term_160  0.117386763   -7.802296242102D-05  -2.4836D-23                     
+H  Term_161  2.917172429   -7.800046778428D-05  -6.2616D-23                     
+H  Term_162  1.639354320   -7.786775410666D-05   2.6956D-23                     
+H  Term_163  5.740100427   -7.785705714459D-05   1.9681D-23                     
+H  Term_164  3.557661227   -7.784636018253D-05   1.2405D-23                     
+H  Term_165  1.375222027   -7.783566322047D-05   5.1301D-24                     
+H  Term_166  5.696975250   -7.765796026935D-05   1.9142D-23                     
+H  Term_167  3.514536050   -7.764726330729D-05   1.1867D-23                     
+H  Term_168  0.054278741   -7.750385266761D-05   9.4163D-23                     
+H  Term_169  4.155024848   -7.749315570555D-05   8.6888D-23                     
+H  Term_170  4.882162720   -7.743745044997D-05   7.2557D-24                     
+H  Term_171  6.173791211   -7.597996830101D-05  -1.8614D-23                     
+H  Term_172  3.991352011   -7.596927133894D-05  -2.5889D-23                     
+H  Term_173  1.808912811   -7.595857437688D-05  -3.3164D-23                     
+H  Term_174  1.258232574   -7.577015544368D-05  -2.3225D-23                     
+H  Term_175  5.358978681   -7.575945848162D-05  -3.0500D-23                     
+H  Term_176  2.670408725   -7.563746078609D-05   6.3144D-23                     
+H  Term_177  0.487969525   -7.562676382402D-05   5.5869D-23                     
+H  Term_178  4.588715632   -7.561606686196D-05   4.8594D-23                     
+H  Term_179  2.406276432   -7.560536989990D-05   4.1318D-23                     
+H  Term_180  3.397546597   -7.558175553051D-05  -1.6488D-23                     
+H  Term_181  1.215107397   -7.557105856844D-05  -2.3764D-23                     
+H  Term_182  5.315853504   -7.556036160638D-05  -3.1039D-23                     
+H  Term_183  3.133414304   -7.554966464432D-05  -3.8314D-23                     
+H  Term_184  5.956342302   -7.540625400463D-05   4.3983D-23                     
+H  Term_185  4.655381861   -7.539445632995D-05   1.3478D-23                     
+H  Term_186  2.472942661   -7.538375936789D-05   6.2026D-24                     
+H  Term_187  1.171982219   -7.537196169321D-05  -2.4302D-23                     
+H  Term_188  5.272728327   -7.536126473114D-05  -3.1577D-23                     
+H  Term_189  3.994910218   -7.522855105352D-05   5.7994D-23                     
+H  Term_190  1.812471018   -7.521785409146D-05   5.0719D-23                     
+H  Term_191  5.913217125   -7.520715712940D-05   4.3444D-23                     
+H  Term_192  3.730777925   -7.519646016733D-05   3.6169D-23                     
+H  Term_193  2.539608890   -7.516214883588D-05  -2.8913D-23                     
+H  Term_194  0.357169690   -7.515145187382D-05  -3.6188D-23                     
+H  Term_195  4.457915797   -7.514075491175D-05  -4.3464D-23                     
+H  Term_196  1.769345841   -7.501875721622D-05   5.0181D-23                     
+H  Term_197  5.870091948   -7.500806025416D-05   4.2905D-23                     
+H  Term_198  3.687652748   -7.499736329210D-05   3.5630D-23                     
+H  Term_199  5.979883354   -7.498554659739D-05   8.3283D-24                     
+H  Term_200  0.314044513   -7.495235499858D-05  -3.6727D-23                     
+H  Term_201  5.826966771   -7.480896337892D-05   4.2367D-23                     
+H  Term_202  0.954533311   -7.479824739683D-05   3.8294D-23                     
+H  Term_203  4.250719063   -7.371756507422D-05  -1.0484D-24                     
+H  Term_204  2.289286979   -7.353986212311D-05   1.2963D-23                     
+H  Term_205  0.106847779   -7.352916516105D-05   5.6882D-24                     
+H  Term_206  4.207593886   -7.351846819899D-05  -1.5870D-24                     
+H  Term_207  3.016424851   -7.348415686753D-05  -6.6669D-23                     
+H  Term_208  0.833985651   -7.347345990547D-05  -7.3944D-23                     
+H  Term_209  4.428601001   -7.335146220994D-05   1.9700D-23                     
+H  Term_210  2.246161801   -7.334076524787D-05   1.2425D-23                     
+H  Term_211  0.063722601   -7.333006828581D-05   5.1496D-24                     
+H  Term_212  4.164468709   -7.331937132375D-05  -2.1256D-24                     
+H  Term_213  1.982029509   -7.330867436169D-05  -9.4009D-24                     
+H  Term_214  5.155738873   -7.329575695436D-05  -5.9932D-23                     
+H  Term_215  2.973299673   -7.328505999229D-05  -6.7208D-23                     
+H  Term_216  0.790860473   -7.327436303023D-05  -7.4483D-23                     
+H  Term_217  4.891606581   -7.326366606817D-05  -8.1758D-23                     
+H  Term_218  4.826056636   -7.317024021321D-05   0.0000D+00                     
+H  Term_219  1.388224095   -7.316000000000D-05   0.0000D+00                     
+H  Term_220  5.796227672   -7.314164935261D-05   1.5089D-23                     
+H  Term_221  3.613788472   -7.313095239055D-05   7.8138D-24                     
+H  Term_222  1.431349272   -7.312025542848D-05   5.3862D-25                     
+H  Term_223  6.210573888   -7.310955138024D-05   0.0000D+00                     
+H  Term_224  1.408343007   -7.310016694212D-05   0.0000D+00                     
+H  Term_225  2.889297432   -7.309078250400D-05   0.0000D+00                     
+H  Term_226  4.370251858   -7.308139806589D-05   0.0000D+00                     
+H  Term_227  5.851206283   -7.307201362777D-05   0.0000D+00                     
+H  Term_228  1.048975402   -7.306262918965D-05   0.0000D+00                     
+H  Term_229  2.529929827   -7.305324475153D-05   0.0000D+00                     
+H  Term_230  4.010884253   -7.304386031342D-05   0.0000D+00                     
+H  Term_231  5.491838679   -7.303447587530D-05   0.0000D+00                     
+H  Term_232  0.689607797   -7.302509143718D-05   0.0000D+00                     
+H  Term_233  2.170562223   -7.301570699906D-05   0.0000D+00                     
+H  Term_234  3.651516648   -7.300632256095D-05   0.0000D+00                     
+H  Term_235  5.132471074   -7.299693812283D-05   0.0000D+00                     
+H  Term_236  2.843525423   -7.298756077089D-05   8.6908D-23                     
+H  Term_237  0.661086223   -7.297686380883D-05   7.9632D-23                     
+H  Term_238  4.761832330   -7.296616684676D-05   7.2357D-23                     
+H  Term_239  1.652356387   -7.295324943944D-05   2.1826D-23                     
+H  Term_240  5.753102495   -7.294255247737D-05   1.4550D-23                     
+H  Term_241  3.570663295   -7.293185551531D-05   7.2752D-24                     
+H  Term_242  1.388224095   -7.292115855325D-05   0.0000D+00                     
+H  Term_243  1.388224095   -7.292115855325D-05   0.0000D+00                     
+H  Term_244  5.488970202   -7.291046159118D-05  -7.2752D-24                     
+H  Term_245  3.306531002   -7.289976462912D-05  -1.4550D-23                     
+H  Term_246  2.587317089   -7.288757331455D-05   0.0000D+00                     
+H  Term_247  4.297801167   -7.287615025973D-05  -7.2357D-23                     
+H  Term_248  2.115361967   -7.286545329767D-05  -7.9632D-23                     
+H  Term_249  6.216108074   -7.285475633560D-05  -8.6908D-23                     
+H  Term_250  4.126582386   -7.284405228736D-05   0.0000D+00                     
+H  Term_251  5.590276072   -7.283477722624D-05   0.0000D+00                     
+H  Term_252  0.770784450   -7.282550216512D-05   0.0000D+00                     
+H  Term_253  2.234478136   -7.281622710399D-05   0.0000D+00                     
+H  Term_254  3.698171822   -7.280695204287D-05   0.0000D+00                     
+H  Term_255  5.161865507   -7.279767698175D-05   0.0000D+00                     
+H  Term_256  0.342373886   -7.278840192062D-05   0.0000D+00                     
+H  Term_257  1.806067572   -7.277912685950D-05   0.0000D+00                     
+H  Term_258  3.269761257   -7.276985179838D-05   0.0000D+00                     
+H  Term_259  4.733454943   -7.276057673726D-05   0.0000D+00                     
+H  Term_260  6.197148629   -7.275130167613D-05   0.0000D+00                     
+H  Term_261  1.377657007   -7.274202661501D-05   0.0000D+00                     
+H  Term_262  3.527538117   -7.273275864007D-05   6.7366D-24                     
+H  Term_263  1.345098917   -7.272206167801D-05  -5.3862D-25                     
+H  Term_264  2.755850765   -7.271134569592D-05  -4.6109D-24                     
+H  Term_265  0.573411565   -7.270064873386D-05  -1.1886D-23                     
+H  Term_266  5.555636431   -7.268885105917D-05  -4.2391D-23                     
+H  Term_267  4.233576861   -7.267207689328D-05   0.0000D+00                     
+H  Term_268  3.472488340   -7.264748661346D-05   0.0000D+00                     
+H  Term_269  0.067280809   -7.258934800039D-05   8.9033D-23                     
+H  Term_270  4.168026916   -7.257865103833D-05   8.1758D-23                     
+H  Term_271  1.985587716   -7.256795407626D-05   7.4483D-23                     
+H  Term_272  6.086333823   -7.255725711420D-05   6.7208D-23                     
+H  Term_273  0.794418681   -7.253364274481D-05   9.4009D-24                     
+H  Term_274  4.895164788   -7.252294578275D-05   2.1256D-24                     
+H  Term_275  2.712725588   -7.251224882068D-05  -5.1496D-24                     
+H  Term_276  0.530286388   -7.250155185862D-05  -1.2425D-23                     
+H  Term_277  4.631032495   -7.249085489656D-05  -1.9700D-23                     
+H  Term_278  5.987047175   -7.247296278279D-05   0.0000D+00                     
+H  Term_279  0.034655798   -7.239840495350D-05   0.0000D+00                     
+H  Term_280  1.942462539   -7.236885720103D-05   7.3944D-23                     
+H  Term_281  5.449542043   -7.235741691168D-05   0.0000D+00                     
+H  Term_282  6.049088540   -7.234063201794D-05   0.0000D+00                     
+H  Term_283  4.852039611   -7.232384890751D-05   1.5870D-24                     
+H  Term_284  2.669600411   -7.231315194544D-05  -5.6882D-24                     
+H  Term_285  0.487161211   -7.230245498338D-05  -1.2963D-23                     
+H  Term_286  1.457332181   -7.227386412351D-05   0.0000D+00                     
+H  Term_287  0.919827049   -7.215831825240D-05   0.0000D+00                     
+H  Term_288  4.808914433   -7.212475203227D-05   1.0484D-24                     
+H  Term_289  4.765789256   -7.192565515703D-05   5.0980D-25                     
+H  Term_290  3.232666726   -7.103335372757D-05  -4.2367D-23                     
+H  Term_291  5.371980749   -7.084495381440D-05  -3.5630D-23                     
+H  Term_292  3.189541549   -7.083425685234D-05  -4.2905D-23                     
+H  Term_293  1.007102349   -7.082355989027D-05  -5.0181D-23                     
+H  Term_294  4.601717699   -7.070156219474D-05   4.3464D-23                     
+H  Term_295  2.419278499   -7.069086523268D-05   3.6188D-23                     
+H  Term_296  1.228109464   -7.065655390122D-05  -2.8894D-23                     
+H  Term_297  5.328855571   -7.064585693916D-05  -3.6169D-23                     
+H  Term_298  3.146416371   -7.063515997710D-05  -4.3444D-23                     
+H  Term_299  0.963977171   -7.062446301503D-05  -5.0719D-23                     
+H  Term_300  5.969344370   -7.049174933741D-05   3.8853D-23                     
+H  Term_301  3.786905170   -7.048105237535D-05   3.1577D-23                     
+H  Term_302  2.485944728   -7.046925470067D-05   1.0726D-24                     
+H  Term_303  0.303505528   -7.045855773861D-05  -6.2026D-24                     
+H  Term_304  5.285730394   -7.044676006392D-05  -3.6707D-23                     
+H  Term_305  3.103291194   -7.043606310186D-05  -4.3983D-23                     
+H  Term_306  1.825473085   -7.030334942424D-05   4.5589D-23                     
+H  Term_307  5.926219193   -7.029265246218D-05   3.8314D-23                     
+H  Term_308  3.743779993   -7.028195550011D-05   3.1039D-23                     
+H  Term_309  1.561340793   -7.027125853805D-05   2.3764D-23                     
+H  Term_310  0.260380351   -7.025946086337D-05  -6.7413D-24                     
+H  Term_311  0.370171757   -7.023694720660D-05  -4.1318D-23                     
+H  Term_312  4.470917865   -7.022625024453D-05  -4.8594D-23                     
+H  Term_313  2.288478665   -7.021555328247D-05  -5.5869D-23                     
+H  Term_314  5.883094015   -7.009355558694D-05   3.7775D-23                     
+H  Term_315  3.700654815   -7.008285862488D-05   3.0500D-23                     
+H  Term_316  3.810446222   -7.006034496810D-05  -4.0770D-24                     
+H  Term_317  1.628007022   -7.004964800604D-05  -1.1352D-23                     
+H  Term_318  0.327046580   -7.003785033136D-05  -4.1857D-23                     
+H  Term_319  4.427792687   -7.002715336930D-05  -4.9132D-23                     
+H  Term_320  0.967535379   -6.988374272961D-05   3.3164D-23                     
+H  Term_321  5.068281486   -6.987304576755D-05   2.5889D-23                     
+H  Term_322  2.885842286   -6.986234880549D-05   1.8614D-23                     
+H  Term_323  0.924410201   -6.968464585437D-05   3.2626D-23                     
+H  Term_324  5.025156309   -6.967394889231D-05   2.5351D-23                     
+H  Term_325  5.588222624   -6.839415067444D-05  -1.1328D-23                     
+H  Term_326  0.803862541   -6.835985836301D-05  -7.9613D-23                     
+H  Term_327  4.904608648   -6.834916140095D-05  -8.6888D-23                     
+H  Term_328  1.444351339   -6.820575076127D-05  -4.5915D-24                     
+H  Term_329  5.545097447   -6.819505379920D-05  -1.1867D-23                     
+H  Term_330  3.583665362   -6.801735084809D-05   2.1451D-24                     
+H  Term_331  1.401226162   -6.800665388603D-05  -5.1301D-24                     
+H  Term_332  5.501972269   -6.799595692396D-05  -1.2405D-23                     
+H  Term_333  3.319533069   -6.798525996190D-05  -1.9681D-23                     
+H  Term_334  2.128364034   -6.795094863045D-05  -8.4762D-23                     
+H  Term_335  6.229110141   -6.794025166838D-05  -9.2038D-23                     
+H  Term_336  6.142461068   -6.784184932222D-05   6.2616D-23                     
+H  Term_337  2.659061426   -6.781935468547D-05   2.4836D-23                     
+H  Term_338  1.358100985   -6.780755701079D-05  -5.6687D-24                     
+H  Term_339  2.768852833   -6.779684102870D-05  -9.7410D-24                     
+H  Term_340  0.586413633   -6.778614406664D-05  -1.7016D-23                     
+H  Term_341  1.998589783   -6.765344940904D-05   6.9353D-23                     
+H  Term_342  6.099335891   -6.764275244698D-05   6.2078D-23                     
+H  Term_343  3.916896691   -6.763205548492D-05   5.4802D-23                     
+H  Term_344  2.725727655   -6.759774415346D-05  -1.0280D-23                     
+H  Term_345  0.543288455   -6.758704719140D-05  -1.7555D-23                     
+H  Term_346  4.644034563   -6.757635022934D-05  -2.4830D-23                     
+H  Term_347  2.461595363   -6.756565326727D-05  -3.2105D-23                     
+H  Term_348  6.056210713   -6.744365557174D-05   6.1539D-23                     
+H  Term_349  6.166002120   -6.742114191497D-05   2.6962D-23                     
+H  Term_350  2.682602478   -6.739864727823D-05  -1.0818D-23                     
+H  Term_351  0.500163278   -6.738795031616D-05  -1.8093D-23                     
+H  Term_352  3.323091277   -6.724453967648D-05   6.4203D-23                     
+H  Term_353  1.140652077   -6.723384271442D-05   5.6928D-23                     
+H  Term_354  1.867789949   -6.717813745884D-05  -2.2704D-23                     
+H  Term_355  5.968536056   -6.716744049677D-05  -2.9980D-23                     
+H  Term_356  3.279966099   -6.704544280124D-05   6.3665D-23                     
+H  Term_357  3.159418439   -6.572065530988D-05  -4.8574D-23                     
+H  Term_358  0.976979239   -6.570995834782D-05  -5.5849D-23                     
+H  Term_359  1.617468037   -6.555585074607D-05   1.9172D-23                     
+H  Term_360  4.527045109   -6.551084245255D-05  -5.3185D-23                     
+H  Term_361  2.344605909   -6.550014549049D-05  -6.0460D-23                     
+H  Term_362  3.756782060   -6.536745083289D-05   2.5909D-23                     
+H  Term_363  1.574342860   -6.535675387083D-05   1.8633D-23                     
+H  Term_364  4.483919932   -6.531174557731D-05  -5.3724D-23                     
+H  Term_365  2.301480732   -6.530104861525D-05  -6.0999D-23                     
+H  Term_366  0.119041532   -6.529035165319D-05  -6.8274D-23                     
+H  Term_367  5.124408731   -6.515763797557D-05   2.1298D-23                     
+H  Term_368  2.941969531   -6.514694101350D-05   1.4023D-23                     
+H  Term_369  1.641009089   -6.513514333882D-05  -1.6482D-23                     
+H  Term_370  5.741755196   -6.512444637676D-05  -2.3758D-23                     
+H  Term_371  4.440794755   -6.511264870208D-05  -5.4262D-23                     
+H  Term_372  2.171706481   -6.500354939385D-05   9.3116D-23                     
+H  Term_373  1.388224095   -6.499000000000D-05   0.0000D+00                     
+H  Term_374  5.081283553   -6.495854110033D-05   2.0759D-23                     
+H  Term_375  2.898844353   -6.494784413827D-05   1.3484D-23                     
+H  Term_376  0.716405153   -6.493714717620D-05   6.2087D-24                     
+H  Term_377  3.625982225   -6.489213888269D-05  -6.6148D-23                     
+H  Term_378  1.443543025   -6.488144192062D-05  -7.3424D-23                     
+H  Term_379  5.038158376   -6.475944422509D-05   2.0220D-23                     
+H  Term_380  2.855719176   -6.474874726303D-05   1.2945D-23                     
+H  Term_381  5.678647175   -6.460533662335D-05   9.5242D-23                     
+H  Term_382  3.496207975   -6.459463966128D-05   8.7967D-23                     
+H  Term_383  4.223345847   -6.453893440570D-05   8.3343D-24                     
+H  Term_384  1.388224095   -6.436000000000D-05   0.0000D+00                     
+H  Term_385  0.002052079   -6.322484387640D-05  -9.6629D-23                     
+H  Term_386  5.514974337   -6.308145225675D-05  -1.7535D-23                     
+H  Term_387  3.332535137   -6.307075529468D-05  -2.4811D-23                     
+H  Term_388  6.242112209   -6.302574700116D-05  -9.7168D-23                     
+H  Term_389  4.059673009   -6.301505003910D-05  -1.0444D-22                     
+H  Term_390  0.599415700   -6.287163939942D-05  -2.2146D-23                     
+H  Term_391  4.700161807   -6.286094243736D-05  -2.9422D-23                     
+H  Term_392  6.112337958   -6.272824777976D-05   5.6947D-23                     
+H  Term_393  3.929898758   -6.271755081770D-05   4.9672D-23                     
+H  Term_394  0.556290523   -6.267254252418D-05  -2.2685D-23                     
+H  Term_395  4.657036630   -6.266184556212D-05  -2.9960D-23                     
+H  Term_396  2.474597430   -6.265114860005D-05  -3.7235D-23                     
+H  Term_397  1.196779321   -6.251843492243D-05   5.2336D-23                     
+H  Term_398  3.996564987   -6.249594028569D-05   1.4556D-23                     
+H  Term_399  0.513165346   -6.247344564894D-05  -2.3224D-23                     
+H  Term_400  1.153654144   -6.231933804720D-05   5.1798D-23                     
+H  Term_401  5.254400251   -6.230864108513D-05   4.4523D-23                     
+H  Term_402  3.071961051   -6.229794412307D-05   3.7247D-23                     
+H  Term_403  5.981538123   -6.225293582955D-05  -3.5110D-23                     
+H  Term_404  1.110528967   -6.212024117196D-05   5.1259D-23                     
+H  Term_405  1.751017765   -6.196613357021D-05   1.2628D-22                     
+H  Term_406  2.357607977   -6.058564082327D-05  -6.5590D-23                     
+H  Term_407  2.314482800   -6.038654394803D-05  -6.6129D-23                     
+H  Term_408  0.132043600   -6.037584698597D-05  -7.3404D-23                     
+H  Term_409  2.954971598   -6.023243634629D-05   8.8924D-24                     
+H  Term_410  0.772532398   -6.022173938422D-05   1.6172D-24                     
+H  Term_411  2.911846421   -6.003333947105D-05   8.3538D-24                     
+H  Term_412  0.729407221   -6.002264250898D-05   1.0786D-24                     
+H  Term_413  2.868721244   -5.983424259581D-05   7.8152D-24                     
+H  Term_414  3.509210042   -5.968013499406D-05   8.2837D-23                     
+H  Term_415  1.326770842   -5.966943803200D-05   7.5561D-23                     
+H  Term_416  1.388224095   -5.849692700000D-05   0.0000D+00                     
+H  Term_417  1.388224095   -5.842692700000D-05   0.0000D+00                     
+H  Term_418  1.388224095   -5.839692700000D-05   0.0000D+00                     
+H  Term_419  1.388224095   -5.835692700000D-05   0.0000D+00                     
+H  Term_420  1.388224095   -5.832692700000D-05   0.0000D+00                     
+H  Term_421  1.388224095   -5.830692700000D-05   0.0000D+00                     
+H  Term_422  1.388224095   -5.829692700000D-05   0.0000D+00                     
+H  Term_423  1.388224095   -5.796764900000D-05   0.0000D+00                     
+H  Term_424  4.670038698   -5.774734089490D-05  -3.5090D-23                     
+H  Term_425  2.487599498   -5.773664393284D-05  -4.2365D-23                     
+H  Term_426  5.267402319   -5.739413641791D-05   3.9393D-23                     
+H  Term_427  3.084963119   -5.738343945585D-05   3.2117D-23                     
+H  Term_428  5.864765940   -5.704093194093D-05   1.1388D-22                     
+H  Term_429  0.742409289   -5.510813784177D-05  -4.0515D-24                     
+H  Term_430  1.388224095   -5.487086900000D-05   0.0000D+00                     
+H  Term_431  1.388224095   -5.486086900000D-05   0.0000D+00                     
+H  Term_432  1.388224095   -5.485086900000D-05   0.0000D+00                     
+H  Term_433  1.339772910   -5.475493336478D-05   7.0431D-23                     
+H  Term_434  1.388224095   -5.468086900000D-05   0.0000D+00                     
+H  Term_435  1.388224095   -5.461086900000D-05   0.0000D+00                     
+H  Term_436  1.388224095   -5.453086900000D-05   0.0000D+00                     
+H  Term_437  1.388224095   -5.449086900000D-05   0.0000D+00                     
+H  Term_438  1.388224095   -5.446086900000D-05   0.0000D+00                     
+H  Term_439  1.388224095    5.457086900000D-05   0.0000D+00                     
+H  Term_440  1.388224095    5.487086900000D-05   0.0000D+00                     
+H  Term_441  1.388224095    5.795764900000D-05   0.0000D+00                     
+H  Term_442  1.388224095    5.801764900000D-05   0.0000D+00                     
+H  Term_443  1.388224095    5.821692700000D-05   0.0000D+00                     
+H  Term_444  1.388224095    5.822692700000D-05   0.0000D+00                     
+H  Term_445  1.388224095    5.823692700000D-05   0.0000D+00                     
+H  Term_446  1.388224095    5.825692700000D-05   0.0000D+00                     
+H  Term_447  1.388224095    5.826692700000D-05   0.0000D+00                     
+H  Term_448  1.388224095    5.827692700000D-05   0.0000D+00                     
+H  Term_449  1.388224095    5.829692700000D-05   0.0000D+00                     
+H  Term_450  1.388224095    5.830692700000D-05   0.0000D+00                     
+H  Term_451  1.388224095    5.833692700000D-05   0.0000D+00                     
+H  Term_452  1.388224095    5.834692700000D-05   0.0000D+00                     
+H  Term_453  1.388224095    5.835692700000D-05   0.0000D+00                     
+H  Term_454  1.388224095    5.836692700000D-05   0.0000D+00                     
+H  Term_455  1.388224095    5.837692700000D-05   0.0000D+00                     
+H  Term_456  1.388224095    5.838692700000D-05   0.0000D+00                     
+H  Term_457  1.388224095    5.839692700000D-05   0.0000D+00                     
+H  Term_458  1.388224095    5.840692700000D-05   0.0000D+00                     
+H  Term_459  1.388224095    5.849692700000D-05   0.0000D+00                     
+H  Term_460  1.388224095    5.855692700000D-05   0.0000D+00                     
+H  Term_461  0.047276787    6.003333947172D-05   0.0000D+00                     
+H  Term_462  1.805469095    6.231933804749D-05   0.0000D+00                     
+H  Term_463  2.402832095    6.267254252446D-05   0.0000D+00                     
+H  Term_464  0.060278787    6.494784413786D-05   0.0000D+00                     
+H  Term_465  4.161024095    6.495854110023D-05   0.0000D+00                     
+H  Term_466  4.758388095    6.531174557720D-05   0.0000D+00                     
+H  Term_467  2.415834095    6.758704719061D-05   0.0000D+00                     
+H  Term_468  3.557457651    6.759774411974D-05   1.0280D-23                     
+H  Term_469  0.598742787    6.799595692287D-05   0.0000D+00                     
+H  Term_470  5.133180095    6.988374272874D-05   0.0000D+00                     
+H  Term_471  5.730543095    7.023694720571D-05   0.0000D+00                     
+H  Term_472  5.614535095    7.025945135218D-05   0.0000D+00                     
+H  Term_473  2.356935095    7.028195549864D-05   0.0000D+00                     
+H  Term_474  0.174495787    7.029265246100D-05   0.0000D+00                     
+H  Term_475  2.954299095    7.063515997561D-05   0.0000D+00                     
+H  Term_476  1.388224095    7.229000000000D-05   0.0000D+00                     
+H  Term_477  4.390268095    7.232384890619D-05   0.0000D+00                     
+H  Term_478  1.388020518    7.252294574902D-05  -2.1256D-24                     
+H  Term_479  4.755616095    7.272206167609D-05   0.0000D+00                     
+H  Term_480  3.753337095    7.291046158901D-05   0.0000D+00                     
+H  Term_481  4.894961211    7.292115851952D-05   0.0000D+00                     
+H  Term_482  2.530051095    7.293185551375D-05   0.0000D+00                     
+H  Term_483  4.669365095    7.312025542667D-05   0.0000D+00                     
+H  Term_484  1.936246095    7.331937132128D-05   0.0000D+00                     
+H  Term_485  0.187497787    7.520715712715D-05   0.0000D+00                     
+H  Term_486  0.784860787    7.556036160412D-05   0.0000D+00                     
+H  Term_487  4.885607095    7.557105856649D-05   0.0000D+00                     
+H  Term_488  2.543053095    7.784636017989D-05   0.0000D+00                     
+H  Term_489  6.049994095    7.824457294979D-05   0.0000D+00                     
+H  Term_490  3.867555095    7.825526991216D-05   0.0000D+00                     
+H  Term_491  2.122364095    8.088377600253D-05   0.0000D+00                     
+H  Term_492  1.388224095    8.709647400000D-05   0.0000D+00                     
+H  Term_493  1.388224095    8.712647400000D-05   0.0000D+00                     
+H  Term_494  1.388224095    8.735539000000D-05   0.0000D+00                     
+H  Term_495  1.388224095    8.748539000000D-05   0.0000D+00                     
+H  Term_496  1.388224095    8.749539000000D-05   0.0000D+00                     
+H  Term_497  1.388224095    8.750539000000D-05   0.0000D+00                     
+H  Term_498  1.388224095    8.751539000000D-05   0.0000D+00                     
+H  Term_499  1.388224095    8.752539000000D-05   0.0000D+00                     
+H  Term_500  1.388224095    9.073257700000D-05   0.0000D+00                     
+H  Term_501  1.388224095    9.074257700000D-05   0.0000D+00                     
+H  Term_502  1.388224095    9.077257700000D-05   0.0000D+00                     
+H  Term_503  1.388224095    9.079257700000D-05   0.0000D+00                     
+H  Term_504  1.388224095    9.100257700000D-05   0.0000D+00                     
+H  Term_505  1.388224095    9.113257700000D-05   0.0000D+00                     
+H  Term_506  1.388224095    1.017608900000D-04   0.0000D+00                     
+H  Term_507  1.388224095    1.018596200000D-04   0.0000D+00                     
+H  Term_508  1.388224095    1.018696200000D-04   0.0000D+00                     
+H  Term_509  1.388224095    1.019496200000D-04   0.0000D+00                     
+H  Term_510  1.388224095    1.019596200000D-04   0.0000D+00                     
+H  Term_511  1.388224095    1.019796200000D-04   0.0000D+00                     
+H  Term_512  1.388224095    1.019896200000D-04   0.0000D+00                     
+H  Term_513  1.388224095    1.019996200000D-04   0.0000D+00                     
+H  Term_514  1.388224095    1.020096200000D-04   0.0000D+00                     
+H  Term_515  1.388224095    1.020296200000D-04   0.0000D+00                     
+H  Term_516  1.388224095    1.021896200000D-04   0.0000D+00                     
+H  Term_517  1.388224095    1.022296200000D-04   0.0000D+00                     
+H  Term_518  1.388224095    1.022396200000D-04   0.0000D+00                     
+H  Term_519  1.388224095    1.022496200000D-04   0.0000D+00                     
+H  Term_520  1.388224095    1.022696200000D-04   0.0000D+00                     
+H  Term_521  3.371543095    1.329544980231D-04   0.0000D+00                     
+H  Term_522  5.129735095    1.352404965989D-04   0.0000D+00                     
+H  Term_523  5.727099095    1.355937010758D-04   0.0000D+00                     
+H  Term_524  1.318113787    1.378571955051D-04   0.0000D+00                     
+H  Term_525  0.242952787    1.378690026892D-04   0.0000D+00                     
+H  Term_526  1.202105787    1.378796996516D-04   0.0000D+00                     
+H  Term_527  1.799469095    1.382329041286D-04   0.0000D+00                     
+H  Term_528  1.388224095    1.399700000000D-04   0.0000D+00                     
+H  Term_529  6.101890095    1.401656982274D-04   0.0000D+00                     
+H  Term_530  0.459193787    1.403198058291D-04   0.0000D+00                     
+H  Term_531  2.598508095    1.405082057420D-04   0.0000D+00                     
+H  Term_532  3.557661095    1.405189027044D-04   0.0000D+00                     
+H  Term_533  3.514536095    1.407179995796D-04   0.0000D+00                     
+H  Term_534  2.174261095    1.428049012801D-04   0.0000D+00                     
+H  Term_535  2.771625095    1.431581057571D-04   0.0000D+00                     
+H  Term_536  5.797209095    1.431806099036D-04   0.0000D+00                     
+H  Term_537  2.539609095    1.432031140500D-04   0.0000D+00                     
+H  Term_538  0.357169787    1.432138110124D-04   0.0000D+00                     
+H  Term_539  1.431349095    1.452450074576D-04   0.0000D+00                     
+H  Term_540  1.388224095    1.452541200000D-04   0.0000D+00                     
+H  Term_541  1.388224095    1.452841200000D-04   0.0000D+00                     
+H  Term_542  1.388223787    1.454441043329D-04   0.0000D+00                     
+H  Term_543  4.486691095    1.456432012082D-04   0.0000D+00                     
+H  Term_544  1.388224095    1.456623200000D-04   0.0000D+00                     
+H  Term_545  1.388224095    1.456723200000D-04   0.0000D+00                     
+H  Term_546  1.388224095    1.457323200000D-04   0.0000D+00                     
+H  Term_547  4.895165095    1.458423171028D-04   0.0000D+00                     
+H  Term_548  2.712725095    1.458530140651D-04   0.0000D+00                     
+H  Term_549  0.530286787    1.458637110275D-04   0.0000D+00                     
+H  Term_550  1.388224095    1.459023200000D-04   0.0000D+00                     
+H  Term_551  1.388224095    1.459423200000D-04   0.0000D+00                     
+H  Term_552  1.388224095    1.459623200000D-04   0.0000D+00                     
+H  Term_553  1.388224095    1.459723200000D-04   0.0000D+00                     
+H  Term_554  1.388224095    1.459823200000D-04   0.0000D+00                     
+H  Term_555  1.388224095    1.459923200000D-04   0.0000D+00                     
+H  Term_556  1.388224095    1.461723200000D-04   0.0000D+00                     
+H  Term_557  0.967534787    1.484815201555D-04   0.0000D+00                     
+H  Term_558  5.068281095    1.484922171179D-04   0.0000D+00                     
+H  Term_559  1.388224095    1.586200000000D-04   0.0000D+00                     
+H  Term_560  2.286824095    2.081391510038D-04   0.0000D+00                     
+H  Term_561  4.642380095    2.107783540565D-04   0.0000D+00                     
+H  Term_562  1.388224095    2.181361900000D-04   0.0000D+00                     
+H  Term_563  1.388224095    2.182461900000D-04   0.0000D+00                     
+H  Term_564  1.388224095    2.182761900000D-04   0.0000D+00                     
+H  Term_565  1.388224095    2.185834800000D-04   0.0000D+00                     
+H  Term_566  1.388224095    2.186134800000D-04   0.0000D+00                     
+H  Term_567  1.388224095    2.187034800000D-04   0.0000D+00                     
+H  Term_568  1.388224095    2.187134800000D-04   0.0000D+00                     
+H  Term_569  1.388224095    2.187334800000D-04   0.0000D+00                     
+H  Term_570  1.388224095    2.187434800000D-04   0.0000D+00                     
+H  Term_571  1.388224095    2.187534800000D-04   0.0000D+00                     
+H  Term_572  1.388224095    2.187634800000D-04   0.0000D+00                     
+H  Term_573  1.388224095    2.188534800000D-04   0.0000D+00                     
+H  Term_574  1.388224095    2.189034800000D-04   0.0000D+00                     
+H  Term_575  1.388224095    2.190534800000D-04   0.0000D+00                     
+H  Term_576  1.388224095    2.192334800000D-04   0.0000D+00                     
+H  Term_577  1.388224095    2.913246300000D-04   0.0000D+00                     
+H  Term_578  1.388224095    2.916246300000D-04   0.0000D+00                     
+H  Term_579  1.388224095    2.916346300000D-04   0.0000D+00                     
+H  Term_580  1.388224095    2.916646300000D-04   0.0000D+00                     
+H  Term_581  1.388224095    2.918146300000D-04   0.0000D+00                     
+H  Term_582  1.388224095    2.923946300000D-04   0.0000D+00                     
+H  Term_583  1.388224095    3.641357900000D-04   0.0000D+00                     
+H  Term_584  1.388224095    3.644257900000D-04   0.0000D+00                     
+H  Term_585  1.388224095    3.645357900000D-04   0.0000D+00                     
+H  Term_586  1.388224095    3.645657900000D-04   0.0000D+00                     
+H  Term_587  1.388224095    3.646057900000D-04   0.0000D+00                     
+H  Term_588  1.388224095    3.646357900000D-04   0.0000D+00                     
+H  Term_589  1.388224095    3.649957900000D-04   0.0000D+00                     
+#
+# Amplitudes of harmonic variations in the Earth rotation
+# 
+# Harmonic        PM_cos       PM_sin        E3_cos        E3_sin
+#                   prad         prad          prad          prad
+#
+A  Term_001           -8.          16.            6.           5.               
+A  Term_002          -16.          14.            8.          -6.               
+A  Term_003           -4.           4.          -10.         -13.               
+A  Term_004            3.           7.           -4.           9.               
+A  Term_005           16.           1.            2.           5.               
+A  Term_006          -15.           2.            0.           0.               
+A  Term_007           13.          13.           -8.           8.               
+A  Term_008          -15.          -7.            0.           7.               
+A  Term_009          -14.         -20.            7.          11.               
+A  Term_010           -7.           4.           11.         -14.               
+A  Term_011           -5.         -15.            9.           0.               
+A  Term_012           13.          -5.            1.           6.               
+A  Term_013            7.          -9.          -16.           0.               
+A  Term_014            0.           3.          -19.           0.               
+A  Term_015            2.          20.           -5.          -3.               
+A  Term_016           -2.           6.          -18.         -10.               
+A  Term_017            4.         -20.            5.           4.               
+A  Term_018           -2.           3.            8.           2.               
+A  Term_019           -2.          18.            3.           1.               
+A  Term_020            7.          12.           -2.           4.               
+A  Term_021            8.          19.           -9.           1.               
+A  Term_022           20.          -5.            3.          15.               
+A  Term_023          -14.          -1.            3.         -22.               
+A  Term_024           -5.          -4.            6.         -26.               
+A  Term_025            4.           0.           -9.          -2.               
+A  Term_026           18.           9.          -13.           2.               
+A  Term_027           11.         -21.           33.           9.               
+A  Term_028           -6.         -32.           26.           3.               
+A  Term_029          -18.          -4.           15.          15.               
+A  Term_030           19.           4.          -14.           3.               
+A  Term_031          -11.          29.            0.          -2.               
+A  Term_032          -18.          10.            2.          -6.               
+A  Term_033           -5.          10.           -5.         -15.               
+A  Term_034            4.           4.            2.         -12.               
+A  Term_035          -15.          11.           -9.          -7.               
+A  Term_036          -12.          20.           -8.          -4.               
+A  Term_037            1.          22.            2.          -1.               
+A  Term_038           16.           5.            3.          15.               
+A  Term_039           15.         -18.            3.          -1.               
+A  Term_040           24.          17.           -6.           8.               
+A  Term_041           11.           9.           -6.          -1.               
+A  Term_042           -9.          -5.            6.          -7.               
+A  Term_043           18.           9.            4.          11.               
+A  Term_044          -11.         -17.            9.          -3.               
+A  Term_045          -12.          22.            6.          -1.               
+A  Term_046           -2.           0.           17.           0.               
+A  Term_047           22.          -9.           -3.          10.               
+A  Term_048           -2.         -15.            5.         -15.               
+A  Term_049          -30.           6.           -6.          -9.               
+A  Term_050            2.          14.          -11.          -4.               
+A  Term_051           -6.          17.           -2.         -28.               
+A  Term_052           -6.          31.          -16.          -8.               
+A  Term_053          -12.          28.           49.         -27.               
+A  Term_054          131.          51.          177.         -29.               
+A  Term_055          -28.          40.          -42.         -37.               
+A  Term_056            8.           2.           20.          43.               
+A  Term_057            9.           3.           -3.         -11.               
+A  Term_058           -6.         -22.           -1.         -12.               
+A  Term_059           -3.         -28.           13.          15.               
+A  Term_060            5.         -10.           10.           6.               
+A  Term_061           -4.         -20.           18.           7.               
+A  Term_062           26.          10.          -12.           8.               
+A  Term_063            9.         -12.          -12.          18.               
+A  Term_064           17.          -4.            6.          -3.               
+A  Term_065          408.         416.          540.         -38.               
+A  Term_066          -15.           2.           20.          -5.               
+A  Term_067           18.         -13.            7.           7.               
+A  Term_068           16.           1.           -8.           8.               
+A  Term_069           14.          -6.          -10.          10.               
+A  Term_070           11.          14.           28.         -18.               
+A  Term_071           -7.           7.           12.          -2.               
+A  Term_072            7.           7.           -7.          12.               
+A  Term_073           10.           7.           -1.          -2.               
+A  Term_074            4.          25.           23.          21.               
+A  Term_075          -14.          -1.            8.           9.               
+A  Term_076          -15.          11.           -1.          -9.               
+A  Term_077          284.        1132.         1193.         485.               
+A  Term_078          -13.          47.           54.          17.               
+A  Term_079          -12.          -4.          -17.         -14.               
+A  Term_080            1.          21.           -9.           9.               
+A  Term_081           -1.           7.           14.          -2.               
+A  Term_082            5.          61.           36.           3.               
+A  Term_083           49.         189.          253.          95.               
+A  Term_084           -3.           1.            7.          12.               
+A  Term_085          -16.          -1.           -3.          10.               
+A  Term_086           -9.          -9.          -18.           4.               
+A  Term_087            4.          36.           60.          43.               
+A  Term_088           22.          47.           58.          13.               
+A  Term_089            2.          18.            4.          13.               
+A  Term_090            2.         -11.           -6.         -17.               
+A  Term_091          -10.          26.           -7.           0.               
+A  Term_092           11.          22.           -9.          14.               
+A  Term_093          -13.          13.           -6.           1.               
+A  Term_094           -6.         -25.           10.          15.               
+A  Term_095           15.          20.            1.          -6.               
+A  Term_096           -4.          19.           -4.          -1.               
+A  Term_097           23.          13.           -9.         -11.               
+A  Term_098           12.         -18.            8.          22.               
+A  Term_099           21.          -6.           -8.          17.               
+A  Term_100          -15.         -10.           16.          -7.               
+A  Term_101           -7.           1.          -11.          -5.               
+A  Term_102           -9.          16.          -15.          16.               
+A  Term_103          -17.          -5.            5.          19.               
+A  Term_104            8.          22.          -11.          13.               
+A  Term_105           24.          -3.            7.          14.               
+A  Term_106            4.          17.            3.           1.               
+A  Term_107          -11.         -23.           13.         -14.               
+A  Term_108           24.          19.           -8.           2.               
+A  Term_109            8.           8.            4.          18.               
+A  Term_110           16.          -7.           -4.          13.               
+A  Term_111            7.          36.          -11.           8.               
+A  Term_112           -5.          -5.           14.           0.               
+A  Term_113           16.         -20.           -3.          12.               
+A  Term_114           26.         -28.            5.          16.               
+A  Term_115          -17.           0.            5.          -8.               
+A  Term_116           17.          -3.           -1.           6.               
+A  Term_117          -18.          -1.            2.          -6.               
+A  Term_118          -23.         -20.           17.           8.               
+A  Term_119          -25.          -1.            1.         -19.               
+A  Term_120           15.         -21.           -2.          -3.               
+A  Term_121           -3.          14.            0.           0.               
+A  Term_122           24.         -22.            0.           0.               
+A  Term_123           -9.         -13.            0.           0.               
+A  Term_124          -28.          27.            0.           0.               
+A  Term_125            2.          15.            0.           0.               
+A  Term_126          -18.          17.            0.           0.               
+A  Term_127            8.          -9.            0.           0.               
+A  Term_128          -19.         -21.            0.           0.               
+A  Term_129           -7.          -6.            0.           0.               
+A  Term_130          -14.          14.            0.           0.               
+A  Term_131            0.           0.            0.           0.               
+A  Term_132           -4.           2.            0.           0.               
+A  Term_133           26.         -22.            8.           3.               
+A  Term_134          -18.          10.            0.           0.               
+A  Term_135           -8.         -14.            0.           0.               
+A  Term_136           -6.          -9.            0.           0.               
+A  Term_137           -1.         -20.            0.           0.               
+A  Term_138           -1.          11.            0.           0.               
+A  Term_139            8.           6.            0.           0.               
+A  Term_140           18.           3.            0.           0.               
+A  Term_141          -29.         -10.            0.           0.               
+A  Term_142           13.         -14.            0.           0.               
+A  Term_143           -1.           4.            0.           0.               
+A  Term_144            0.           2.            0.           0.               
+A  Term_145           -9.          18.            0.           0.               
+A  Term_146           -9.         -17.            0.           0.               
+A  Term_147           15.           7.            0.           0.               
+A  Term_148            1.           5.            0.           0.               
+A  Term_149           -1.         -11.            0.           0.               
+A  Term_150           13.         -16.            0.           0.               
+A  Term_151           19.          -2.            0.           0.               
+A  Term_152           -9.           2.            0.           0.               
+A  Term_153            4.          -1.            0.           0.               
+A  Term_154          -11.         -44.           40.          35.               
+A  Term_155          -30.         -50.           34.          40.               
+A  Term_156           15.           7.            0.           0.               
+A  Term_157            2.           1.            0.           0.               
+A  Term_158          -20.         -18.            0.           0.               
+A  Term_159            3.          14.            0.           0.               
+A  Term_160            7.         -19.            0.           0.               
+A  Term_161           -4.          14.            0.           0.               
+A  Term_162           24.           2.          -23.          18.               
+A  Term_163           -2.          18.            0.           0.               
+A  Term_164          -11.         -12.            8.           3.               
+A  Term_165           13.           0.            0.           0.               
+A  Term_166          -20.         -32.            0.           0.               
+A  Term_167           11.           0.            0.           0.               
+A  Term_168           -6.           6.            0.           0.               
+A  Term_169          -10.           2.            0.           0.               
+A  Term_170           -8.          18.            0.           0.               
+A  Term_171           13.           9.            0.           0.               
+A  Term_172            9.           8.            0.           0.               
+A  Term_173            9.         -12.            0.           0.               
+A  Term_174           13.           5.            0.           0.               
+A  Term_175           -4.          -2.            0.           0.               
+A  Term_176            3.           9.            0.           0.               
+A  Term_177          -17.         -20.            0.           0.               
+A  Term_178           -6.           4.            0.           0.               
+A  Term_179           24.           9.            0.           0.               
+A  Term_180          -38.          -7.            0.           0.               
+A  Term_181           -4.          -3.            6.          15.               
+A  Term_182          -19.         -67.           55.          82.               
+A  Term_183            5.           2.            0.           0.               
+A  Term_184            3.           6.            0.           0.               
+A  Term_185          -18.          37.            0.           0.               
+A  Term_186           42.         -27.            0.           0.               
+A  Term_187          -22.          -7.            0.           0.               
+A  Term_188           -8.          -9.            0.           0.               
+A  Term_189          -14.          -7.            0.           0.               
+A  Term_190           -2.          10.            0.           0.               
+A  Term_191          -16.          15.           -2.         -11.               
+A  Term_192           -9.          13.            0.           0.               
+A  Term_193            7.           9.            0.           0.               
+A  Term_194          -26.           6.            0.           0.               
+A  Term_195            2.           1.            0.           0.               
+A  Term_196          -18.          -8.            0.           0.               
+A  Term_197          -18.         -14.            0.           0.               
+A  Term_198            6.           1.            0.           0.               
+A  Term_199           24.           1.            0.           0.               
+A  Term_200          -16.         -11.            0.           0.               
+A  Term_201          -14.          -5.            0.           0.               
+A  Term_202           -1.           7.            0.           0.               
+A  Term_203          -16.          -8.            0.           0.               
+A  Term_204          -12.          -2.            0.           0.               
+A  Term_205            9.           5.            0.           0.               
+A  Term_206           -4.          13.            0.           0.               
+A  Term_207          -19.           3.            0.           0.               
+A  Term_208            7.          -5.            0.           0.               
+A  Term_209           52.          45.            0.           0.               
+A  Term_210           16.           9.            0.           0.               
+A  Term_211           -2.          26.            0.           0.               
+A  Term_212          -97.          -8.            6.           2.               
+A  Term_213            5.          24.            0.           0.               
+A  Term_214          -28.          18.            0.           0.               
+A  Term_215           32.          -2.            0.           0.               
+A  Term_216            5.          10.            0.           0.               
+A  Term_217           13.          16.            0.           0.               
+A  Term_218          -71.          31.            0.           0.               
+A  Term_219           49.          44.            4.          -1.               
+A  Term_220          -24.         -52.            0.           0.               
+A  Term_221         -134.          -2.            0.           0.               
+A  Term_222          -65.         108.            6.          11.               
+A  Term_223          -75.        -157.            0.           0.               
+A  Term_224           91.         414.            0.           0.               
+A  Term_225          382.        -135.            0.           0.               
+A  Term_226          114.        -215.            0.           0.               
+A  Term_227           40.         357.            0.           0.               
+A  Term_228            0.        -209.            0.           0.               
+A  Term_229          -50.          48.            0.           0.               
+A  Term_230           31.         -72.            0.           0.               
+A  Term_231          -77.          37.            0.           0.               
+A  Term_232          116.         -36.            0.           0.               
+A  Term_233          -98.         -12.            0.           0.               
+A  Term_234           42.          12.            0.           0.               
+A  Term_235           34.          24.            0.           0.               
+A  Term_236           29.          13.            0.           0.               
+A  Term_237           33.          18.            0.           0.               
+A  Term_238          -14.          14.            0.           0.               
+A  Term_239          -26.          41.            0.           0.               
+A  Term_240           55.           7.            0.           0.               
+A  Term_241         -210.        -157.           72.         141.               
+A  Term_242            0.           0.            0.           0.               
+A  Term_243         -759.         -81.          670.        1257.               
+A  Term_244         -556.          79.          -14.         -48.               
+A  Term_245           25.         124.            0.           0.               
+A  Term_246         -116.         -46.            0.           0.               
+A  Term_247          -36.          77.            0.           0.               
+A  Term_248           52.          50.            0.           0.               
+A  Term_249           17.          33.            0.           0.               
+A  Term_250           28.          59.            0.           0.               
+A  Term_251           -5.         -25.            0.           0.               
+A  Term_252           56.          73.            0.           0.               
+A  Term_253           -6.         -65.            0.           0.               
+A  Term_254           -2.          22.            0.           0.               
+A  Term_255           41.         -10.            0.           0.               
+A  Term_256            8.          -7.            0.           0.               
+A  Term_257          -19.         -38.            0.           0.               
+A  Term_258          -47.           5.            0.           0.               
+A  Term_259           36.         -22.            0.           0.               
+A  Term_260          -61.          19.            0.           0.               
+A  Term_261           55.          35.            0.           0.               
+A  Term_262          -17.         -65.            0.           0.               
+A  Term_263           15.          23.           25.          81.               
+A  Term_264          -53.          51.            0.           0.               
+A  Term_265          -15.         -27.            0.           0.               
+A  Term_266          -16.           1.            0.           0.               
+A  Term_267           14.         -11.            0.           0.               
+A  Term_268           -8.         -10.            0.           0.               
+A  Term_269            8.          -9.            0.           0.               
+A  Term_270          -21.         -13.            0.           0.               
+A  Term_271           11.          -2.            0.           0.               
+A  Term_272           29.         -24.            0.           0.               
+A  Term_273           -9.         -23.            0.           0.               
+A  Term_274           62.          69.         -252.        -401.               
+A  Term_275           -9.         -28.            0.           0.               
+A  Term_276           -1.          10.            0.           0.               
+A  Term_277           11.           4.            0.           0.               
+A  Term_278          -11.           3.            0.           0.               
+A  Term_279            9.          -4.            0.           0.               
+A  Term_280          -11.          -5.            0.           0.               
+A  Term_281            4.           8.            0.           0.               
+A  Term_282           -7.           4.            0.           0.               
+A  Term_283           35.          22.           -3.         -10.               
+A  Term_284           18.         -20.            0.           0.               
+A  Term_285           -4.         -19.            0.           0.               
+A  Term_286           28.         -12.            0.           0.               
+A  Term_287           -8.          27.            0.           0.               
+A  Term_288           14.         -13.            0.           0.               
+A  Term_289            5.          20.            0.           0.               
+A  Term_290            3.           0.            0.           0.               
+A  Term_291           14.          12.            0.           0.               
+A  Term_292          -16.           3.            0.           0.               
+A  Term_293          -15.         -20.            0.           0.               
+A  Term_294           29.           9.            0.           0.               
+A  Term_295           12.         -20.            0.           0.               
+A  Term_296           13.          -4.            0.           0.               
+A  Term_297          -12.          -3.            0.           0.               
+A  Term_298           -1.           7.           14.           4.               
+A  Term_299           -7.         -19.            0.           0.               
+A  Term_300          -24.          26.            0.           0.               
+A  Term_301          -15.         -14.            0.           0.               
+A  Term_302           -6.          -7.            0.           0.               
+A  Term_303           33.         -15.            0.           0.               
+A  Term_304           -4.           2.            0.           0.               
+A  Term_305          -30.           2.            0.           0.               
+A  Term_306           15.          -2.            0.           0.               
+A  Term_307           -1.          -2.           19.           7.               
+A  Term_308           52.           4.           67.          80.               
+A  Term_309           12.          17.            0.           0.               
+A  Term_310           -2.         -12.          -49.           0.               
+A  Term_311           61.           0.           13.          52.               
+A  Term_312          -34.          18.            0.           0.               
+A  Term_313           19.          22.            0.           0.               
+A  Term_314            8.          16.            0.           0.               
+A  Term_315          -14.         -21.            0.           0.               
+A  Term_316           -5.         -23.            0.           0.               
+A  Term_317           -5.          24.            0.           0.               
+A  Term_318          -19.          -1.            0.           0.               
+A  Term_319           33.         -26.            0.           0.               
+A  Term_320          -16.         -15.           11.         -11.               
+A  Term_321           -5.           4.            0.           0.               
+A  Term_322           -9.           4.            0.           0.               
+A  Term_323           13.          -7.            0.           0.               
+A  Term_324           -5.           8.            0.           0.               
+A  Term_325           -2.           1.            0.           0.               
+A  Term_326          -12.           2.            0.           0.               
+A  Term_327           -8.         -10.            0.           0.               
+A  Term_328           10.          10.            0.           0.               
+A  Term_329           -9.         -19.            0.           0.               
+A  Term_330           -3.           5.            0.           0.               
+A  Term_331          -14.         -31.            0.           0.               
+A  Term_332          -18.          -8.           15.          -3.               
+A  Term_333           13.           3.            0.           0.               
+A  Term_334            0.           0.            0.           0.               
+A  Term_335          -12.           0.            0.           0.               
+A  Term_336           -9.           3.            0.           0.               
+A  Term_337           -8.         -11.            0.           0.               
+A  Term_338            8.          -3.            0.           0.               
+A  Term_339           -7.          -8.            0.           0.               
+A  Term_340           -2.          18.            0.           0.               
+A  Term_341            4.          -4.            0.           0.               
+A  Term_342           14.         -17.            0.           0.               
+A  Term_343           10.          19.            0.           0.               
+A  Term_344          -65.          12.         -958.       -1288.               
+A  Term_345          -32.           4.         -166.        -230.               
+A  Term_346           24.           1.            0.           0.               
+A  Term_347           -8.          14.            0.           0.               
+A  Term_348            2.         -16.            0.           0.               
+A  Term_349           22.          14.            0.           0.               
+A  Term_350           -5.           4.            0.           0.               
+A  Term_351           17.          -9.            0.           0.               
+A  Term_352          -15.          -6.            0.           0.               
+A  Term_353           20.           5.            0.           0.               
+A  Term_354           -8.           3.            0.           0.               
+A  Term_355          -17.          -9.            0.           0.               
+A  Term_356           24.          12.            0.           0.               
+A  Term_357            3.           5.            0.           0.               
+A  Term_358          -10.           2.            0.           0.               
+A  Term_359           15.         -11.            0.           0.               
+A  Term_360           35.           9.            0.           0.               
+A  Term_361            1.          -1.            0.           0.               
+A  Term_362           -1.           9.            0.           0.               
+A  Term_363           -2.          26.            0.           0.               
+A  Term_364           10.          22.          -69.         -58.               
+A  Term_365          -23.          19.            0.           0.               
+A  Term_366          -22.          19.            0.           0.               
+A  Term_367           29.          -7.            0.           0.               
+A  Term_368           12.           3.            0.           0.               
+A  Term_369            5.           0.            0.           0.               
+A  Term_370           17.         -14.            0.           0.               
+A  Term_371           -9.          17.            0.           0.               
+A  Term_372           48.          -4.            0.           0.               
+A  Term_373          -14.         -77.           17.          24.               
+A  Term_374           51.         -15.         -185.        -387.               
+A  Term_375          -17.          18.          -26.         -86.               
+A  Term_376            1.          -7.            0.           0.               
+A  Term_377            4.           6.            0.           0.               
+A  Term_378          -36.           3.            0.           0.               
+A  Term_379          -10.         -12.            0.           0.               
+A  Term_380           10.          -2.            0.           0.               
+A  Term_381          -10.         -17.            0.           0.               
+A  Term_382            0.         -12.            0.           0.               
+A  Term_383           26.         -20.            0.           0.               
+A  Term_384           35.           5.            1.          14.               
+A  Term_385           19.          14.            0.           0.               
+A  Term_386          -29.         -18.            0.           0.               
+A  Term_387           11.         -12.            0.           0.               
+A  Term_388           -1.           1.            0.           0.               
+A  Term_389           16.          13.            0.           0.               
+A  Term_390          -27.          24.            0.           0.               
+A  Term_391           -2.         -19.            0.           0.               
+A  Term_392          -15.           1.            0.           0.               
+A  Term_393          -59.          20.            0.           0.               
+A  Term_394           24.          15.          -17.         -65.               
+A  Term_395            3.         -13.            0.           0.               
+A  Term_396          -20.          19.            0.           0.               
+A  Term_397          -54.           1.            0.           0.               
+A  Term_398          -39.          -4.            0.           0.               
+A  Term_399           -6.          -8.            0.           0.               
+A  Term_400           32.           1.            9.         -74.               
+A  Term_401            5.           5.            0.           0.               
+A  Term_402           10.         -12.            0.           0.               
+A  Term_403           -3.          18.            0.           0.               
+A  Term_404          -23.           7.            0.           0.               
+A  Term_405          -15.           6.            0.           0.               
+A  Term_406           14.           8.            0.           0.               
+A  Term_407          -10.         -16.            0.           0.               
+A  Term_408            8.          -8.            0.           0.               
+A  Term_409            7.          26.            0.           0.               
+A  Term_410           -1.         -12.            0.           0.               
+A  Term_411          -16.         -25.           -8.         -36.               
+A  Term_412          -15.         -22.            0.           0.               
+A  Term_413           17.          17.            0.           0.               
+A  Term_414           45.          -9.            0.           0.               
+A  Term_415            0.          37.            0.           0.               
+A  Term_416           10.         -14.           19.          30.               
+A  Term_417            0.          39.          -22.          -1.               
+A  Term_418           11.          44.          -19.          21.               
+A  Term_419           -8.         -38.            6.          -5.               
+A  Term_420           36.         -32.           10.          -9.               
+A  Term_421          -18.          12.            1.         -17.               
+A  Term_422           10.         -24.           16.           2.               
+A  Term_423          -20.          -8.            3.         -14.               
+A  Term_424           -8.          27.            0.           0.               
+A  Term_425           18.          11.            0.           0.               
+A  Term_426           42.           0.            0.           0.               
+A  Term_427          -20.          -3.            0.           0.               
+A  Term_428           19.           4.            0.           0.               
+A  Term_429           16.          34.            0.           0.               
+A  Term_430          -27.          28.          -32.         -20.               
+A  Term_431           -4.         -19.           41.          16.               
+A  Term_432            7.          30.          -24.         -16.               
+A  Term_433            9.         -12.            0.           0.               
+A  Term_434           40.          22.           -4.           0.               
+A  Term_435           25.         -19.            8.          35.               
+A  Term_436            6.         -24.           -2.          10.               
+A  Term_437          -15.          11.           -1.          11.               
+A  Term_438           18.          33.            1.          18.               
+A  Term_439            7.          19.            0.           0.               
+A  Term_440          -44.           7.            0.           0.               
+A  Term_441          -10.          17.            0.           0.               
+A  Term_442           -2.         -32.            0.           0.               
+A  Term_443            0.           7.            0.           0.               
+A  Term_444            8.         -20.            0.           0.               
+A  Term_445            9.          10.            0.           0.               
+A  Term_446          -10.         -46.            0.           0.               
+A  Term_447           24.          33.            0.           0.               
+A  Term_448          -32.         -29.            0.           0.               
+A  Term_449           37.          27.            0.           0.               
+A  Term_450          -17.          22.            0.           0.               
+A  Term_451          -20.          31.            0.           0.               
+A  Term_452          -17.         -36.            0.           0.               
+A  Term_453           34.          50.            0.           0.               
+A  Term_454          -60.          20.            0.           0.               
+A  Term_455           29.         -75.            0.           0.               
+A  Term_456          -14.          74.            0.           0.               
+A  Term_457          -43.         -55.            0.           0.               
+A  Term_458           17.          23.            0.           0.               
+A  Term_459            7.           4.            0.           0.               
+A  Term_460          -10.          33.            0.           0.               
+A  Term_461           -7.          -8.            0.           0.               
+A  Term_462           -9.         -21.            0.           0.               
+A  Term_463            8.         -39.            0.           0.               
+A  Term_464          -14.         -14.            0.           0.               
+A  Term_465          -12.        -151.            0.           0.               
+A  Term_466           19.         -32.            0.           0.               
+A  Term_467           19.        -124.            0.           0.               
+A  Term_468         -226.         685.            0.           0.               
+A  Term_469            0.           4.            0.           0.               
+A  Term_470            1.           9.            0.           0.               
+A  Term_471          -15.          12.            0.           0.               
+A  Term_472            3.           9.            0.           0.               
+A  Term_473           29.         -18.            0.           0.               
+A  Term_474          -20.          13.            0.           0.               
+A  Term_475           16.          -1.            0.           0.               
+A  Term_476           13.         -23.            0.           0.               
+A  Term_477           24.           9.            0.           0.               
+A  Term_478         -124.         217.            0.           0.               
+A  Term_479          -76.         -56.            0.           0.               
+A  Term_480          -10.         -18.            0.           0.               
+A  Term_481          443.        -763.            0.           0.               
+A  Term_482            7.        -101.            0.           0.               
+A  Term_483            1.           1.            0.           0.               
+A  Term_484          -13.         -14.            0.           0.               
+A  Term_485           18.         -19.            0.           0.               
+A  Term_486           14.         -24.            0.           0.               
+A  Term_487          -22.          -4.            0.           0.               
+A  Term_488           18.          -9.            0.           0.               
+A  Term_489           36.         -23.            0.           0.               
+A  Term_490            3.         -10.            0.           0.               
+A  Term_491           13.          22.            0.           0.               
+A  Term_492          -16.           3.            0.           0.               
+A  Term_493            6.         -23.            0.           0.               
+A  Term_494           12.           9.            0.           0.               
+A  Term_495          -16.           2.            0.           0.               
+A  Term_496            1.         -21.            0.           0.               
+A  Term_497           10.          17.            0.           0.               
+A  Term_498          -14.         -27.            0.           0.               
+A  Term_499           20.           9.            0.           0.               
+A  Term_500          -10.         -20.            0.           0.               
+A  Term_501           20.           8.            0.           0.               
+A  Term_502           27.           7.            0.           0.               
+A  Term_503           15.         -14.            0.           0.               
+A  Term_504           -3.          18.            0.           0.               
+A  Term_505            9.          11.            0.           0.               
+A  Term_506          -10.           0.            0.           0.               
+A  Term_507           -8.         -18.            0.           0.               
+A  Term_508           -7.           8.            0.           0.               
+A  Term_509          -23.           3.            0.           0.               
+A  Term_510            3.         -21.            0.           0.               
+A  Term_511            0.          12.            0.           0.               
+A  Term_512           11.         -19.            0.           0.               
+A  Term_513          -10.          19.            0.           0.               
+A  Term_514           -1.         -26.            0.           0.               
+A  Term_515          -17.           0.            0.           0.               
+A  Term_516           15.          -3.            0.           0.               
+A  Term_517          -15.          -7.            0.           0.               
+A  Term_518            5.           2.            0.           0.               
+A  Term_519           -8.          28.            0.           0.               
+A  Term_520            3.          17.            0.           0.               
+A  Term_521            2.          -2.            0.           0.               
+A  Term_522          -11.          -5.            0.           0.               
+A  Term_523           -9.          -6.            0.           0.               
+A  Term_524          -12.          -8.            0.           0.               
+A  Term_525            1.         -14.            0.           0.               
+A  Term_526          -58.         -55.            0.           0.               
+A  Term_527          -17.           2.            0.           0.               
+A  Term_528           30.         -14.            0.           0.               
+A  Term_529           13.          -2.            0.           0.               
+A  Term_530            3.         -20.            0.           0.               
+A  Term_531           -8.         -26.            0.           0.               
+A  Term_532         -221.        -338.            0.           0.               
+A  Term_533           12.           9.            0.           0.               
+A  Term_534            0.           1.            0.           0.               
+A  Term_535            9.         -14.            0.           0.               
+A  Term_536           -7.           7.            0.           0.               
+A  Term_537            0.          -3.            0.           0.               
+A  Term_538            0.         -11.            0.           0.               
+A  Term_539          -22.          -8.            0.           0.               
+A  Term_540          -13.         -10.            0.           0.               
+A  Term_541           17.          -9.            0.           0.               
+A  Term_542          -34.        -146.            0.           0.               
+A  Term_543           -7.           2.            0.           0.               
+A  Term_544            1.          20.            0.           0.               
+A  Term_545           -2.         -15.            0.           0.               
+A  Term_546           12.          14.            0.           0.               
+A  Term_547          -37.         -94.            0.           0.               
+A  Term_548            4.          -8.            0.           0.               
+A  Term_549            1.           6.            0.           0.               
+A  Term_550          -24.          14.            0.           0.               
+A  Term_551           13.         -16.            0.           0.               
+A  Term_552            5.          16.            0.           0.               
+A  Term_553          -10.         -15.            0.           0.               
+A  Term_554            2.          25.            0.           0.               
+A  Term_555          -17.           9.            0.           0.               
+A  Term_556           13.           1.            0.           0.               
+A  Term_557           12.           9.            0.           0.               
+A  Term_558            3.           6.            0.           0.               
+A  Term_559          -12.         -20.            0.           0.               
+A  Term_560            7.          -6.            0.           0.               
+A  Term_561            6.           1.            0.           0.               
+A  Term_562           -6.          11.            0.           0.               
+A  Term_563            0.         -13.            0.           0.               
+A  Term_564            9.         -11.            0.           0.               
+A  Term_565           15.          -2.            0.           0.               
+A  Term_566            8.          16.            0.           0.               
+A  Term_567           -3.         -31.            0.           0.               
+A  Term_568           -6.          15.            0.           0.               
+A  Term_569           21.           4.            0.           0.               
+A  Term_570          -36.          37.            0.           0.               
+A  Term_571           16.         -26.            0.           0.               
+A  Term_572          -21.          30.            0.           0.               
+A  Term_573           24.         -10.            0.           0.               
+A  Term_574           -8.          -5.            0.           0.               
+A  Term_575            5.          11.            0.           0.               
+A  Term_576           17.         -11.            0.           0.               
+A  Term_577            3.           7.            0.           0.               
+A  Term_578          -16.           9.            0.           0.               
+A  Term_579           21.          -8.            0.           0.               
+A  Term_580            7.           2.            0.           0.               
+A  Term_581           -3.         -10.            0.           0.               
+A  Term_582          -11.           3.            0.           0.               
+A  Term_583           15.          11.            0.           0.               
+A  Term_584          -12.           6.            0.           0.               
+A  Term_585          -15.         -15.            0.           0.               
+A  Term_586           15.          -9.            0.           0.               
+A  Term_587           -3.           5.            0.           0.               
+A  Term_588           -8.          -2.            0.           0.               
+A  Term_589           -5.          15.            0.           0.               
+#
+# Rate of change of the amplitudes of harmonic variations in the Earth rotation
+# 
+# Harmonic   PM_rate_cos  PM_rate_sin   E3_rate_cos  E3_rate_sin
+#            10^{-21} rad/s             10^{-21} rad/s 
+#
+V  Term_242        -3907.       -1473.            0.           0.               
+#
+HEO  Format version of 2004.03.12 

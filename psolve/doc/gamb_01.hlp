@@ -1,0 +1,83 @@
+GAMB                                                         
+
+       Procedure for automatic VLBI group ambiguities resolution.
+
+       Description of menu items.
+
+(H) -- Put on-line help one the screen, which you are reading just now.
+
+(B) -- If you have only database in oborg area scratch file you can make 
+       automatic group delay resolution only for this database. If you
+       have two databases: X- and S- for the same experiment in oborg ares
+       you have option to analyze X-band database, S-band database or to
+       analyze them together (combined). Hitting <B> key you can cyclically
+       change setup.
+
+(G) -- You can use all available observations or only good one. "Good" means 
+       that observations rejected during previous SOLVE analysis will not be 
+       used. When only one database is analyzed and ionosphere calibration 
+       is not recalculated "all" means all observations except those with 
+       quality code less than QUALCODE_GOOD_LIM. If ionosphere calibration 
+       is recalculated then observations which have with quality code less 
+       than QUALCODE_GOOD_LIM on opposite band will be automatically rejected 
+       for both databases before analysis (IUNW=8 or 5)
+
+(S) -- GAMB saves results of its works in normal mode: it updates oborg
+       area scratch files for databases used: number of ambiguities, 
+       information about outliers and (optionally) ionosphere calibration.
+       You may prohibit changes of oborg area. In that case results of GAMB 
+       will disappear after finishing program.
+
+(I) -- In the case when two databases loaded in scratch file GAMB analyzes 
+       two bands simultaneously and it recalculates ionosphere calibration.
+       In this mode GAMB will reject observations marked as outliers for 
+       opposite band. In this mode GAMB will also transfer some information
+       for X-band to S-band oborg area of scratch files. User can prohibit this
+       mode.
+
+(M) -- If baseline contains less than specified limit observation it will not
+       be analyzed and will be rejected beforehand. If during analysis
+       the number of good observations become less than this limit all 
+       observations will be rejected and unweight flag IUNW=1 will be set up.
+       You can enter this limit in range [4, 1000]. Recommended value is 8.
+
+(C) -- Ambiguity spacing. As default ambiguity spacing is set up by DBEDIT 
+       and is reciprocal minimal channels spacings. You can change it 
+       manually. But I don't recommend you to do it unless you have very
+       serious grounds to do it!!
+
+(L) -- If the deviation an observation from second order polynomial clock 
+       model after ambiguities resolution will be larger in module than
+       cutoff limit the observation will be rejected from estimation and 
+       marked as outlier (flag IUNW=1 will be set up). You can enter cutoff 
+       limit in range [0.1, 1000.0] nsec. This value shouldn't be less than 
+       2 nsec from one hand and larger than 30% of ambiguity spacing form the
+       other hand. Recommended value is 5 nsec.
+
+(Q) -- Observations with quality code less than specified code will be marked 
+       as outliers before work of GAMB. If ionosphere calibration is 
+       calculated the observation will be marked as outlier if matched 
+       observation at the opposite band has bad quality code. Quality code
+       limit may be in the range [1, 9]. Recommended value is 5.
+
+(A) -- When user hits "A" or <space> at the field of this option GAMB will 
+       start to work.
+
+(V) -- Verbosity mode. 0 -- means silent mode. No messages will be printed 
+       at the screen except error messages. 1 -- total RMS and judgment about 
+       goodness will be printed.  2 -- RMS values for baselines and more 
+       verbose analysis of goodness of the solution will be printed. 3 --
+       r.m.s. for pre-pre-estimation are printed. 4 -- clock parameters,
+       errors of clock shift triangles closures and permanent baseline 
+       dependent ambiguities are printed. 5-6 -- debugging mode. Lists of 
+       objects will be printed if verbosity mode 5 is setup. Pre-fit "raw" 
+       o-c for the first baseline and values of obtained clock jumps due to 
+       the ambiguities and values of post-fit o-c for all baselines are 
+       printed at the screen when verbosity mode 6 is set up. All information 
+       displayed at the screen is also printed in spool file. Recommended 
+       value is 2.
+
+(A) -- When user hit "O" or <space> at the field of this option GAMB will 
+       finish its work and OPTIN will be called back.
+
+(R) -- GAMB will rewrite screen if user hit "R" key.

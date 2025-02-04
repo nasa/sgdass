@@ -1,0 +1,299 @@
+GAMB                                                       GAMB  Ver. 2001.07.31
+                     |같같같같같같같같같같같같�|
+                     |      RELEASE NOTE       |
+                     |_________________________|
+ 
+       Procedure for automatic VLBI group ambiguities resolution.
+
+      I. Release GAMB 1.97 of  2001.07.31
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     Program  GAMB  is the part of SOLVE software for geodetic VLBI
+  data analysis. GAMB solves simultaneously the following problems:
+  1) resolving group delay ambiguity for both X- and S- band
+  observations; 2) obtaining preliminary adjustments to clock polynomial
+  models for clocks of all stations except one stations chosen as a
+  fiducial station: clock shift, clock drift, frequency drift;
+  3) outliers detection and elimination ; 4) calculation ionosphere 
+  calibration for group delay observables.
+
+     It is assumed that GAMB is called either from OPTIN (in interactive mode)
+  or from BATCH (non-interactive mode). 
+
+     GAMB can work in two modes: one-band mode (X- or S- band) and two-band
+  mode. 
+
+     In one-band mode GAMB reads oborg area of scratch file for the first 
+  loaded database. It rejects observations with quality code worse than
+  specified limit. It can also reject observations already marked as 
+  outliers in previous SOLVE solutions (IUNW>0) or use all available 
+  observations. Then GAMB resolves ambiguities and removes outliers for all 
+  baselines in single-baseline mode. Then GAMB redistributes permanent
+  ambiguity correction between stations in order to eliminate excess of 
+  triangles clock shift closures. Finally GAMB finds estimates for 
+  coefficients of stations clock function modeled by polynomial of the 2-nd
+  degree. After that GAMB updates oborg area of scratch files. It updates
+  number of ambiguities and unweight flag.
+
+     In two-band mode GAMB reads 1-st and 2-nd database from oborg area of
+  scratch files. These database should correspond to X- and S- bands 
+  observations of the same experiment. GAMB rejects observations for both 
+  bands if they have bad quality code. GAMB recalculates group delay 
+  ionosphere corrections for both bands during reading scratch files unless 
+  it is not explicitly prohibited. Then GAMB eliminates jumps from group 
+  delay ionosphere corrections for S-band observations due to ambiguities at 
+  X-band. After that GAMB resolves ambiguities firstly for S-band 
+  observations then for X-band. In two baseline mode GAMB updates also group 
+  ionosphere correction for both bands and forces to migrate 10 observables 
+  of opposite band. Thus GAMB in two-band mode makes the work which IONO does.
+
+    GAMB has four criteria of goodness of solution. Solution may be
+  marked as "good", "looks suspicious", "looks bad" of "failure". Good 
+  solution shouldn't have rejected baseline, the number of detected outliers 
+  should be less some critical values; r.m.s. of preliminary solution 
+  for every baseline should be less some certain share of group delay 
+  ambiguity spacing, the excess o triangle clock shifts closures (after 
+  elimination permanent baseline-dependent ambiguity) shouldn't exceed the 
+  specified share of group delay ambiguity spacing.
+  
+    All information which GAMB displays at the screen is also written to SPOOL
+  file.
+
+    GAMB may be called also in BATCH mode (by setting environment variable
+  GAMB_BATCH as "TRUE" ).
+
+      II. Restrictions:
+          ~~~~~~~~~~~~~
+
+  1) GAMB will reject session with wrong order of observations;
+  2) GAMB will reject sessions which contain the same baseline but with
+     different order of stations. For example is session contains
+     baseline "WESTFORD/WETTZELL" and "WETTZELL/WESTFORD" it will be
+     rejected.
+  3) GAMB analyzes only databases with letter "X" or "S" at the 9-th place
+     of their names. Thus session like $83JUL26LL or $84JUL18DX will be 
+     rejected.
+  4) GAMB scans only the first two databases in scratch file in two-band 
+     mode, it doesn't "see" 3-rd and the next databases.
+  5) GAMB will always mark as suspicious or bad session with baselines which 
+     contain less than specified limit observations regardless the actual 
+     quality of ambiguity resolution.
+  6) GAMB may not work properly when different baselines have different
+     ambiguity spacings. GAMB looks at lcode GPDLAMBG and when it has 
+     different values it issues a warning message. If different ambiguity
+     spacings are multiple each other when we should take the minimal value.
+     When database actually has value of ambiguity spacings for different
+     baselines but GPDLAMBG has the same value GAMB may not work properly.
+  7) GAMB may not work properly when database contains considerable real 
+     clock breaks. GAMB works properly only if clock function doesn't 
+     deviate from continuous second order polynomial by more than 10 nsec.
+  8) GAMB cannot resolve ambiguity if dry troposphere time delay is not
+     applied. If user somehow forget to apply it GAMB politely remind it.
+  9) GAMB in two-band mode will not calculate ionosphere calibrations for
+     ONSALA60/ONSALA85 antennas for databases prior 1987.
+ 10) GAMB will not work properly with sessions which has huge (more than 
+     0.001 msec) clock offset and/or clock drift. A priori clock model should
+     be applied for such cases.
+  
+      III. Approbation.
+           ~~~~~~~~~~~~
+
+  A set of 2707 sessions from Goddard superfile has been analyzed in 
+  one band mode for testing purposes. All data with quality code 5 and higher
+  have been considered.
+
+  2406 sessions have been marked as "good". I failed to find any problems 
+       with sessions marked as good. 
+
+   246 sessions have been marked as "suspicious". 
+       154 out of them were marked only because they contained less than 8 
+           observations at at least one baseline. Ambiguities for other 
+           baselines have been resolved correctly.
+        89 out of them had various clock problems: clock breaks or 
+           data were really poor and GAMB rejected considerable number of 
+           observations ( from 20% till 50% at the certain baseline) at some 
+           baselines were rejected. Nevertheless, ambiguities have been 
+           resolved correctly.
+         3 out of them were analyzed by GAMB erroneously: not all ambiguity 
+           have been resolved correctly.
+
+    54 sessions have been marked as "bad". 
+
+       47  out of them had various clock problems: considerable clock breaks,
+           different ambiguity spacings or really lousy data. Nevertheless, 
+           ambiguities have been resolved correctly but the price of it was
+           for some cases too high: rejection more than 50% observations at 
+           some baselines or rejection all observations at poorly observed 
+           baselines .
+         7 out of them were analyzed by GAMB erroneously: not all ambiguity have 
+           been resolved correctly.
+
+     1 session has been marked as "failure" ($87DEC09XI)
+
+    Thus the current version GAMB resolved ambiguities for 2695 sessions 
+  out of 2707 ( efficiency 99.6% ) and for 2406 sessions ( 89% ) made it 
+  perfectly.
+
+
+    Further information about GAMB may be found in
+  1) SOLVE_HELP_DIR directory file gamb_01.hlp
+  2) SOLVE_HELP_DIR directory file gamb_03_hlp.ps
+  3) Petrov, L.Y. "Secondary data analysis of geodetic VLBI
+     observations. III Estimation of model's parameters",
+     Communications of the Institute of Applied Astronomy N76,
+     Institute of Applied Astronomy, St.Petersburg, 47 pages.
+     (In Russian).
+
+      History:                                                           
+                                                                         
+      Who  When       What                                               
+      -------------------------------------------------------------
+      pet  29-JUL-97  Start of work for developing GAMB. Algorithms 
+                      used in PREPES routine from software VORIN 
+                      developed in 1991-96 were taken as the base.             
+                                                                     
+      pet  23-AUG-97  1.0  First release GAMB.                       
+                                                                     
+      pet  25-AUG-97  1.1  Added goodness codes: failure of the 
+                           solution, "some baseline rejected before 
+                           solution"; corrected spelling errors in 
+                           messages.   
+                                                                    
+      pet  02-MAR-98  1.2  Added support of deselection lists:      
+                           observation made at the deselected 
+                           baseline or observation of the deselected 
+                           source is not taken into account.                    
+
+      pet  05-MAR-98  1.3  Added new feature: GAMB will force to 
+                           migrate 10 additional parameters from S- to 
+                           X-band oborg area: 1) total phase for 
+                           S-band; 2) SNR for S-band; 3) Correlation 
+                           coefficient for S-band; 4) Narrow band group 
+                           delay for S-band; 5) Original group delay 
+                           observable for S-band; 6) Original phase 
+                           delay for S-band; 7) Group delay ambiguity 
+                           spacing for S-band; 8) Phase delay ambiguity 
+                           spacing for S-band; 9) Group delay ambiguity 
+                           for S-band; 10) Phase delay ambiguity for 
+                           S-band.
+                                                                    
+      pet  07-MAR-98  1.4  Added capacity to resolve group delay
+                           ambiguities, recalculate group delay
+                           ionosphere calibration and etc for both bands
+                           while only database/superfile for the X-band
+                           was read provided it contains all necessary
+                           information.	       	       	       	       	  
+
+      pet  01-MAY-98  1.5  Changed scheme for tracing information about
+                           suppression status of observations. Fixed bug:
+                           previous version took into account baseline
+                           with unresolved ambiguities when made
+                           permanent ambiguities redistribution. New
+                           version bypasses such baselines. Trap of
+                           internal control was added to block to write
+                           in oborg area ambiguities exceeding by modulo
+                           32767.
+
+      pet  07-MAY-98  1.6  Changed treating not used observations:
+                           a) GAMB doesn't see observation of deselected
+                              sources and at deselected baselines, or
+                              observations no fringes detected and
+                              doesn't update their status.
+                           b) Not used observations (but at selected
+                              baselines and sources and with fringes)
+                              don't participate in calculation of clock
+                              function but their ambiguity and (if it
+                              was specified) ionosphere calibration are
+                              calculated and written in scratch file.
+      pet  18-SEP-98  1.7  a) Disabled an attempt to lift status          
+                              "suppressed" for observations which GAMB    
+                              finds good. All observations which were  
+                              marked as "suppressed by user" will remain  
+                              "suppressed by user". But if GAMB find      
+                              some observations which seems bad, GAMB  
+                              set "suppressed by user" flag.              
+                           b) Made GAMB to lift forcibly ICORR bits        
+                              1, 5, 7, 10. These bits are actually         
+                              obsolete but they may badly interfere with   
+                              s-SOLVE scheme of handling suppressed       
+                              observations.                               
+      pet  28-APR-99  1.8  a) Disabled setting flag "ionosphere         
+                              calibration is available and applied" for 
+                              the deselected stations.                  
+                           b) Lifted flag availability ionosphere in     
+                              reading data. Thus availability of         
+                              ionosphere calibration status is not taken
+                              into account in reading data and in getting
+                              suppression status.                   
+                           c) Forced GAMB to mark observations with
+                              "ambiguities found during final control
+                               run of resolving ambiguities in group
+                               delay ionosphere corrections" as     
+                               outliers. Usually these observations
+                               has subambiguities.                  
+     pet  1999.11.11  1.81   Extended a list of atmosphere calibrations 
+                             to avoid false warnings.                   
+                                                                      
+     pet  1999.11.11  1.82   Added test of a tolerance range in iono_amb 
+                             in order to avoid an error in              
+                             re-distribution of permanent ambiguity in  
+                             ionosphere contribution.                  
+
+     pet  1999.11.30  1.83   Corrected a bug: ambiguity jumps were not
+                             initialized in the previous version for the 
+                             baseline which has been removed during the 
+                             process of ambiguity resolution.
+
+     pet  2000.03.03  1.9    Enchanced algorithm: added the final
+                             inspection of residuals in order to detect
+                             remaining ambiguities after re-distribution
+                             of ambiguities between two bands.
+
+     pet  2000.03.22  1.91   Fixed a bug: the previous version set ionosphere
+                             flag "undefined" if GAMB_GET didn't find a 
+                             matching observation at the opposite band for the 
+                             last observation. The new version sets this flag 
+                             if it didn't find any matching observation.
+
+     pet  2000.03.22  1.92   Changed a logic of handing observations
+                             with very large ambiguities (more than
+                             32766) which cannot be stored in INTEGER*2
+                             format. New logic is to set them to zero
+                             and set a suppression status.
+  
+     pet  2000.12.06  1.93   Fixed some errors initialization. The previous 
+                             version set garbage in the 21 lcodes of S-band 
+                             whcih migrate to the X-band database if there 
+                             was no matching S-band observation.
+
+     pet  2001.01.05  1.94   The previous version copied atmosphere
+                             parameters amd calibration from X-band
+                             database to the S-band database. This
+                             feature caused abnormal termination of
+                             PROC and CRES ain the case if S-band
+                             database didn't have atmopshere parameters
+                             and there are observations at S-band
+                             which didn't have counterparts at X-band.
+
+     pet  2001.01.17  1.95   Prohibited setting "bad ionosphere flag", bits 3 
+                             and 9 in ICORR if the observations was marked
+                             as conditionally bad at S-band. Set IUNW=1
+                             (manually suppressed flag instead of).
+
+     pet  2001.01.17  1.96   Relaxed restrictions: nonstandard database 
+                             suffixes DX/DS are supported now.
+
+     pet  2001.01.17  1.97   Fixed a bug in prepes_sb -- the previous version
+                             incorrectly suppressed wild ouliers.
+                             Fixed a bug in iono_amb -- the previous version
+                             incorrectly worked when one or more baselines 
+                             were deselected.
+                             Fixed a bug in prepes_mb -- the previous version
+                             may terminate abnormally when baselines misclosure
+                             was too large and caused overflow.
+ 
+
+please send bug reports and your comments to Leonid Petrov 
+( sgdass@lists.nasa.gov )
+
+2001.07.31_16:08:57

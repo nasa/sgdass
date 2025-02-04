@@ -1,0 +1,32 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   Program vget is an anlogie for wget, but downloads the URL from    *
+# *   CDDIS.                                                             *
+# *                                                                      *
+# *   echo "Usage: vget url"  or                                         *
+# *   echo "Usage: vget url output_file"                                 *
+# *                                                                      *
+# *                                                                      *
+# *  ### 01-MAR-2021       vget    v2.0 (c)  L. Petrov  13-FEB-2024 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# --- Local customizations are here
+#
+set vsdc_dir=/progs/vsdc_20240204
+set datacenter_cnf=/cont/vsdc/cddis.cnf 
+#
+# --- End of local customization
+#
+set vsdc_get        = ${vsdc_dir}/vsdc_get.py
+#
+if ( $1 == "" ) then
+     echo "Usage: vget url [output_file]"
+     exit 1
+endif
+if ( $2 == "" ) then
+     ${vsdc_get} -c /cont/vsdc/cddis.cnf -u $1 -v 1
+   else
+     ${vsdc_get} -c /cont/vsdc/cddis.cnf -u $1 -o $2 -v 1 
+endif

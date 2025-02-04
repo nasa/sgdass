@@ -1,0 +1,14 @@
+      FUNCTION REPBASL ( REPA_PAR, ADDR, REPA_FLAG, FLAG, MD_OUT )
+!
+      INCLUDE  'solve.i'
+      INCLUDE  'diagi.i'
+      INCLUDE  'repa.i'
+!
+      INTEGER*4  REPA_PAR, ADDR, FLAG, MD_OUT, REPA_FLAG, REPBASL
+!
+      REPA_PAR = LOC(ADDR)
+      REPA_FLAG = FLAG
+      MD_OUT = DIAGI__QUIT
+      REPBASL = DIAGI__QUIT
+      RETURN
+      END

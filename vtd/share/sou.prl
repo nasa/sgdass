@@ -1,0 +1,38 @@
+# Source proper motion and parallax. File format  1.0  of 2023.03.11
+#
+#  Last update: 2023.03.11_15:29:02
+# 
+#  Format description:
+#
+#   1-8    A8     B-name  IVS source name
+#  11-20   A10    J-name  IAU source name
+#  23-32   F10.4  Proper motion in right ascension in mas/yr
+#  35-44   F10.4  Proper motion in declination in mas 
+#  47-54   F8.4   Parallax in mas
+#  56-56   A1     Delimiter
+#  58-121  A64    Comment
+#
+#  Modification history:
+#
+#  Who       When       What
+#  L. Petrov 2023.03.11 Created 
+#
+# B-name  J-name      PM Rt. Ascen. PM Decl.  Parallax
+#
+LSI61303  J0240+6113     -0.8726     -0.25      0.3800 ! Gaia DR3 proper motion and parallax
+UXARI     J0326+2842     53.3509   -102.87     19.7800 ! Gaia DR3 proper motion and parallax
+HR1099    J0336+0035    -32.2417   -162.07     33.9800 ! Gaia DR3 proper motion and parallax
+0532-054  J0535-0523      1.3560      0.25      2.6400 ! Gaia DR3 proper motion and parallax
+0833-450  J0835-4510    -71.7628     29.2114    0.0001 ! VLBI proper motion
+1052+607  J1055+6028    -76.9138     -7.56      5.3800 ! Gaia DR3 proper motion and parallax
+HD132742  J1500-0831    -63.7433     -6.02      9.2800 ! Gaia DR3 proper motion and parallax
+1550-238  J1553-2358    -14.6656    -24.10      6.9900 ! Gaia DR3 proper motion and parallax
+SIGCRB    J1614+3351   -322.9817    -87.28     44.0500 ! Gaia DR3 proper motion and parallax
+SGR-A     J1745-2900     -3.5631     -5.3534    0.116  ! VLBI proper motion. Distance: 8.6 kpc
+1815-122  J1818-1214      0.2046     -1.97      0.7200 ! Gaia DR3 proper motion and parallax
+1823-148  J1826-1450      7.6763     -8.15      0.4900 ! Gaia DR3 proper motion and parallax
+1909+048  J1911+0458     -3.0315     -4.78      0.1200 ! Gaia DR3 proper motion and parallax aka SS 433
+2030+407  J2032+4057     -6.9651    -14.04      0.8000 ! Gaia DR3 proper motion and parallax
+2052+441  J2053+4423     36.9977     -0.88      8.8900 ! Gaia DR3 proper motion and parallax
+2347+361  J2349+3625     -0.7830    -47.74      7.2600 ! Gaia DR3 proper motion and parallax
+2352+283  J2355+2838    654.9222     34.4227   25.5600 ! Gaia DR3 proper motion and parallax

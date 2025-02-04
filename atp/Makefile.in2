@@ -1,0 +1,90 @@
+LOG = $(FOURPACK_ROOT)/temp/build.log
+
+build:
+	@echo "Building atp started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`  |& tee   > $(BUILD_LOG)
+	@echo " "                                                                           |& tee  -a $(BUILD_LOG)
+	source support/atp_vars; cd src; umask 0002; make -j $(NUM_PROC) lib                |& tee  -a $(BUILD_LOG)
+	source support/atp_vars; cd src; umask 0002; make -j $(NUM_PROC) bin                |& tee  -a $(BUILD_LOG)
+	@echo " "                                                                           |& tee  -a $(BUILD_LOG)
+	@echo "Building atp finished at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`  |& tee  -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+.PHONY: install
+install:
+	@echo "Instsalling atp started at $(DATE)"
+	if ( -d $(ATP_PREFIX)          == 0 ) mkdir $(ATP_PREFIX)
+	if ( -d $(ATP_PREFIX)/lib      == 0 ) mkdir $(ATP_PREFIX)/lib
+	if ( -d $(ATP_PREFIX)/bin      == 0 ) mkdir $(ATP_PREFIX)/bin
+	if ( -d $(ATP_PREFIX)/share    == 0 ) mkdir $(ATP_PREFIX)/share
+	if ( -d $(ATP_PREFIX)/include  == 0 ) mkdir $(ATP_PREFIX)/include
+	cp src/libatp.a                             $(ATP_PREFIX)/lib/libatp.a
+	cp include/atp.i                            $(ATP_PREFIX)/include/
+        ifeq ($(ATP_OS),Linux)
+	    cp src/libatp.so.1.0 $(ATP_PREFIX)/lib/libatp.so.1.0
+	    ln -sf libatp.so.1.0   $(ATP_PREFIX)/lib/libatp.so.1
+	    ln -sf libatp.so.1.0   $(ATP_PREFIX)/lib/libatp.so
+        endif
+        ifeq ($(ATP_OS),Darwin)
+	    cp src/libatp.1.dylib  $(ATP_PREFIX)/lib/libatp.1.dylib
+	    if ( -l $(ATP_PREFIX)/lib/libatp.dylib ) rm $(ATP_PREFIX)/lib/libatp.dylib
+	    ln -s $(ATP_PREFIX)/lib/libatp.1.dylib   $(ATP_PREFIX)/lib/libatp.dylib
+	    install_name_tool -id     $(ATP_PREFIX)/lib/libatp.dylib $(ATP_PREFIX)/lib/libatp.1.dylib
+	    install_name_tool -change $(ATP_ROOT)/lib/libatp.1.dylib $(ATP_PREFIX)/lib/libatp.dylib $(ATP_PREFIX)/bin/create_fftw_plan
+        endif
+	cp support/export_atp_vars $(ATP_PREFIX)/bin/atp_vars
+	cp $(ATP_ROOT)/bin/anc_to_bnc              $(ATP_PREFIX)/bin/anc_to_bnc 
+	cp $(ATP_ROOT)/bin/bnc_parse_dump          $(ATP_PREFIX)/bin/bnc_parse_dump
+	cp $(ATP_ROOT)/bin/bnc_plot                $(ATP_PREFIX)/bin/bnc_plot
+	cp $(ATP_ROOT)/bin/bnc_scav                $(ATP_PREFIX)/bin/bnc_scav
+	cp $(ATP_ROOT)/bin/bnc_plot_2              $(ATP_PREFIX)/bin/bnc_plot_2
+	cp $(ATP_ROOT)/bin/anc_to_bnc_sim          $(ATP_PREFIX)/bin/anc_to_bnc_sim
+
+uninstall:
+	if ( -f $(ATP_PREFIX)/lib/libatp.a       ) rm -f $(ATP_PREFIX)/lib/libatp.a
+	if ( -f $(ATP_PREFIX)/lib/libatp.so.1.0  ) rm -f $(ATP_PREFIX)/lib/libatp.so.1.0
+	if ( -l $(ATP_PREFIX)/lib/libatp.so.1    ) rm -f $(ATP_PREFIX)/lib/libatp.so.1
+	if ( -l $(ATP_PREFIX)/lib/libatp.so      ) rm -f $(ATP_PREFIX)/lib/libatp.so
+	if ( -f $(ATP_PREFIX)/lib/libatp.1.dylib ) rm -f $(ATP_PREFIX)/lib/libatp.1.dylib
+	if ( -l $(ATP_PREFIX)/lib/libatp.dylib   ) rm -f $(ATP_PREFIX)/lib/libatp.dylib
+	if ( -f $(ATP_PREFIX)/include/atp.i      ) rm -f $(ATP_PREFIX)/include/atp.i
+	if ( -f $(ATP_PREFIX)/bin/anc_to_bnc     ) rm -f $(ATP_PREFIX)/bin/anc_to_bnc
+	if ( -f $(ATP_PREFIX)/bin/bnc_parse_dump ) rm -f $(ATP_PREFIX)/bin/bnc_parse_dump
+	if ( -f $(ATP_PREFIX)/bin/bnc_plot       ) rm -f $(ATP_PREFIX)/bin/bnc_plot
+	if ( -f $(ATP_PREFIX)/bin/bnc_scav       ) rm -f $(ATP_PREFIX)/bin/bnc_scav
+	if ( -f $(ATP_PREFIX)/bin/bnc_plot_2     ) rm -f $(ATP_PREFIX)/bin/bnc_plot_2
+	if ( -f $(ATP_PREFIX)/bin/anc_to_bnc_sim ) rm -f $(ATP_PREFIX)/bin/anc_to_bnc_sim
+
+clean:	
+	cd src; make clean      >>& /dev/null; set  status = 0
+	if ( -f src/libatp.1.dylib   ) rm -f src/libatp.1.dylib   
+
+distclean:	
+	cd src; make clean      >>& /dev/null; set  status = 0
+	if ( -f src/libatp.1.dylib   ) rm -f src/libatp.1.dylib   
+	./reconfigure -d > /tmp/atp_last_configure.txt ; chmod 666 /tmp/atp_last_configure.txt
+	if ( -f $(CONF_LOG)                         ) rm -f $(CONF_LOG)                         
+	if ( -f $(BUILD_LOG)                        ) rm -f $(BUILD_LOG)
+	support/rmfile     atp
+	support/rmfile     export_atp_vars
+	support/rmfile     Makefile
+	support/rmfile     build.log
+	support/rmfile     conf.log
+	support/purge      temp
+	support/purge      src
+	support/purge      support
+	support/purge      doc
+	support/purge      include
+	support/purge      ./
+
+tar:	distclean
+	cd src; make distclean      >>& /dev/null; set  status = 0
+	@if ( -f Makefile                        ) rm Makefile
+	@if ( -f temp/conf.log                   ) rm -f temp/conf.log
+	@if ( -f support/atp_vars                ) rm -f support/atp_vars        
+	@if ( -f support/export_atp_vars         ) rm -f support/export_atp_vars 
+	@if ( -f /tmp/atp-$(ATP_VERSION).tar.bz2 ) rm -f /tmp/atp-$(ATP_VERSION).tar.bz2 
+	cd ../; tar -cf -  atp_$(ATP_VERSION)  | \
+                lbzip2 -c > /tmp/atp-$(ATP_VERSION).tar.bz2 
+	@support/distribution_update.csh $(ATP_VERSION)
+	@echo "The tar-file /tmp/atp-$(ATP_VERSION).tar.bz2 is created"
+	sync

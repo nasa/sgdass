@@ -1,0 +1,15 @@
+Program  READ_CRL  reads Solve correlation file in binary CRL_SPOOL format 
+and writes it to the output file in ascii CRL_SPOOL format. Refer to
+$HELP_DIR/correlations.txt for description of the formats. This program also 
+serves as an example of manipulation with Solve binary correlation files.
+
+Usage:  read_crl  <correlation_file_name> [<output_file>]
+
+   where <correlation_file_name> is a correlation file name in binary format. 
+Solve writes down correlations in file $WORK_DIR/CORLxx where xx are Solve 
+user initials. Of course, keyword CORRELATIONS should be specified in batch
+control file for this solution, otherwise $WORK_DIR/CORLxx will be empty
+
+   If output_file is omitted of it is '-' then correlations are written in 
+standard output device (screen).
+

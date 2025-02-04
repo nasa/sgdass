@@ -1,0 +1,52 @@
+      SUBROUTINE USE_COVF_MAT(MAT,NP,STRING)
+      IMPLICIT NONE
+!
+! 1.  USE_COVF_MAT PROGRAM SPECIFICATION
+!
+! 1.1 Access a saved COVFIL's matrix.
+!
+! 1.2 REFERENCES:
+!
+! 2.  USE_COVF_MAT INTERFACE
+!
+! 2.1 Parameter File
+      INCLUDE 'solve.i'
+!
+! 2.2 INPUT Variables:
+!
+      CHARACTER*(*) STRING
+      INTEGER*4 NP
+      REAL*8 MAT(* )
+!
+! MAT - The matrix
+! NP _ Number of parameters
+! STRING - Requested access type
+!
+! 2.3 OUTPUT Variables: None
+!
+! 2.4 COMMON BLOCKS USED
+      INCLUDE 'precm.i'
+      CHARACTER*(NAME_SIZE) FNAME
+      INTEGER*4 FILDES
+      INTEGER*2 IDIRECT(BLOCK_WORDS)
+      COMMON/SAVCOV/FILDES,IDIRECT
+      SAVE /SAVCOV/
+      COMMON/SAVCOVCH/FNAME
+      SAVE /SAVCOVCH/
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES:
+!       CALLED SUBROUTINES: cgm_mat
+!
+! 3.  LOCAL VARIABLES
+!
+! 4. HISTORY
+!   WHO   WHEN   WHAT
+!
+! 5.  USE_COVF_MAT PROGRAM STRUCTURE
+!
+      CALL CGM_MAT(IDIRECT,FNAME,FILDES,MAT,NP,STRING)
+!
+      RETURN
+      END

@@ -1,0 +1,1034 @@
+Specification of VLBI schedule file in ast format version 1.2  of 2018.01.20
+
+1. Introduction:
+================
+
+  VLBI schedule in ast format describes a sequence of the 
+following commands executed by every station that participate 
+in a VLBI experiment:
+
+-- hardware setup
+-- slewing to a new source
+-- preob procedure that runs after an antenna stopped slewing
+   and set state on-source
+-- data recording
+-- postob procedure that runs after an antenna stopped recording
+   but before it started slewing to another source.
+
+  The schedule file provides timing for every command. Time is 
+expressed in UTC argument and is rounded to 0.1 sec.
+
+  Ast schedule specifies only the name of the hardware setup, preob, 
+and postob procedures, but it does not describe them. Description of 
+the hardware setup is provided by another schedule file in hds format.
+
+  A pair of schedule files in ast and hds format can be transformed
+to a schedule in vex format and vice versus. A schedule in ast
+format can be transformed to snap format directly without computation.
+
+  The motivation of designing another format for schedule description
+is to split hardware setup from description of observing sequence.
+The observing sequence is described in an a language that is intuitively
+understood by astronomer. The schedule in ast format has redundancy:
+some parameters can be dedued from others and some parameters present
+in the schedule file more than once. This redundency facilitates 
+investigation of problems and failures.
+
+2. Syntax of a schedule in ast format:
+======================================
+
+  Schedule in ast format contains lines of 8-bit characters.
+The first line identifies format, its version, and date of 
+the ast format specification release. Lines that starts with 
+character # are considered as comments and discarded by a parser. 
+Each line that is not a comment contains a command or a definition.
+
+  A command or a definition have the following format:
+
+  keyword: value(s) qualifier: value(s) [qualifier: value(s)]
+  
+  Keywords, values, and qualifiers are separated by one or more
+blanks. A value may not have blanks. A command, keyword, or a qualifier 
+end with character : (colon). A given keyword requires certain values 
+and qualifiers. A qualifier or a value cannot be empty. A given keyword
+or qualifier requires a certain number of values. All required values
+must be present. The order of qualifiers is arbitrary, but if a command 
+or a definition requires both values and qualifiers, the values must 
+preceed qualifiers. If a given keyword or qualifier requires a value that 
+has more than one word, the order of words is fixed and cannot be changed. 
+Keywords are sub-divided to primary, secondary, and commands. A primary 
+keyword defines a block of secondary keywords. A block of secondary 
+keywords that follow the primary keyword cannot be empty. 
+
+  Primary keywords should start with the first position. Two blanks should 
+precede any secondary keyword. Four blanks should precede any command.
+A definition specified in a secondary keyword is tied to the encompassing 
+block defined by a primary keyword by having common values. A definition 
+specified in a command keyword is tied to the encompassing blocks defined 
+by a secondary keyword and primary keywords by having common values. 
+
+  The ast format is by design grepable, i.e. simple combinations of Unix
+commands grep and awk are sufficient to produce a useful output.
+
+3. Definitions of primary keywords:
+===================================
+
+Keyword Experiment -- defines a block of information about the experiment.
+
+  value 
+
+    experiment code. The experiment code should be a string of letters 
+    in the upper case and digits no more than 8 characters long. 
+    NB: program drudg of 2018.01.01 required experiment code not exceed
+    6 characters. Experiment code should start with a letter.
+
+Keyword Station_parameters -- defines a block that describes station parameters 
+                              that were used for generation this schedule. 
+                              This block is needed for analyzing discrepancies 
+                              between schedule and log file that may help 
+                              in tracing problems.
+
+  value
+
+    station name. Station name is a sequence of characters in the upper 
+    case not exceeding 8 characters. 
+
+  keyword Station_parameters requires one qualifier:
+
+    Short_name: -- defines an alternative two character long station name
+
+      value of qualifirer Short_name:
+
+        a two character long station name.
+
+Keyword Scan       -- defines a block of definitions and commands 
+                      specific for a given scan. A scan in this context 
+                      is an operation performed by all stations of
+                      the network at a given interval of time related to 
+                      a given source. A station can observe a source or 
+                      skip a source. In the context of this document scan 
+                      start is the time when antennas started slewing to 
+                      a target source. Scan start time and stop time is 
+                      the same for all the stations. Since in general, 
+                      slewing rate, preob and postob duration are 
+                      different for every station, station recording start 
+                      time is allowed to be different for different 
+                      stations. Recording stop time is allowed to be 
+                      different for different stations.
+  
+  value
+
+    scan name. Scan name should be unique within a given schedule and
+    should not exceed 6 characters.
+  
+  Keyword Scan requires 7 following qualifiers:
+
+    Source:           -- defines the primary source name. 
+
+      value of qualifer Source: 
+      
+        primary source name. The primary source name should not exceed 8 characters. 
+        Longer name may break compatibility with existing software.
+
+    Alt_source_name:  -- defines the secondary source name. 
+
+      value of qualifer Alt_source_name:
+
+        secondary source name. The secondary source name should not 
+        exceed 16 characters.
+
+    Ra:               -- defines source right ascension in J2000.0 coordinate 
+                         system.
+
+      value of qualifer Ra:
+
+        source right ascension. Format: HH:MM:SS.ffffff
+
+    Dec:              -- defines source declination in J2000.0 coordinate
+                         system.
+
+      value of qualifer Dec:
+
+        source declination in format DDD:MM:SS.ffffff. Leading + is 
+        mandatory for a source with the positive declination.
+
+    Start_time:          -- defines a nominal scan time. Scan start time is 
+                            when all the antennas either finished recording
+                            and started postob procedure of the previous
+                            scan or finished hardware setup.
+
+      value of qualifer Start_time:
+
+        UTC time tag of the nominal scan start time. Format of the time
+        tag string: YYYY.MM.DD-HH:MM:SS.f
+
+    Stop_time:           -- defines a nominal scan time. Scan stop time is 
+                            when the last antenna finished recording and
+                            is ready for execution of the postob procedure.
+
+      value of qualifer Start_time:
+
+        UTC time tag of the nominal scan start time. Format of the time
+        tag string: YYYY.MM.DD-HH:MM:SS.f
+
+    Type:                -- Defines the type of the observed source.
+
+      value of qualifier Type:
+
+        type of the observed source. Supported types are:
+             target;
+             calibrator;
+             pointing;
+             planet.
+
+4. Definitions of secondary keywords:
+=====================================
+
+4.1 Definitions of secondary keywords within the experiment block
+-----------------------------------------------------------------
+
+Experiment_description  -- defines the text that describe the experiment.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+ 
+  value2-n
+
+     Arbitrary text that describes the exeriment not exceeding 128
+     characters long. The number o words should not exceed 32.
+
+
+Keyword Scheduler_name  -- defines the name of the person who prepared 
+                           this schedule file.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+
+  value2
+
+     first name of the person who prepared the schedule. 
+
+  value3
+
+     last name of the person who prepared the schedule. 
+
+Keyword Scheduler_email  -- defines the email address of the person who 
+                            prepared this schedule.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+
+  value2
+
+     email address
+
+Keyword Scheduler_phone  -- defines the telephone number of the person 
+                            who prepared this schedule.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+  value2
+
+     telephone number.
+
+Keyword Observer_phone   -- defines the telephone number to contact 
+                            during observations.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+  value2
+
+     telephone number.
+
+Keyword Description      -- an arbitrary string not exceeding 
+                            128 characters that describes the experiment.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+
+  value2
+
+     a string that describes the experiment
+
+Keyword UTC_experiment_dates -- defines the range of UTC dates of 
+                                the experiment: the nominal start and
+                                the nominal stop.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+
+  value2
+
+     UTC time tag of the experiment nominal start date. Format of the time
+     tag string: YYYY.MM.DD-HH:MM:SS.f
+
+  value3
+
+     UTC time tag of the experiment nominal stop date. Format of the time
+     tag string: YYYY.MM.DD-HH:MM:SS.f
+
+Corr_spectral_resolution -- defines spectral resolution for correlation.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+    
+  value2
+  
+     spectral resolution for correlation as a float number.
+    
+  value3
+  
+     unit of spectral resolution. Supported units: MHz and KHz
+
+Corr_time_resolution     -- defins time resolution for correlation.
+
+  value1
+  
+     experiment code. Should be the same as the value of defined in the 
+                      Experiment keyword.
+    
+  value2
+  
+     time resolution for correlation as a float number.
+    
+  value3
+  
+     unit of time resolution. Supported unit: sec.
+
+
+4.2 Definitions of secondary keywords within the station parameter block
+------------------------------------------------------------------------
+
+Keyword Last_time_update -- defines the date when the station parameter
+                            block was updated the last time.
+
+  value1
+
+    station name.
+
+  value2
+
+    The date of the last update of the station parameter block.
+    Format: YYYY.MM.DD
+
+Keyword Coordinates      -- defines the Cartesian positions of the station 
+                            in the ITRF.
+
+  value1
+
+    station name.
+
+  value2
+
+    Cartesian position along X axis as a real number.
+
+  value3
+
+    Cartesian position along Y axis as a real number.
+
+  value4
+
+    Cartesian position along Z axis as a real number.
+
+  value5
+
+    Unit. Supported units: meter, mm.
+
+Keyword Mount  -- defines antenna mounting type.
+
+  value1
+
+    station name.
+
+  value2
+
+    string that describes mounting type. Supported antenna mounting types:
+                    ALTAZ Alt-azimuthal mounting;
+                    NASM  Nasmyth mounting. Equivalent to ALTAZ for 
+                          scheduling purposes;
+                    BWG   beamed wave guide mounting. Equivalent to ALTAZ for 
+                          scheduling purposes;
+                    EQUA  Equatorial mounting;
+                    XY_E  XY mounting along East
+                    XY_N  XY mounting along North.
+
+Keyword 1st_axis_range -- defines the range of admissible angles along the first
+                          axis. That keyword defines 4 values. The first
+                          value defines the minimum angle. The fourth value 
+                          defines the maximum value. The 2nd and 3rd values 
+                          have meaning only if the first axis is over azimuth. 
+                          The 2nd value defines the transition angle from 
+                          the counterclock-wise to the neutral azimuthal sector.
+                          The 3rd value defines the transition angle from 
+                          the neutral to the clock-wise azimuthal sector.
+                          The 2nd and 3rd values are not used for mountings
+                          others than ALTAZ.
+
+  value1
+
+    station name.
+
+  value2
+
+    minimum angle along the 1st axis.
+     
+  value3
+
+    transition angle from counterclock-wise to the neutral sector.
+
+  value4
+
+    transition angle from the neutral to the clock-wise sector.
+
+  value5
+
+    maximum angle along the 1st axis.
+
+  value6
+
+    unit of angle. Supported units: deg and rad.
+
+  Keyword 1st_axis_range requires one qualifier:  
+
+    Axis: -- defines the name of the 1st axis.
+
+      value of qualifier Axis:
+
+        name of the 1st axis. Supported names are: azimuth, x, hour_angle.
+
+Keyword 2nd_axis_range -- defines the range of admissible angles along the 
+                          second axis. That keyword defines 2 values. The first
+                          value is the minimum angle. The second value is 
+                          the maximum angle.
+  value1
+
+    station name.
+
+  value2
+
+    minimum angle along the 2nd axis.
+     
+  value3
+
+    maximum angle along the 1st axis.
+
+  value4
+
+    unit of angle. Supported units: deg and rad.
+
+  Keyword 2nd_axis_range requires one qualifier:  
+
+    Axis:  --  defines the name of the 2nd axis.
+
+      value of qualifier Axis:
+
+        name of the 2nd axis. Supported names are: elevation, y, declination.
+
+Keyword 1st_axis_slewing_rate -- defines the slewing rate along 
+                                 the first axis. 
+                
+  value1
+
+    station name.
+
+  value2
+
+    Slewing rate along the first axis.
+
+  value3
+  
+    Units of the slewing rate. Supported units: deg/sec.
+
+  Keyword 1st_axis_slewing_rate requires one qualifier:  
+
+    Axis:  -- defines the name of the 1st axis.
+
+      value of qualifier Axis:
+
+        name of the 1st axis. Supported names are: azimuth, x, hour_angle.
+
+Keyword 2nd_axis_slewing_rate: defines the slewing rate along the second 
+                               axis. 
+  value1
+
+    station name.
+
+  value2
+
+    Slewing rate along the first axis.
+
+  value3
+  
+    Units of the slewing rate. Supported units: deg/sec.
+
+  Keyword 2nd_axis_slewing_rate requires one qualifier:  
+
+    Axis:  --  defines the name of the 2nd axis.
+
+      value of qualifier Axis:
+
+        name of the 2nd axis. Supported names are: elevation, y, declination.
+
+Keyword 1st_axis_slewing_accl: defines the slewing acceleration along 
+                               the first axis. 
+                
+  value1
+
+    station name.
+
+  value2
+
+    Slewing acceleration along the first axis.
+
+  value3
+  
+    Units of the slewing acceleration. Supported units: deg/sec^2.
+
+  Keyword 1st_axis_slewing_accl requires one qualifier:  
+
+
+    Axis:  -- defines the name of the 1st axis.
+
+      value of qualifier Axis:
+
+        name of the 1st axis. Supported names are: azimuth, x, hour_angle.
+
+Keyword 2nd_axis_slewing_accl: defines slewing acceleration along 
+                               the second axis. 
+                
+  value1
+
+    station name.
+
+  value2
+
+    Slewing rate along the first axis.
+
+  value3
+  
+    Units of the slewing acceleration. Supported units: deg/sec^2.
+
+  Keyword 2nd_axis_slewing_accl requires one qualifier:  
+
+    Axis:  --  defines the name of the 2nd axis.
+
+      value of qualifier Axis:
+
+        name of the 2nd axis. Supported names are: elevation, y, declination.
+
+Keyword 1st_axis_settle_time -- defines the settle time over the first axis
+                                after antenna stops slewing and before 
+                                it reports "on-source". This time is added 
+                                to the slewing time for a motion along this axis.
+
+  value1
+
+    station name.
+
+  value2
+
+    Slewing rate along the first axis.
+
+  value3
+  
+    Units of settle time. Supported units: sec.
+
+  Keyword 1st_axis_settle_time requires one qualifier:  
+
+    Axis:  --  defines the name of the 1st axis.
+
+      value of qualifier Axis:
+
+        name of the 1st axis. Supported names are: azimuth, x, hour_angle.
+
+Keyword 2nd_axis_settle_time -- defines the settle time over the secibd  axis
+                                after antenna stops slewing and before 
+                                it reports "on-source". This time is added 
+                                to the slewing time for a motion along this axis.
+
+  value1
+
+    station name.
+
+  value2
+
+    Slewing rate along the second axis.
+
+  value3
+  
+    Units of settle time. Supported units: sec.
+
+  Keyword 2nd_axis_settle_time requires one qualifier:  
+
+    Axis:  --  defines the name of the 2nd axis.
+
+      value of qualifier Axis:
+
+        name of the 1st axis. Supported names are: elevatin, y, declination.
+
+Keyword Preob_proc_duration -- defines duration of preob procedure that runs
+                               immediately after the antennas reports
+                               status "on-source". Zero value is admissible,
+                               and it means no preob procedure will run.
+
+  value1
+
+    station name.
+
+  value2
+
+    duration of the preob procedure.
+
+  value3
+  
+    Units of duration. Supported units: sec.
+
+Keyword Postob_proc_duration -- defines duration of postob procedure that runs
+                                immediately after the stations stopped
+                                recording and before they started to move
+                                to another source. Zero value is admissible,
+                                and it means no postob procedure will run.
+
+  value1
+
+    station name.
+
+  value2
+
+    duration of the postob procedure.
+
+  value3
+  
+    Units of duration. Supported units: sec.
+
+Keyword Recorder            -- defines the name of the recorder that 
+                               station uses.
+
+  value1
+
+    station name.
+
+  value2
+
+    name of the recorder. Supported names: mark5, mark5b, mark5c, mark6, 
+         and flexbuf.
+
+
+Keyword Recording_rate      -- defines recording rate used in this 
+                               experiment.
+
+  value1
+
+    station name.
+
+  value2
+
+    recording rate.
+
+  value3
+  
+    Units of the recording rate. Supported units: Gbps and Mbps.
+
+
+4.3 Definitions of secondary keywords within the station block
+--------------------------------------------------------------
+
+Keyword Station -- defines source and the operation for the given
+                   station and given scan.
+
+  value
+
+    Station name.
+
+   Keyword Station has the following 3 mandatory qualifiers:
+
+    Scan:       -- scan ID.
+
+      value of qualifier Scan:
+
+        Scan name -- a string of characters. NB: scan length longer 
+                     6 characters may break some software packages.
+
+    Operation:    -- defines which operation will be executed during
+                     this scan: either observing or skipping. Operation 
+                     observing assumes that commands from the list 
+                     set_mode, slew, preob, record, postob will follow. 
+                     Operation skipping indicates that the station
+                     will not participate in this scan.
+
+      value of qualifier Operation:
+
+        The operation executed by the station during the scan.
+        Supported operations: observing and skipping.
+
+
+    Source:       -- defines the source that the antenna will be
+                     observing, or would have been observing unless
+                     the operation was skipping.
+
+    value of qualifier Source:
+
+      primary source name.
+
+
+4. Definitions of commands
+==========================
+
+Command Set_mode: -- requests the field system to execute a command 
+                     for setting the hardware mode with the specified 
+                     name. The schedule in the ast format specifies 
+                     only the name of the new mode, but it does not 
+                     specifies which changes in the hardware state 
+                     will be made when the new mode is set up. The name
+                     is used to associate it with the setup defined
+                     in another schedule file.
+
+   value1 
+
+     station name.
+
+   value2
+
+     UTC start time of the setting mode command. Format of the time
+     tag string: YYYY.MM.DD-HH:MM:SS.f
+
+   value3
+
+     Expected UTC stop time of the setting mode command. Format of 
+     the time tag string: YYYY.MM.DD-HH:MM:SS.f
+
+   Command Set_mode has the following 3 mandatory qualifiers:
+
+     Scan:                 -- defines the scan name.
+
+       value of qualifier Scan:
+
+         scan name defined in the encompassing Scan and Station keywords.
+
+     Hardware_setup_mode:  -- defines the name of the hardware setup mode.
+
+       value of qualifier Hardware_setup_mode:  
+
+         name of the hardware setup mode as a sting of characters.
+
+     Wrap:                 -- Defines the cable wrap code. It has sense only 
+                              for ALTAZ mountings and defines the cable wrap 
+                              sector. The azimuth range that can be reach 
+                              uniquely is called neutral. If an antenna is 
+                              supposed to point to the sector that is 
+                              reached by the counter-clockwise turn with 
+                              respect to the neutral sector that position 
+                              is called counter-clock wise wrap. If 
+                              an antenna is supposed to point to the sector 
+                              that is reached by the clockwise turn with 
+                              respect to the neutral sector that position 
+                              is called counter-clock wise wrap.
+
+       value of qualifier Wrap:
+
+         Wrap code. Supported calbe wrap codes:
+                    &ccw -- counter-clockwise wrap;
+                    &n   -- neutral wrap;
+                    &cw  -- clockwise wrap;
+                    &und -- cable wrap is undefined or not applicable.
+      
+Command Slew:     -- requests the field system to move the antenna to another
+                     source.
+
+   value1 
+
+     station name.
+
+   value2
+
+     UTC start time of slewing to the new source command. Format of the time
+     tag string: YYYY.MM.DD-HH:MM:SS.f
+
+   value3
+
+     Expected UTC stop time of the slewing mode command. This time accounts
+     for settle time. It is expected the antenna will signal that it is 
+     on source by that time. Format of the time tag string: 
+     YYYY.MM.DD-HH:MM:SS.f
+
+   Command Slew requires 7 following qualifiers:
+
+   Scan:         -- defines the scan name.
+
+     value of qualifier Scan:
+
+       scan name defined in the encompassing Scan and Station keywords.
+       
+   Sources:      -- defines the names of the source where the antenna was
+                    before sewing and the name where the antenna is expected
+                    to be after slewing.
+
+     value1 of qualifier Sources:
+
+       name of the old source where the antenna was before slewing.
+
+     value2 of qualifier Sources:
+
+       name of the new source where the antenna will be after slewing.
+
+
+   Duration:    -- defines duration of slewing in seconds that 
+                   includes settle time.
+
+     value of qualifier Duration:
+  
+       duration of slewing as a float number.
+
+   Elevs:       -- defines elevations angles above the horizon
+                   in degrees before slewing and after slewing
+
+     value1 of qualifier Elevs:
+
+       elevation angle before slewing as a float number.
+
+     value2 of qualifier Elevs:
+
+       elevation angle after slewing as a float number.
+
+   Azims:       -- defines azimuth angles in degrees before slewing 
+                   and after slewing. The azimuths should be in the range 
+                   defined by the keyword 1st_axis_range. The azimuth 
+                   ambiguity should correspond to the cable wrap. If the 
+                   antenna moves clockwise the second azimuth should be 
+                   greater than the first azimuth. If the antenna moves 
+                   counter-clockwise the second azimuth should be less than 
+                   the first azimuth. If the antenna moves less than 180 deg, 
+                   the module of the azimuth differences should be less than 
+                   180 deg. If the antenna moves greater than 180 deg, 
+                   the module of the azimuth differences should be greater 
+                   than 180 deg. 
+                   
+     value1 of qualifier Azims:
+
+       azimuth angle in a range before slewing as a float number.
+
+     value2 of qualifier Azims:
+
+       azimuth angle after slewing as a float number.
+
+   Hour_angles: -- defines the hour angles in degrees before slewing 
+                   and after slewing. The hour should be in
+                   the range defined by the keyword 1st_axis_range.
+
+     value1 of qualifier Hour_angles:
+
+       hour angle in a range before slewing as a float number.
+
+     value2 of qualifier Hour_angles:
+
+       hour angle after slewing as a float number.
+
+     Wrap:                 -- Defines the cable wrap code. It has sense only 
+                              for ALTAZ mountings and defines the cable wrap 
+                              sector. The azimuth range that can be reach 
+                              uniquely is called neutral. If an antenna is 
+                              supposed to point to the sector that is 
+                              reached by the counter-clockwise turn with 
+                              respect to the neutral sector that position 
+                              is called counter-clock wise wrap. If 
+                              an antenna is supposed to point to the sector 
+                              that is reached by the clockwise turn with 
+                              respect to the neutral sector that position 
+                              is called counter-clock wise wrap.
+
+       value of qualifier Wrap:
+
+         Wrap code. Supported calbe wrap codes:
+                    &ccw -- counter-clockwise wrap;
+                    &n   -- neutral wrap;
+                    &cw  -- clockwise wrap;
+                    &und -- cable wrap is undefined or not applicable.
+
+Command Preob: --    requests the field system to execute the so-called
+                     preob procedure. The preob procedure runs when
+                     antenna is on-source, but before the antenna starts
+                     recording. This command should be defined even if 
+                     no specific procedure is requested.
+   value1 
+
+     station name.
+
+   value2
+
+     UTC start time of preob procedure Format of the time tag string: 
+     YYYY.MM.DD-HH:MM:SS.f
+
+   value3
+
+     Expected UTC stop time of the preob procedure. The preob procedure
+     is expected to finish by that time. Format of the time tag string: 
+     YYYY.MM.DD-HH:MM:SS.f
+
+
+   Command Preob requires 4 following qualifiers:
+
+   Scan:         -- defines the scan name.
+
+     value of qualifier Scan:
+
+       scan name defined in the encompassing Scan and Station keywords.
+
+       
+   Source:      -- defines the names of the source where the antenna
+                   points.
+
+     value of qualifier Source:
+
+       source name defined in the encompassing Scan and Station keywords.
+
+
+   Duration:    -- defines duration of the preob procedure in seconds
+
+     value of qualifier Duration:
+  
+       duration of the preob procedure as a float number.
+
+   Proc_name:   -- defines the name of the preob procedure. A schedule
+                   in ast format does not specify what a procedure with
+                   a given name should execute.
+
+     value of qualifier Proc_name:
+
+       name of the preob procedure
+    
+
+Command Record: --   requests the field system to record the data.
+                     The antenna is supposed to be on-source all
+                     the time during recording.
+
+   value1 
+
+     station name
+
+   value2
+
+     UTC start time of recording. Format of the time tag string: 
+     YYYY.MM.DD-HH:MM:SS.f
+
+   value3
+
+     UTC stop time of recording. Format of the time tag string: 
+     YYYY.MM.DD-HH:MM:SS.f
+
+   Command Record requires 6 following qualifiers:
+
+   Scan:         -- defines the scan name.
+
+     value of qualifier Scan:
+
+       scan name defined in the encompassing Scan and Station keywords
+
+   Source:      -- defines the names of the source where the antenna
+                   points.
+
+     value of qualifier Source:
+
+       source name defined in the encompassing Scan and Station keywords.
+
+
+   Duration:    -- defines duration of the recording in seconds.
+
+     value of qualifier Duration:
+  
+       duration of recording as a float number.
+
+   Elev:        -- defines the elevation angle in degrees at the beginning 
+                   the recording interval.
+
+     value of qualifier Elev:
+
+       elevation angle above the horizon in degrees at the beginning
+       of data recording.
+
+   Azim:        -- defines the azimuth angle in degrees at the beginning 
+                   of the recording interval. The azimuth angle is in 
+                   the range [-180, 180] degrees.
+
+     value of qualifier Azim:
+
+       azimuth angle in degrees at the beginning of data recording.
+
+   Hour_angle:  -- defines the hour angle in degrees at the beginning 
+                   of the recording interval. The hour angle is in 
+                   the range [-180, 180] degrees.
+
+     value of qualifier Hour_angle:
+
+       hour angle in degrees at the beginning of data recording.
+
+Command Postob: --   requests the field system to execute the so-called
+                     postob procedure. The postob procedure runs after
+                     the station stopped recording, but before the antenna
+                     starts slewing to a new source. This command should 
+                     be defined even if no specific procedure is requested.
+   value1 
+
+     station name
+
+   value2
+
+     UTC start time of postob procedure, Format of the time tag string: 
+     YYYY.MM.DD-HH:MM:SS.f
+
+   value3
+
+     Expected UTC stop time of the postob procedure. The postob procedure
+     is expected to finish by that time. Format of the time tag string: 
+     YYYY.MM.DD-HH:MM:SS.f
+
+   value3
+
+     Expected UTC stop time of the postob command. Format of the time tag 
+     string: YYYY.MM.DD-HH:MM:SS.f
+
+   Command Postob requires 4 following qualifiers:
+
+   Scan:         -- defines the scan name.
+
+     value of qualifier Scan:
+
+       scan name defined in the encompassing Scan and Station keywords.
+
+       
+   Source:      -- defines the names of the source where the antenna
+                   points.
+
+     value of qualifier Source:
+
+       source name defined in the encompassing Scan and Station keywords.
+
+
+   Duration:    -- defines duration of the postob procedure in seconds
+
+     value of qualifier Duration:
+  
+       duration of the postob procedure as a float number.
+
+   Proc_name:   -- defines the name of the postob procedure. A schedule
+                   in ast format does not specify what a procedure with
+                   a given name should execute.
+
+     value of qualifier Proc_name:
+
+       name of the postob procedure.

@@ -1,0 +1,120 @@
+# VTD Control file.   Format version of 2022.08.30
+#
+# /vlbi/vtd_data/vtd_getdb.cnt
+#  Example of a configuration file for VTD
+#
+#  Created:     2016.09.14_16:27:52
+#  Last update: 2022.08.30_07:25:00
+#
+#
+# --- General files
+#
+LEAP_SECOND:             /vlbi/apriori/leapsec.dat
+DE_EPHEMERIDES:          /vlbi/apriori/de440.eph
+#
+# --- Site positions and source coordinate catalogues
+#
+STATION_DESCRIPTION:     /vlbi/apriori/station.desc
+STATION_COORDINATES:     /vlbi/solve/save_files/glo.sit
+STATION_VELOCITIES:      /vlbi/solve/save_files/glo.vel
+STATION_ECCENTRICITIES:  /vlbi/solve/save_files/ECCDAT.ecc
+SOURCE_COORDINATES:      /vlbi/solve/save_files/glo.src
+SOURCE_COORDINATES_2ND:  NONE
+SOURCE_COORDINATES_3RD:  NONE
+SOURCE_COORDINATES_4TH:  NONE
+#
+# --- Options for accounting for the Earth's rotation (ERM formalism)
+#
+AEM_FILE:                NONE
+ERM_FILE:                NONE
+HARMONIC_EOP_FILE:       /vlbi/solve/save_files/heo_20220720.heo
+#
+# --- Options for accounting for the Earth's rotation (IERS formalism)
+#
+EOP_SERIES:              /vlbi/solve/save_files/ners.eop
+EOP_TIME_SCALE:          TAI
+UZT_MODEL:               DICKMAN1993
+UZT_USE:                 NONE
+EROT_COMPAT:             NONE
+PRECESSION_EXPRESSION:   CAPITAINE_2003
+NUTATION_EXPANSION:      MHB2000
+GEODESIC_NUTATION:       NONE
+#
+# --- Solid Earth tides and the pole tide
+#
+SOLID_EARTH_TIDES_ZERO_FREQ:    MDG97AN
+SOLID_EARTH_TIDES_2ND_DEGREE:   NONE
+SOLID_EARTH_TIDES_3RD_DEGREE:   NONE
+POLE_TIDE_MODEL:                NONE
+MPL_FILE:                       NONE
+#
+# --- Position variations
+#
+POSVAR_FIL:  NONE
+POSVAR_MOD:  NONE
+POSVAR_INT:  NONE
+POSVAR_USE:  NONE
+#
+#
+# --- Axis offset computations
+#
+AXIS_OFFSET_MODEL:              NONE
+#
+# --- Antenna deformations:
+#
+ANTENNA_DEFORMATIONS_FILE: 	NONE
+ANTENNA_THERMAL_EXPANSION:      NONE
+#
+# --- Delays in the propagation media
+#
+METEO_DEF:                      CALC
+#
+HYDROSTATIC_ZENITH_DELAY:       NONE
+WET_ZENITH_DELAY:               NONE
+HYDROSTATIC_MAPPING_FUNCTION:   NONE
+WET_MAPPING_FUNCTION:           NONE
+#
+SLANT_PATH_DELAY_MODEL:         NONE
+EXTERNAL_DELAY_DIR: 		NONE
+EXTERNAL_DELAY_DIR_2ND: 	NONE
+EXTERNAL_DELAY_DIR_3RD: 	NONE
+EXTERNAL_DELAY_DIR_4TH: 	NONE
+SLANTED_PATH_DELAY_BIAS_FILE:   NONE
+#
+ATMOSPHERE_PATH_DELAY_PARTIAL:  GAUSSIAN_LAYER   5000.0  500.0
+ATMOSPHERE_TILT_PARTIALS:       NORTH_EAST
+#
+IONOSPHERE_MODEL:               GNSS_TEC_MAP
+IONOSPHERE_SCALE:               0.784
+SOU_DEBIAS_MODEL:               MOD784
+#
+IONOSPHERE_DATA_FILE:           /s0/viono/codg_01.vio
+IONOSPHERE_DATA_FILE_2ND:       /s0/viono/codg_02.vio
+IONOSPHERE_DATA_FILE_3RD:       /s0/viono/codg_03.vio
+IONOSPHERE_DATA_FILE_4TH:       NONE
+IONOSPHERE_DATA_FILE_5TH:       NONE
+IONOSPHERE_DATA_FILE_6TH:       NONE
+IONOSPHERE_DATA_FILE_7TH:       NONE
+IONOSPHERE_DATA_FILE_8TH:       NONE
+IONOSPHERE_DATA_FILE_9TH:       NONE
+#
+# --- Options for computing geometric part of the path delay
+#
+GRS_METRIC:                     ITRF2000
+TROP_AXOF_COUPLING:             NONE
+TROP_GEOMETRIC_COUPLING:        NONE
+PARALLACTIC_ANGLE:              YES
+GALACTIC_ABERRATION:            NONE
+#
+DOPPLER_EXPR:                   COARSE_2006
+#
+# --- Coupling effects
+#
+GEOM_EXPR_FAR_ZONE:             PK_2001
+GEOM_EXPR_NEAR_ZONE:            LIGHT_TIME
+SOURCE_STRUCTURE:               NONE
+#
+# --- Whether or not to analytically compute delay rate
+#
+DELAY_RATE:                     YES
+#

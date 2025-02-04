@@ -1,0 +1,31 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   This C-shell program is supposed to be invoked by Intel compiler   *
+# *   during the linking phase. It removes an object file for_main.o     *
+# *   from the list of arguments to ld and invokes ld                    *
+# *                                                                      *
+# *  ### 10-NOV-2003               v1.0 (c)  L. Petrov  10-NOV-2003 ###  *
+# *                                                                      *
+# ************************************************************************
+set remove_object_file_patter = "/lib/for_main.o"
+set k = 0
+set opt_use  = ""
+# echo " Number of arguments: " ${#argv} 
+loop:
+   set k = `expr $k + 1`
+   if ( $k > ${#argv} ) goto out_of_loop
+#
+# ----- Remove some options which are not needed, but make only harm
+#
+         echo $argv[$k] | grep $remove_object_file_patter
+         if ( $status == 1 ) then
+            set opt_use = "$opt_use "$argv[$k]
+         endif
+   goto loop
+out_of_loop:
+# echo "ld $opt_use"
+#
+# --- invoke linker
+#
+/usr/bin/ld $opt_use

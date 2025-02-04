@@ -1,0 +1,903 @@
+<HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov 2016.05.10_18:13:33 -->
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1" >
+    <META NAME="GENERATOR" CONTENT="manually" >
+    <META NAME="Author" CONTENT="Leonid Petrov" >
+
+    <STYLE TYPE="text/css">
+    .com{
+         color: 0B0B55;
+           font-generic-family: "fantasy";
+           font-style: normal;
+           font-weight: bold;
+    } 
+    .wrap{
+         color: 0B550B;
+           font-generic-family: "fantasy";
+           font-style: normal;
+           font-weight: bold;
+           text-shadow: 2px -2px 2px #DDDDDD;
+    } 
+    .val{
+         color: 550B0B;
+           font-generic-family: "fantasy";
+           font-style: normal;
+           font-weight: bold;
+    } 
+    .task{
+         color: 350b55;
+           font-generic-family: sans-serif;
+           font-weight: bold;
+<!--           
+           letter-spacing: -1px; 
+-->
+    } 
+    .pima{
+         color: 0B550B;
+         font-weight: bold;
+         font-family: "URW Chancery L", "URW Chancery L Bold", 
+                      "Comic Sans MS", "Century Gothic", 
+                      CenturyGothic, AppleGothic, sans-serif;
+         text-shadow: 2px -2px 2px #DDDDDD;
+         font-size: 125%;
+         line-height: 80%;
+    } 
+    .pima_font{
+         font-weight: bold;
+         font-family: "Comic Sans MS", "URW Chancery L";
+         font-size: 125%;
+    } 
+   </STYLE>
+    <TITLE> 
+            PIMA Python wrappers
+    </TITLE>
+
+</HEAD>
+<BODY>
+
+<H1> <CENTER> <EM class="pima_font">PIMA</EM> Python wrappers </CENTER></H1>
+
+<P><DIV ALIGN="right">
+Date of last modification: <TT>
+2023.01.08_17:19:39
+&nbsp;&nbsp;
+</TT></DIV><P>
+
+<BLOCKQUOTE><I>   
+<EM class="pima">PIMA</EM> was designed to be "scriptable", i.e. called from 
+another programs. The interface: control file that have to define all parameters, 
+task and command line arguments that override the keywords defined in the 
+control file is somewhat heavy weight. <EM class="pima">PIMA</EM> distribution
+provides 4 scripts and users are encouraged to develop their own. These scripts 
+are also called wrappers, because they wrap calls to various 
+<EM class="pima">PIMA</EM> tasks.
+</I>
+<P>
+
+</I>
+<P>
+<HR SIZE="2">
+<CENTER><EM> Contents: </CENTER></EM>
+
+<UL>
+  <LI> <A HREF="#pf"> pf.py</A> &mdash; 
+       general fringe fitting</LI></BR>
+  <LI> <A HREF="#pt"> pt.py</A> &mdash; 
+       trial fringe fitting</LI><BR>
+  <LI> <A HREF="#pr"> pr.py</A> &mdash; 
+       re-fringing</LI><BR> 
+  <LI> <A HREF="#pu"> pu.py</A> &mdash; update suppression status after 
+       refringing</LI><BR> 
+  <LI> <A HREF="#automap"> automap.py</A> &mdash; automatic image restoration 
+                           of an experiment </LI><BR> 
+  <LI> <A HREF="#imadir"> imadir.py</A> &mdash; automatic imaging using all
+                          visibility files at a given directory.</LI><BR> 
+</UL>
+
+</BLOCKQUOTE>
+<HR SIZE="2">
+<P>
+
+  The wrappers do not provide new functionality that <EM class="pima">PIMA</EM>
+does not have. They significantly simplify the user interface by expense 
+of reducing functionality and by imposing rules on file names. If you need 
+full functionality, for instance for processing unusual experiment, 
+<EM class="pima">PIMA</EM> wrappers will not work for you. But the use of 
+wrappers may be sufficient for processing many experiments.
+<P>
+Wrappers assume the file names obey the following convention:
+<UL>
+     <LI> <EM class="pima">PIMA</EM> control files are located in directory 
+          <TT>VVVVV/EEE</TT>, where <TT>VVVVV</TT> is the root directory of 
+          vlbi experiments specified by --pima-exp-dir  during 
+          configuration and <TT>EEE</TT> is the experiment name specified 
+          in the keyword <EM class="com">SESS_CODE</EM> of the 
+          <EM class="pima">PIMA</EM> control file. 
+</UL> 
+
+<P>
+
+The following wrappers are provided:
+
+<UL>
+     <LI><EM class="wrap">pf.py</EM> &mdash; Fringe fitting. Includes tasks 
+         data loading, parse log files, coarse fringe fitting, bandpass 
+         computation, fine fringe fitting, data calibration and splitting, 
+         generation of the output database in GVF format, auto-imaging, 
+         generation of image pictures, etc.
+         </LI><P>
+
+     <LI><EM class="wrap">pt.py</EM> &mdash; Trial fringe fitting. Runs 
+         a trial fringe fitting procedure for a given observation.
+         </LI><P>
+
+     <LI><EM class="wrap">pr.py</EM> &mdash; Resolving sub-ambiguities. 
+         Parses the listing of the VTD/Post-Solve run, generates control 
+         file for re-fringing with a narrow search window, executes that
+         control file, and updates the database.
+         </LI><P>
+
+     <LI><EM class="wrap">automap.py</EM> &mdash; automatic imaging using
+          given averaged and calibrated visibility file.
+         </LI><P>
+
+     <LI><EM class="wrap">imadir.py</EM> &mdash; automatic imaging all
+          the sources with averaged and calibrated visibilities found
+          in a given directory.
+         </LI><P>
+</UL>
+<P>
+<P>&nbsp;<P>
+
+<A NAME="pf"> 
+<H2> <EM class="wrap">pf.py</EM> &mdash; a general <EM class="pima">PIMA</EM> wrapper.</H2>
+
+<P>&nbsp;<P>
+
+<PRE>
+usage: <EM class="wrap">pf.py</EM> 
+             <EM class="com">[-h] [--version] [-v value] [-r] [-resume] [-s] [-H]</EM>
+             <EM class="val">exp band</EM>
+             {<EM class="task">load,logs,gean,coarse,bpas,fine,mkdb,mktxt,splt,gain,autm,pict,map,sres,gaco,opal,opag</EM>}
+             <EM class="com">[opts]</EM>
+</PRE>
+
+   The wrapper has general options followed by three mandatory positional 
+arguments followed by task specific optional arguments. General options that 
+follow immediately after the wrapper name and before positional arguments:
+<P>
+<UL>
+     <LI><EM class="com">-h</EM> &mdash; prints a brief information about
+         the wrapper.
+         </LI><P>
+
+     <LI><EM class="com">-H</EM> &mdash; print extended manual (this
+                                 text)
+         </LI><P>
+
+     <LI><EM class="com">--version</EM> &mdash; prints the wrapper version.
+         </LI><P>
+    
+     <LI><EM class="com">-v</EM> &mdash; verbosity level. An integer parameter 
+         that describes how detailed informational messages will be printed
+         at the screen. Error message will be printed regardless of verbosity
+         level.
+         <EM class="wrap">pf.py</EM> will print.
+         <UL>
+             <LI><EM class="val">0</EM> &mdash; silent mode. No information
+                 messages are printed.
+                 </LI></BR>
+             <LI><EM class="val">1</EM> &mdash; moderate verbosity (default)
+                 </LI></BR>
+             <LI><EM class="val">2</EM> &mdash; verbose mode. 
+                  <EM class="pima">PIMA</EM> commands are printed at the 
+                  screen before execution.
+                 </LI></BR>
+             <LI><EM class="val">&gt;2</EM> &mdash; debugging mode. More verbose
+                 than 2.
+                 </LI></BR>
+         </UL></LI><P>
+
+     <LI><EM class="com">-r</EM> &mdash; dry run. <EM class="wrap">pf.py</EM> 
+          prints commands that it is about to execute, but does not execute 
+          them.
+         </LI><P>
+  
+     <LI><EM class="com">-resume</EM> &mdash; resume mode. If 
+         <EM class="wrap">pf.py</EM>  tasks 
+         <EM class="task">coarse, fine,</EM> or <EM class="task">allfine</EM> 
+         have been interrupted, when <EM class="wrap">pf.py</EM> 
+         is invoked with <EM class="com">-resume</EM> flag, it will examine 
+         fringe file and fringe residual file. It will search backward the 
+         latest full record and then restart with the next observation.
+         If the last record is corrupted, f.e. was written only
+         partially, <EM class="wrap">pf.py</EM> will discard the corrupted record.
+         prints commands that it is about to execute, but does not execute 
+         them.
+         </LI><P>
+
+     <LI><EM class="com">-s</EM> &mdash; to use static build of 
+             <EM class="pima">PIMA</EM>. The directory of the static build
+             is defined in pima_local.py. This option may be useful when you
+             have several versions of <EM class="pima">PIMA</EM>.
+         </LI><P>
+
+     <LI><EM class="com">[opts]</EM> &mdash; additional options. Some
+            tasks have specific options that starts from hyphen. These
+            options may be followed up by pairs keywords: value, where
+            keywords is a recognized <EM class="pima">PIMA</EM> keyword.
+            Wrapper <EM class="wrap">pf.py</EM> may override values
+            of some keywords defined in the control file. Values 
+            of the keywords defined at the end of the wrapper command
+            line have the highest priority and override the values set
+            by the wrapper.
+         </LI><P>
+</UL>
+
+   There are three mandatory arguments:
+<P>
+<UL>
+     <LI><EM class="com">exp</EM> &mdash; experiment name in low case.
+         </LI><P>
+
+     <LI><EM class="com">band</EM> &mdash; band name in the low case.
+         </LI><P>
+     <LI><EM class="com">task</EM> &mdash; take name. A task may follow
+         by task specific options. The task specific options cannot be
+         be put before the task name.
+         </LI><P>
+</UL>
+
+   Supported tasks:
+<P>
+<UL>
+    <LI> <EM class="task">load</EM> [<EM class="com">-nopcal</EM>] &mdash; 
+         loading a database into internal <EM class="pima">PIMA</EM>
+         data structures. This task searches for <TT>SSSSS/EEE_uv.exc</TT> 
+         file. If such a file exists, it purges its contents. If during 
+         executing <EM class="pima">PIMA</EM> task <EM class="task">load</EM>
+         it finds that there are bad points, and the keyword 
+         <EM class="com">UV_EXCLUDE_FILE:</EM> <EM class="val">AUTO</EM>,
+         it runs the this task the second time, and if necessary,
+         the second time. Option <EM class="com">-nopcal</EM> instructs
+         <EM class="pima">PIMA</EM> not to load phase calibration.
+         <P>
+         This task creates log file <TT>VVVVV/EEE/EEE_load.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">logs</EM> &mdash; searches for all log files 
+         in VVVVV/EEE directory, parses them and writes down in PIMA
+         ANTAB format. This task assumes log names are either in
+         IVS format: <TT>VVVVV/EEE/EEElog.SS</TT> format, or VLBA format: 
+         <TT>VVVVV/EEE/EEESS.log</TT>, or in KVN format: 
+         <TT>VVVVV/EEE/EEEKK.log</TT>, where SS is a two character long 
+         station code, KK is a three character long name of a KVN 
+         station: one of KTN, KUS, or KYS. The output file has format 
+         <TT>VVVVV/EEE/EEE_SS.ant</TT>. This  task creates log file
+         <TT>VVVVV/EEE/EEE_log_antab.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">gean</EM> &mdash; this task searches for log
+         files in PIMA ANTAB format generated, for example, by wrapper 
+         task <EM class="task">logs</EM> and/or for legacy VLBI log
+         file, parses them and loads system temperature, cable calibration
+         atmospheric pressure, air temperature, and relative humidity into 
+         internal data structure of <EM class="pima">PIMA</EM>. It searches 
+         for </I>parsed</I> log files in PIMA ANTAB format with file names
+         <TT>VVVVV/EEE/EEE_SS.ant</TT> and/or VLBA legacy log with
+         name <TT>VVVVVV/EEE/EEEcal.vlba</TT>. When the tasks processes
+         legacy VLBA logs, it loads phase calibration phase and amplitude
+         as well as cable calibration. NB: Legacy log files should 
+         <I>not</I> be used for processing VLBA experiments recorded with 
+         a digital backend since 2014. If FITS-IDI files had calibration
+         information, task <EM class="task">gean</EM> overwrites it.
+         This  task creates log file <TT>VVVVV/EEE/EEE_gean.log</TT>. 
+         </LI><P>
+
+    <LI> <EM class="task">coarse</EM> &mdash; this task performs fringe
+         search in the coarse mode. The goal of performing coarse fringe 
+         search is a) to identify failures; b) to find a list of high SNR
+         scans. Coarse fringe search runs in a simplified mode in order
+         to speed up computations. No bandpass calibration, no bandpass
+         mask, no phase calibration mask, no oversampling is applied.
+         Fringe fit uses single polarization data. Fine fringe fits 
+         algorithm uses a simplistic parabolic fit. The task generates
+         the output file with fringe fitting results with name 
+         <TT>VVVVV/EEE/EEE_B_nobps.fri</TT> and fringe fitting residuals
+         with name <TT>VVVVV/EEE/EEE_B_nobps.frr</TT> overriding names
+         specified in the control file by keywords 
+         <EM class="com">FRINGE_FILE</EM> and <EM class="com">FRIRES_FILE</EM,
+         though trailing options of <EM class="wrap">pf.py</EM> still can
+         override these names. The task creates log file with name
+         <TT>VVVVVV/EEE/EEE_B_coarse.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">bpas</EM> &mdash; this task performs computation
+          of the bandpass and, in a case of dual-polarization data, 
+          polarization bandpass. This task has two modes: inspection mode
+          that is invoked with option <EM class="com">-insp</EM> and 
+          production mode. The task in the inspection mode computes bandpass 
+          in the <EM class="com">init</EM> mode. It generates two plots 
+          for observations with the maximum SNR with at all baselines
+          with the reference stations. The first plot shows normalized 
+          amplitude (green), a model fit to the normalized amplitude (blue), 
+          and amplitude of auto-correlation (red). The second plot shows
+          residual phases (green) and the model fit to residual phases 
+          (blue). The task invoked in the inspection node creates a bandpass 
+          with name <TT>VVVVV/EEE/EEE_B_init.bps</TT> and, if dual-band data
+          are processed, the polarization bandpass with name
+          <TT>VVVVV/EEE/EEE_B_init_plr.bps</TT> as well. 
+          <P>
+ 
+          When task is invoked in the production mode, i.e. without using 
+          <EM class="com">-insp</EM> option, it computes the bandpass,
+          and polarization.
+
+         </LI><P>
+    <LI> <EM class="task">fine</EM> &mdash; runs fringe fitting
+          in the fine mode. Unless option <EM class="cal">-keep</EM> is
+          specified, this task will purge fringe file and fringe residual
+          file if they exist before processing the first observation. 
+          Option <EM class="cal">-keep</EM> suppresses deletion of 
+          existing fringe file and fringe residual files.
+          The list of observations to be processed is determined by 
+          keywords <EM class="cal">OBS, INCLUDE_OBS_FILE, 
+          EXCLUDE_OBS_FILE</EM>
+          <P>
+          The task creates log file with name <TT>VVVVVV/EEE/EEE_B_fine.log</TT>.
+
+         </LI><P>
+    <LI> <EM class="task">mkdb</EM> &mdash; generates of the
+         output database in GVF format using fringe fitting results.
+         <P>
+
+          The task creates log file with name <TT>VVVVVV/EEE/EEE_mkdb.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">mktxt</EM> &mdash; &mdash; generates of the
+         output database in TEXT format using fringe fitting results.
+         <P>
+
+          The task creates log file with name <TT>VVVVVV/EEE/EEE_mktxt.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">gain</EM> &mdash; updates gain table into internal
+         <EM class="pima">pima</EM> data structure. The task checks
+         two files vlba_gains.key and ivs_gains.key in the share directory 
+         specified by options <EM class="com">--pima-share</EM> during
+         <EM class="pima">PIMA</EM> installation. The task does not issue
+         a message if it does not find gain information for one or more
+         stations, since this situation is considered normal. However,
+         if gain is missing for certain stations(s), observations at 
+         baselines with such stations will not be used by task 
+         <EM class="task">splt</EM>, and therefore, cannot contribute
+         to imaging. 
+         <P>
+         This task <I>updates</I> the gain only for frequencies and 
+         stations specified in the control file (<EM class="com"> BEG_FRQ, 
+         END_FRQ, FRQ_GRP</EM> ) and found in the gain file. Gain for
+         for other stations and/or other frequencies remains unchanged.
+         <P>
+
+         The task creates log file with name <TT>VVVVVV/EEE/EEE_B_gain.log</TT>.
+         The log file contains information about gain information in
+         <EM class="pima">PIMA</EM> data structure after running this
+         task. It is strongly advised to examine this log file to be
+         sure that correct gain is applied.
+         </LI><P>
+
+    <LI> <EM class="task">splt</EM> &mdash; performs calibration of 
+          visibilities for system temperature and gain; performs
+          amplitude renormalization, applies results of fringe fitting,
+          averages visibilities over time and frequencies, and writes
+          calibrated and averaged visibilities into output files in
+          FITS format.
+          <P>
+
+          The task creates log file with name <TT>VVVVVV/EEE/EEE_B_splt.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">autm</EM> &mdash; performs automatic
+         imaging. Unless option <EM class="com">-sou</EM> is specified,
+         this task searches for all fits files with calibrated and
+         averaged visibilities with in directory <TT>SSSSSS/EEE_uvs</TT>
+         with suffix <TT>_uva.fits</TT> and runs fringe fitting for all these
+         sources. Option <EM class="com">-sou</EM> followed by the value
+         of source names separated by comma instructs 
+         <EM class="task">autm</EM> to perform automatic imaging for 
+         these sources only. Source names can be either in B1950 or J2000.
+         <EM class="pima">PIMA</EM> does not report an error if does not
+         find one or more input files with calibrated and averaged 
+         visibilities.
+         <P>
+         The output files are created for each source: map in FITS image
+         format with suffix <TT>_map.fits</TT>, self-calibrated 
+         visibilities in FITS-format, and ascii log file with suffix
+         <TT>dfm.log</TT>.
+         
+         <P>
+
+         The task creates log file with name <TT>VVVVVV/EEE/EEE_autm.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">pict</EM> &mdash; generate pictures files in gif
+         format for all source images in the image directory for a given
+         experiment, given band. This task searches for pair of image 
+         file in FITS format with suffix <TT>_map.fits</TT> and 
+         self-calibrated visibilities with suffix <TT>_uvs.fits</TT>
+         in image directory <TT>SSSSS/EEE_uvs</TT>. It generates two
+         files fir each input: picture of the image in gif format
+         with suffix <TT>_map.gif</TT> and scan-averaged self-calibrated 
+         visibilities versus baseline length in gif format with suffix
+         <TT>_uvs.gif</TT>.
+         <P>
+
+         The task creates log file with name <TT>VVVVVV/EEE/EEE_autm.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">sres</EM> &mdash; runs task gain (see above)
+         and task <EM class="task">splt</EM> for reference sources defined 
+         in file <TT>VVVVV/EEE_B_ref.sou</TT>. The file may define sources
+         either with B1950 or J2000 names, one source per line. Lines
+         that start with # are considered as comments and ignored.
+         <P>
+
+         The task creates log file with name <TT>VVVVVV/EEE/EEE_sres.log</TT>.
+         </LI><P>
+
+    <LI> <EM class="task">gaco</EM> &mdash; computes gain correction
+         for reference source defined in the reference source file with
+         name <TT>VVVVV/EEE_B_ref.sou</TT>. The file may define sources
+         either with B1950 or J2000 names, one source per line. Lines
+         that start with # are considered as comments and ignored.
+         </LI><P>
+
+    <LI> <EM class="task">gepm</EM> &mdash; automatically masks phase
+         calibration tones infected by spurious signals and identifies
+         epochs at which clock breaks have occurred.
+         The task creates a log file with name <TT>VVVVVV/EEE/EEE_B_gepm.log</TT>,
+         a report file with name <TT>VVVVVV/EEE/EEE_B_pcal_report.gen</TT>,
+         an rms pcal health file with name <TT>VVVVVV/EEE/EEE_B_pcal_rms.txt</TT>,
+         and a condensed pcal generator file with name determined by 
+         the name of the pcal mask file.
+         </LI><P>
+
+    <LI> <EM class="task">opag</EM> &mdash; fetches data file with opacity, 
+          atmospheric brightness temperature, slant path delay, atmospheric
+          pressure, partial pressure of water vapor at surface, and surface
+          air temperature from the remote Web server and stores in
+          the subdirectory <TT>SSSSSS/EEE_sob</TT>. These datafile are needed
+          for further analysis with task <EM class="task">opal</EM>.
+          <P>
+
+          The URL whether the datafile are fiteched is harded-coded in 
+          file pf_local.py.
+         </LI><P>
+
+
+    <LI> class="task">opal</EM> &mdash; executes two tasks: 
+         <EM class="task">opal</EM> and <EM class="task">tsmo</EM>.
+         <B>NB:</B> task <EM class="task">opag</EM> should be executed
+         before running <EM class="wrap"> pf.py</EM> with task
+         <EM class="task">opal</EM>. Task <EM class="task">opal</EM> 
+         reads the files with atmospheric opacity, brightness temperature
+         of the atmosphere and slant path delay computed on the 
+         elevation-azimuth-time 3D grid using the output of numerical
+         weather models, interpolates these quantities to the start and 
+         stop time of each scan for each station and write them into
+         the internal <EM class="pima">PIMA</EM> data structure. 
+         After that <EM class="wrap"> pf.py</EM> executes 
+         <EM class="pima">PIMA</EM> task <EM class="task">opal</EM> 
+         and computes modeled and cleaned system temperature for 
+         the main goal to clean measured Tsys from outliers. The 
+         cleaned and modeled Tsys is written in the internal 
+         <EM class="pima">PIMA</EM> data structure. When the experiment
+         has two chained bands, task <EM class="wrap"> pf.py</EM>
+         <EM class="task">opal</EM> should be called specifying the
+         upper band. Then <EM class="wrap"> pf.py</EM> examines the 
+         keyword <EM CLASS="com">MKDB.VCAT_CONFIG</EM> and if it is 
+         not <EM class="val">NO</EM>, then it calls task 
+         <EM class="task">tsmo</EM> two times: first for the lower
+         band, second for the upper band. In that case 
+         cleaned and modeled Tsys will be computed for both bands.
+         If <EM class="wrap"> pf.py</EM> <EM class="task">opal</EM> is 
+         called for the lower band, cleaned and modeled Tsys will be
+         computed only for the lower band and will be initialized with
+         zeros for the upper band.
+
+         </LI><P>
+
+    <LI> <EM class="task">map</EM> &mdash; combines tasks
+         <EM class="task">gain</EM>, 
+         <EM class="task">splt</EM>, 
+         <EM class="task">autm</EM>, 
+         <EM class="task">pict</EM>. It is just consecutively 
+         executes these tasks.
+         
+         </LI><P>
+</UL>
+
+<P>&nbsp;<P>
+<A NAME="pt"> 
+<H2> <EM class="wrap">pt.py</EM> &mdash; trial fringe fitting.</H2>
+
+   This wrapper performs fringe fit for an observation with given
+index. Fringe results are written in <TT>/tmp/1.fri</TT> and fringe
+residuals are written in <TT>/tmp/1.frr</TT> overriding keywords
+<EM class="com">FRINGE_FILE</EM> and <EM class="com">FRIRES_FILE</EM>.
+The task does not purge these files, and therefore, it appends results
+to their end. Task <EM class="com">pt.py</EM> shows an 1D plot of residual 
+phases and amplitudes versus frequency and a similar plot of residuals 
+versus time. Examining fringe plots is the main function of this task.
+Task <EM class="pt.py</EM> also sets <EM class="com">DEBUG_LEVEL:</EM>
+<EM class="val">6</EM>, and therefore, it prints verbose report about
+fringe fitting.
+
+<P>&nbsp;<P>
+
+<PRE>
+usage: <EM class="wrap">pt.py</EM> 
+             <EM class="com">[-h] [--version] [-v value] [-r] [-s] [-H]</EM>
+             <EM class="val">exp band obs</EM>
+             <EM class="com">[opts]</EM>
+</PRE>
+
+   Wrapper has general options followed by three mandatory positional 
+arguments followed by <EM class="pima">PIMA</EM> options that are pairs
+<TT>keyword: value</TT>.
+
+   There are three mandatory arguments:
+<P>
+<UL>
+     <LI><EM class="com">exp</EM> &mdash; experiment name in low case.
+         </LI><P>
+
+     <LI><EM class="com">band</EM> &mdash; band name in the low case.
+         </LI><P>
+
+     <LI><EM class="com">obs</EM> &mdash; observations index. Should
+         be a positive number not exceeding the total number of
+         observations in the experiment.
+         </LI><P>
+</UL>
+
+<P>
+<UL>
+     <LI><EM class="com">-h</EM> &mdash; prints a brief information about
+         the wrapper.
+         </LI><P>
+
+     <LI><EM class="com">-H</EM> &mdash; print extended manual (this
+                                 text)
+         </LI><P>
+
+     <LI><EM class="com">--version</EM> &mdash; prints the wrapper version.
+         </LI><P>
+    
+     <LI><EM class="com">-v</EM> &mdash; verbosity level. An integer parameter 
+         that describes how detailed informational messages will be printed
+         at the screen. Error message will be printed regardless of verbosity
+         level.
+         <EM class="wrap">pt.py</EM> will print.
+         <UL>
+             <LI><EM class="val">0</EM> &mdash; silent mode. No information
+                 messages are printed.
+                 </LI></BR>
+             <LI><EM class="val">1</EM> &mdash; moderate verbosity (default)
+                 </LI></BR>
+             <LI><EM class="val">2</EM> &mdash; verbose mode. 
+                  <EM class="pima">PIMA</EM> commands are printed at the
+                  screen before execution.
+                 </LI></BR>
+             <LI><EM class="val">&gt;2</EM> &mdash; debugging mode. More verbose
+                 than 2.
+                 </LI></BR>
+         </UL></LI><P>
+
+     <LI><EM class="com">-r</EM> &mdash; dry run. <EM class="wrap">pt.py</EM> 
+          prints commands that it is about to execute, but does not execute 
+          them.
+         </LI><P>
+
+     <LI><EM class="com">-s</EM> &mdash; to use static build of 
+             <EM class="pima">PIMA</EM>. The directory of the static build
+             is defined in pima_local.py. This option may be useful when you
+             have several versions of <EM class="pima">PIMA</EM>.
+         </LI><P>
+
+     <LI><EM class="com">[opts]</EM> &mdash; additional options,
+            pairs keywords: value, where
+            keywords is a recognized <EM class="pima">PIMA</EM> keyword.
+            Wrapper <EM class="wrap">pt.py</EM> may override values
+            of some keywords defined in the control file. Values 
+            of the keywords defined at the end of the wrapper command
+            line have the highest priority and override the values set
+            by the wrapper.
+           </LI><P>
+            
+</UL>
+
+<A NAME="pr"> 
+<H2> <EM class="wrap">pr.py</EM> &mdash; re-fringe VLBI experiment.</H2>
+
+  Task <EM class="wrap">pr.py</EM> implements interface Solve 
+&arrow; <EM class="pima">PIMA</EM>. It 1) analyzes Solve residual file,
+2) finds observations that have been suppressed, computes predicted 
+path delay on the basis of a priori path delay and adjustments from
+the Solve solution and computes correction to the a priori path delay
+with respect to the model used by the correlator; 3) generates a
+command file that calls <EM class="pima">PIMA</EM> with parameters
+of the search window centered with respect to the updated a priori
+path delay and with the specified window semi-width; 4) executes this
+command file; 5) creates databases in GVF format; 6) updates
+automatic suppression status.
+<P>
+
+  There are several situations when <EM class="pima">PIMA</EM> 
+re-fringe procedure helps to improve results:
+
+<OL>
+     <LI> There was a strong RFI and fringe fitting procedure picked up
+          fringes from the FRI; 
+          </LI><P>
+
+     <LI> A priori delay rate was low and fringe fitting procedure
+          picked up fringes from the phase calibration signal.
+          </LI><P>
+
+     <LI> There was a significant phase distortion in IFs after applying
+          measured phase calibration and bandpass calibration. As a result,
+          the amplitude of the secondary maximum of 2D Fourier transform 
+          that in the absence of phase distortion would be below the 
+          amplitude of the main maximum became higher than the level of
+          the main maximum.
+	  </LI><P>
+
+     <LI> A priori source position (and in a case of RadioAstron, a priori
+          Space Radio Telescope position) was significantly (more than 1 mas)
+          improved. Significant errors in a priori source position may result
+          in quadratic term of fringe phase versus time.
+	  </LI><P>
+
+     <LI> A source has marginal SNR (typically in range 4.5&ndash;6.5), and
+          the thermal noise reduced the main maximum and increased a secondary
+          maximum above the amplitude of the main maximum.
+	  </LI><P>
+</OL>
+
+VTD/Post-Solve interactive solution should be made first. 
+Option <TT>Print residu(A)ls: ON</TT> should be turn on, the spool file
+with solution listing be rewound, and residuals be generated (command 
+<TT>Q</TT>). The the spool file with residuals should be copied into file
+<TT>VVVVVV/EEE/EEE_B_init.spl</TT>. An analyst should be check carefully 
+the residual file. In particular, an analyst should check a) the experiment
+name and band name :-); b) whether solution is correct (wrms of residuals
+is close to what it is supposed to be); c) the spool file contains residuals.
+Residual section starts after line <TT>Residuals from Solve</TT>
+Symbols &gt; at the 8-th position marks suppressed observation. All 
+suppressed observations will be re-fringed.<P>
+
+  There is a way to change the list of observations that will be re-fringed.
+If an analyst does not want to re-fringe some observations, the lines that
+correspond to these observations should be either removed from the listing
+file or the character at the 8th column of the rows that correspond to those
+observations should be changed to <TT>K</TT>. Alternatively, if an analyst 
+would like to re-fringe a given observation  even it it is not suppress, 
+the character at 8th column should be changed to <TT>R</TT>. Re-fringing
+an observation of a source that had a priori position errors exceeding
+1 arcsec may improve the SNR.
+<P>
+
+<PRE>
+Usage: <EM class="wrap">pr.py</EM> 
+             <EM class="com">[-h] [--version] [-v value] [-r] [-s] [-H]</EM>
+             <EM class="val">exp band snr</EM>
+             <EM class="com">[opts]</EM>
+</PRE>
+
+   Wrapper has general options followed by three mandatory positional 
+arguments followed by <EM class="pima">PIMA</EM> options that are pairs
+keyword: value.
+
+   There are three mandatory arguments:
+<P>
+<UL>
+     <LI><EM class="com">exp</EM> &mdash; experiment name in low case.
+         </LI><P>
+
+     <LI><EM class="com">band</EM> &mdash; band name in the low case.
+         </LI><P>
+     <LI><EM class="com">snr</EM> &mdash; SNR limit. Should
+         be a positive number. Typical value is 4.8. <BR>
+         <B>NB:</B> SNR detection limit is lower for re-fringing 
+         procedure, because the search window is less.
+         </LI><P>
+</UL>
+
+<P>
+<UL>
+     <LI><EM class="com">-h</EM> &mdash; prints a brief information about
+         the wrapper.
+         </LI><P>
+
+     <LI><EM class="com">-H</EM> &mdash; print extended manual (this
+                                 text)
+         </LI><P>
+
+     <LI><EM class="com">--version</EM> &mdash; prints the wrapper version.
+         </LI><P>
+    
+     <LI><EM class="com">-v</EM> &mdash; verbosity level. An integer parameter 
+         that describes how detailed informational messages will be printed
+         at the screen. Error message will be printed regardless of verbosity
+         level.
+         <EM class="wrap">pr.py</EM> will print.
+         <UL>
+             <LI><EM class="val">0</EM> &mdash; silent mode. No information
+                 messages are printed 
+                 </LI></BR>
+             <LI><EM class="val">1</EM> &mdash; moderate verbosity (default).
+                 Only messages about finish of the procedure is printed.
+                 </LI></BR>
+             <LI><EM class="val">&gt;2</EM> &mdash; debugging mode. More verbose
+                 than 1.
+                 </LI></BR>
+         </UL></LI><P>
+
+     <LI><EM class="com">-r</EM> &mdash; dry run. <EM class="wrap">pr.py</EM> 
+          prints commands that it is about to execute, but does not execute 
+          them.
+         </LI><P>
+
+     <LI><EM class="com">-s</EM> &mdash; to use static build of 
+             <EM class="pima">PIMA</EM>. The directory of the static build
+             is defined in pima_local.py. This option may be useful when you
+             have several versions of <EM class="pima">PIMA</EM>.
+         </LI><P>
+
+     <LI><EM class="com">[opts]</EM> &mdash; additional options:
+         <P>
+         <UL>
+             <LI><EM class="val">-delwin</EM> &mdash; specifies the semi-width
+                 of the search window with respect to group delay. Units: ns.
+                 By default, <EM class="wrap">pr.py</EM> selects the window
+                 semi-width itself depending on frequency.
+                 </LI></BR>
+
+             <LI><EM class="val">-nodb</EM> &mdash; does not create the 
+                 database upon completion of re-fringing. This option
+                 is required for processing the low band of a dual-band 
+                 experiment.
+                 </LI></BR>
+         </UL></LI><P>
+</UL>
+
+The wrapper creates log file <TT>VVVVVV/EEE/EEE_samb.log</TT>.
+
+<P>&nbsp;<P>
+<A NAME="pu"> 
+<H2> <EM class="wrap">pu.py</EM> &mdash; update suppression status after 
+re-fringing.
+</H2>
+
+VTD/Post-Solve supports so-called automatic suppression status. This
+status depends on a number of factors including detection status
+and other parameters. When <EM class="pima">PIMA</EM> creates a GVF
+database it sets this status for version 1. But the status does not
+automatically propagate to version 2 and higher. Wrapper
+<EM class="wrap">pu.py</EM> propagates the status from version 1
+database to the higher version.
+<P>
+  Let us consider the following situation. A given observations had 
+SNR 4.7 and therefore was treated as unconditionally suppressed.
+VTD/post-Solve does not show such observation and does not allow to 
+restore it. After re-fringing then SNR grew to 6.8, i.e. the observations
+was detected. Task <EM class="task">mkdb</EM> created GVF database 
+version 1. The suppression status is version dependent. The observation
+is marked as good in version 1, but unconditionally suppressed in
+version 2.
+<P>
+   Wrapper <EM class="wrap">pu.py</EM> will set status "suppressed,
+but recovered" in version 2. Then a user can reset status to "good".
+  
+<PRE>
+usage: <EM class="wrap">pu.py</EM> 
+             <EM class="com">[-h] [--version] [-v value] [-r] [-s] [-H]</EM>
+             <EM class="val">exp</EM>
+</PRE>    
+
+<P>&nbsp;<P>
+<A NAME="automap"> 
+<H2> <EM class="wrap">automap.py</EM> &mdash; Automatic imaging of a given 
+     visibility file. </H2>
+
+This wrapper calls DIFMAP and preforms automatic imaging using script 
+pima_mupet_01.dfm developed by Martin Shepherd and Greg Taylor.
+
+<PRE>
+usage: <EM class="wrap">automap.py</EM> 
+             <EM class="com">[--version]</EM>
+             <EM class="val">uva_file</EM>
+</PRE>    
+
+The input for the wrapper is the file with averaged calibrated visibilities
+in FITS-IDI format. 
+<P>
+
+  The wrapper assumes the filename with averaged calibrated visibilities has
+the following form <TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B_uva.fits</TT> where 
+<TT>SSSSSS</TT> is the directory specified in the keyword
+<EM class="com">SESS_CODE</EM> of <EM class="pima">PIMA</EM> control file.
+The wrapper generates 5 output files: 
+<TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B_map.fits</TT> &mdash; FITS image,
+<TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B_uvs.fits</TT> &mdash; self-calibrated, scan averaged
+visibilities in FITS format,
+<TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B.mod</TT> &mdash; ascii file with Clean components
+of the image,
+<TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B.win</TT> &mdash; coordinates of four corners of CLEAN windows 
+used be the imaging process,
+<TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B.par</TT> &mdash; command file created by the DIFMAP.
+<P>
+
+  The quality of automatic image may or may not be satisfactory. Automatic
+image does not perform flagging. If the visibility data are either too high or
+too low for some IFs due to errors in amplitude calibration, or a portion
+of data has garbage visibilities at some station(s) because the antenna(s)
+were not on source, the quality of automatic image will be disappointing at best,
+or totally garbage at worst. Running <EM class="com">onof</EM> and 
+<EM class="com">gaco</EM> tasks usually solve these problems and substantially
+reduces the chances that the automatically generated images will have 
+unsatisfactory quality.
+<P>
+
+  In general, analyst should scrutinize automatically generated images
+and decide whether to keep them or re-image them manually.
+
+<P>&nbsp;<P>
+<A NAME="imadir"> 
+<H2> <EM class="wrap">imadir.py</EM> &mdash; Automatic imaging for all
+      files with averaged visibilities in a given directory. </H2>
+
+<PRE>
+usage: <EM class="wrap">imadir.py</EM> 
+             <EM class="com">[-h] [--version] [-pict] [-H]</EM>
+             <EM class="val">directory</EM>
+</PRE>    
+
+This wrapper scans the specified directory, searches file with
+ending <TT>uva.fits</TT> or <TT>uvm.fits</TT> and executes wrapper
+<EM class="wrap">automap.py</EM> for each file, i.e. generates 
+automatically the image and picture files
+
+<UL>
+     <LI><EM class="com">-h</EM> &mdash; prints a brief information about
+         the wrapper.
+         </LI><P>
+
+     <LI><EM class="com">-H</EM> &mdash; print extended manual (this
+                                 text)
+         </LI><P>
+
+     <LI><EM class="com">--version</EM> &mdash; prints the wrapper version.
+         </LI><P>
+    
+     <LI><EM class="com">--pict</EM> &mdash; generates only picture files 
+             from results of imaging without image re-generation. The following
+             pictures gif-format are generated for each image: 
+             files <TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B_map.gif</TT>
+             and scan-averaged self-calibrated visibilities as a function
+             of baseline length in files <TT>SSSSSS/EEE_uvs/JJJJJJJJJJ_B_uvs.gif</TT>.
+         </LI><P>
+</UL>
+    
+<P>
+<HR size="1">
+<EM>
+     This document was prepared by Leonid Petrov
+     <BR>
+     Last update:    2025.01.07
+</EM>
+</BODY>
+</HTML>

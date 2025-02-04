@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+# 2018.07.01  Updated slewing rate and acceleration
+#
+SHORT_NAME:  CEDUNA    Cd
+LAST_UPDATE: CEDUNA    2018.07.01
+COORD:       CEDUNA    meters    -3753442.777  3912709.791 -3348067.649   
+MOUNT:       CEDUNA    char       ALTAZ
+SLEW_AZ:     CEDUNA    deg/sec    0.667
+SLEW_EL:     CEDUNA    deg/sec    0.667
+ACCL_AZ:     CEDUNA    deg/sec^2  0.028
+ACCL_EL:     CEDUNA    deg/sec^2  0.028
+TSETTLE_AZ:  CEDUNA    sec        2.0
+TSETTLE_EL:  CEDUNA    sec        2.0
+EL_MIN:      CEDUNA    deg        5.0
+EL_MAX:      CEDUNA    deg       89.0
+AZ_RANGE:    CEDUNA    deg     -170.0 -30.0 190.0 330.0
+RECORDER:    CEDUNA    char      mark5
+PREOB:       CEDUNA    sec       10.0
+POSTOB:      CEDUNA    sec        2.0

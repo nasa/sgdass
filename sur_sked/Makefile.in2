@@ -1,0 +1,144 @@
+build:	
+	@echo "Building sur_sked started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`    |& tee   > $(BUILD_LOG)
+	@echo " "                                                                                  |& tee  -a $(BUILD_LOG)
+	cd  src;     source ../support/sur_sked_vars; make -j $(NUM_PROC)                          |& tee  -a $(BUILD_LOG)
+	@echo "=== Compilation of sur_sked is completed. Now, please run make install ==="         |& tee  -a $(BUILD_LOG)
+
+install:   bin_install script_install data_install
+
+bin_install:
+	cd  $(SUR_SKED_ROOT)/src;     source ../support/sur_sked_vars
+	if  ( -d $(SUR_SKED_PREFIX)/bin == 0               ) mkdir $(SUR_SKED_PREFIX)/bin 
+	cp  $(SUR_SKED_ROOT)/bin/sur_sked                       $(SUR_SKED_PREFIX)/bin/sur_sked
+	cp  $(SUR_SKED_ROOT)/bin/ast_to_snap                    $(SUR_SKED_PREFIX)/bin/ast_to_snap
+	cp  $(SUR_SKED_ROOT)/bin/check_proc_snap                $(SUR_SKED_PREFIX)/bin/check_proc_snap
+	cp  $(SUR_SKED_ROOT)/bin/gen_seq_prc                    $(SUR_SKED_PREFIX)/bin/gen_seq_prc
+
+script_install:
+	cd  $(SUR_SKED_ROOT)/src;     source ../support/sur_sked_vars
+	if  ( -d $(SUR_SKED_PREFIX)/script == 0            ) mkdir $(SUR_SKED_PREFIX)/script
+	cp  $(SUR_SKED_ROOT)/script/vex_lib.py                  $(SUR_SKED_PREFIX)/script/vex_lib.py
+	cp  $(SUR_SKED_ROOT)/script/pet_misc.py                 $(SUR_SKED_PREFIX)/script/pet_misc.py
+	cp  $(SUR_SKED_ROOT)/script/gen_seq_prc.py              $(SUR_SKED_PREFIX)/bin/gen_seq_prc.py
+	cp  $(SUR_SKED_ROOT)/script/gen_vex_tmpl.py             $(SUR_SKED_PREFIX)/bin/gen_vex_tmpl.py
+	cp  $(SUR_SKED_ROOT)/script/gen_sched.py                $(SUR_SKED_PREFIX)/bin/gen_sched.py
+	cp  $(SUR_SKED_ROOT)/script/mark_cal_scans.py           $(SUR_SKED_PREFIX)/bin/mark_cal_scans.py
+	cp  $(SUR_SKED_ROOT)/script/mark_cal_sou.py             $(SUR_SKED_PREFIX)/bin/mark_cal_sou.py
+	cp  $(SUR_SKED_ROOT)/script/proc_snap_to_txt.py         $(SUR_SKED_PREFIX)/bin/proc_snap_to_txt.py
+	cp  $(SUR_SKED_ROOT)/script/proc_to_vex.py              $(SUR_SKED_PREFIX)/bin/proc_to_vex.py
+	cp  $(SUR_SKED_ROOT)/script/sched_2modes.py             $(SUR_SKED_PREFIX)/bin/sched_2modes.py             
+	cp  $(SUR_SKED_ROOT)/script/sched_2hds.py               $(SUR_SKED_PREFIX)/bin/sched_2hds.py               
+	cp  $(SUR_SKED_ROOT)/script/sds_to_snap.py              $(SUR_SKED_PREFIX)/bin/sds_to_snap.py
+	cp  $(SUR_SKED_ROOT)/script/snap_to_lst.py              $(SUR_SKED_PREFIX)/bin/snap_to_lst.py
+	cp  $(SUR_SKED_ROOT)/script/txt_to_proc_snap.py         $(SUR_SKED_PREFIX)/bin/txt_to_proc_snap.py
+	cp  $(SUR_SKED_ROOT)/script/vex2_to_vex1.py             $(SUR_SKED_PREFIX)/bin/vex2_to_vex1.py
+	cp  $(SUR_SKED_ROOT)/script/vex_hv_l_to_u.py            $(SUR_SKED_PREFIX)/bin/vex_hv_l_to_u.py            
+	cp  $(SUR_SKED_ROOT)/script/vex_scan_split.py           $(SUR_SKED_PREFIX)/bin/vex_scan_split.py
+	cp  $(SUR_SKED_ROOT)/script/vex_scan_change_mode.py     $(SUR_SKED_PREFIX)/bin/vex_scan_change_mode.py
+	cp  $(SUR_SKED_ROOT)/script/vex_to_snap.py              $(SUR_SKED_PREFIX)/bin/vex_to_snap.py
+	cp  $(SUR_SKED_ROOT)/script/vex_to_proc.py              $(SUR_SKED_PREFIX)/bin/vex_to_proc.py
+	cp  $(SUR_SKED_ROOT)/script/fuse_vex_frq.py             $(SUR_SKED_PREFIX)/bin/fuse_vex_frq.py
+	cp  $(SUR_SKED_ROOT)/script/fuse_vex_prc.py             $(SUR_SKED_PREFIX)/bin/fuse_vex_prc.py
+	cp  $(SUR_SKED_ROOT)/support/sur_sked_config.py         $(SUR_SKED_PREFIX)/bin/sur_sked_config.py         
+
+data_install:
+	cd  $(SUR_SKED_ROOT)/src;     source ../support/sur_sked_vars
+	if  ( -d $(SUR_SKED_SHARE_DIR) == 0 ) mkdir -p $(SUR_SKED_SHARE_DIR)
+	if  ( -d $(SUR_SKED_SHARE_DIR)/sur_sked == 0 ) mkdir -p $(SUR_SKED_SHARE_DIR)/sur_sked
+	if  ( -d $(SUR_SKED_SHARE_DIR)/sur_sked/seq == 0 ) mkdir -p $(SUR_SKED_SHARE_DIR)/sur_sked/seq
+	if  ( -d $(SUR_SKED_SHARE_DIR)/sur_sked/stp == 0 ) mkdir -p $(SUR_SKED_SHARE_DIR)/sur_sked/stp
+	if  ( -d $(SUR_SKED_SHARE_DIR)/sur_sked/prc == 0 ) mkdir -p $(SUR_SKED_SHARE_DIR)/sur_sked/prc
+	rsync -a $(SUR_SKED_ROOT)/share/seq          $(SUR_SKED_SHARE_DIR)/
+	rsync -a $(SUR_SKED_ROOT)/share/stp          $(SUR_SKED_SHARE_DIR)/
+	rsync -a $(SUR_SKED_ROOT)/share/prc          $(SUR_SKED_SHARE_DIR)/
+	cp -p    $(SUR_SKED_ROOT)/share/freq_def.txt $(SUR_SKED_SHARE_DIR)/
+
+	@echo "=== Installation of sur_sked is completed ==="
+
+
+uninstall:
+	cd  src;  source ../support/sur_sked_vars
+	if ( -f $(SUR_SKED_PREFIX)/bin/sur_sked                ) rm -f $(SUR_SKED_PREFIX)/bin/sur_sked 
+	if ( -f $(SUR_SKED_PREFIX)/bin/ast_to_snap             ) rm -f $(SUR_SKED_PREFIX)/bin/ast_to_snap
+	if ( -f $(SUR_SKED_PREFIX)/bin/check_proc_snap         ) rm -f $(SUR_SKED_PREFIX)/bin/check_proc_snap
+	if ( -f $(SUR_SKED_PREFIX)/bin/gen_seq_prc             ) rm -f $(SUR_SKED_PREFIX)/bin/gen_seq_prc
+	if ( -f $(SUR_SKED_PREFIX)/bin/mark_cal_scans.py       ) rm -f $(SUR_SKED_PREFIX)/bin/mark_cal_scans.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/mark_cal_sou.py         ) rm -f $(SUR_SKED_PREFIX)/bin/mark_cal_sou.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/fuse_vex_frq.py         ) rm -f $(SUR_SKED_PREFIX)/bin/fuse_vex_frq.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/fuse_vex_prc.py         ) rm -f $(SUR_SKED_PREFIX)/bin/fuse_vex_prc.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/proc_to_vex.py          ) rm -f $(SUR_SKED_PREFIX)/bin/proc_to_vex.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/proc_to_vex.py          ) rm -f $(SUR_SKED_PREFIX)/bin/proc_to_vex.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/sched_2modes.py         ) rm -f $(SUR_SKED_PREFIX)/bin/sched_2modes.py     
+	if ( -f $(SUR_SKED_PREFIX)/bin/sched_2hds.py           ) rm -f $(SUR_SKED_PREFIX)/bin/sched_2hds.py       
+	if ( -f $(SUR_SKED_PREFIX)/bin/sds_to_snap.py          ) rm -f $(SUR_SKED_PREFIX)/bin/sds_to_snap.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/snap_to_lst.py          ) rm -f $(SUR_SKED_PREFIX)/bin/snap_to_lst.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/txt_to_proc_snap.py     ) rm -f $(SUR_SKED_PREFIX)/bin/txt_to_proc_snap.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/vex_to_proc.py          ) rm -f $(SUR_SKED_PREFIX)/bin/vex_to_proc.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/vex_to_snap.py          ) rm -f $(SUR_SKED_PREFIX)/bin/vex_to_snap.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/vex2_to_vex1.py         ) rm -f $(SUR_SKED_PREFIX)/bin/vex2_to_vex1.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/vex_hv_l_to_u.py        ) rm -f $(SUR_SKED_PREFIX)/bin/vex_hv_l_to_u.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/vex_scan_split.py       ) rm -f $(SUR_SKED_PREFIX)/bin/vex_scan_split.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/vex_scan_change_mode.py ) rm -f $(SUR_SKED_PREFIX)/bin/vex_scan_change_mode.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/txt_to_proc_snap.py     ) rm -f $(SUR_SKED_PREFIX)/bin/txt_to_proc_snap.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/proc_snap_to_txt.py     ) rm -f $(SUR_SKED_PREFIX)/bin/proc_snap_to_txt.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/gen_sched.py            ) rm -f $(SUR_SKED_PREFIX)/bin/gen_sched.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/gen_seq_prc.py          ) rm -f $(SUR_SKED_PREFIX)/bin/gen_seq_prc.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/gen_vex_tmpl.py         ) rm -f $(SUR_SKED_PREFIX)/bin/gen_vex_tmpl.py
+	if ( -f $(SUR_SKED_PREFIX)/script/vex_lib.py           ) rm -f $(SUR_SKED_PREFIX)/script/vex_lib.py
+	if ( -f $(SUR_SKED_PREFIX)/script/pet_misc.py          ) rm -f $(SUR_SKED_PREFIX)/script/pet_misc.py
+	if ( -f $(SUR_SKED_PREFIX)/bin/check_cfitsio_version.e ) rm -f $(SUR_SKED_PREFIX)/bin/check_cfitsio_version.e
+	if ( -f $(SUR_SKED_PREFIX)/bin/sur_sked_config.py      ) rm -f $(SUR_SKED_PREFIX)/bin/sur_sked_config.py
+	if ( -d $(SUR_SKED_SHARE_DIR)/sur_sked                 ) rm -fR $(SUR_SKED_SHARE_DIR)/sur_sked
+
+clean:	
+	if ( -f bin/check_cfitsio_version.e ) rm -f bin/check_cfitsio_version.e
+	cd  src;  source ../support/sur_sked_vars; make clean
+
+distclean:	
+	@./reconfigure -d > /tmp/sur_sked_configure.txt
+	@-chmod 666 /tmp/sur_sked_configure.txt
+	cd  src;  source $(SUR_SKED_ROOT)/support/sur_sked_vars; make clean
+	find src/ -name "*.o*" -exec rm {} \;
+	cd  src;  source $(SUR_SKED_ROOT)/support/sur_sked_vars; make -f ../support/check_cfitsio_version.mak clean
+	if ( -f $(SUR_SKED_ROOT)/support/check_cfitsio_version.o ) rm -f $(SUR_SKED_ROOT)/support/check_cfitsio_version.o 
+	if ( -f $(SUR_SKED_ROOT)/support/sur_sked.cnf  ) rm -f $(SUR_SKED_ROOT)/support/sur_sked.cnf 
+	if ( -f $(SUR_SKED_ROOT)/support/sur_sked_vars ) rm -f $(SUR_SKED_ROOT)/support/sur_sked_vars
+	if ( -f $(SUR_SKED_ROOT)/temp/conf.log         ) rm -f $(SUR_SKED_ROOT)/temp/conf.log
+	support/purge $(SUR_SKED_ROOT)/temp
+	support/purge $(SUR_SKED_ROOT)/bin
+	support/purge $(SUR_SKED_ROOT)/src
+	support/purge $(SUR_SKED_ROOT)/auxil
+	support/purge $(SUR_SKED_ROOT)/doc
+	support/purge $(SUR_SKED_ROOT)/data
+	support/purge $(SUR_SKED_ROOT)/data/slew_dir
+	support/purge $(SUR_SKED_ROOT)/include
+	support/purge $(SUR_SKED_ROOT)/script
+	support/purge $(SUR_SKED_ROOT)/support
+	support/purge $(SUR_SKED_ROOT)/
+#	rm -f examples/* >& /dev/null
+
+SUR_SKED_BASENAME = `basename $(SUR_SKED_ROOT)`
+tar:	distclean
+        
+	if ( -d /cont/stp ) rsync -av /cont/stp $(SUR_SKED_ROOT)/share/
+	if ( -d /cont/prc ) rsync -av /cont/prc $(SUR_SKED_ROOT)/share/
+	if ( -d /cont/seq ) rsync -av /cont/seq $(SUR_SKED_ROOT)/share/
+	cp /cont/freq_def.txt $(SUR_SKED_ROOT)/share/
+	support/purge $(SUR_SKED_ROOT)/share
+	support/purge $(SUR_SKED_ROOT)/share/stp
+	support/purge $(SUR_SKED_ROOT)/share/prc
+	support/purge $(SUR_SKED_ROOT)/share/seq
+	rm Makefile
+	if ( -f temp/conf.log                  ) rm -f temp/conf.log
+	cd  src;  source $(SUR_SKED_ROOT)/support/sur_sked_vars; make -f ../support/check_cfitsio_version.mak clean
+	if ( -f $(SUR_SKED_ROOT)/support/sur_sked_vars ) rm -f $(SUR_SKED_ROOT)/support/sur_sked_vars
+	if ( -f /tmp/sur_sked-$(SUR_SKED_VERSION).tar.bz2 ) rm -f /tmp/sur_sked-$(SUR_SKED_VERSION).tar.bz2 
+	cd ../; tar --exclude="*obsolete*" -cf - sur_sked_$(SUR_SKED_VERSION) | \
+                lbzip2 -c > /tmp/sur_sked-$(SUR_SKED_VERSION).tar.bz2 
+	cp doc/user_guide.txt /astrogeo.org/sur_sked/
+	cp -pv README             /astrogeo.org/sur_sked/README.txt
+	cp -pv INSTALL            /astrogeo.org/sur_sked/INSTALL.txt
+	echo "Tar-file /tmp/sur_sked-$(SUR_SKED_VERSION).tar.bz2" 
+	cp /tmp/sur_sked-$(SUR_SKED_VERSION).tar.bz2 /astrogeo.org/sur_sked/
+	echo "The tar-file is uploaded to the Web"
+	sync

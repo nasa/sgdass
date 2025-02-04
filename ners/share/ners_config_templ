@@ -1,0 +1,17 @@
+# NERS Configuration file.  Format version of 2019.10.20
+#
+# 2024.01.20_09:06:55
+#
+URL:             http://earthrotation.smce.nasa.gov/ners/eop.ners
+URL:             http://earthrotation.net/ners/eop.ners
+URL:             http://alt.earthrotation.net/ners/eop.ners
+FCS_FILE:        @F
+LEAPSEC_FILE:    @L
+LTP_USAGE:       warning
+ON_FAIL_TO_READ: warning
+CONN_TIMEOUT:    2
+READ_TIMEOUT:    2
+LOCK_TIMEOUT:    8
+N_TRIES:         3
+AGE_FCS:         2000
+AGE_SPL:         -1

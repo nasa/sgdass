@@ -1,0 +1,18 @@
+SPD_3D_CONF   Format version of 2024.01.11
+#
+#  Last updated 2015.01.09_22:14:38
+#
+REFR_EXPR:   Radio_Aparicio_2011
+SPD_ALG:     y_nonloc
+FIL_STA:     /opt64/spd/share/vlbi.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      merra_height_above_geoid.heb
+FIL_LEAPSEC: /apr/eop/leapsec.dat
+FIL_DESC:    /opt64/spd/share/spd_desc.txt
+FIL_FMT:     /opt64/spd/doc/spd_3d_format.txt
+TIM_INTRV:   21600.0D0
+N_EL:        16
+N_AZ:        12
+SOB_ALG:     none
+COMPRESS:    NO
+N_FRQ:       0

@@ -1,0 +1,166 @@
+   Specifications of TROPO_PATH_DELAY Exchange format Version 2.0
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   TROPO_PATH_DELAY format is for
+1) providing a template for computation of slanted path delay in the
+   neutral atmosphere as well as its partial derivatives in the direction
+   of the symmetry axis of the neutral atmosphere and partial derivatives
+   on directions of that axis, and
+
+2) for distributing results of variations.
+
+   A file in TROPO_PATH_DELAY format consists of records of variable length
+in ASCII coding. The records are separated by a character with decimal
+code 13. The records are grouped into sections. Sections follow
+in this order:
+
+1) Header record -- the first record should have a signature:
+                    TROPO_PATH_DELAY  Format version of 2008.10.01
+
+                    The header record allows to distinguish a valid
+                    file in the TROPO_PATH_DELAY  format from files
+                    in other formats.
+
+2) E-records section
+   E-record  has letter E in the first field. It specified the experiment
+             name.
+
+3) H-records section
+   H-record  has letter H in the first field. It specified the secondary
+             experiment name.
+
+4) M-records section
+   M-record  has letter M in the first field. The M record keeps the
+             model identifier.
+
+4) U-records section
+   U-record  has letter U in the first field. The U instructs analysis
+             software how to use the data. Analysis software may 
+             override this recommendation.
+
+5) S-records section
+   S-record  has letter S in the first field. It defines a name
+             and coordinates of each site. A site cannot be defined
+             more than once.
+
+6) D-records section
+   D-record  has letter O in the first field. It defines
+             circumstances of the observation: the time tag, site ID,
+             azimuth and elevation in the local topocentric coordinate
+             system surface atmospheric pressure and air temperature,
+             slanted path delay and its partial derivatives.
+
+7) Trailer record -- the last record is the same as the header record.
+
+Records which start from # character are considered as comments.
+
+
+Format of a U-record:
+
+Field  1:1   A1    -- Record ID. Should be letter U (decimal code 85).
+field  2:2   a1       delimiter: blanks.
+Field  4:67  A64   -- a 64 characters long string with keywords separated
+                      by blank. Recognized keywords:
+                      ZEN   -- interpreted the field "slanted path delay" 
+                               as zenith path delay and use it.
+                      SLANT -- use slanted path delay
+                      DERZ  -- use partial derivative with respect to the
+                               zenith path delay
+                      DERN  -- use partial derivative with respect to the 
+                               tilt of the atmosphere symmetry axis in the
+                               north direction.
+                      DERE  -- use partial derivative with respect to the 
+                               tilt of the atmosphere symmetry axis in the
+                               east direction.
+	              Example: STANT DERZ
+
+Format of an S-record:
+----------------------
+
+Field  1:1   A1    -- Record ID. Should be letter S (decimal code 83).
+field  2:2   a1       delimiter: blanks.
+Field  4:11  A8    -- 8-letter long site identifier. May contain
+                      any characters with decimal codes 32-255, but
+                      blanks are allowed only at the end of the site
+                      identifier. This site identifier should be unique
+                      among S-records. This field should not
+                      necessarily have a special meaning. Parsing
+                      software should not try to interpret it.
+field 12:13  a2       delimiter: blanks.
+Field 14:26  F13.4 -- X site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 27:27  a1       delimiter: blank.
+Field 28:40  F13.4 -- Y site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 27:27  a1       delimiter: blank.
+Field 42:54  F13.4 -- Z site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 55:56  a2       delimiter: blanks.
+Field 57:64  F8.4  -- Site geocentric latitude, positive to north,
+                      in degrees. This field is for information only.
+                      Parsing software MUST ignore it.
+field 65:65  a1       delimiter: blank.
+Field 66:73  F8.4  -- Site longitude, positive towards east,
+                      in degrees. This field is for information only.
+                      Parsing software MUST ignore it.
+field 74:74  a1       delimiter: blank.
+Field 75:80  F6.1  -- Site height above the reference ellipsoid in
+                      meters. This field is for information only.
+                      Parsing software MUST ignore it.
+
+Format of an D-record:
+----------------------
+
+Field  1:1    A1      -- Record ID. Should be letter A (decimal code 68).
+field  2:3    a2         delimiter: blanks.
+Field 14:23   A2      -- Experiment name
+field 24:24   a1         delimiter: blanks.
+Field 25:46   A1      -- Calendar date in TAI in YYYY.MM.DD-hh:mm:ss.s format
+                         Calendar date format:
+                         field 1:4   -- I4   Year
+                         field 5:5   -- a1   delimiter: .
+                         field 6:7   -- I2   Month of the year
+                         field 8:8   -- a1   delimiter: .
+                         field 9:10  -- I2   Day of the month
+                         field 11:11 -- a1   delimiter: -
+                         field 12:13 -- I2   Hour
+                         field 14:14 -- a1   delimiter: :
+                         field 15:16 -- I2   Minute
+                         field 17:17 -- a1   delimiter: :
+                         field 18:21 -- F4.1 Seconds part
+field 47:48   a2         delimiter: blank.
+Field 49:56   A8      -- Site identifier
+                         in TAI, in seconds. This field is for
+                         information only. Parsing software MUST ignore it.
+field 57:58   a2         delimiter: blanks.
+Field 59:67   F9.5    -- Azimuth   in degrees.
+field 68:68   a1         delimiter: blanks.
+Field 69:76   F8.5    -- Elevation in degrees.
+field 77:78   a2         delimiter: blanks.
+Field 79:84   F6.1    -- Surface atmospheric pressure in mbars
+field 85:85   a1         delimiter: blanks.
+Field 86:90   F5.1    -- Surface air temperature in degrees Celsius.
+field 91:92   a2         delimiter: blanks.
+Field 93:107  1PD15.7 -- Total slanted path delay in seconds of time.
+field 108:108 a1         delimiter: blanks.
+Field 109:123 1PD15.7 -- Hydrostatic slanted path delay in seconds of time.
+field 124:124 a1         delimiter: blanks.
+Field 125:139 1PD15.7 -- Non-Hydrostatic slanted path delay in seconds of time.
+field 140:140 a1         delimiter: blanks.
+Field 141:155 1PD15.7 -- Zeinth total path delay in seconds of time.
+field 156:156 a1         delimiter: blanks.
+Field 157:171 1PD15.7 -- Zeinth hydrostatic path delay in seconds of time.
+field 172:172 a1         delimiter: blanks.
+Field 173:187 1PD15.7 -- Zeinth non-hydrostatic path delay in seconds of time.
+field 188:188 a1         delimiter: blanks.
+
+Comments:
+---------
+
+  1. Site IDs in this files are ARBITRARY. They do not have any meaning
+     and are for internal labeling only. Parsing software SHOULD NOT
+     try to use and match them against common station names.
+     Site coordinates should be used for matching stations within the
+     area of validity defined in record D.
+
+  2. D-records must be sorted in the order of increasing time epochs.

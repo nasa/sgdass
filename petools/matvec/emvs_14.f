@@ -1,0 +1,371 @@
+#include <mk5_preprocessor_directives.inc>
+      SUBROUTINE EMVS_14 ( A, EMVS, IUER )
+! ************************************************************************
+! *                                                                      *
+! *     Routine EMVS comptes the maximal by module eigenvalue of the     *
+! *     square symmetric mstrix using the methods of consequitive        *
+! *     iterations ( Faddeev, D.K., Faddeva V.N. "Computational methods  *
+! *     of linear algebra, M.-L., 1963, pp.349-372 (in Russian) ).       *
+! *                                                                      *
+! *     This methods will not give a result if                           *
+! *     1) There exists an eigenvalue L2, such that L1=-L2 where K1      *
+! *        is the maximal eigen value;                                   *
+! *     2) The maximal eigenvalue forms a complex-conjugate pair;        *
+! *     3) L1 occupies Jordan cell of the 2-nd order.                    *
+! *                                                                      *
+! *     In this case the error parameter IUER will signal that the       *
+! *     required precision, 0.1 has not been achived for 20 iteration.   *
+! *                                                                      *
+! *     Convergance of the process is accelerated by computing dot       *
+! *     products on each step of iterations.                             *
+! *                                                                      *
+! * ________________________ Input parameters: _________________________ *
+! *                                                                      *
+! *         A ( REAL*8    ) -- The matrix under investigation in upper   *
+! *                            triangular representation.                *
+! *                                                                      *
+! * ________________________ Output parameters _________________________ *
+! *                                                                      *
+! *      EMVS ( REAL*8    ) -- Maximal by module eigenvalue.             *
+! *                            at the last iteration step.               *
+! *                                                                      *
+! * ________________________ Modified parameters: ______________________ *
+! *                                                                      *
+! *    IUER ( INTEGER*4, OPT ) -- Universal error handler.               *
+! *                           Input: switch IUER=0 -- no error messages  *
+! *                                  will be generated even in the case  *
+! *                                  of error. IUER=-1 -- in the case of *
+! *                                  error the message will be put on    *
+! *                                  stdout.                             *
+! *                           Output: 0 in the case of successful        *
+! *                                   completion and non-zero in the     *
+! *                                   case of error.                     *
+! *                                                                      *
+! * ### Source code was created automatically                         ## *
+! * ### Generator: INVS_GENERATOR (c) L. Petrov version of 2002.11.30 ## *
+! *                                                                      *
+! ************************************************************************
+       IMPLICIT   NONE 
+       REAL*8     A(*), EMVS
+       INTEGER*4  N, IUER
+       CHARACTER STR*20
+       INTEGER*4  MAXIT, LEP
+       PARAMETER ( MAXIT = 16 )
+       PARAMETER ( LEP = 30 )
+       REAL*8     V1( 14), V2( 14), EM, EPS, ER
+       PARAMETER ( EPS = 0.1 )
+       REAL*8     R, S, ER_L, EM_L, EM_LL, D1, D2, EPS_L, V1_V1, V1_V2
+       INTEGER*4  IT, IPOR, J2
+       REAL*8  DP_VV_V 
+       INTEGER*4  I_LEN
+!
+       EPS_L = EPS * 3.D0
+       V1( 1 ) = 1.0
+       V1( 2 ) = -1.0
+       V1( 3 ) = 1.0
+       V1( 4 ) = -1.0
+       V1( 5 ) = 1.0
+       V1( 6 ) = -1.0
+       V1( 7 ) = 1.0
+       V1( 8 ) = -1.0
+       V1( 9 ) = 1.0
+       V1( 10 ) = -1.0
+       V1( 11 ) = 1.0
+       V1( 12 ) = -1.0
+       V1( 13 ) = 1.0
+       V1( 14 ) = -1.0
+       EM = 1.D14
+       ER = 1.D14
+!
+       DO 420 J2=1,MAXIT
+          V2( 1 ) = 0.0D0
+          V2( 1 ) = V2( 1 ) + A( 1 ) * V1( 1 )
+          V2( 1 ) = V2( 1 ) + A( 2 ) * V1( 2 )
+          V2( 1 ) = V2( 1 ) + A( 4 ) * V1( 3 )
+          V2( 1 ) = V2( 1 ) + A( 7 ) * V1( 4 )
+          V2( 1 ) = V2( 1 ) + A( 11 ) * V1( 5 )
+          V2( 1 ) = V2( 1 ) + A( 16 ) * V1( 6 )
+          V2( 1 ) = V2( 1 ) + A( 22 ) * V1( 7 )
+          V2( 1 ) = V2( 1 ) + A( 29 ) * V1( 8 )
+          V2( 1 ) = V2( 1 ) + A( 37 ) * V1( 9 )
+          V2( 1 ) = V2( 1 ) + A( 46 ) * V1( 10 )
+          V2( 1 ) = V2( 1 ) + A( 56 ) * V1( 11 )
+          V2( 1 ) = V2( 1 ) + A( 67 ) * V1( 12 )
+          V2( 1 ) = V2( 1 ) + A( 79 ) * V1( 13 )
+          V2( 1 ) = V2( 1 ) + A( 92 ) * V1( 14 )
+          V2( 2 ) = 0.0D0
+          V2( 2 ) = V2( 2 ) + A( 2 ) * V1( 1 )
+          V2( 2 ) = V2( 2 ) + A( 3 ) * V1( 2 )
+          V2( 2 ) = V2( 2 ) + A( 5 ) * V1( 3 )
+          V2( 2 ) = V2( 2 ) + A( 8 ) * V1( 4 )
+          V2( 2 ) = V2( 2 ) + A( 12 ) * V1( 5 )
+          V2( 2 ) = V2( 2 ) + A( 17 ) * V1( 6 )
+          V2( 2 ) = V2( 2 ) + A( 23 ) * V1( 7 )
+          V2( 2 ) = V2( 2 ) + A( 30 ) * V1( 8 )
+          V2( 2 ) = V2( 2 ) + A( 38 ) * V1( 9 )
+          V2( 2 ) = V2( 2 ) + A( 47 ) * V1( 10 )
+          V2( 2 ) = V2( 2 ) + A( 57 ) * V1( 11 )
+          V2( 2 ) = V2( 2 ) + A( 68 ) * V1( 12 )
+          V2( 2 ) = V2( 2 ) + A( 80 ) * V1( 13 )
+          V2( 2 ) = V2( 2 ) + A( 93 ) * V1( 14 )
+          V2( 3 ) = 0.0D0
+          V2( 3 ) = V2( 3 ) + A( 4 ) * V1( 1 )
+          V2( 3 ) = V2( 3 ) + A( 5 ) * V1( 2 )
+          V2( 3 ) = V2( 3 ) + A( 6 ) * V1( 3 )
+          V2( 3 ) = V2( 3 ) + A( 9 ) * V1( 4 )
+          V2( 3 ) = V2( 3 ) + A( 13 ) * V1( 5 )
+          V2( 3 ) = V2( 3 ) + A( 18 ) * V1( 6 )
+          V2( 3 ) = V2( 3 ) + A( 24 ) * V1( 7 )
+          V2( 3 ) = V2( 3 ) + A( 31 ) * V1( 8 )
+          V2( 3 ) = V2( 3 ) + A( 39 ) * V1( 9 )
+          V2( 3 ) = V2( 3 ) + A( 48 ) * V1( 10 )
+          V2( 3 ) = V2( 3 ) + A( 58 ) * V1( 11 )
+          V2( 3 ) = V2( 3 ) + A( 69 ) * V1( 12 )
+          V2( 3 ) = V2( 3 ) + A( 81 ) * V1( 13 )
+          V2( 3 ) = V2( 3 ) + A( 94 ) * V1( 14 )
+          V2( 4 ) = 0.0D0
+          V2( 4 ) = V2( 4 ) + A( 7 ) * V1( 1 )
+          V2( 4 ) = V2( 4 ) + A( 8 ) * V1( 2 )
+          V2( 4 ) = V2( 4 ) + A( 9 ) * V1( 3 )
+          V2( 4 ) = V2( 4 ) + A( 10 ) * V1( 4 )
+          V2( 4 ) = V2( 4 ) + A( 14 ) * V1( 5 )
+          V2( 4 ) = V2( 4 ) + A( 19 ) * V1( 6 )
+          V2( 4 ) = V2( 4 ) + A( 25 ) * V1( 7 )
+          V2( 4 ) = V2( 4 ) + A( 32 ) * V1( 8 )
+          V2( 4 ) = V2( 4 ) + A( 40 ) * V1( 9 )
+          V2( 4 ) = V2( 4 ) + A( 49 ) * V1( 10 )
+          V2( 4 ) = V2( 4 ) + A( 59 ) * V1( 11 )
+          V2( 4 ) = V2( 4 ) + A( 70 ) * V1( 12 )
+          V2( 4 ) = V2( 4 ) + A( 82 ) * V1( 13 )
+          V2( 4 ) = V2( 4 ) + A( 95 ) * V1( 14 )
+          V2( 5 ) = 0.0D0
+          V2( 5 ) = V2( 5 ) + A( 11 ) * V1( 1 )
+          V2( 5 ) = V2( 5 ) + A( 12 ) * V1( 2 )
+          V2( 5 ) = V2( 5 ) + A( 13 ) * V1( 3 )
+          V2( 5 ) = V2( 5 ) + A( 14 ) * V1( 4 )
+          V2( 5 ) = V2( 5 ) + A( 15 ) * V1( 5 )
+          V2( 5 ) = V2( 5 ) + A( 20 ) * V1( 6 )
+          V2( 5 ) = V2( 5 ) + A( 26 ) * V1( 7 )
+          V2( 5 ) = V2( 5 ) + A( 33 ) * V1( 8 )
+          V2( 5 ) = V2( 5 ) + A( 41 ) * V1( 9 )
+          V2( 5 ) = V2( 5 ) + A( 50 ) * V1( 10 )
+          V2( 5 ) = V2( 5 ) + A( 60 ) * V1( 11 )
+          V2( 5 ) = V2( 5 ) + A( 71 ) * V1( 12 )
+          V2( 5 ) = V2( 5 ) + A( 83 ) * V1( 13 )
+          V2( 5 ) = V2( 5 ) + A( 96 ) * V1( 14 )
+          V2( 6 ) = 0.0D0
+          V2( 6 ) = V2( 6 ) + A( 16 ) * V1( 1 )
+          V2( 6 ) = V2( 6 ) + A( 17 ) * V1( 2 )
+          V2( 6 ) = V2( 6 ) + A( 18 ) * V1( 3 )
+          V2( 6 ) = V2( 6 ) + A( 19 ) * V1( 4 )
+          V2( 6 ) = V2( 6 ) + A( 20 ) * V1( 5 )
+          V2( 6 ) = V2( 6 ) + A( 21 ) * V1( 6 )
+          V2( 6 ) = V2( 6 ) + A( 27 ) * V1( 7 )
+          V2( 6 ) = V2( 6 ) + A( 34 ) * V1( 8 )
+          V2( 6 ) = V2( 6 ) + A( 42 ) * V1( 9 )
+          V2( 6 ) = V2( 6 ) + A( 51 ) * V1( 10 )
+          V2( 6 ) = V2( 6 ) + A( 61 ) * V1( 11 )
+          V2( 6 ) = V2( 6 ) + A( 72 ) * V1( 12 )
+          V2( 6 ) = V2( 6 ) + A( 84 ) * V1( 13 )
+          V2( 6 ) = V2( 6 ) + A( 97 ) * V1( 14 )
+          V2( 7 ) = 0.0D0
+          V2( 7 ) = V2( 7 ) + A( 22 ) * V1( 1 )
+          V2( 7 ) = V2( 7 ) + A( 23 ) * V1( 2 )
+          V2( 7 ) = V2( 7 ) + A( 24 ) * V1( 3 )
+          V2( 7 ) = V2( 7 ) + A( 25 ) * V1( 4 )
+          V2( 7 ) = V2( 7 ) + A( 26 ) * V1( 5 )
+          V2( 7 ) = V2( 7 ) + A( 27 ) * V1( 6 )
+          V2( 7 ) = V2( 7 ) + A( 28 ) * V1( 7 )
+          V2( 7 ) = V2( 7 ) + A( 35 ) * V1( 8 )
+          V2( 7 ) = V2( 7 ) + A( 43 ) * V1( 9 )
+          V2( 7 ) = V2( 7 ) + A( 52 ) * V1( 10 )
+          V2( 7 ) = V2( 7 ) + A( 62 ) * V1( 11 )
+          V2( 7 ) = V2( 7 ) + A( 73 ) * V1( 12 )
+          V2( 7 ) = V2( 7 ) + A( 85 ) * V1( 13 )
+          V2( 7 ) = V2( 7 ) + A( 98 ) * V1( 14 )
+          V2( 8 ) = 0.0D0
+          V2( 8 ) = V2( 8 ) + A( 29 ) * V1( 1 )
+          V2( 8 ) = V2( 8 ) + A( 30 ) * V1( 2 )
+          V2( 8 ) = V2( 8 ) + A( 31 ) * V1( 3 )
+          V2( 8 ) = V2( 8 ) + A( 32 ) * V1( 4 )
+          V2( 8 ) = V2( 8 ) + A( 33 ) * V1( 5 )
+          V2( 8 ) = V2( 8 ) + A( 34 ) * V1( 6 )
+          V2( 8 ) = V2( 8 ) + A( 35 ) * V1( 7 )
+          V2( 8 ) = V2( 8 ) + A( 36 ) * V1( 8 )
+          V2( 8 ) = V2( 8 ) + A( 44 ) * V1( 9 )
+          V2( 8 ) = V2( 8 ) + A( 53 ) * V1( 10 )
+          V2( 8 ) = V2( 8 ) + A( 63 ) * V1( 11 )
+          V2( 8 ) = V2( 8 ) + A( 74 ) * V1( 12 )
+          V2( 8 ) = V2( 8 ) + A( 86 ) * V1( 13 )
+          V2( 8 ) = V2( 8 ) + A( 99 ) * V1( 14 )
+          V2( 9 ) = 0.0D0
+          V2( 9 ) = V2( 9 ) + A( 37 ) * V1( 1 )
+          V2( 9 ) = V2( 9 ) + A( 38 ) * V1( 2 )
+          V2( 9 ) = V2( 9 ) + A( 39 ) * V1( 3 )
+          V2( 9 ) = V2( 9 ) + A( 40 ) * V1( 4 )
+          V2( 9 ) = V2( 9 ) + A( 41 ) * V1( 5 )
+          V2( 9 ) = V2( 9 ) + A( 42 ) * V1( 6 )
+          V2( 9 ) = V2( 9 ) + A( 43 ) * V1( 7 )
+          V2( 9 ) = V2( 9 ) + A( 44 ) * V1( 8 )
+          V2( 9 ) = V2( 9 ) + A( 45 ) * V1( 9 )
+          V2( 9 ) = V2( 9 ) + A( 54 ) * V1( 10 )
+          V2( 9 ) = V2( 9 ) + A( 64 ) * V1( 11 )
+          V2( 9 ) = V2( 9 ) + A( 75 ) * V1( 12 )
+          V2( 9 ) = V2( 9 ) + A( 87 ) * V1( 13 )
+          V2( 9 ) = V2( 9 ) + A( 100 ) * V1( 14 )
+          V2( 10 ) = 0.0D0
+          V2( 10 ) = V2( 10 ) + A( 46 ) * V1( 1 )
+          V2( 10 ) = V2( 10 ) + A( 47 ) * V1( 2 )
+          V2( 10 ) = V2( 10 ) + A( 48 ) * V1( 3 )
+          V2( 10 ) = V2( 10 ) + A( 49 ) * V1( 4 )
+          V2( 10 ) = V2( 10 ) + A( 50 ) * V1( 5 )
+          V2( 10 ) = V2( 10 ) + A( 51 ) * V1( 6 )
+          V2( 10 ) = V2( 10 ) + A( 52 ) * V1( 7 )
+          V2( 10 ) = V2( 10 ) + A( 53 ) * V1( 8 )
+          V2( 10 ) = V2( 10 ) + A( 54 ) * V1( 9 )
+          V2( 10 ) = V2( 10 ) + A( 55 ) * V1( 10 )
+          V2( 10 ) = V2( 10 ) + A( 65 ) * V1( 11 )
+          V2( 10 ) = V2( 10 ) + A( 76 ) * V1( 12 )
+          V2( 10 ) = V2( 10 ) + A( 88 ) * V1( 13 )
+          V2( 10 ) = V2( 10 ) + A( 101 ) * V1( 14 )
+          V2( 11 ) = 0.0D0
+          V2( 11 ) = V2( 11 ) + A( 56 ) * V1( 1 )
+          V2( 11 ) = V2( 11 ) + A( 57 ) * V1( 2 )
+          V2( 11 ) = V2( 11 ) + A( 58 ) * V1( 3 )
+          V2( 11 ) = V2( 11 ) + A( 59 ) * V1( 4 )
+          V2( 11 ) = V2( 11 ) + A( 60 ) * V1( 5 )
+          V2( 11 ) = V2( 11 ) + A( 61 ) * V1( 6 )
+          V2( 11 ) = V2( 11 ) + A( 62 ) * V1( 7 )
+          V2( 11 ) = V2( 11 ) + A( 63 ) * V1( 8 )
+          V2( 11 ) = V2( 11 ) + A( 64 ) * V1( 9 )
+          V2( 11 ) = V2( 11 ) + A( 65 ) * V1( 10 )
+          V2( 11 ) = V2( 11 ) + A( 66 ) * V1( 11 )
+          V2( 11 ) = V2( 11 ) + A( 77 ) * V1( 12 )
+          V2( 11 ) = V2( 11 ) + A( 89 ) * V1( 13 )
+          V2( 11 ) = V2( 11 ) + A( 102 ) * V1( 14 )
+          V2( 12 ) = 0.0D0
+          V2( 12 ) = V2( 12 ) + A( 67 ) * V1( 1 )
+          V2( 12 ) = V2( 12 ) + A( 68 ) * V1( 2 )
+          V2( 12 ) = V2( 12 ) + A( 69 ) * V1( 3 )
+          V2( 12 ) = V2( 12 ) + A( 70 ) * V1( 4 )
+          V2( 12 ) = V2( 12 ) + A( 71 ) * V1( 5 )
+          V2( 12 ) = V2( 12 ) + A( 72 ) * V1( 6 )
+          V2( 12 ) = V2( 12 ) + A( 73 ) * V1( 7 )
+          V2( 12 ) = V2( 12 ) + A( 74 ) * V1( 8 )
+          V2( 12 ) = V2( 12 ) + A( 75 ) * V1( 9 )
+          V2( 12 ) = V2( 12 ) + A( 76 ) * V1( 10 )
+          V2( 12 ) = V2( 12 ) + A( 77 ) * V1( 11 )
+          V2( 12 ) = V2( 12 ) + A( 78 ) * V1( 12 )
+          V2( 12 ) = V2( 12 ) + A( 90 ) * V1( 13 )
+          V2( 12 ) = V2( 12 ) + A( 103 ) * V1( 14 )
+          V2( 13 ) = 0.0D0
+          V2( 13 ) = V2( 13 ) + A( 79 ) * V1( 1 )
+          V2( 13 ) = V2( 13 ) + A( 80 ) * V1( 2 )
+          V2( 13 ) = V2( 13 ) + A( 81 ) * V1( 3 )
+          V2( 13 ) = V2( 13 ) + A( 82 ) * V1( 4 )
+          V2( 13 ) = V2( 13 ) + A( 83 ) * V1( 5 )
+          V2( 13 ) = V2( 13 ) + A( 84 ) * V1( 6 )
+          V2( 13 ) = V2( 13 ) + A( 85 ) * V1( 7 )
+          V2( 13 ) = V2( 13 ) + A( 86 ) * V1( 8 )
+          V2( 13 ) = V2( 13 ) + A( 87 ) * V1( 9 )
+          V2( 13 ) = V2( 13 ) + A( 88 ) * V1( 10 )
+          V2( 13 ) = V2( 13 ) + A( 89 ) * V1( 11 )
+          V2( 13 ) = V2( 13 ) + A( 90 ) * V1( 12 )
+          V2( 13 ) = V2( 13 ) + A( 91 ) * V1( 13 )
+          V2( 13 ) = V2( 13 ) + A( 104 ) * V1( 14 )
+          V2( 14 ) = 0.0D0
+          V2( 14 ) = V2( 14 ) + A( 92 ) * V1( 1 )
+          V2( 14 ) = V2( 14 ) + A( 93 ) * V1( 2 )
+          V2( 14 ) = V2( 14 ) + A( 94 ) * V1( 3 )
+          V2( 14 ) = V2( 14 ) + A( 95 ) * V1( 4 )
+          V2( 14 ) = V2( 14 ) + A( 96 ) * V1( 5 )
+          V2( 14 ) = V2( 14 ) + A( 97 ) * V1( 6 )
+          V2( 14 ) = V2( 14 ) + A( 98 ) * V1( 7 )
+          V2( 14 ) = V2( 14 ) + A( 99 ) * V1( 8 )
+          V2( 14 ) = V2( 14 ) + A( 100 ) * V1( 9 )
+          V2( 14 ) = V2( 14 ) + A( 101 ) * V1( 10 )
+          V2( 14 ) = V2( 14 ) + A( 102 ) * V1( 11 )
+          V2( 14 ) = V2( 14 ) + A( 103 ) * V1( 12 )
+          V2( 14 ) = V2( 14 ) + A( 104 ) * V1( 13 )
+          V2( 14 ) = V2( 14 ) + A( 105 ) * V1( 14 )
+          EM_LL=EM_L  !  Set last-last of eigen value
+          EM_L=EM     !  Set last of eigen value
+          ER_L=ER     !  Set last uncertainty
+          V1_V2 = 0.0D0
+          V1_V1 = 0.0D0
+!
+          V1_V2 = V1_V2 + V1( 1  ) * V2( 1 )
+          V1_V1 = V1_V1 + V1( 1  ) * V1( 1 )
+          V1_V2 = V1_V2 + V1( 2  ) * V2( 2 )
+          V1_V1 = V1_V1 + V1( 2  ) * V1( 2 )
+          V1_V2 = V1_V2 + V1( 3  ) * V2( 3 )
+          V1_V1 = V1_V1 + V1( 3  ) * V1( 3 )
+          V1_V2 = V1_V2 + V1( 4  ) * V2( 4 )
+          V1_V1 = V1_V1 + V1( 4  ) * V1( 4 )
+          V1_V2 = V1_V2 + V1( 5  ) * V2( 5 )
+          V1_V1 = V1_V1 + V1( 5  ) * V1( 5 )
+          V1_V2 = V1_V2 + V1( 6  ) * V2( 6 )
+          V1_V1 = V1_V1 + V1( 6  ) * V1( 6 )
+          V1_V2 = V1_V2 + V1( 7  ) * V2( 7 )
+          V1_V1 = V1_V1 + V1( 7  ) * V1( 7 )
+          V1_V2 = V1_V2 + V1( 8  ) * V2( 8 )
+          V1_V1 = V1_V1 + V1( 8  ) * V1( 8 )
+          V1_V2 = V1_V2 + V1( 9  ) * V2( 9 )
+          V1_V1 = V1_V1 + V1( 9  ) * V1( 9 )
+          V1_V2 = V1_V2 + V1( 10  ) * V2( 10 )
+          V1_V1 = V1_V1 + V1( 10  ) * V1( 10 )
+          V1_V2 = V1_V2 + V1( 11  ) * V2( 11 )
+          V1_V1 = V1_V1 + V1( 11  ) * V1( 11 )
+          V1_V2 = V1_V2 + V1( 12  ) * V2( 12 )
+          V1_V1 = V1_V1 + V1( 12  ) * V1( 12 )
+          V1_V2 = V1_V2 + V1( 13  ) * V2( 13 )
+          V1_V1 = V1_V1 + V1( 13  ) * V1( 13 )
+          V1_V2 = V1_V2 + V1( 14  ) * V2( 14 )
+          V1_V1 = V1_V1 + V1( 14  ) * V1( 14 )
+!
+          EM = V1_V2/V1_V1
+          IF ( DLOG10(DABS(EM_L)+1.D-32) - DLOG10(DABS(EM)+1.D-32) .GT. LEP ) THEN
+              CALL ERR_LOG ( 1241, IUER, 'EMVS_14', 'Error in an attempt '//   &
+     &             'to compute maximal by modulo eigenvalue: the process '// &
+     &             'is diverging' )
+               EM=1.D30
+               RETURN
+          END IF
+          ER = DABS ( (EM-EM_L)/EM )
+!
+          V1( 1 ) = V2( 1 )/EM
+          V1( 2 ) = V2( 2 )/EM
+          V1( 3 ) = V2( 3 )/EM
+          V1( 4 ) = V2( 4 )/EM
+          V1( 5 ) = V2( 5 )/EM
+          V1( 6 ) = V2( 6 )/EM
+          V1( 7 ) = V2( 7 )/EM
+          V1( 8 ) = V2( 8 )/EM
+          V1( 9 ) = V2( 9 )/EM
+          V1( 10 ) = V2( 10 )/EM
+          V1( 11 ) = V2( 11 )/EM
+          V1( 12 ) = V2( 12 )/EM
+          V1( 13 ) = V2( 13 )/EM
+          V1( 14 ) = V2( 14 )/EM
+!
+          IF ( ER_L .LT. EPS_L  .AND.  ER .LT. EPS ) GOTO 810
+  420 CONTINUE
+!
+      J2=MAXIT
+      IF ( DABS(ER) .GE. EPS ) THEN
+           EM=-1.D0
+           CALL CLRCH ( STR )
+           CALL INCH  ( MAXIT, STR )
+          CALL ERR_LOG ( 1242, IUER, 'EMVS_14', 'Error in an attempt '//   &
+     &          'to compute the maximal; by module eigenvalue -- '//      &
+     &           STR(1:I_LEN(STR))//' iterations was not enough to '//    &
+     &          'reach desirable precision' )
+           RETURN
+      END IF
+  810 CONTINUE
+      IT = J2
+      EMVS = EM
+!
+      CALL ERR_LOG ( 0, IUER )
+      RETURN
+      END  !#!  EMVS_14  #!#

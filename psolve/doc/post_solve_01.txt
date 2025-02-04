@@ -1,0 +1,269 @@
+Memo: Introduction to Post-Solve
+Author: Leonid Petrov
+Last revision: 2013.07.14
+=========================
+
+1. Why revision of Calc/Solve was necessary.
+--------------------------------------------
+
+
+The package known as Calc/Solve has a very long history. It was originally
+developed by Doug Robertson in 1960s and was called VLBI1, VLBI2, VLBI3.
+Packages  VLBI2,VLBI3 were re-written 70s and in 80s were migrated to HP 
+computer A900. They named Calc and Solve. AT the at time a 16bit computer 
+had 64 Kb operative memory, half of which were used by the operating
+system. In 2003 Calc/Solve was ported to Linux. However, this port did
+not solve problems that Calc/Solve inherited from VLBI2/VLBI3.
+
+  First, Calc/Solve uses exceptionally inefficient layer of software
+for handling the data, so-called Mark-III dbh database handler, 
+"superfiles" and so-called "Solve catalogue system". The Mark-III DBH 
+was designed for computers without a file system. In fact, Calc/Solve
+implements its own home-made file system, but very inefficient. An attempt 
+to solve efficiently problem and introducing an alternative restricted 
+database handler, superfiles, only exacerbated the problem.
+
+  Second, contrary to a popular belief, Calc is not a state-of-the
+art package for astronomical reduction. Solve undoes almost every reduction
+computation and provides its alternative algorithms. In fact we, have
+three packages: standalone-Calc, anti-Calc, and Calc-in-Solve. Calc/Solve
+is firmly embedded to Mark-III DBH and the Calc database system. 
+It is very difficult to use Calc outside Solve.
+
+  Third, Calc/Solve treats dual-band data as independent experiments which
+prevents an efficient processing the data. 
+
+  Fourth, Calc/Solve uses very complicated algorithms for observations 
+de-selection which have bugs even after 20 years of bug-fixing efforts. 
+In particular, there are 14 variables, which affect de-selection algorithm.
+
+  Fifth, Calc/Solve has input interface to the output of Fourfit only.
+AIPS has an emulator of Fourfit output, but it has a very limited set of
+features. A loop: fringe fitting --> Calc/Solve --> fringe fitting is 
+extremely complicated and not practical.
+
+
+2. A concept of VTD/Post-Solve.
+-------------------------------
+
+
+  VTD/Post-Solve is a step towards *evolutionary* changes of Calc/Solve that
+offers alternatives, but does not remove existing features. The alternatives
+include:
+
+1) Support of a new geo-VLBI datafile format: GVF;
+2) Support of an alternative library for computing theoretical path delay
+   and partial derivatives VTD. Unlike to Calc, VTD runs every time when
+   we process the data;
+3) Support of a new outlier suppression scheme "META";
+4) Support of fringe fitting software PIMA;
+5) Support of visualization of fringe plots.
+
+ It should be stressed that VTD/Post-Solve is put on top of Calc/Solve.
+A user may use with Post-Solve old database files and superfiles, although
+a mixture of GVF database and archaic database files is not practical.
+
+2.1. Alternative geo-VLBI Format.
+
+  On a logical level geo-VLBI format resembles Mark-III DBH: it has LCODEs,
+it supports logical, integer and real types. LCODEs, i.e. parameter names,
+are defined as session-wide, station-wide, or observation-wide variables
+or arrays. The handler supports two physical levels of data storage with
+identical logical level of data access: binary database file and ascii 
+database file. A database in ascii format can be transformed to binary
+format without losses and vice versus. Although Post-Solve can work with
+database data stored in ascii format, this way is not recommended because
+performance loss will be very significant. However, transformation 
+binary --> ascii --> binary is useful when small data editing is required,
+for instance, source name change.
+
+  An experiment is stored in several files: fr1, fr2, cl1, th1, sl1,
+called extents
+fr1 keeps essential results of fringe-fitting procedure
+fr1 keeps non-essential results of fringe-fitting procedure
+cl1 keeps various calibrations 
+th1 keeps path delays, delay rates and partial derivatives computed by VTD
+sl1 keeps Solve supplied variables: de-selection status, solution 
+    parameterization, re-weighting parameters, etc.
+
+Only fr1 and cl1 files are considered mandatory, other files are optimal.
+
+  In addition to data files, there is a short ascii so-called envelop file
+that keeps names of extentss and their versions.
+
+  Like Calc/Sivve, GVH supports versions. Unlike to Calc/Solve, post-Solve
+allows to overwrite the latest version. In practice, versions with number 
+beyond 2 is rarely used.
+
+  There is no analogue of the so-called Calc/Solve "catalogue system". All 
+database files reside in two directories: one directory for data extents, 
+another directory for envelopes. When post-Solve needs to find a database, it 
+uses standard Unix routines for searching a file in the directory.
+
+  A database may contain data from one to four bands, although by middle 2013
+post-Solve supports only single-band and dual-band data. Unlike to Calc/Solve,
+there are no separate X and S database. A database may be single-band S-, X-
+or dual-band S/X (or C/X).
+
+2.2. Support of VTD.
+
+  Unlike to Calc, VTD is not an executable, but a library. Post-Solve runs
+VTD every time when it process an experiment, either in interactive mode
+or in a batch mode. Post-Solve provides means to supply VTD control file.
+
+NB: post-Solve does not support an interface to Calc for database in GVF
+format, and vice versus: there is no interface for processing databases in 
+Mark-III DBH or super-file format using VTD. You cannot and do need to 
+run "calcing" or 'superfile creating' for databases in GVF format.
+
+  When using database in GVH format, so-called data calibration 
+(i.e Solve-supplied astronomical reductions) are not accessible.
+
+2.3. Outlier status.
+
+  Post-Solve  provides completely independent layer of dealing 
+with deselected observations: suppression method "META". Post-Solve
+supports three flags for each of 21 solution types and for each observations:
+automatically suppressed, user suppressed, user resurrected despite adamantly
+suppressed. Flag automatically suppressed is set for all observations that
+satisfied a certain condition: for instance, all observations of a given
+source or at a given baseline, or with SNR less than some limit.
+Flats "user suppressed" or "user resurrected despite automatically suppressed"
+are set by a user or a program individually for each observation and
+a solution type. Each solution types has its own set of flags. An observation 
+may be suppressed at a low band and used at a high band.
+
+2.4. Support of fringe fitting software PIMA
+
+  A versatile VLBI fringe fitting program PIMA supports generation of a database
+in GVH format using correlator output and results of fringe fitting. Therefore,
+any correlator output that satisfies FITS-IDI specifications can be processed
+with Post-Solve. Post-Solve can in turn generate a set of commands for PIMA.
+A loop PIMA --> post-Solve --> PIMA --> post-Solve is easily implemented. 
+Moreover, this is a recommended way of using post-Solve.
+
+2.5) Support of visualization of fringe plots.
+
+  Residual visualization program REPA, a part of post-Solve, supports displaying
+fringe plots for a given point, at which the cursor points at (Alt/Mouse_Left, 
+Alt/Mouse_Center, Alt/Mouse_Right). This facilitates integration of fringe 
+fitting and post-Solve.
+
+
+3. Why transition for Post-Solve is desirable.
+----------------------------------------------
+
+
+  There are several reasons to migrate from Calc/Solve to VTD/Post-Solve:
+
+1) support of PIMA. If you process FITS-IDI compliant dataset, you
+   have to use VTD/Post-Solve. Development of interface between PIMA
+   and archaic Calc/Solve would have required tremendous resources
+   but provided very poor performance.
+
+2) Processing absolute astrometry experiments requires several
+   iteration PIMA --> Post-Solve --> PIMA. Processing dual-band data
+   astrometric experiments when not every observation is detected at
+   both bands (as it usually happened) is not extremely difficult with 
+   the old Calc/Solve.
+
+3) Processing geodetic VLBI experiments fringe fitted with PIMA can be 
+   done without resolving rare points with group delay ambiguities.
+   Normal mode of processing data with post-Solve and PIMA is first to 
+   suppress outliers and then re-fringe outliers with a narrow search
+   window. This approach automatically resolves observations with
+   ambiguities and sub-ambiguities and in 80% cases restores point affected
+   by RFI, zero-fringe rate, correlation of phase-cal signal, or
+   quadratic term in phase versus time dependence caused by large 
+   errors in a priori source positions.
+
+4) Suppression method META enables to keep suppression status of every
+   data type. This feature cannot be supported for data in Mark-III DBH
+   or superfile format.
+
+  I do not see arguments to stick to 45 years old Calc/Solve when
+its modernization VTD/post-Solve
+
+
+4. How transition to VTD/post-Solve is done.
+--------------------------------------------
+
+
+You need
+
+1) to convert database files from Mark-III DBH to GVH format
+   There is a program mark3_to_gvf that converts mark3 DBH data to GVF. 
+   Alternatively, you can ask somebody who made this conversation 
+   to provide you database files. NB: during conversion process a lot 
+   of inconsistencies that affect observation suppression status were 
+   found for data prior 1994. Fixing errors in old Mark-III databases 
+   may be time consuming.
+
+2) to develop and store VTD control file for interactive Solve.
+
+3) To create a simple ascii VCAT configuration file that specifies
+   a) directory where GVH data extents are stored, 
+   b) directory where GVH envelop files are stored, 
+   c) VTD control file for interactive Solve.
+
+   Solve assumes that files has name $SAVE_DIR/vcat.conf
+
+4) You will need to update so-called arc-list of batch Solve control
+   filed and supply there GVH database names.
+
+
+Example: file $SAVE_DIR/vcat.conf
+
+# VCAT  Configuration file. Version of 2006.02.18
+#
+GVF_DB_DIR:    /vlbi/gvf_db
+GVF_ENV_DIR:   /vlbi/gvf_env
+VTD_CONF_FILE: /vlbi/apriori/vtd_getdb.cnf
+# VCAT  Configuration file. Version of 2006.02.18
+
+
+5. How to use interactive post-Solve.
+-------------------------------------
+
+
+a) Loading the database is done with key CNTRL/G. You can enter use cursor or 
+   type the database name (envelop name).
+
+b) Writing the database is done with command CNTRL/U. Unlike to the old 
+   Solve, you can overwrite the current database. Usually, database version 1
+   is the initial version. Version 2 is analyzed version. Normally, we do
+   not need to create version 3, version 4, etc.
+
+Post-Solve computes theoretical path delay and derivatives when a new database
+is loaded into Solve. Sometimes you may need to update these computation, 
+for instance, if you updated a priori source position or changed the band.
+This is done by hitting key ~.
+
+NB: if your control file specifies using ionosphere path delay and you 
+process single band data, theoretical path delay depends on band. When you 
+change band, usually you want to re-compute theoretical path delay.
+
+
+6. How to use batch post-Solve.
+-------------------------------
+
+You use command "$ARCS  GVF" that indicates that the following session list
+contains database files in GVH format.
+
+  Session list has format:
+
+SYS  database_name version_number options
+
+version number 0 is interpreted as the last version.
+
+Example:
+
+$ARCS  GVF 
+ SYS  20130429_a  0 
+ SYS  20130502_a  0 SUPMET META ! r4583
+
+  You need also specify VTD control file in $MAPPING section. This 
+control file will be applied to all sessions unless the option VTD_CONF 
+is specified in the session line. Then the control file specified 
+as the value of option VTD_CONF overrides g,obal VTD control. 
+It will be used for processing only that experiment.

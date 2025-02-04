@@ -1,0 +1,360 @@
+Space Geodesy Data Analysis Software Suite. Installation instructions.
+
+SGDASS is installed from the distributive that includes 
+a) tar-balls of all SGDASS packages, 
+b) tar from the third-party open source packages
+c) patches
+d) installation software
+e) data
+
+Last update: 2025.02.03
+
+SGDASS fully supports Linux and some versions of MACOS.
+SGDASS will work  under any flavor of Linux. Support of MACOS
+is limited. It was tested under MACOS 11.5, MACOS 13.5, 14.7 and 
+xcode 14.2 and xcode 15.2. Other versions of MACOS may break 
+the installation process.
+
+I. Dependencies:
+
+   These dependencies should be installed with a package manager 
+   and require root access:
+
+   tcsh
+   X11 headers. Names are distribution dependent. Usually they are
+       libXp-devel, libX11-devel, libXt-devel, libXext-devel
+   csh should be a symbolic link to tcsh.
+   perl
+   python3 (3.4 or newer)
+
+   The following dependencies can be either installed with a package 
+   manager (requires root access) or built with sources (does not 
+   require root access). Follow Beyond Linux from Scratch for 
+   direction if you select to build from sources.
+
+   a postscript reader, for instance ImageMagic
+   a gif reader, for instance ImageMagic
+   gcc
+   g++
+   python3
+   perl
+ 
+   You may need install some packages as a root in order to proceed.
+   The list of packages depends on Linux distribution. Here is 
+   an example of packages to install in Fedora 36 (workstation edition):
+
+   yum tcsh                        # needed for sgdass
+   yum install g++                 # needed for gcc
+   yum install perl-File-Compare   # needed for autoconf
+   yum install perl-FindBin        # needed for openssl
+   yum install libX11-devel        # Needed for petools
+   yum install libXp-devel         # May be needed for petools
+   yum install libXt-devel         # May be needed for petools
+   yum install xwd                 # Needed for Solve
+   yum install xrdb                # Needed for Solve
+   yum install ImageMagick-devel   # Needed for Solve
+
+   OR packages need be installed under Ubuntu 22.04.2 LTS
+
+   apt-get install tcsh
+   apt-get install gcc
+   apt-get install gfortran
+   apt-get install cmake
+   apt-get install g++
+   apt-get install libx11-dev
+   apt-get install libxt-dev
+   apt-get install x11-xserver-utils
+   apt-get install imagemagick
+
+   SGDASS includes a number of third party open source packages in the 
+   installation tarball. Some of these packages can be at your system and
+   may work fine with SGDASS. Some of these packages can be at your system,
+   but will not work with SGDASS, since they need be compiled in a different
+   way as most of Linux distributions do.
+ 
+   NB: Linux distributions often split packages into two parts: default (abridged)
+       and development that includes files missed in the abridged version.
+       SGDASS installation requires development packages.
+
+   SGDASS was tested at modern gcc and gfortran version 8.0.0 a newer.
+   It may or may not work with older version of gcc/gfortran.
+
+   It is strongly recommended to install a modern version of the compiler.
+   SGDASS provides a mechanism to install a new version of gcc/g++/gfortran.
+
+   MACOS (also known as Darwin):
+          1) macos provides a gcc wrapper to clang. If you see /usr/bin/gcc
+             you may think that you have gcc. This is correct. That wrapper is 
+             not suitable for compilation of sgdass and its dependencies. Genuine 
+             gcc/g++/gfortran compilers are needed. SGDASS distribution kit
+             provides tarball with gcc compiler and the control file.
+          2) software development kit is needed for building SGDASS dependencies.
+
+II. Before installation.
+
+Get and untar the distribution kit. The kit consists of 
+-- tarballs with source code
+-- installation software
+-- configuration file examples
+
+Requirements:
+
+1) Installation is directed by the configuration file. The first section of
+   the configuration file is the directory list. SGDASS relies on the fact that 
+   the directory names are fixed. You need create these directories or set 
+   soft symbolic links. Setting symbolic links pointed to the root directory
+   requires root privileges. Permission mask should be 775. If you change 
+   directory names, you will still be able to install individual packages, 
+   but the functionality of SGDASS as a whole will be broken.
+
+2) Root access. Root access is not needed for installation. The package will be 
+   built in a directory that is writable for a non-root users. However, root
+   access is still needed before installation for
+
+   a) Installing tcsh;
+   b) Installing X11 headers  and libraries;
+   c) Installing initial version of gcc,g++;
+   d) Installing perl, python and modern version of wget;
+   e) under MACOS only: installing clang and xcode software development kit.
+   f) making symbolic links to the root directory and securing read/write/execute
+      permission
+
+   Once these initial steps are made, no root support is needed.
+
+3) All SGDASS users should belong to the same primary group. They should use 
+   mask 002.
+
+4) Section [Where] defines prefix directory. Shared libraries will be placed in
+   subdirectory lib and/or lib64 with respect to the prefix directory. These
+   directories require special handling under Linux. Before installation you need 
+   add these directories to LD_LIBRARY_PATH. If you have LD_LIBRARY_PATH defined, 
+   you need add these directories at the beginning of the to list in LD_LIBRARY_PATH.
+   If you have root access, under Linux you can add this directory to /etc/ld.so.conf 
+   after installation is completed and run command ldconfig. If you do not have 
+   root access, you need always keep that subdirectory in LD_LIBRARY_PATH when
+   you use SGDASS programs. You do not need this if you work under MACOS.
+
+   Example "setenv LD_LIBRARY_PATH /opt64/lib:/opt64/lib64:/usr/lib64:/usr/lib"
+
+III. Installation:
+
+SGDASS consists of a number of packages that have their own configuration.
+SGDASS distribution consists of tar-balls with sources code, patches,
+and sgdass_install.py installation tool.
+
+  You can take example_sgdass_linux.cnf or example_sgdass_linux.cnf, examine it, 
+and adjust for your needs. NB: the order of packages in the configuration file 
+matters.
+
+Quick explanation:
+
+After you satisfied requirements and prepared configuration file, all you
+need is to execute two commands:
+
+   sgdass_install.py -c config_file build       all
+   sgdass_install.py -c config_file postinstall all
+
+where config_file is the configuration file you just have created
+
+Long explanation:
+
+     sgdass_install.py -c config_file task package [-v 0|1|2] [-n]
+
+     where 
+
+     config_file is the SGDASS configuration file.
+
+     command
+    
+          configure   -- create control file for building SGDASS, write 
+                         down, and stop.
+   
+          build       -- create control file for building SGDASS and execute it.
+
+          rebuild     -- create control file for rebuilding SGDASS and execute it.
+                         The difference of rebuild with respect to build:
+                         Task build unpacks tar-files with package distributive
+                         and then builds.
+                         Task rebuild does not unpack distributions. It assumes 
+                         sgdass was once built. It re-configures, re-compiles, 
+                         re-links, and re-installs.
+   
+          postinstall -- run post-installation procedure. NB: it may take hours.
+
+     package is the name of the package or all for all the packages.
+     
+     -v  -- verbosity level
+            0 -- silent (default), 
+            1 -- normal verbosity, 
+            2 -- debugging mode
+
+     -n  --  not to rebuild auxiliary packages. Can be used only with 
+             task rebuild.
+
+
+If automatic installation fails, you can install packages individually.
+NB: in general, you cannot change the order of package installation.
+If command configure is used, sgdass_install.py creates control file,
+writes down the name of the control file and stops. You can execute this 
+command file manually.
+
+sgdass_install.py requires pet_misc.py file that comes with the tarball.
+
+Post-installation procedures may take considerable time: from several
+hours to several days.
+
+IV. Building compilers and cmake.
+
+    If you gcc/g++/gfortran compilers are relatively new, you can proceed.
+    If they are old, or you do not have one of these compilers, you can
+    either build the compiler using sgdass or install them as a root 
+    using some package management tool. Look at example_gcc_linux.cnf or 
+    example_gcc_darwin.cnf and adapt it for your needs. Usually, you
+    need only change num_proc definition. You still need an initial 
+    c/c++ compilers.
+
+    NB: gcc application binary interface has been changed in version 8.
+    If you upgrade from gcc/gfortran below version 8 to version 8 and newer,
+    many programs compiled and built with the old version will stop working.
+    There are two workarounds:
+
+a)  (recommended) to re-compile/re-link your old code with the new 
+    compiler.
+
+b)  If you do not have root access, you can built gcc/gfortran and install it 
+    in a directory different than /usr, f.e. in /opt64 . 
+    Take example_gcc_linux.cnf or example_gcc_darwin.cnf, copy it to another
+    name, customize and run command 
+
+          sgdass_install.py -c {your_config_file} build all
+
+    Then if /opt64/lib and /opt64/lib64 in your LD_LIBRARY_PATH environment
+    variable is defined first, then programs compiled/linked with the new
+    compiler will work, but the old program may not work.
+    ( Example "setenv LD_LIBRARY_PATH /opt64/lib:/opt64/lib64:/usr/lib64:/usr/lib" )
+
+    Installation of gcc compiler may fail under MACOS because of incompatibility
+    of xcode and provided patch. Then you have an option either to patch the gcc
+    installation procedure ot to use some called brew utility. You need install
+    brew and configure it to use the same prefix as for sgdass installation.
+    You can find program brew_in_my_prefix.bash that installs and configure
+    brew. After that you can build gcc with command  brew install gcc.
+
+    If /usr/lib64 and /usr/lib are defined first, the old programs will work,
+    but the programs build with the new version may not work.
+    ( Example "setenv LD_LIBRARY_PATH /usr/lib64:/usr/lib:/opt64/lib:/opt64/lib64" )
+
+    If you have up-to-date compilers, but do not have cmake, you can build it
+    with command
+
+          sgdass_install.py -c {your_config_file} build cmake
+
+V. Configuration:
+
+    It is recommended to take example_config_linux.cnf or 
+    example_config_darwin.cnf, rename it, review, and edit.
+
+    The control file has a number of sections.
+     
+    Section directories and subdirectories defines the directory layout.
+The directory layout uses short names that starts from root directory "/".
+There are at least three ways to setup directory names:
+
+1) (recommended) to set up symbolic links. In that case the physical layout 
+   of directories can be arbitrary. Physical names are mapped to logical 
+   names using Unix mechanism of symbolic links: 
+   "ln -s /PHSICAL/NAME/DIR /LOGICAL_NAME". This mechanism is very flexible
+   and allows changing physical structure of disk space without software
+   update.
+
+2) to create physical directories from the root partition
+
+3) to use logical volumes.
+
+   All these mechanisms require a root privilege.
+
+   SGDASS components can be installed in arbitrary directory layout, but it 
+will not functioning as a system. The directory layout stitches elements 
+of SGDASS as a whole.
+
+   You still can alter directory names. In that case you need search for that 
+   directory name in the configuration file and replace the name. Keep 
+   in mind you do it at your own risk and some functionality will be broken.
+
+V. Installation.
+
+   a) Setting environment. If you installed compilers in a directory other 
+      than /usr or usr/local, you need to add in you csh *and* sh startup
+      files ($HOME/.cshrc and $HOME/.profile) definitions of PATH and 
+      LD_LIBRARY_PATH environment variables.
+
+   b) execute command sgdass_install.py -c configuration_file build all
+
+      It takes 10 to 100 minutes to build sgdass.
+
+VI. Post-installation.
+
+a) .Xdefaults
+
+   In order graphic to work properly, you need to add to your
+   file $HOME/.Xdefaults the following line
+
+   pgxwin.Win.iconize:     True
+
+   It is also recommended to add these lines to $HOME/.Xdefaults 
+
+   pgxwin.Win.geometry:	1080x750+0+50
+   pgxwin.server.visible:	True
+   pgxwin.Win.maxColors:   230
+
+   In order to activate this changes, you need to run command
+   xrdb -merge $HOME/.Xdefaults 
+
+   It is recommended to add command xrdb -merge $HOME/.Xdefaults in your 
+   shell startupfile.
+
+b) Environment variables that control graphics
+
+  In order to run PG PLOT you need to specify several environment 
+  variables. Here is an example under tcsh:
+
+  setenv PGPLOT_DEV  "/XW"                      # tells that default is to print 
+                                                # the graphics to the screen
+  setenv PGPLOT_XW_MARGIN "1.0"                 # sets display margins
+  setenv PGPLOT_XSIZE_MM 400.0                  # specifies with width of the PGPLOT window
+
+
+c) It is recommended to add these definitions in $HOME/.login file
+   (assuming you use tcsh):
+
+limit coredumpsize     0
+limit stacksize        8000000
+limit maxproc          16384
+limit descriptors      2048
+setenv GOMP_STACKSIZE  2000000
+
+  Most of the programs are written in gfortran and compiled with -fopenmp
+flag. Gfortran allocates local variables in stack. Default linux stack 
+limit is 16Mb, which is too small. It needs be increased.
+
+VII. Caveats
+
+  SGDASS requires direct interoperability between Fortran and C.
+Linux distribution usually builds third party packages with appending
+underscore to the procedure name that makes direct interoperability
+impossible. SGDASS builds these packages without underscore.
+This potentially may cause a problem to other packages.
+  
+  For instance, you may have two fftw libraries, one in /usr/lib64 
+that comes from your distribution and another in /opt64/lib
+build by sgdass. This potentially may cause a conflict when you
+use or compile/link another program that requires  underscores
+in names. If you find problem, check the program in question
+with ldd. You may need run them with altered LD_LIBRARY_PATH
+defining /usr/lib and /usr/lib64 before /opt64/lib.
+
+  If you run sgdass in the upgrade mode and upgraded fftw, you need 
+to re-create fftw configuration files called "wisdom". Usually
+you run command "pima_gen_wis.csh big all". It may take 1 to 60 hours 
+to complete.
+

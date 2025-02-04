@@ -1,0 +1,11 @@
+      FUNCTION DFLFORT(STRING)
+      IMPLICIT NONE
+      CHARACTER STRING*(*)
+      INTEGER*4  DFLFORT
+      INTEGER RET, IVALUE
+      INTEGER F77STATFS, F77STATFSGET
+!
+      WRITE ( 6, * ) 'ERROR statfs.'
+      DFLFORT = 1
+      RETURN
+      END  !#!  DFLFORT  #!#

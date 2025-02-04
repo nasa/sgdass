@@ -1,0 +1,163 @@
+Program  Phase_Doctor v 0.95                                          2000.03.16
+
+
+  1. Usage
+  --------
+
+Usage: phase_doctor [-h] [-f <input_file>] [-d <experiment_id>] 
+                         [-v <verbosity_level>] [-w <web_dir>]
+
+   -h -- show this text
+   -f -- specifies input file with definitions of files with data
+   -d -- experiment identifier
+   -v -- verbosity level
+         0 -- silent mode
+         1 -- normal verbosity [default]
+         2 -- eloquent mode
+         3,4 -- debugging modes
+   -w -- directory name where hard-copies plots and tables will be put. 
+         Trailing symbol / should present in the name if it is a name 
+         of a directory.
+
+
+   2. Purpose
+   ----------
+
+  Program Phase_Doctor is an interactive graphical tool for investigation and 
+calibration of instrumental delays in a given geo-VLBI experiment. 
+
+  Phase_Doctor requires log-files for all stations and a pair of X- and S-band
+databases which are assumed to be in the SOLVE databases catalogue system.
+Phase_doctor is a part of CALC/SOLVE package.
+
+  Phase_Doctor is for
+
+   A) Examination of auxiliary quantities of VLBI observations:
+        1) system temperatures;
+        2) phase and amplitudes of phase calibration signals;
+        3) residual phases fringe phase;
+        4) cable calibration.
+
+   B) Displaying various plots associated with these quantities; 
+
+   C) Fitting parameters of the model of some functions of these quantities;
+
+   D) Computation of corrections to group and phase delays for instrumental 
+      errors:
+        1) correction for presence of spurious signals in phase calibration
+           signal.
+
+   E) Estimation of station perofrmance and quality of
+        1) system temperature;
+        2) phase calibration;
+        3) residual fringe phases;
+
+
+  3. Arugments of the command string.
+  -----------------------------------
+
+  Input for Phase_Doctor is either 
+1) a definitions file -- it is used for first call of Phase_Doctor for the 
+   experiment -- or 
+2) an experiment identifier which has been created during the previous calls 
+   of Phase_Doctor.
+
+  Format of a definitions file:
+<Keyword> <value_1> [<value_2>]
+
+Keyword is one of
+DATABASE: -- value_1 is a database name. Dollar sign may be omitted.
+MK3:      -- value_1 is directory name with MK3 correlator output 
+             **not implemented**
+MK4:      -- value_1 is directory name with MK4 correlator output 
+             **not implemented**
+MON:      -- value_1 file name of VLBI monitor file **not implemented**
+LOG:      -- value_1 is a station name using exactly the same syntax as in 
+             SOLVE, however blanks in station name should replaced with 
+             ~ (decimal code 126); value_2 is a log file name
+*         -- comment
+#         -- comment
+
+  Example of a definitions file:
+
+DATABASE:  $99MAY18XA
+*
+LOG:       ALGOPARK   /diskB5/logs/ca062_log_algo
+LOG:       GILCREEK   /diskB5/logs/ca062_log_gilc
+LOG:       MATERA     /diskB5/logs/ca062_log_mate
+LOG:       MEDICINA   /diskB5/logs/ca062_log_medi
+LOG:       HARTRAO    /diskB5/logs/ca062_log_hart
+LOG:       WESTFORD   /diskB5/logs/ca062_log_west
+
+   Experiment file is created after processing the input definitions file. 
+An experiment identifier is a main part of the definition file name (without
+path and extension). For example, if a definitions file has name 
+/geo/vlbi/phase/99MAY18XA.def then the experiment identifier would be 99MAY18XA
+
+   The next call of Phase_Doctor for this experiment may be done either by
+specifying a definitions file or by specifying an experiment identifier, f.e. 
+
+    phase_doctor -f /geo/vlbi/phase/99MAY18XA.def 
+
+or
+
+    phase_doctor -d 99MAY18XA
+
+The latter variant is executed much faster.
+
+
+  4. Customization.
+  -----------------
+
+  Initial placement of the graphic window is determined in x-resource file.
+You should add the following line to the file ~/.Xdefaults
+
+pgxwin.Win.geometry:	1260x800+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+
+1260x800+0+90 means that the window will have 1260 pixels width, 800 in height,
+0 -- shift to the right respectively to the left edge of the screen, 90 pixels
+shift down respectively to the top edge of the screen. Parameters window width
+and window heights are ignored.
+"pgxwin.Win.iconize:     True" means that PGPLOT window will be iconize and
+go out from the screen after termination of DiaGI. This resource is MANDATORY,
+otherwise DiaGI will require confirmation from text screen when it terminates.
+
+The following command should be run before the first call of pgxwin_server:
+
+xrdb -merge ~/.Xdefault
+
+NB: if pgxwin_server is running xrdb will be ignored! To change initial 
+position of the graphic window pgxwin_server should be stopped before it.
+It is reasonable to put the command xrdb -merge ~/.Xdefault at your
+login script.
+
+  The following environment variable should be set up:
+
+  PGPLOT_DIR   -- directory where files pgwin_server and libpgplot.sl are kept;
+  HELP_DIR     -- directory name where help files are kept;
+  DIAGI_PRICOM -- contains the command for printing PostScript file. Example:
+                  "lp -onb -dlaser2" for printer which has built-in PostScript
+                  interpreter (don't use it if printer doesn't have such a
+                  capacity!)
+
+  Optionally environment the following environment variables can be set up:
+
+  PHD_DIR      -- Phase_Doctor writes down files with experiment to a specific
+                  directory. Default name of this directory is defined by the
+                  variable PHD_DIR defined in the ../solve/gsfcb.i file.
+                  Environment variable PH_DIR overrides the name directory. 
+                  Typical size of experiment files is several megabytes. 
+
+
+  5.  Documentation
+  -----------------
+
+1) phase_doctor_01.hlp      -- this document
+2) phase_doctor_02_hlp.html -- User guide
+3) phase_doctor_03_hlp.ps   -- Description of algorithms (**not implemented**)
+
+
+Please send comments and bug reports to 
+Leonid Petrov ( sgdass@lists.nasa.gov )

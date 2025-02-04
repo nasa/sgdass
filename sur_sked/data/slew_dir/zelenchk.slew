@@ -1,0 +1,24 @@
+# Station slew format of  2018.02.02
+#
+# rms over azimith:   2.8 s
+# rms over elevation: 6.4 s
+#
+# 2018.01.24 Slewing rate and settle time is adjusted according to epa001 experiment
+# 2018.03.02 Changed EL_MIN, EM_MAX from 5, 85  to 10, 80
+#
+SHORT_NAME:  ZELENCHK  Zc
+LAST_UPDATE: ZELENCHK  2018.03.02
+COORD:       ZELENCHK  meters    3451207.870   3060375.195   4391914.928   
+MOUNT:       ZELENCHK  char       ALTAZ
+SLEW_AZ:     ZELENCHK  deg/sec    1.05
+SLEW_EL:     ZELENCHK  deg/sec    0.49
+ACCL_AZ:     ZELENCHK  deg/sec^2  0.05
+ACCL_EL:     ZELENCHK  deg/sec^2  0.18
+TSETTLE_AZ:  ZELENCHK  sec       10.0
+TSETTLE_EL:  ZELENCHK  sec       26.0
+EL_MIN:      ZELENCHK  deg       10.0
+EL_MAX:      ZELENCHK  deg       80.0
+AZ_RANGE:    ZELENCHK  deg      -78.0   78.0  282.0  438.0
+RECORDER:    ZELENCHK  char      mark5
+PREOB:       ZELENCHK  sec       10.0
+POSTOB:      ZELENCHK  sec        2.0

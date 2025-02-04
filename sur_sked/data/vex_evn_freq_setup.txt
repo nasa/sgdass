@@ -1,0 +1,149 @@
+$FREQ;
+*
+def 4940.49MHz16x8MHz;
+* mode =  1    stations =Ef:Jb:On:Mc:Tr:Nt
+     sample_rate = 16.000 Ms/sec;  * (2bits/sample)
+     chan_def = :  4940.49 MHz : L : 8.000 MHz : &CH01 : &BBC01 : &NoCal; *Lcp
+     chan_def = :  4940.49 MHz : U : 8.000 MHz : &CH02 : &BBC01 : &NoCal; *Lcp
+     chan_def = :  4956.49 MHz : L : 8.000 MHz : &CH03 : &BBC02 : &NoCal; *Lcp
+     chan_def = :  4956.49 MHz : U : 8.000 MHz : &CH04 : &BBC02 : &NoCal; *Lcp
+     chan_def = :  4972.49 MHz : L : 8.000 MHz : &CH05 : &BBC03 : &NoCal; *Lcp
+     chan_def = :  4972.49 MHz : U : 8.000 MHz : &CH06 : &BBC03 : &NoCal; *Lcp
+     chan_def = :  4988.49 MHz : L : 8.000 MHz : &CH07 : &BBC04 : &NoCal; *Lcp
+     chan_def = :  4988.49 MHz : U : 8.000 MHz : &CH08 : &BBC04 : &NoCal; *Lcp
+     chan_def = :  5004.49 MHz : L : 8.000 MHz : &CH09 : &BBC05 : &NoCal; *Lcp
+     chan_def = :  5004.49 MHz : U : 8.000 MHz : &CH10 : &BBC05 : &NoCal; *Lcp
+     chan_def = :  5020.49 MHz : L : 8.000 MHz : &CH11 : &BBC06 : &NoCal; *Lcp
+     chan_def = :  5020.49 MHz : U : 8.000 MHz : &CH12 : &BBC06 : &NoCal; *Lcp
+     chan_def = :  5036.49 MHz : L : 8.000 MHz : &CH13 : &BBC07 : &NoCal; *Lcp
+     chan_def = :  5036.49 MHz : U : 8.000 MHz : &CH14 : &BBC07 : &NoCal; *Lcp
+     chan_def = :  5052.49 MHz : L : 8.000 MHz : &CH15 : &BBC08 : &NoCal; *Lcp
+     chan_def = :  5052.49 MHz : U : 8.000 MHz : &CH16 : &BBC08 : &NoCal; *Lcp
+enddef;
+*------------------------------------------------------------------------------
+$IF;
+*
+def LO@4840MHzLPolTone/1;
+* mode =  1    stations =Ef:Jb
+     if_def = &IF_1N : 1N : L :  4840.0 MHz : U : 1 MHz ;
+     if_def = &IF_2A : 2A : L :  4840.0 MHz : U : 1 MHz ;
+enddef;
+*
+def LO@4800MHzLPolTone/1;
+* mode =  1    stations =On
+     if_def = &IF_1N : 1N : L :  4800.0 MHz : U : 1 MHz ;
+     if_def = &IF_2A : 2A : L :  4800.0 MHz : U : 1 MHz ;
+enddef;
+*
+def LO@4600MHzLPolTone/1;
+* mode =  1    stations =Mc
+     if_def = &IF_1N : 1N : L :  4600.0 MHz : U : 1 MHz ;
+     if_def = &IF_2A : 2A : L :  4600.0 MHz : U : 1 MHz ;
+enddef;
+*
+def LO@4200MHzLPolTone/1;
+* mode =  1    stations =Tr
+     if_def = &IF_A : A : L :  4200.0 MHz : U : 1 MHz ;
+enddef;
+*
+def LO@4120MHzLPolTone/1;
+* mode =  1    stations =Nt
+     if_def = &IF_A : A : L :  4120.1 MHz : U : 1 MHz ;
+enddef;
+*------------------------------------------------------------------------------
+$BBC;
+*
+def 8BBCs;
+* mode =  1    stations =Ef:Jb:On:Mc
+     BBC_assign = &BBC01 :  1 : &IF_1N;
+     BBC_assign = &BBC02 :  2 : &IF_2A;
+     BBC_assign = &BBC03 :  3 : &IF_1N;
+     BBC_assign = &BBC04 :  4 : &IF_2A;
+     BBC_assign = &BBC05 :  5 : &IF_1N;
+     BBC_assign = &BBC06 :  6 : &IF_2A;
+     BBC_assign = &BBC07 :  7 : &IF_1N;
+     BBC_assign = &BBC08 :  8 : &IF_2A;
+enddef;
+*
+def 8BBCs#02;
+* mode =  1    stations =Tr:Nt
+     BBC_assign = &BBC01 :  1 : &IF_A;
+     BBC_assign = &BBC02 :  2 : &IF_A;
+     BBC_assign = &BBC03 :  3 : &IF_A;
+     BBC_assign = &BBC04 :  4 : &IF_A;
+     BBC_assign = &BBC05 :  5 : &IF_A;
+     BBC_assign = &BBC06 :  6 : &IF_A;
+     BBC_assign = &BBC07 :  7 : &IF_A;
+     BBC_assign = &BBC08 :  8 : &IF_A;
+enddef;
+*------------------------------------------------------------------------------
+$PHASE_CAL_DETECT;
+*
+     def NoDetect;
+     * mode =  1    stations =Jb:Wb:Ef:Mc:Tr:Nt:Hh:Cm:On
+          phase_cal_detect = &NoCal;
+     enddef;
+*------------------------------------------------------------------------------
+$TRACKS;
+*
+def MKIV.16Ch2bit1to2;
+* mode =  1    stations =Ef:Jb:On:Mc:Tr:Nt
+*    format = MKIV1:2, and fan-out = 2
+*    mode requires  8.00Mb/s/tr; stations using disks
+     track_frame_format = Mark4;
+     data_modulation = off;
+     fanout_def =   : &CH01 : sign : 1:  2:  4;
+     fanout_def =   : &CH01 :  mag : 1:  6:  8;
+     fanout_def =   : &CH02 : sign : 1: 10: 12;
+     fanout_def =   : &CH02 :  mag : 1: 14: 16;
+     fanout_def =   : &CH03 : sign : 1: 18: 20;
+     fanout_def =   : &CH03 :  mag : 1: 22: 24;
+     fanout_def =   : &CH04 : sign : 1: 26: 28;
+     fanout_def =   : &CH04 :  mag : 1: 30: 32;
+     fanout_def =   : &CH05 : sign : 1:  3:  5;
+     fanout_def =   : &CH05 :  mag : 1:  7:  9;
+     fanout_def =   : &CH06 : sign : 1: 11: 13;
+     fanout_def =   : &CH06 :  mag : 1: 15: 17;
+     fanout_def =   : &CH07 : sign : 1: 19: 21;
+     fanout_def =   : &CH07 :  mag : 1: 23: 25;
+     fanout_def =   : &CH08 : sign : 1: 27: 29;
+     fanout_def =   : &CH08 :  mag : 1: 31: 33;
+     fanout_def =   : &CH09 : sign : 2:  2:  4;
+     fanout_def =   : &CH09 :  mag : 2:  6:  8;
+     fanout_def =   : &CH10 : sign : 2: 10: 12;
+     fanout_def =   : &CH10 :  mag : 2: 14: 16;
+     fanout_def =   : &CH11 : sign : 2: 18: 20;
+     fanout_def =   : &CH11 :  mag : 2: 22: 24;
+     fanout_def =   : &CH12 : sign : 2: 26: 28;
+     fanout_def =   : &CH12 :  mag : 2: 30: 32;
+     fanout_def =   : &CH13 : sign : 2:  3:  5;
+     fanout_def =   : &CH13 :  mag : 2:  7:  9;
+     fanout_def =   : &CH14 : sign : 2: 11: 13;
+     fanout_def =   : &CH14 :  mag : 2: 15: 17;
+     fanout_def =   : &CH15 : sign : 2: 19: 21;
+     fanout_def =   : &CH15 :  mag : 2: 23: 25;
+     fanout_def =   : &CH16 : sign : 2: 27: 29;
+     fanout_def =   : &CH16 :  mag : 2: 31: 33;
+enddef;
+*------------------------------------------------------------------------------
+$HEAD_POS;
+def DiskVoid;
+* mode =  1    stations =Ef:Jb:On:Mc:Tr:Nt
+*     Head positions irrelevant for Disk: empty def
+enddef;
+*------------------------------------------------------------------------------
+$PASS_ORDER;
+*
+def DiskVoid;
+* mode =  1    stations =Ef:Jb:On:Mc:Tr:Nt
+*     Pass orders irrelevant for Disk: empty def
+enddef;
+*------------------------------------------------------------------------------
+$ROLL;
+*
+def NoRoll;
+* mode =  1    stations =Ef:Jb:On:Mc:Tr:Nt
+*    barrel-roll set to 'roll_off', so reverse-roll by  0 (2 head)
+     roll = off;
+enddef;
+*------------------------------------------------------------------------------

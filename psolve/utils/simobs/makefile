@@ -1,0 +1,53 @@
+# ************************************************************************
+# *                                                                      *
+# *   Makefile  for compiling and linking   simobs executable            *
+# *                                                                      *
+# ************************************************************************
+.SUFFIXES:
+.SUFFIXES:	.f	.c	.o	.opt_o	.a	.d
+SHELL = /bin/csh -f -c 'umask 0002 ; eval "$2"'
+
+.c.o:
+	$(MK5_C) -c -o $*.o $*.c  
+
+.f.o:
+	$(MK5_F95) -c -o $*.o $*.f  
+
+.f.opt_o:
+	$(MK5_F95_OPT)   -c -o $*.opt_o $*.f  
+
+
+EXE_DIR = $(SOLVE_ROOT)/bin
+SUPPORT = $(SOLVE_ROOT)/support
+
+OBJM 	=               	\
+		simobs_main.o
+
+OBJS 	=               	\
+		simobs_comp.opt_o 	\
+		simobs_get.o
+
+LIBS =				  	\
+        -L$(VEX_LIB) -lvex_parser 	\
+	$(SOLVE_LIB_GVH)		\
+	$(SOLVE_LIB_VTD)		\
+	$(SOLVE_FITSLIB_LIB) 		\
+	$(SOLVE_CFITSIO_LIB) 		\
+	$(SOLVE_LIB_PETOOLS) 		\
+        $(SOLVE_LIB_BLAS)		\
+        $(SOLVE_EXTRA_LIB)
+
+all:	bin
+
+$(OBJS):	$(VEX_INC)/vex.i		\
+		$(SOLVE_ROOT)/include/simul.i
+
+$(OBJM):	$(VEX_INC)/vex.i		\
+		$(SOLVE_ROOT)/include/simul.i
+
+bin:	$(OBJS) $(OBJM) 
+	$(SUPPORT)/set_revision_date.csh;
+	$(MK5_LINK) -o $(EXE_DIR)/simobs $(OBJM) $(OBJS) $(LIBS)
+
+clean:  
+	rm -f $(OBJM) $(OBJS) $(EXE_DIR)/simobs

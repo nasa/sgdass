@@ -1,0 +1,34 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2021.06.09  L. Petrov Created
+# 
+# 2021.07.02  Added STOW_AZIM and STOW_ELEV fields
+# 2022.01.28  Added BACKEND definition
+# 2022.04.03 pet Added peculiar clock offset
+#
+SHORT_NAME:    WESTFORD  char       WF
+LAST_UPDATE:   WESTFORD  char       2022.04.03
+COORD:         WESTFORD  meters      1492206.541  -4458130.522   4296015.549
+MOUNT:         WESTFORD  char       ALTAZ
+#
+SLEW_AZ:       WESTFORD  deg/sec    3.333
+SLEW_EL:       WESTFORD  deg/sec    2.0
+ACCL_AZ:       WESTFORD  deg/sec^2  1.0
+ACCL_EL:       WESTFORD  deg/sec^2  1.0
+TSETTLE_AZ:    WESTFORD  sec        8.0
+TSETTLE_EL:    WESTFORD  sec        8.0
+EL_MIN:        WESTFORD  deg        2.0
+EL_MAX:        WESTFORD  deg       87.2
+AZ_RANGE:      WESTFORD  deg       100.0 100.0 460.0 460.0
+RECORDER:      WESTFORD  char      mark6
+BACKEND:       WESTFORD  char      r2dbe
+SETMODE:       WESTFORD  sec        4.0
+PREOB:         WESTFORD  sec        3.0
+POSTOB:        WESTFORD  sec        0.0
+HOR_AZIM:      WESTFORD  deg       0   15   16   25   26   60   61   75   76   85   86   95   96  105  106  115  116  360     
+HOR_ELEV:      WESTFORD  deg       5    5    6    6    8    8    5    5  6.5  6.5    5    5  6.5  6.5    5    5    4    4   
+STOW_AZIM:     WESTFORD  deg       110.0
+STOW_ELEV:     WESTFORD  deg        50.0
+#
+CLOCK_DATES:   WESTFORD  sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  WESTFORD  sec        1.169E-6

@@ -1,0 +1,122 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   This C-shell program sets names of standard variables for PETOOLS  *
+# *                                                                      *
+# * # 23-MAR-2004 petools_standard_vars v1.3 (c) L. Petrov 05-OCT-2010 # *
+# *                                                                      *
+# ************************************************************************
+if ( `uname` == "HP-UX" ) then
+      setenv SOLVE_LIB_VEC      "-lvec"
+      setenv SOLVE_LIB_BLAS     "-lblas"
+      setenv SOLVE_LIB_M        "-lm"
+      setenv SOLVE_LIB_U77      "-lU77"
+      setenv SOLVE_LIB_LCL      "-lcl"
+      setenv SOLVE_EXTRA_LIB    " "
+#
+      if ( -f /usr/lib/libXhp11.sl ) then
+           setenv SOLVE_LIB_XHP11       /usr/lib/libXhp11.sl
+         else
+            result = `find /usr/lib -name libXhp11.sl`
+            if ( $#result > 0 ) then
+                 setenv SOLVE_LIB_XHP11 "$results[1]"
+            endif
+      endif
+#
+      if ( -f /usr/lib/libX11.sl ) then
+           setenv SOLVE_LIB_X11       /usr/lib/libX11.sl
+         else
+            result = `find /usr/lib -name libX11.sl`
+            if ( $#result > 0 ) then
+                 setenv SOLVE_LIB_X11 "$results[1]"
+            endif
+      endif
+#
+      if ( -f /usr/lib/libXt.sl ) then
+           setenv SOLVE_LIB_XT       /usr/lib/libXt.sl
+         else
+           result = `find /usr/lib -name libXt.sl`
+           if ( $#result > 0 ) then
+                setenv SOLVE_LIB_XT  "$results[1]"
+           endif
+      endif
+#
+# --- Learn HP-UX version
+#
+      source ${PETOOLS_ROOT}/support/learn_hp_version.csh
+      if ( `uname` == "HP-UX" && $SOLVE_HP_VERSION == "00" ) then
+            echo solve_lib: HP-UX version `uname -r` is not supported by \!
+            exit 1
+      endif
+      switch ( $SOLVE_HP_VERSION )
+        case "09":
+          setenv SOLVE_LIB_CURSES  " "
+          setenv SOLVE_EXTRA_LIB   "/usr/lib/end.o"
+          breaksw
+        case "10":
+          setenv SOLVE_LIB_CURSES  " "
+          setenv SOLVE_EXTRA_LIB   ""
+          breaksw
+        case "11":
+          setenv SOLVE_LIB_VEC     "${PETOOLS_ROOT}/lib/libsys/libvec_HP10.20.a"
+          setenv SOLVE_LIB_CURSES  " "
+          setenv SOLVE_EXTRA_LIB   "${PETOOLS_ROOT}/lib/libsys/cl_patch_for_HP11.a"
+          breaksw
+      endsw
+   else if ( `uname` == "Linux" ) then
+      setenv SOLVE_LIB_VEC      " "
+      setenv SOLVE_LIB_BLAS     "-llapack -lcblas -lf77blas -latlas"
+      setenv SOLVE_LIB_M        " "
+      setenv SOLVE_LIB_U77      " "
+      setenv SOLVE_LIB_LCL      " "
+      setenv SOLVE_LIB_XHP11    " "
+      setenv SOLVE_LIB_X11      "$MK5_X11_LIB/libX11.so"
+      setenv SOLVE_LIB_XT       " "
+      setenv SOLVE_LIB_CURSES   " "
+      setenv SOLVE_EXTRA_LIB    " "
+      setenv SOLVE_LIB_XHP11    " "
+   else if ( `uname` == "Darwin" ) then
+      setenv SOLVE_LIB_VEC      " "
+      setenv SOLVE_LIB_BLAS     "-lsatlas"
+      setenv SOLVE_LIB_M        " "
+      setenv SOLVE_LIB_U77      " "
+      setenv SOLVE_LIB_LCL      " "
+      setenv SOLVE_LIB_XHP11    " "
+      setenv SOLVE_LIB_X11      "$MK5_X11_LIB/libX11.dylib"
+      setenv SOLVE_LIB_XT       " "
+      setenv SOLVE_LIB_CURSES   " "
+      setenv SOLVE_EXTRA_LIB    " "
+      setenv SOLVE_LIB_XHP11    " "
+   else if ( `uname` == "SunOS" ) then
+      setenv SOLVE_LIB_VEC      " "
+      setenv SOLVE_LIB_BLAS     "-llapack -lcblas -lf77blas -latlas"
+      setenv SOLVE_LIB_M        " "
+      setenv SOLVE_LIB_U77      " "
+      setenv SOLVE_LIB_LCL      " "
+      setenv SOLVE_LIB_XHP11    " "
+      setenv SOLVE_LIB_X11      "$MK5_X11_LIB/libX11.so"
+      setenv SOLVE_LIB_XT       " "
+      setenv SOLVE_LIB_CURSES   " "
+      setenv SOLVE_EXTRA_LIB    " "
+      setenv SOLVE_LIB_XHP11    " "
+endif
+if ( `$MK5_FC --version | grep GNU | wc -l` > 0 ) then
+       if ( `uname` == "Linux" ) then
+             setenv SOLVE_EXTRA_LIB    "-lpthread -lrt"
+	  else 
+             setenv SOLVE_EXTRA_LIB    "-lpthread"
+       endif
+   else
+       setenv SOLVE_EXTRA_LIB    "-lsvml -liomp5 -lguide -lpthread -lrt"
+endif
+setenv PETOOLS_MAKE        make
+setenv PGPLOT_DIR          ${PETOOLS_ROOT}/bin
+setenv SOLVE_LIB_PGPLOT    ${PETOOLS_ROOT}/lib/libpgplot.a
+setenv PGPLOT_FONT         ${PGPLOT_DIR}/grfont.dat
+setenv PGPLOT_DEV          "/XW"
+setenv PGPLOT_XW_MARGIN    "1.0"
+setenv SOLVE_C_INCLUDE     ${PETOOLS_ROOT}/include/
+#
+setenv HELP_DIR            ${PETOOLS_ROOT}/doc
+#
+setenv SOLVE_PGPLOT_X_INC  ${MK5_X11_INCLUDE}

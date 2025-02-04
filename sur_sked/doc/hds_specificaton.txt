@@ -1,0 +1,175 @@
+Provisional specification of VLBI hardware setup in HDS format version 0.1 of 2018.01.21
+
+1. Introduction:
+================
+
+  A file in hds format describes a VLBI hardware setup in a level of 
+abstraction suitable for an astronomer in order the principle 
+investigator who may be ignorant of details of VLBI hardware at 
+a given station(s) would be able to design a correct frequency setup 
+and understand it.
+
+  Hardware setup file is processed with the following programs:
+
+hds_verify station_list hds_database -- verifies whether a given
+           setup is suitable for the specified stations. If not,
+           the program provides a detailed explanation why this 
+           setup is not suitable for the stations and guides the 
+           user for modification the original hds file.
+
+hds_to_key station_list hds_database -- translates the hds setup
+           to key format for NRAO sched program.
+
+ast_hds_to_vex ast_file hds_file hds_database -- takes a VLBI schedule 
+           file in ast format + VLBI hardware setup in hds format 
+           as input and translates them into vex format.
+
+
+2. Syntax of a schedule in hds format:
+======================================
+
+  Schedule in hds format contains lines of 8-bit characters.
+The first line identifies format, its version, and date of 
+the hds format specification release. Lines that starts with 
+character # are considered as comments and discarded by a parser. 
+Each line that is not a comment contains a definition.
+
+  A definition have the following format:
+
+  keyword: value(s) qualifier: value(s) [qualifier: value(s)]
+  
+  Keywords, values, and qualifiers are separated by one or more
+blanks. A value may not have blanks. A command, keyword, or a qualifier 
+end with character : (colon). A given keyword requires certain values 
+and qualifiers. A given keyword or qualifier requires a certain number 
+of values. All required values must be present. The order of qualifiers 
+is arbitrary, but if a command or a definition requires both values and 
+qualifiers, the values must precede qualifiers. If a given keyword or 
+qualifier requires a value that has more than one word, the order of words 
+is fixed and cannot be changed. Keywords are sub-divided to primary and
+secondary. A primary keyword defines a block of secondary keywords. 
+A block of secondary keywords that follow the primary keyword cannot be empty. 
+
+  Primary keywords should start with the first position. Two blanks should 
+precede any secondary keyword. A definition specified in a command keyword 
+is tied to the encompassing block defined by a secondary keyword and primary 
+keywords by having common values. 
+
+  The hds format is by design grepable, i.e. simple combinations of Unix
+commands grep and awk are sufficient to produce a useful output.
+
+3. Definitions of primary keywords:
+===================================
+
+Keyword Hardware_setup -- defines a block of information about the hardware 
+                          setup. A file in hds format may have more than one
+                          hardware setup blocks, and it should have at least 
+                          one block. 
+
+  value 
+
+    Hardware setup mode name. If more than one hardware setup blocks with 
+    a given name is present, the definition in the last block take 
+    precedence.
+
+4. Definitions of secondary keywords:
+=====================================
+
+4.1 Definitions of secondary keywords within the Hardware_setup block
+---------------------------------------------------------------------
+
+Keyword IF -- defines the setup of a given intermediate frequency 
+              channel: its sky frequency, bandwidth, and polarization.
+
+  value1
+  
+    IF name. The scope of the IF name is limited to the encompassing 
+             Hardware_setup block. If more than one IF with a given 
+             name is defined in a given hardware block, the latest
+             definition takes precedence.
+
+  Keyword IF has 4 mandatory qualifiers:
+
+    sky_frequency: -- defines the sky frequency as the low frequency
+                      of the intermediate frequency channel.
+
+      value1 
+
+        sky frequency of the IF as a float number defined as the 
+        lowest nominal frequency that the IF bandpass is to pass through.
+
+      value2
+
+        Units of the sky frequency. Supported units: MHz and GHz.
+
+    bandwidth:     -- defines the bandwidth of the intermediate frequency
+                      channel.
+
+      value1 
+       
+        the IF bandwidth as a float number.
+
+      value2
+
+        Units of the bandwidth. Supported units: MHz and GHz.
+
+    polarization:  -- defines the polarization that the IF records.
+
+      value
+
+        polarization code. Supported codes: rcp, lcp, lin_hor, lin_vert.
+
+    Setup_name:    -- defines the name of the setup. 
+
+      value
+     
+        hardware setup name. Should be the same as the hardware setup 
+        name in the encompassing block.
+
+Keyword Bits_per_sample:   -- defines how many bits per sample is recorded.
+
+  value
+
+    The number of bits in one sample.
+
+  Keyword Bits_per_sample requires a mandatory qualifier:
+
+    Setup_name:    -- defines the name of the setup. 
+
+      value
+     
+        hardware setup name. Should be the same as the hardware setup 
+        name in the encompassing block.
+
+Keyword Phase_calibration: -- defines whether the phase calibration should
+                              be turned off or on, and if it should be 
+                              turned on, defines the frequency step between 
+                              phase calibration tones.
+
+  value
+
+    phase calibration mode: on or off.
+
+  Keyword Phase_calibration has one mandatory qualifier Setup_name and
+  one optional qualifier Frequency_step. The qualifier Frequency_step
+  can be omitted if the phase calibration is set to be off, and must be
+  present if the phase calibration is set to be on.
+
+    Frequency_step: -- defines the frequency step of the sequence of
+                       phase calibration tones.
+
+      value1 
+       
+        the frequency step between the peaks of the phase calibration
+        spectrum.
+
+      value2
+
+        Units of the frequency step. Supported unit: MHz.
+
+    Setup_name:     -- defines the name of the setup. 
+
+      value
+     
+        hardware setup name. Should be the same as the hardware setup 
+        name in the encompassing block.

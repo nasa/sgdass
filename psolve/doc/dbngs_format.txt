@@ -1,0 +1,232 @@
+
+                    NGS Format for VLBI Data Transfer
+
+                      Revised June 11, 2007.
+
+                   (See modification history at end.)
+
+
+ 1.  Header Card - 80 column ASCII descriptor for the data set
+      a.  DATA IN NGS FORMAT FROM DATA BASE YRMONDYxx VERSION ####
+      b. Hellings theoretical delays and rates into card #2. 
+           OR
+         Observed delays and rates into card #2.
+
+
+ 2.  Site Cards
+       Col  1- 8: Eight character site name
+       Col 11-25: X-component of the site position (meters)
+       Col 26-40: Y-component of the site position (meters)
+       Col 41-55: Z-component of the site position (meters)
+       Col 57-60: Axis type (must be AZEL, EQUA, X-YN (for 
+                   X axis N), X-YE, or RICH (RICHMOND, an EQUA antenna
+                   from Maryland moved to Florida)
+       Col 61-70: Axis offset (meters)
+
+    End of site cards is indicated by a card with $END in Col 1-4
+
+ 3. Radio source position cards
+       Col  1- 8: Eight character source name
+       Col 11-12: Right ascension hours
+       Col 14-15: Right ascension minutes
+       Col 17-28: Right ascension seconds
+       Col    30: Declination sign
+       Col 31-32: Declination degrees
+       Col 34-35: Declination minutes
+       Col 37-48: Declination seconds
+
+    End of source cards is indicated by a card with $END in Col 1-4
+
+ 4. Auxiliary parameters
+       Col  1-20: Reference frequency (MHz)
+       Col 21-30: Group delay ambiguity spacing (nsec)
+       Col 32-33: Delay type (GR-group, PH-phase)
+       Col 35-36: Delay rate type (GR-group, PH-phase)
+
+    This card must be followed by a card with $END in Col 1-4
+
+ 4. Data Cards
+
+    Card #1:
+       Col  1- 8: Eight character site name for site 1
+       Col 11-18: Eight character site name for site 2
+       Col 21-28: Eight character source name for radio source
+       Col 30-33: Year of observation (e.g. 1993)
+       Col 35-36: Month 
+       Col 38-39: Day
+       Col 41-42: Hour
+       Col 44-45: Minute
+       Col 47-60: Seconds
+       Col 61-70: Run identification code (if desired)
+       Col 71-78: Sequence number
+       Col 79-80: 01
+
+    Card #2:
+       Col  1-20: Observed delay (ns)
+       Col 21-30: Formal error for the observed delay (ns)
+       Col 31-50: Observed delay rate (ps/sec)
+       Col 51-60: Formal error for the observed delay rate (ps/sec)
+       Col 61-62: Data quality flag (blank or 0 indicates good data)
+       Col 64-65: Delay type (blank if same as in Auxiliary Parameters)
+       Col 67-68: Delay rate type (blank if same as in Auxiliary Parameters)
+       Col 71-78: Sequence number
+       Col 79-80: 02
+
+    Card #3:
+       Col  1-10: Correlation coefficient (0-1)
+       Col 11-20: Formal error for correlation coefficient
+       Col 21-30: Fringe amplitude (J)
+       Col 31-40: Formal error for fringe amplitude (J)
+       Col 41-60: Total fringe phase (radians)
+       Col 61-70: Formal error for total fringe phase (radians)
+       Col 71-78: Sequence number
+       Col 79-80: 03
+
+    Card #4:
+       Col  1-10: System temperature at site 1 (K)
+       Col 11-15: Formal error for system temperature at site 1 (K)
+       Col 16-25: System temperature at site 2 (K)
+       Col 26-30: Formal error for system temperature at site 2 (K)
+       Col 31-40: Antenna temperature at site 1 (K)
+       Col 41-45: Formal error for antenna temperature at site 1 (K)
+       Col 46-55: Antenna temperature at site 2 (K)
+       Col 56-60: Formal error for antenna temperature at site 2 (K)
+       Col 71-78: Sequence number
+       Col 79-80: 04
+
+    Card #5:
+       Col  1-10: Cable calibration correction (one-way) for site 1 (ns)
+       Col 11-20: Cable calibration correction (one-way) for site 2 (ns)
+       Col 21-30: Water vapor radiometer parameter at site 1 (ns)
+       Col 31-40: Formal error for water vapor radiometer at site 1 (ns)
+       Col 41-50: Water vapor radiometer parameter at site 2 (ns)
+       Col 51-60: Formal error for water vapor radiometer at site 2 (ns)
+       Col 62   : Water vapor radiometer parameter definition code for
+                   site 1 as follows:
+                  0 - parameter is zenith path delay
+                  1 - parameter is path delay along line-of-sight
+       Col 64   : Water vapor radiometer parameter definition code for
+                   site 2 (see above)
+       Col 71-78: Sequence number
+       Col 79-80: 05
+
+    Card #6:
+       Col  1-10: Ambient atmospheric temperature at site 1 (deg. C)
+       Col 11-20: Ambient atmospheric temperature at site 2 (deg. C)
+       Col 21-30: Ambient atmospheric barometric pressure at site 1 (mb)
+       Col 31-40: Ambient atmospheric barometric pressure at site 2 (mb)
+       Col 41-50: Ambient atmospheric humidity parameter at site 1
+       Col 51-60: Ambient atmospheric humidity parameter at site 2
+       Col 62   : Humidity parameter definition code for site 1 as follows:
+                  0 - humidity parameter is relative humidity (%)
+                  1 - humidity parameter is dew point (deg. C)
+                  2 - humidity parameter is wet bulb temperature (deg. C)
+       Col 64   : Humidity parameter definition code for site 2 (see above)
+       Col 71-78: Sequence number
+       Col 79-80: 06
+
+    Card #7:
+       Col  1-10: Time difference between the reference epoch (card 1) and
+                   the start of the observations (e.g. -60.) (seconds)
+       Col 11-20: Duration of the observation (seconds)
+       Col 21-30: A priori UTC offset at site 1 (if any) (seconds)
+       Col 31-50: Observation frequency (MHz) (blank if same as in 
+                   Auxiliary Parameter)
+       Col 51-60: Group delay ambiguity (ns) (blank if same as in Auxiliary
+                   Parameter)
+       Col 71-78: Sequence number
+       Col 79-80: 07
+
+    Card #8:
+       Col  1-20: Delay ionosphere correction (ns)
+       Col 21-30: Delay ionosphere correction formal error (ns)
+       Col 31-50: Delay rate ionosphere correction (ps/s)
+       Col 51-60: Delay rate ionosphere correction formal error (ps/s)
+       Col 62-63: Ionosphere error flag (0 = ionosphere correction OK)
+       Col 71-78: Sequence number
+       Col 79-80: 08
+
+    Card #9: Same as card #2, except modified formal errors.
+       Col  1-20: Observed delay (ns)
+       Col 21-30: Modified formal error for the observed delay (ns)
+       Col 31-50: Observed delay rate (ps/sec)
+       Col 51-60: Modified formal error for the observed delay rate (ps/sec)
+       Col 61-62: Data quality flag (blank or 0 indicates good data)
+       Col 64-65: Delay type (blank if same as in Auxiliary Parameters)
+       Col 67-68: Delay rate type (blank if same as in Auxiliary Parameters)
+       Col 71-78: Sequence number
+       Col 79-80: 09
+
+
+    Notes:
+
+ 1. All values should include a decimal point or be right-hand justified in
+    the indicated fields.
+
+ 2. Station coordinates are given in a Greenwich right-hand Cartesian 
+    coordinate system (e.g., Z-axis toward the CIO pole, X-axis toward 
+    the Greenwich meridian and Y-axis toward the 90 deg. east meridian).
+
+ 3. Source coordinates are given in J2000.0 coordinates using the IAU 1984
+    definitions for precession, nutation, aberration, etc.
+
+ 4. The reference frequency is defined as the frequency to which the total 
+    fringe phase observable (Card #4) is referred.
+
+ 5. The epoch of the observation is defined as the UTC epoch at which the 
+    signal arrived at site 1; i.e., the site identified in columns 1-8 of
+    card #1.
+
+ 6. The sequence number in columns 71-78 of the data cards is to be the same
+    number for each data card associated with a given observation.  The 
+    numbers in columns 79-80 serve to sequence the cards within a given
+    observation.
+
+ 7. The delay is defined as:
+
+                    D = T2 - T1
+
+    where
+
+                   T1 = time of signal arrival at site 1 as measured 
+                        by the site clock at site 1
+                   T2 = time of signal arrival at site 2 as measured
+                        by the site clock at site 2
+
+    No calibration corrections (e.g. atmosphere corrections) have been added
+    to or subtracted from these values.
+
+ 8. The delay rate is defined as the derivative of delay with respect to time
+    as measured by the clock at site 1.
+
+ 9. The sense of the cable calibration is that an increase means an increase
+    in the (one-way) electrical length of the cable carrying the phase
+    calibration signal to the receiver box.
+
+10. The barometric pressure should not be corrected to sea level.
+
+11. It is not necessary to include blank data cards for missing data.  For 
+    example, if no meteorological data are available, card #6 may be deleted.
+
+12. Card #1 may not be deleted.
+
+13. Data should be arranged in time order.
+
+14. If the cards are put on tape, the tape should be 9 track with the 
+    following DCB:
+
+                   DCB = (RECFM=FB,LRECL=80,BLKSIZE=3200)
+
+------------------------------------------------------------------------
+
+Modifications:
+
+1999.02.08      File creation date.  Format itself dated "10/20/83".
+1999.06.29 BA   - Removed last part of file, which was e-mail message
+                from Mike Abell to Jim Ryan of 1994.05.09, mostly
+                containing just a copy of the first part of this file.
+                - Added antenna type RICH for RICHMOND antenna.
+2007.06.12 DG/GSFC - PC Linux version. Card nine created to match Zinovy
+                Malkin's version.
+
+------------------------------------------------------------------------

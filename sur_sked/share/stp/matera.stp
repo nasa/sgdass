@@ -1,0 +1,49 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2021.11.14  No measurment of Tsys; No horizonatl mask
+# 2022.01.28  Added BACKEND definition
+# 2022.04.03 pet Added peculiar clock offset
+# 
+SHORT_NAME:    MATERA    char       Ma
+LAST_UPDATE:   MATERA    char       2022.04.03
+COORD:         MATERA    meters         4641938.770     1393003.017     4133325.546
+MOUNT:         MATERA    char       ALTAZ   
+SLEW_AZ:       MATERA    deg/sec       1.75
+SLEW_EL:       MATERA    deg/sec       2.31
+ACCL_AZ:       MATERA    deg/sec^2     0.8
+ACCL_EL:       MATERA    deg/sec^2     0.3
+DECE_AZ:       MATERA    deg/sec^2     0.8
+DECE_EL:       MATERA    deg/sec^2     0.3
+TSETTLE_AZ:    MATERA    sec           0.1
+TSETTLE_EL:    MATERA    sec           0.1
+EL_MIN:        MATERA    deg          15.0
+EL_MAX:        MATERA    deg          88.0
+AZ_RANGE:      MATERA    deg         -90.0  90.0 270.0 270.0
+RECORDER:      MATERA    char       mark5   
+BACKEND:       MATERA    char       mark4
+PREOB:         MATERA    sec           0.2
+POSTOB:        MATERA    sec           0.0
+HOR_AZIM:      MATERA    deg           0.0  360.0
+HOR_ELEV:      MATERA    deg           5.0    5.0
+#
+CLOCK_DATES:   MATERA    sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  MATERA    sec        0.638E-6
+# 
+TSYS_DATES:    MATERA    char       2001.01.01  2049.12.31
+TSYS_ELEVS:    MATERA    deg           3.0   5.0  10.0  20.0  30.0  40.0  80.0  90.0
+TSYS_FREQS:    MATERA    GHz           2.1   2.4
+TSYS_POLVALS:  MATERA    K     R      75.039  74.315  72.000  65.897  63.307  61.565  63.967  62.657
+TSYS_FREQS:    MATERA    GHz           7.9   9.1
+TSYS_POLVALS:  MATERA    K     R      47.299  46.118  42.930  36.686  33.981  32.315  29.570  28.033
+#
+BPSS_DATES:    MATERA    char       2001.01.01  2049.12.31
+BPSS_BWIDTH:   MATERA    MHz          16
+BPSS_BETA:     MATERA    d/l        1.00
+BPSS_BWIDTH:   MATERA    MHz          32
+BPSS_BETA:     MATERA    d/l        1.00
+#
+GAIN_DATES:    MATERA    char       2004.12.31 2025.01.01
+GAIN_FREQS:    MATERA    GHz           2.1   2.4
+GAIN_ELEVS:    MATERA    deg           3.0  90.0
+GAIN_POLVALS:  MATERA    K/Jy  R     0.029 0.029
+GAIN_POLVALS:  MATERA    K/Jy  L     0.029 0.029

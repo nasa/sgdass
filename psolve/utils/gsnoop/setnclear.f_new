@@ -1,0 +1,14 @@
+      SUBROUTINE SETNCLEAR ( IX, IY, LUO)
+!
+!     set cursor & clear below
+!     03.05.01 JWR Error in call to setcr fixed. (There was a third arg.)
+!
+      implicit none
+!
+      integer*2 ix, iy, luo
+!
+      CALL ADR_CURSOR ( INT4(IX), INT4(IY) )
+      CALL CLEAR ()
+!
+      RETURN
+      END  !#!  SETNCLEAR  #!#

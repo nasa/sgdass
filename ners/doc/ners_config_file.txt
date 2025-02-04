@@ -1,0 +1,100 @@
+Description of the NERS configuration file
+
+The ners configuration file consists of ascii lines of variable length.
+The first line should be 
+
+# NERS Configuration file.  Format version of 2016.12.06
+
+Other lines that start with # are considered comments and are ignored 
+by the parser. Keyword lines of configuration are in a form 
+KEYWORD: value separated by one or more blanks. If a keyword, except
+keyword URL, is defined more than once, the last definition overrides
+previous definitions. All keywords should be defined.
+
+Supported keywords:
+
+  URL: value.   Defines the URL where NERS client will download the NERS
+                EOP forecast. More than one URL can be defined. 
+                If connection to NERS client will not be established 
+                during timeout time period, NERS library will try the
+                next URL. If it cannot establish connection to the last
+                URL fort timeout period, it will stop with error message.
+
+  FCS_FILE:     Name of the local copy of the EOP forecast file. NERS
+                writes this file.
+
+  LEAPSEC_FILE: Name of the leap second file. NERS writes this file.
+
+  LTP_USAGE:    Usage of the long tern EOP forecast.
+
+                   stop    -- if the requested epoch is beyond the last
+                              epoch of the precise EOP forecast, then
+                              stop with the error message.
+
+                   warning -- if the requested epoch is beyond the last
+                              epoch of the precise EOP forecast, but still
+                              within a range of coarse EOP long-term
+                              prediction, to print a warning and compute
+                              the EOP using coarse long-term EOP prediction.
+                              The warning is printed only once.
+
+                   silent  -- if the requested epoch is beyond the last
+                              epoch of the precise EOP forecast, but still
+                              within a range of coarse EOP long-term
+                              prediction, to compute the EOP using coarse 
+                              long-term EOP prediction.
+
+  ON_FAIL_TO_READ: determines behavior of NERS on read failure that may
+                   occur mainly due to Internet outage. Supported values:
+
+                   stop    -- issue error message and stop.
+
+                   warning -- issue warning and proceed with the stale
+                              version of NERS message. Quality of EOP 
+                              prediction may degrade.
+
+                   ignore  -- proceed with the stale version of NERS 
+                              message. Quality of EOP prediction may degrade.
+
+  CONN_TIMEOUT: timeout of establishing connection to the NERS server
+                and sleep time before attempting to make a new connection.
+                Units: sec. Default: 2. Minimum value: 1.
+
+  READ_TIMEOUT: timeout of establishing connection to the NERS server
+                and sleep time before attempting to make a new connection.
+                Units: sec. Default: 10. NB: NERS forecast length is about
+                600 Kb. You may need to adjust this timeout if you have
+                very slow or very fast Internet connection. Minimum value: 1.
+
+  LOCK_TIMEOUT: timeout for locking ners files. Since NERS writes and reads
+                the message and leap second file, for avoiding reading and
+                writing at the same time of more than one process that use
+                NERS, Unix locking mechanism is used. To prevent deadlock,
+                read and write locks have expiration timeout specified
+                by LOCK_TIMEOUT. Recommended value: 8
+
+  N_TRIES:      The number of tries to connect to the server. NERS client
+                sleeps for CONN_TIMEOUT between connections. Default: 2.
+                Minimum value: 1.
+
+  AGE_FCS:      Maximum age of the local copy of the forecast file. If the 
+                age of the local copy of the NERS forecast file exceeds 
+                AGE_FCS, NERS client will check the age of the remote
+                EOP forecast before computing the internal spline. If the 
+                remote NERS forecast is newer then the the forecast in the 
+                local copy of the NERS file, NERS library will download the 
+                forecast from the remote server and uses the newest version
+                for computing internal splines. NERS Will not check the age 
+                of NERS client file when it uses internal spline. Unit: sec. 
+                Default: 2000. Minimum value: 1000. 
+
+  AGE_SPL:      Maximum age of internal spline. NERS library checks the age 
+                of internal spline before computing the EOP at a given epoch.
+                If the age exceeds AGE_SPL, the NERS library checks age of 
+                the local forecast file. If the age exceeds AGE_FCS, then
+                NERS client will check the forecast age at the remote NERS 
+                server. If the forecast age at the remote server is newer than
+                the forecast age at the local copy, NERS client downloads the
+                forecast from the remote server, re-compute the internal 
+                spline, and will use the re-compute spline. Default: 2000.
+                Minimum value: 1.

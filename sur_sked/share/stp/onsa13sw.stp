@@ -1,0 +1,40 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2023.08.21 pet created
+# 2023.08.23 pet added gains. Source Eskil Varenius email of 2023.08.23
+# 
+SHORT_NAME:    ONSA13SW  char       Ow
+LAST_UPDATE:   ONSA13SW  char       2023.08.21
+COORD:         ONSA13SW  meters         3370946.918      711534.360     5349660.816
+MOUNT:         ONSA13SW  char       ALTAZ   
+SLEW_AZ:       ONSA13SW  deg/sec      12.0
+SLEW_EL:       ONSA13SW  deg/sec       6.0
+ACCL_AZ:       ONSA13SW  deg/sec^2     3.4
+ACCL_EL:       ONSA13SW  deg/sec^2     3.4
+TSETTLE_AZ:    ONSA13SW  sec           4.0
+TSETTLE_EL:    ONSA13SW  sec           4.0
+EL_MIN:        ONSA13SW  deg           5.0
+EL_MAX:        ONSA13SW  deg          89.5
+AZ_RANGE:      ONSA13SW  deg         -65.0  65.0 295.0 425.0
+RECORDER:      ONSA13SW  char       mark6   
+BACKEND:       ONSA13SW  char       dbbc3
+SETMODE:       ONSA13SW  sec 	       4.0
+PREOB:         ONSA13SW  sec           0.2
+POSTOB:        ONSA13SW  sec           0.0
+HOR_AZIM:      ONSA13SW  deg           0.0   34.0  46.0  259.0  283.0  342.0  360.0
+HOR_ELEV:      ONSA13SW  deg           5.0   10.0  10.0   18.0    5.0    7.0    5.0
+STOW_AZIM:     ONSA13SW  deg          36.0
+STOW_ELEV:     ONSA13SW  deg          89.0
+#
+CLOCK_DATES:   ONSA13SW  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  ONSA13SW  sec        6.188E-6
+# 
+GAIN_DATES:    ONSA13SW  char       2020.01.01 2049.12.31
+GAIN_FREQS:    ONSA13SW  GHz          2.000    14.00
+GAIN_ELEVS:    ONSA13SW  deg            3.0    90.0
+GAIN_POLVALS:  ONSA13SW  K/Jy  H      0.025     0.025
+#
+GAIN_DATES:    ONSA13SW  char       2020.01.01 2049.12.31
+GAIN_FREQS:    ONSA13SW  GHz          2.000    14.00
+GAIN_ELEVS:    ONSA13SW  deg            3.0    90.0
+GAIN_POLVALS:  ONSA13SW  K/Jy  V      0.025     0.025

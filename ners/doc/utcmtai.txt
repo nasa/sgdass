@@ -1,0 +1,8 @@
+Program utcmtai retrieves the value of function UTC minus TAI for 
+the current epoch from the Network Earth Rotation Service (NERS) 
+server and prints it in stdout. Units: s
+
+Usage:
+
+   utcmtai [-h]
+

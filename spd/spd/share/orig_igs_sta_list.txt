@@ -1,0 +1,474 @@
+abmf  HourlyIGLOS-PP abmf  Les Abymes                        Guadeloupe                        298.4725   16.2623   -25.0000  IGN-SGN             INTERNAL                  
+abpo  Hourly  abpo  Antananarivo                             Madagascar                         47.2292  -19.0183  1552.9923  JPL                 INTERNAL                  
+adis  HourlyIGLOS-PP adis  Addis Ababa                       Ethiopia                           38.7663    9.0351  2439.1540  BKG                                           
+aira  ReferenceHourlyIGLOS-PP aira  Aira                     Japan                             130.5996   31.8241   314.6400  GSI                 EXTERNAL CESIUM           
+ajac  HourlyIGLOS-PP ajac  Ajaccio                           France                              8.7626   41.9275    99.0000  IGN-SGN             INTERNAL                  
+albh  ReferenceHourly  albh  Victoria                        Canada                            236.5126   48.3898    32.0000  GSC                 INTERNAL                  
+algo  ReferenceHourlyIGLOS-PP algo  Algonquin Park           Canada                            281.9286   45.9588   202.0000  NRCan               EXTERNAL H-MASER          
+alic  ReferenceHourlyIGLOS-PP alic  Alice Springs            Australia                         133.8855  -23.6701   603.3581  GA                  INTERNAL                  
+alrt  Reference   alrt  Alert (Ellesmere Island)             Canada                            297.6595   82.4943    78.1100  NRCan/GSD           Internal                  
+amc2  ReferenceHourly  amc2  Colorado Springs                United States                     255.4754   38.8031  1912.4898  USNO                EXTERNAL H-MASER          
+ankr  ReferenceHourlyIGLOS-PP ankr  Ankara                   Turkey                             32.7586   39.8875   974.8000  BKG and GCM         INTERNAL                  
+antc  Reference IGLOS-PP antc  Los Angeles                   Chile                             288.4679  -37.3387   745.4000  G2                                            
+areg  New HourlyIGLOS-PP areg  Arequipa                      Peru                              288.5071  -16.4654  2489.3370  CNES                EXTERNAL RUBIDIUM         
+areq  Hourly  areq  Arequipa                                 Peru                              288.5072  -16.4655  2488.9226  JPL                 EXTERNAL XL-DC 151-358-108
+arev  HourlyIGLOS-PP arev  Arequipa                          Peru                              288.5072  -16.4655  2488.9226  JPL                 EXTERNAL XL-DC 151-358-108
+artu  ReferenceHourly  artu  Arti                            Russian Federation                 58.5605   56.4298   247.5110  GOA                 INTERNAL                  
+aruc  Hourly  aruc  Aruch-Yerevan                            Armenia                            44.0856   40.2857  1222.0000  JPL                 INTERNAL                  
+aspa  ReferenceHourlyIGLOS-PP aspa  Pago Pago                United States                     189.2776  -14.3261    53.7000  NOAA-NGS            INTERNAL                  
+auck  ReferenceHourlyIGLOS-PP auck  Whangaparaoa Peninsula   New Zealand                       174.8344  -36.6028   132.7110  LINZ                INTERNAL                  
+azu1  azu1  Azusa                                            United States                     242.1035   34.1260   144.7500  UNAVCO              INTERNAL                  
+badg  HourlyIGLOS-PP badg  Badary                            Russian Federation                102.2350   51.7697   811.4000  IAA                 EXTERNAL H-MASER CH1-80   
+baie  Hourly  baie  BAIE COMEAU                              Canada                            291.7367   49.1868    27.5000  NRCan/GFZ           INTERNAL                  
+bake  ReferenceHourlyIGLOS-PP bake  Baker Lake               Canada                            263.9977   64.3178     4.4000  NRCan               INTERNAL                  
+bako  IGLOS-PP bako  Cibinong                                Indonesia                         106.8500   -6.4900   158.1800  BAKOSURTANAL        EXTERNAL                  
+bamf  Hourly  bamf  Bamfield                                 Canada                            234.8649   48.8353    11.1000  GSC                 INTERNAL                  
+ban2  Reference   ban2  Bangalore                            India                              77.5116   13.0343   831.9000  GFZ                 EXTERNAL RUBIDIUM         
+barh  ReferenceHourlyIGLOS-PP barh  Bar Harbor               United States                     291.7783   44.3950     6.8000  NOAA-NGS            INTERNAL                  
+bik0  HourlyIGLOS-PP bik0  Bishkek                           Kyrgyzstan                         74.5332   42.8542   749.2000  GFZ                 INTERNAL                  
+bili  Reference   bili  Bilibino                             Russian Federation                166.4380   68.0761   456.2380  RDAAC-IRIS          INTERNAL                  
+bill  bill  Temecula                                         United States                     242.9354   33.5782   470.0600  UNAVCO              INTERNAL                  
+bjco  HourlyIGLOS-PP bjco  Cotonou                           Benin                               2.4500    6.3847    30.7000  IGN-BJ              INTERNAL                  
+bjfs  Reference IGLOS-PP bjfs  Fangshan                      China                             115.8925   39.6086    87.4130  NGCC                                          
+bjnm  IGLOS-PP bjnm  Beijing                                 China                             116.2241   40.2453   118.6000  NIM                 EXTERNAL HYDROGEN MASER   
+blyt  blyt  Blythe                                           United States                     245.2851   33.6104    85.9000  USGS                INTERNAL                  
+bnoa  bnoa  Benoa                                            Indonesia                         115.2099   -8.7465    39.0560  PGF                                           
+bogi  HourlyIGLOS-PP bogi  Borowa Gora                       Poland                             21.0352   52.4750   139.9000  IGiK                EXTERNAL RUBIDIUM         
+bogt  ReferenceHourly  bogt  Bogota                          Colombia                          285.9191    4.6401  2576.7782  JPL                 INTERNAL                  
+bor1  ReferenceHourly  bor1  Borowiec                        Poland                             17.0668   52.1002   124.0000  SRC PAS             INTERNAL                  
+braz  Reference IGLOS-PP braz  Brasilia                      Brazil                            312.1222  -15.9474  1106.0413  IBGE                INTERNAL                  
+brew  ReferenceHourly  brew  Brewster                        United States                     240.3174   48.1315   238.6273  JPL                 EXTERNAL H-MASER          
+brft  ReferenceHourly  brft  Eusebio                         Brazil                            321.5745   -3.8774    21.7000  NOAA-NGS            INTERNAL                  
+brmu  ReferenceHourlyIGLOS-PP brmu  Bermuda                  United Kingdom                    295.3037   32.3704   -11.6000  NOAA-NGS            INTERNAL                  
+brst  ReferenceHourlyIGLOS-PP brst  Brest                    France                            355.5034   48.3805    65.8000  IGN-SGN             INTERNAL                  
+brux  HourlyIGLOS-PP brux  Brussels                          Belgium                             4.3586   50.7981   158.3000  ROB                 EXTERNAL CH1-75A MASER    
+bshm  HourlyIGLOS-PP bshm  Haifa                             Israel                             35.0200   32.7790   225.1000  JPL                 INTERNAL                  
+btng  btng  Bitung                                           Indonesia                         125.1904    1.4389    74.9930  PGF                                           
+bucu  ReferenceHourlyIGLOS-PP bucu  Bucuresti                Romania                            26.1257   44.4639   143.2000  BKG                 INTERNAL                  
+bzrg  HourlyIGLOS-PP bzrg  Bolzano - Bozen                   Italy                              11.3368   46.4990   328.8000  STPOS               INTERNAL                  
+cagl  Reference   cagl  Cagliari                             Italy                               8.9728   39.1359   238.4000  ASI                 INTERNAL                  
+cags  IGLOS-PP cags  Gatineau                                Canada                            284.1927   45.5850   235.0000  NRCan/GSD           INTERNAL                  
+cagz  Reference IGLOS-PP cagz  Capoterra                     Italy                               8.9728   39.1359   238.0000  DISIG-Cagliari      EXTERNAL CAESIUM OSCILLATO
+cas1  ReferenceHourlyIGLOS-PP cas1  Casey                    Antarctica                        110.5197  -66.2834    22.5500  GA                  INTERNAL                  
+ccj2  HourlyIGLOS-PP ccj2  Ogasawara                         Japan                             142.1950   27.0675   104.2140  GSI                 EXTERNAL CESIUM           
+ccjm  Reference   ccjm  Ogasawara                            Japan                             142.1846   27.0956   208.8300  GSI                 EXTERNAL CESIUM           
+cebr  HourlyIGLOS-PP cebr  Cebreros                          Spain                             355.6322   40.4534   775.8000  ESOC                EXTERNAL H-MASER          
+cedu  ReferenceHourlyIGLOS-PP cedu  Ceduna                   Australia                         133.8098  -31.8667   144.8155  GA                  INTERNAL                  
+cfag  Reference   cfag  Caucete                              Argentina                         291.7674  -31.6022   703.0000  CERI                INTERNAL                  
+cggn  IGLOS-PP cggn  TORO                                    Nigeria                             9.1183   10.1231   916.6953  JPL                 INTERNAL                  
+chan  Hourly  chan  CHANGCHUN                                China                             125.4433   43.7905   268.3000  CHO                 INTERNAL                  
+chil  chil  San Gabriel Mountains                            United States                     241.9740   34.3334  1567.5100  USGS                INTERNAL                  
+chof  New  IGLOS-PP chof  Chofu                              Japan                             139.5311   35.6745    93.9000  DLR                 INTERNAL                  
+chpg  New HourlyIGLOS-PP chpg  Cachoeira Paulista            Brazil                            314.9976  -22.6823   566.2500  CNES                INTERNAL                  
+chpi  HourlyIGLOS-PP chpi  Cachoeira Paulista                Brazil                            315.0148  -22.6871   617.4176  JPL                 INTERNAL                  
+chti  HourlyIGLOS-PP chti  Wharekauri                        New Zealand                       183.3829  -43.7355    75.7000  GNS                 INTERNAL                  
+chum  ReferenceHourly  chum  Chumysh                         Kazakhstan                         74.7511   42.9985   716.3321  JPL                 INTERNAL                  
+chur  ReferenceHourlyIGLOS-PP chur  CHURCHILL                Canada                            265.9113   58.7591   -18.9000  NRCan               INTERNAL                  
+chwk  Hourly  chwk  Chilliwack                               Canada                            237.9916   49.1566   170.0000  GSC                 clock steering            
+cit1  IGLOS-PP cit1  Pasadena                                United States                     241.8727   34.1367   215.3500  USGS                INTERNAL                  
+ckis  HourlyIGLOS-PP ckis  Rarotonga                         Cook Islands                      200.1994  -21.2009    18.4000  GA                  INTERNAL                  
+clar  clar  Claremont                                        United States                     242.2912   34.1099   373.6300  USGS                INTERNAL                  
+cmp9  cmp9  Sylmar                                           United States                     241.5886   34.3532  1137.9900  USGS                INTERNAL                  
+cnmr  IGLOS-PP cnmr  Saipan                                  United States                     145.7431   15.2297    64.4000  NOAA-NGS            INTERNAL                  
+coco  ReferenceHourlyIGLOS-PP coco  Cocos (Keeling) Island   Australia                          96.8339  -12.1883   -35.2212  GA                  INTERNAL                  
+cord  HourlyIGLOS-PP cord  Cordoba                           Argentina                         295.5300  -31.5284   747.0654  JPL                 INTERNAL                  
+coso  coso  Coso Junction                                    United States                     242.1911   35.9823  1455.1600  USGS                INTERNAL                  
+coyq  Reference   coyq  Coyhaique                            Chile                             288.1079  -45.5143   476.0000  G2                  INTERNAL                  
+cpvg  New HourlyIGLOS-PP cpvg  Espargos                      Cape Verde                        337.0651   16.7321    94.0890  CNES                INTERNAL                  
+crao  ReferenceHourly  crao  Simeiz                          Ukraine                            33.9910   44.4133   365.8000  UNAVCO              INTERNAL                  
+crfp  IGLOS-PP crfp  Yucaipa                                 United States                     242.9003   34.0391   688.8200  USGS                INTERNAL                  
+cro1  ReferenceHourly  cro1  Christiansted                   Virgin Islands, U.S.              295.4157   17.7569   -31.9558  JPL                 EXTERNAL H-MASER          
+cusv  cusv  Patumwan                                         Thailand                          100.5339   13.7359    76.0600  DUT                 INTERNAL                  
+cut0  New  IGLOS-PP cut0  Bentley, Perth                     Australia                         115.8948  -32.0039    24.0000  CUT                 INTERNAL                  
+cztg  IGLOS-PP cztg  CROZET Islands                          French Southern Territories        51.8555  -46.4319   202.8000  IGN                 INTERNAL                  
+daej  ReferenceHourlyIGLOS-PP daej  Daejeon                  South Korea                       127.3745   36.3994   117.0370  KASI                EXTERNAL CESIUM           
+dakr  HourlyIGLOS-PP dakr  Dakar                             Senegal                           342.5605   14.7212    51.0000  ANAT/DTGC           INTERNAL                  
+darw  ReferenceHourlyIGLOS-PP darw  Darwin                   Australia                         131.1327  -12.8437   125.1965  GA                  INTERNAL                  
+dav1  ReferenceHourlyIGLOS-PP dav1  Davis                    Antarctica                         77.9726  -68.5773    44.5000  GA                  INTERNAL                  
+dear  Hourly  dear  DE AAR                                   South Africa                       23.9926  -30.6652  1321.7000  NGI                                           
+dgar  ReferenceHourly  dgar  Diego Garcia Island             United Kingdom                     72.3702   -7.2697   -64.7455  JPL                 INTERNAL                  
+dgav  HourlyIGLOS-PP dgav  Diego Garcia Island               United Kingdom                     72.3702   -7.2697   -64.7455  JPL                 INTERNAL                  
+dhlg  dhlg  Durmid Hill                                      United States                     244.2120   33.3898   -83.0500  USGS                INTERNAL                  
+djig  New  IGLOS-PP djig  Observatoire Geophysique dArta     Djibouti                           42.8471   11.5263   711.4090  CNES                INTERNAL                  
+dlf1  HourlyIGLOS-PP dlf1  Delft                             Netherlands                         4.3875   51.9860    74.2000  TUD/MGP             EXTERNAL CESIUM           
+drag  Reference IGLOS-PP drag  Metzoki dragot                Israel                             35.3921   31.5932    31.8000  GSM                 INTERNAL                  
+drao  ReferenceHourlyIGLOS-PP drao  Penticton                Canada                            240.3750   49.3226   542.0000  GSC                 INTERNAL                  
+dubo  ReferenceHourlyIGLOS-PP dubo  LAC DU BONNET            Canada                            264.1338   50.2588   251.0000  NRCan               EXTERNAL RUBIDIUM SYMMETRI
+dubr  Reference IGLOS-PP dubr  Dubrovnik                     Croatia                            18.1104   42.6500   454.3000  SGA                 INTERNAL                  
+dum1  Reference   dum1  Antarctic base of Dumont d'Urville   Antarctica                        140.0019  -66.6651    -1.4000  ENS/CNRS                                      
+dund  HourlyIGLOS-PP dund  Dunedin                           New Zealand                       170.5972  -45.8837   386.9000  GNS                 INTERNAL                  
+dyng  HourlyIGLOS-PP dyng  DIONYSOS                          Greece                             23.9324   38.0786   510.5690  CNES                INTERNAL                  
+ebre  HourlyIGLOS-PP ebre  Roquetes                          Spain                               0.4924   40.8209   107.9000  ICGC                INTERNAL                  
+eprt  Reference IGLOS-PP eprt  Eastport                      United States                     293.0079   44.9087    30.4000  NOAA-NGS            INTERNAL                  
+escu  escu  Escuminac                                        Canada                            295.2013   47.0734   -16.0200  NRCan/GSD           INTERNAL                  
+faa1  IGLOS-PP faa1  Faaa                                    French Polynesia                  210.3857  -17.5553    12.3500  ESOC                INTERNAL                  
+fair  ReferenceHourly  fair  Fairbanks                       United States                     212.5008   64.9780   319.1771  JPL                 INTERNAL                  
+fale  Hourly  fale  Faleolo                                  Samoa                             188.0005  -13.8322    47.6000  GNS                 INTERNAL                  
+falk  Hourly  falk  Port Stanley                             Falkland Islands                  302.1259  -51.6937    50.8407  JPL                 INTERNAL                  
+ffmj  HourlyIGLOS-PP ffmj  Frankfurt / Main                  Germany                             8.6650   50.0906   178.2000  BKG                 INTERNAL                  
+flin  ReferenceHourlyIGLOS-PP flin  CFS FLIN FLON            Canada                            258.0220   54.7256   320.0000  NRCan               INTERNAL                  
+flrs  HourlyIGLOS-PP flrs  Santa Cruz das Flores             Portugal                          328.8736   39.4538    79.9000  IGP                 INTERNAL                  
+frdn  HourlyIGLOS-PP frdn  Fredericton                       Canada                            293.3410   45.9330    95.9000  NRCan               INTERNAL                  
+ftna  HourlyIGLOS-PP ftna  Maopo'opo                         Wallis And Futuna                 181.8791  -14.3078    84.8590  CNES                INTERNAL                  
+func  HourlyIGLOS-PP func  Funchal                           Portugal                          343.0924   32.6479    78.5000  IGP                 INTERNAL                  
+ganp  HourlyIGLOS-PP ganp  Ganovce                           Slovakia                           20.3229   49.0347   745.2000  GKU                 INTERNAL                  
+geno  Hourly  geno  Genova                                   Italy                               8.9211   44.4194   137.0000  ASI                 INTERNAL                  
+glps  ReferenceHourlyIGLOS-PP glps  Puerto Ayora             Ecuador                           269.6963   -0.7430     1.7882  JPL                 INTERNAL                  
+glsv  ReferenceHourlyIGLOS-PP glsv  Kiev                     Ukraine                            30.4967   50.3642   226.8000  MAO                 INTERNAL                  
+gmas  Reference   gmas  Maspalomas                           Spain                             344.5324   27.7648   195.4000  JAXA                CESIUM                    
+gmsd  ReferenceHourlyIGLOS-PP gmsd  Nakatane town            Japan                             131.0156   30.5564   142.6475  JAXA                EXTERNAL CESIUM           
+gode  ReferenceHourly  gode  Greenbelt                       United States                     283.1732   39.0217    14.5046  JPL                 EXTERNAL H-MASER          
+godn  HourlyIGLOS-PP godn  Greenbelt                         United States                     283.1729   39.0212    18.0000  JPL                 External                  
+gods  HourlyIGLOS-PP gods  Greenbelt                         United States                     282.6130   39.0348    19.1000  JPL                 External                  
+godz  HourlyIGLOS-PP godz  Greenbelt                         United States                     283.1732   39.0217    14.5090  JPL                 H-MASER                   
+gol2  Hourly  gol2  Goldstone                                United States                     243.1107   35.4252   986.6779  JPL                 EXTERNAL H-MASER          
+gold  ReferenceHourlyIGLOS-PP gold  Goldstone                United States                     243.1107   35.4252   986.6779  JPL                 INTERNAL                  
+gop6  New HourlyIGLOS-PP gop6  Ondrejov                      Czech Republic                     14.7856   49.9137   592.6000  RIGTC GOP           EXTERNAL CESIUM           
+gop7  New HourlyIGLOS-PP gop7  Ondrejov                      Czech Republic                     14.7856   49.9137   592.6200  RIGTC GOP           EXTERNAL CESIUM           
+gope  HourlyIGLOS-PP gope  Ondrejov                          Czech Republic                     14.7856   49.9137   592.6000  RIGTC GOP           EXTERNAL CESIUM           
+goug  Reference IGLOS-PP goug  Gough Island                  dependent territory of the U.K.   350.1193  -40.3488    81.2700  HartRAO             INTERNAL                  
+grac  HourlyIGLOS-PP grac  Caussols                          France                              6.9208   43.7545  1319.8000  IGN                 INTERNAL                  
+gras  ReferenceHourlyIGLOS-PP gras  Caussols                 France                              6.9206   43.7547  1319.3180  CNES                INTERNAL                  
+graz  ReferenceHourlyIGLOS-PP graz  Graz                     Austria                            15.4935   47.0671   538.3000  BEV                 INTERNAL                  
+guam  ReferenceHourlyIGLOS-PP guam  Dededo                   Guam                              144.8683   13.5893   201.9220  JPL                 INTERNAL                  
+guao  ReferenceHourly  guao  URUMQI                          China                              87.1773   43.4711  2049.2000  UAO                 EXTERNAL H-MASER          
+guat  ReferenceHourlyIGLOS-PP guat  Guatemala City           Guatemala                         269.4798   14.5904  1519.9000  IGN-GT              INTERNAL                  
+guug  ReferenceHourlyIGLOS-PP guug  Mangilao                 United States                     144.8027   13.4332   134.7000  NOAA-NGS            INTERNAL                  
+haly  haly  Halat Ammar                                      Saudi Arabia                       36.0999   29.1389   861.6765  MIT                 INTERNAL                  
+harb  ReferenceHourlyIGLOS-PP harb  Pretoria                 South Africa                       27.7072  -25.8870  1558.0780  CNES                EXTERNAL CESIUM           
+harv  HourlyIGLOS-PP harv  Vandenberg AFB                    United States                     239.3179   34.4694    14.9662  JPL                 INTERNAL                  
+hers  ReferenceHourlyIGLOS-PP hers  Hailsham                 United Kingdom                      0.3362   50.8673    76.5000  NSGF                EXTERNAL H-MASER          
+hert  ReferenceHourlyIGLOS-PP hert  Hailsham                 United Kingdom                      0.3344   50.8675    83.3000  NSGF                INTERNAL                  
+hlfx  ReferenceHourlyIGLOS-PP hlfx  Halifax                  Canada                            296.3887   44.6835     3.1000  NRCan/GFZ           EXTERNAL RUBIDIUM         
+hnlc  Reference   hnlc  Honolulu                             United States                     202.1355   21.3033    22.0000  PGF                 INTERNAL                  
+hnpt  HourlyIGLOS-PP hnpt  Cambridge                         United States                     283.8696   38.5888   -28.0000  NOAA-NGS            INTERNAL                  
+hnus  HourlyIGLOS-PP hnus  HERMANUS                          South Africa                       19.2231  -34.4246    63.0000  NGI                 INTERNAL                  
+hob2  ReferenceHourlyIGLOS-PP hob2  Hobart                   Australia                         147.4387  -42.8047    41.1270  GA                  EXTERNAL H-MASER          
+hofn  ReferenceHourlyIGLOS-PP hofn  Hoefn                    Iceland                           344.8132   64.2673    82.5000  BKG                 INTERNAL                  
+holb  ReferenceHourlyIGLOS-PP holb  Holberg                  Canada                            231.8650   50.6404   560.0000  GSC                 INTERNAL                  
+holm  holm  Ulukhaktok, formerly Holman (Victoria Island)    Canada                            242.2391   70.7364    39.5000  NRCan/GSD           Internal                  
+holp  holp  Hollydale                                        United States                     241.8318   33.9245    -6.7100  USGS                INTERNAL                  
+hrag  New    hrag  Krugersdorp                               South Africa                       27.6852  -25.8904  1407.3800  DLR                 INTERNAL                  
+hrao  ReferenceHourlyIGLOS-PP hrao  Krugersdorp              South Africa                       27.6870  -25.8901  1414.3000  HRAO                EXTERNAL H-MASER          
+hueg  HourlyIGLOS-PP hueg  Huegelheim                        Germany                             7.5962   47.8339   278.4000  BKG                 INTERNAL                  
+hyde  ReferenceHourlyIGLOS-PP hyde  Hyderabad                India)  INDIA                              78.5509   17.4173   441.6800  NGRI,HYDERABAD                                
+ieng  Hourly  ieng  Torino                                   Italy                               7.6394   45.0151   316.6000  I.N.RI.M.           EXTERNAL H-MASER          
+iisc  ReferenceHourly  iisc  Bangalore                                     India                              77.5704   13.0212   843.7145  JPL                 INTERNAL                  
+ineg  Hourly  ineg  Aguascalientes                           Mexico                            257.7158   21.8562  1888.3470  INEGI                                         
+invk  Reference   invk  Inuvik                               Canada                            226.4730   68.3062    46.3600  NRCan/GSD           INTERNAL                  
+iqal  HourlyIGLOS-PP iqal  Iqaluit                           Canada                            291.4895   63.7560    91.7000  NRCan               INTERNAL                  
+iqqe  iqqe  Iquique                                          Chile                             289.8683  -20.2735    38.9000  G2                                            
+irkj  Reference IGLOS-PP irkj  Irkutsk                       Russian Federation                104.3162   52.2190   502.1000  VNIIFTRI            EXTERNAL H-MASER          
+irkm  Hourly  irkm  Irkutsk                                  Russian Federation                104.3162   52.2190   502.3170  ES NIIFTRI          H-MASER                   
+irkt  Reference   irkt  Irkutsk                              Russian Federation                104.3162   52.2190   503.3816  DEOS-DUT            H-MASER                   
+isba  IGLOS-PP isba  Palestine Street                        Iraq                               44.4384   33.3414    72.4000  IRAGDS              INTERNAL                  
+ispa  ReferenceHourly  ispa  Easter Island                   Chile                             250.6556  -27.1250   112.4948  JPL                 INTERNAL                  
+ista  ReferenceHourly  ista  Istanbul                        Turkey                             29.0193   41.1044   147.2000  BKG                 INTERNAL                  
+jfng  HourlyIGLOS-PP jfng  Jiufeng                           China                             114.4910   30.5156    71.3240  CNES                INTERNAL                  
+joz2  ReferenceHourlyIGLOS-PP joz2  Jozefoslaw               Poland                             21.0323   52.0978   152.5000  WUT                 INTERNAL                  
+joze  ReferenceHourly  joze  Jozefoslaw                      Poland                             21.0315   52.0973   141.4000  WUT                 INTERNAL                  
+jplm  ReferenceHourlyIGLOS-PP jplm  Pasadena                 United States                     241.8268   34.2048   423.9843  JPL                 EXTERNAL RUBIDIUM         
+karr  ReferenceHourlyIGLOS-PP karr  Karratha                 Australia                         117.0972  -20.9814   109.2468  GA                  INTERNAL                  
+kat1  HourlyIGLOS-PP kat1  Katherine                         Australia                         132.1533  -14.3760   184.4760  GA                  INTERNAL                  
+kely  ReferenceHourly  kely  Kangerlussuaq                   Greenland                         309.0552   66.9874   229.8000  JPL                 INTERNAL                  
+kerg  ReferenceHourlyIGLOS-PP kerg  Port aux Francais        French Southern Territories        70.2555  -49.3515    73.0090  CNES                INTERNAL                  
+kgni  Reference   kgni  KOGANEI                              Japan                             139.4881   35.7103   123.5000  NICT                EXTERNAL H-MASER          
+khaj  Reference IGLOS-PP khaj  Khabarovsk                    Russian Federation                135.0462   48.5215   130.6000  VNIIFTRI            EXTERNAL H-MASER          
+khar  HourlyIGLOS-PP khar  Kharkiv                           Ukraine                            36.2390   50.0051   201.0000  MAO                 INTERNAL                  
+kir0  HourlyIGLOS-PP kir0  Kiruna                            Sweden                             21.0602   67.8776   497.9000  LMV                 INTERNAL                  
+kir8  New  IGLOS-PP kir8  Kiruna                             Sweden                             21.0602   67.8775   498.0000  LMV                 EXTERNAL RUBIDIUM         
+kiri  HourlyIGLOS-PP kiri  Betio                             Kiribati                          172.9229    1.3546    36.2000  GA                  INTERNAL                  
+kiru  HourlyIGLOS-PP kiru  Kiruna                            Sweden                             20.9684   67.8573   391.1000  ESOC                EXTERNAL CESIUM           
+kit3  ReferenceHourlyIGLOS-PP kit3  Kitab                    Uzbekistan                         66.8800   39.1400   643.0000  GFZ                 INTERNAL                  
+kokb  ReferenceHourly  kokb  Kokee Park, Waimea,             United States                     200.3351   22.1263  1167.5216  JPL                 EXTERNAL H-MASER          
+kokv  HourlyIGLOS-PP kokv  Kokee Park, Waimea,               United States                     200.3351   22.1263  1167.5216  JPL                 EXTERNAL H-MASER          
+kosg  Reference IGLOS-PP kosg  Kootwijk                      Netherlands                         5.8096   52.1784    97.9000  DUT                 INTERNAL                  
+kouc  ReferenceHourlyIGLOS-PP kouc  Koumac                   New Caledonia                     164.2873  -20.5587    84.1700  DITTT               INTERNAL                  
+koug  HourlyIGLOS-PP koug  Kourou                            French Guiana                     307.3602    5.0985   107.2480  CNES                EXTERNAL CESIUM           
+kour  HourlyIGLOS-PP kour  Kourou                            French Guiana                     307.1940    5.2522   -25.5700  ESOC                EXTERNAL H-MASER          
+krgg  HourlyIGLOS-PP krgg  Port aux Francais                 French Southern Territories        70.2555  -49.3515    72.9673  CNES                INTERNAL                  
+ksmv  ksmv  KASHIMA                                          Japan                             140.6577   35.9554    57.9000  NICT                EXTERNAL H-MASER          
+kunm  Reference   kunm  Kunming                              China                             102.7972   25.0295  1986.2000  JPL                 INTERNAL                  
+kuuj  HourlyIGLOS-PP kuuj  Kuujjuarapik                      Canada                            282.2546   55.2784    -0.5000  NRCan/GFZ           INTERNAL                  
+kzn2  New  IGLOS-PP kzn2  KAZAN                              Russian Federation                 49.1192   55.7908    94.6000  KFU                                           
+lae1  Reference   lae1  Lae                                  Papua New Guinea                  146.9932   -6.6737   140.3500  DSLS                                          
+lama  HourlyIGLOS-PP lama  Olsztyn                           Poland                             20.6699   53.8924   187.0000  UWM_OLSZTYN         INTERNAL                  
+lbch  lbch  Long Beach                                       United States                     241.7967   33.7878   -27.5800  USGS                INTERNAL                  
+lck3  HourlyIGLOS-PP lck3  Lucknow                           India                              80.9556   26.9122    64.1650  ISRO                EXTERNAL CESIUM 5071A STAN
+lck4  HourlyIGLOS-PP lck4  Lucknow                           India                              80.9556   26.9121    64.1821  ISRO                EXTERNAL CESIUM 5071A STAN
+leij  HourlyIGLOS-PP leij  Leipzig                           Germany                            12.3741   51.3540   178.4000  BKG                 INTERNAL                  
+lhaz  ReferenceHourlyIGLOS-PP lhaz  Lhasa                    China                              91.1040   29.6573  3622.0000  BKG                 INTERNAL                  
+llag  llag  La Laguna                                        Spain                             343.6793   28.4817   622.8200  DLR                 INTERNAL                  
+lmmf  HourlyIGLOS-PP lmmf  Le Lamentin                       Martinique                        299.0038   14.5948   -27.0000  IGN-SGN             INTERNAL                  
+lpal  HourlyIGLOS-PP lpal  Roque de los Muchachos            Spain                             342.1061   28.7639  2207.0000  IGN-E               INTERNAL                  
+lpgs  ReferenceHourlyIGLOS-PP lpgs  La Plata                 Argentina                         302.0677  -34.9067    29.9000  GFZ                 INTERNAL                  
+lroc  Reference IGLOS-PP lroc  La Rochelle                   France                            358.7807   46.1589    57.9000  ULR                 INTERNAL                  
+m0se  HourlyIGLOS-PP m0se  Roma                              Italy                              12.4933   41.8931   120.6000  AGG_DITS            EXTERNAL RUBIDIUM         
+mac1  ReferenceHourlyIGLOS-PP mac1  Macquarie Island         Australia                         158.9358  -54.4995    -6.6900  GA                  INTERNAL                  
+mad2  Hourly  mad2  Robledo                                  Spain                             355.7503   40.4292   829.5000  JPL                 EXTERNAL H-MASER          
+madr  HourlyIGLOS-PP madr  Robledo                           Spain                             355.7503   40.4292   829.5000  JPL                 EXTERNAL                  
+mag0  Hourly  mag0  Magadan                                  Russian Federation                150.7700   59.5758   361.9266  RDAAC-IRIS          INTERNAL                  
+mal2  HourlyIGLOS-PP mal2  Malindi                           Kenya                              40.1940   -2.9960   -20.4000  ESOC                                          
+mald  Reference   mald  Male Airport                         Maldives                           73.5263    4.1887   -92.0000  PGPSF               INTERNAL                  
+mana  Reference   mana  Managua                              Nicaragua                         273.7510   12.1489    71.0000  INETER                                        
+mar6  ReferenceHourlyIGLOS-PP mar6  Maartsbo                 Sweden                             17.2585   60.5951    75.4000  LMV                 EXTERNAL RUBIDIUM         
+mar7  New  IGLOS-PP mar7  Gavle                              Sweden                             17.2584   60.5951    74.3000  LMV                 EXTERNAL RUBIDIUM         
+mars  HourlyIGLOS-PP mars  Marseille                         France                              5.3538   43.2788    61.8000  IGN-SGN             INTERNAL                  
+mas1  ReferenceHourlyIGLOS-PP mas1  Maspalomas               Spain                             344.3667   27.7637   197.3000  ESOC                EXTERNAL CESIUM           
+mat1  ReferenceHourlyIGLOS-PP mat1  MATERA                   Italy                              16.7045   40.6491   534.5000  ASI                 INTERNAL                  
+mate  ReferenceHourlyIGLOS-PP mate  Matera                   Italy                              16.7045   40.6491   535.6000  ASI                 EXTERNAL H_MASER          
+maui  Reference   maui  Haleakala, Maui                      United States                     203.7430   20.7067  3062.0000  PGF                 INTERNAL                  
+maw1  ReferenceHourlyIGLOS-PP maw1  Mawson                   Antarctica                         62.8707  -67.6048    59.1840  GA                  INTERNAL                  
+mayg  New HourlyIGLOS-PP mayg  Dzaoudzi                      Mayotte                            45.2582  -12.7821   -16.3500  CNES                INTERNAL                  
+mbar  Reference IGLOS-PP mbar  Mbarara                       Uganda                             30.7379   -0.6015  1337.6533  JPL                 INTERNAL                  
+mcil  ReferenceHourly  mcil  Ogasawara                       Japan                             153.9787   24.2901    35.6600  GSI                 EXTERNAL RUBIDIUM         
+mcm4  ReferenceHourly  mcm4  Ross Island                     Antarctica                        166.6693  -77.8383    98.0222  JPL                 INTERNAL                  
+mdo1  ReferenceHourly  mdo1  Fort Davis                      United States                     255.9850   30.6805  2004.4761  JPL                 EXTERNAL XTAL VCO         
+mdvj  Reference IGLOS-PP mdvj  Mendeleevo                    Russian Federation                 37.2145   56.0215   257.4000  IMVP                EXTERNAL H-MASER          
+mdvo  Reference   mdvo  Mendeleevo                           Russian Federation                 37.2236   56.0275   254.8000  DEOS-DUT            EXTERNAL H-MASER          
+medi  ReferenceHourly  medi  Medicina                        Italy                              11.6468   44.5199    50.0000  ASI                 EXTERNAL H-MASER          
+meli  HourlyIGLOS-PP meli  Melilla                           Spain                             357.0484   35.2812    93.0000  IGN-E               INTERNAL                  
+metg  HourlyIGLOS-PP metg  METSAHOVI                         Finland                            24.3842   60.2420    59.6720  CNES                INTERNAL                  
+mets  ReferenceHourly  mets  Kirkkonummi                     Finland                            24.3953   60.2175    94.6000  FGI                 INTERNAL                  
+metz  Reference IGLOS-PP metz  Kirkkonummi                   Finland                            24.3953   60.2175    94.5000  FGI                 EXTERNAL QUARTZ           
+mfkg  Hourly  mfkg  MAFIKENG                                 South Africa                       25.5400  -25.8050  1310.9000  NGI                 INTERNAL                  
+mgue  HourlyIGLOS-PP mgue  Malargue                          Argentina                         290.6021  -35.7773  1554.1500  ESOC                EXTERNAL H-MASER          
+mikl  Hourly  mikl  Mykolaiv                                 Ukraine                            31.9728   46.9728    94.7000  RIGC                INTERNAL                  
+mizu  HourlyIGLOS-PP mizu  Mizusawa                          Japan                             141.1328   39.1352   117.0000  GFZ                 EXTERNAL CESIUM           
+mkea  ReferenceHourlyIGLOS-PP mkea  Mauna Kea                United States                     204.5437   19.8014  3754.7000  JPL                 EXTERNAL H-MASER          
+mobj  HourlyIGLOS-PP mobj  Obninsk                           Russian Federation                 36.5697   55.1149   182.6079  GS RAS              INTERNAL                  
+mobk  HourlyIGLOS-PP mobk  Obninsk                           Russian Federation                 36.5697   55.1149   182.6079  JPL                 INTERNAL                  
+mobn  Hourly  mobn  Obninsk                                  Russian Federation                 36.5695   55.1149   182.6340  RDAAC-JPL-IRIS      INTERNAL                  
+mobs  ReferenceHourlyIGLOS-PP mobs  Melbourne                Australia                         144.9753  -37.8294    40.5780  GA                  INTERNAL                  
+moiu  HourlyIGLOS-PP moiu  Eldoret                           Kenya                              35.2900    0.2883  2201.5321  JPL                 INTERNAL                  
+monp  Reference   monp  Laguna Mountains                     United States                     243.5800   32.8900  1842.5500  SIO                 INTERNAL                  
+morp  ReferenceHourlyIGLOS-PP morp  Morpeth                  United Kingdom                    358.3145   55.2128   144.4000  NCL                 INTERNAL                  
+mqzg  ReferenceHourlyIGLOS-PP mqzg  Christchurch             New Zealand                       172.6547  -43.7027   154.6800  LINZ                                          
+mro1  New  IGLOS-PP mro1  Boolardy Station                   Australia                         116.6375  -26.6966   354.0690  GA                  INTERNAL                  
+mtbg  IGLOS-PP mtbg  Mattersburg                             Austria                            16.4043   47.7379   294.0000  BEWAG               INTERNAL                  
+mtka  Reference IGLOS-PP mtka  Mitaka                        Japan                             139.5614   35.6795   109.0000  ENRI                INTERNAL                  
+nain  Reference   nain  Nain                                 Canada                            298.3113   56.5370    33.4800  NRCan/GSD           INTERNAL                  
+nama  nama  Namas                                            Saudi Arabia                       42.0446   19.2114  2703.2212  MIT                 INTERNAL                  
+nano  ReferenceHourlyIGLOS-PP nano  Nanoose Bay              Canada                            235.9135   49.2948     6.0000  GSC                 INTERNAL                  
+naur  HourlyIGLOS-PP naur  Nauru, Yaren District             Nauru                             166.9255   -0.5518    46.3000  GA                  INTERNAL                  
+nico  ReferenceHourlyIGLOS-PP nico  Nicosia                  Cyprus                             33.3964   35.1409   155.0000  BKG                 INTERNAL                  
+nist  nist  Boulder                                          United States                     254.7374   39.9951  1648.4880  NIST                EXTERNAL H-MASER          
+nium  HourlyIGLOS-PP nium  Alofi                             Niue                              190.0729  -19.0766    90.1000  GA                  INTERNAL                  
+nklg  ReferenceHourlyIGLOS-PP nklg  Libreville               Gabon                               9.6721    0.3539    31.4960  CNES                INTERNAL                  
+nlib  ReferenceHourly  nlib  North Liberty                   United States                     268.4251   41.7716   207.0648  JPL                 EXTERNAL H-MASER          
+nnor  ReferenceHourlyIGLOS-PP nnor  New Norcia               Australia                         116.1927  -31.0487   234.9840  ESOC                EXTERNAL SLAVED CRYSTAL   
+not1  ReferenceHourly  not1  Noto                            Italy                              14.9898   36.8761   126.2000  ASI                 INTERNAL                  
+novm  IGLOS-PP novm  Novosibirsk                             Russian Federation                 82.9095   55.0305   149.9800  IMVP                EXTERNAL H-MASER          
+nrc1  ReferenceHourlyIGLOS-PP nrc1  Ottawa                   Canada                            284.3762   45.4542    82.5000  NRCan               EXTERNAL H-MASER          
+nril  ReferenceHourly  nril  Norilsk                         Russian Federation                 88.3598   69.3618    47.8937  CMIS                INTERNAL                  
+nrl1  Hourly  nrl1  Washington                               United States                     282.9756   38.8208   -26.0100  NRL                 H-MASER                   
+nrmd  HourlyIGLOS-PP nrmd  NOUMEA                            France                            166.4849  -22.2283   160.3840  DITTT                                         
+ntus  IGLOS-PP ntus  Singapore                               Singapore                         103.6799    1.3458    79.0000  DUT                 INTERNAL                  
+nurk  IGLOS-PP nurk  Kigali                                  Rwanda                             30.0899   -1.9446  1485.3000  GFZ                 INTERNAL                  
+nvsk  Reference   nvsk  Novosibirsk                          Russian Federation                 83.2355   54.8406   123.6429  IPGG SB RAS         INTERNAL                  
+nya1  ReferenceHourlyIGLOS-PP nya1  Ny-Alesund               Norway                             11.8653   78.9296    84.0000  Kartverket          EXTERNAL H-MASER          
+nya2  HourlyIGLOS-PP nya2  Ny Alesund                        Norway                             11.8700   78.8600    84.2000  GFZ                 INTERNAL                  
+nyal  ReferenceHourly  nyal  Ny-Alesund                      Norway                             11.8700   78.9300    82.0000  Kartverket          EXTERNAL H-MASER          
+obe4  HourlyIGLOS-PP obe4  Oberpfaffenhofen                  Germany                            11.2779   48.0848   650.5000  GFZ                 INTERNAL                  
+ohi2  ReferenceHourlyIGLOS-PP ohi2  O'Higgins                Antarctica                        302.0987  -63.3211    33.1000  BKG                 INTERNAL                  
+ohi3  ReferenceHourlyIGLOS-PP ohi3  O'Higgins                Antarctica                        302.0986  -63.3211    32.1500  BKG                 EXTERNAL H-MASER          
+ons1  New  IGLOS-PP ons1  Onsala                             Sweden                             11.9245   57.3953    44.4000  LMV                 EXTERNAL H-MASER          
+onsa  ReferenceHourlyIGLOS-PP onsa  Onsala                   Sweden                             11.9255   57.3953    45.5000  LMV                 EXTERNAL H-MASER          
+opmt  opmt  Paris                                            France                              2.3349   48.8359   124.2000  OP                  EXTERNAL H-MASER          
+orid  HourlyIGLOS-PP orid  Ohrid                             Macedonia                          20.7941   41.1273   773.0000  BKG                 INTERNAL                  
+osje  IGLOS-PP osje  Osijek                                  Croatia                            18.6805   45.5608   153.9000  SGA                 INTERNAL                  
+ous2  ReferenceHourlyIGLOS-PP ous2  Dunedin                  New Zealand                       170.5109  -45.8695    26.1000  GFZ                 INTERNAL                  
+owng  HourlyIGLOS-PP owng  Owenga                            New Zealand                       183.6317  -44.0249    23.7070  CNES                INTERNAL                  
+pado  HourlyIGLOS-PP pado  Padova                            Italy                              11.8961   45.4111    64.7000  UNIPD               INTERNAL                  
+palm  ReferenceHourly  palm  Palmer Station                  Antarctica                        295.9489  -64.7751    31.2394  JPL                 INTERNAL                  
+palv  HourlyIGLOS-PP palv  Palmer Station                    Antarctica                        295.9489  -64.7751    31.2394  JPL                 INTERNAL                  
+parc  Reference IGLOS-PP parc  Punta Arenas                  Chile                             289.1201  -53.1370    22.3000  G2                  INTERNAL                  
+park  HourlyIGLOS-PP park  Parkes                            Australia                         148.2646  -32.9988   397.3570  GA                  EXTERNAL H-MASER          
+pbr2  HourlyIGLOS-PP pbr2  Port Blair                        India                              92.7122   11.6378   -22.4340  ISRO                EXTERNAL RUBIDIUM         
+pbri  HourlyIGLOS-PP pbri  Port Blair                        India                              92.7121   11.6378   -22.5540  ISRO                EXTERNAL RUBIDIUM         
+pdel  ReferenceHourlyIGLOS-PP pdel  Ponta Delgada            Portugal                          334.3372   37.7477   110.8000  DGT                 EXTERNAL QUARTZ           
+pen2  HourlyIGLOS-PP pen2  Penc                              Hungary                            19.2817   47.7897   294.0000  FÃ–MI SGO           INTERNAL                  
+penc  HourlyIGLOS-PP penc  Penc                              Hungary                            19.2815   47.7896   291.7000  FÃ–MI SGO           INTERNAL                  
+pert  ReferenceHourlyIGLOS-PP pert  Perth                    Australia                         115.8852  -31.8019    12.9200  GA                  INTERNAL                  
+petp  Reference   petp  Petropavlovsk-Kamchatka              Russian Federation                158.6070   53.0667   211.0343  KOMSP               INTERNAL                  
+pets  Hourly  pets  Petropavlovsk-Kamchatka                  Russian Federation                158.6501   53.0233   102.2000  KOMSP               INTERNAL                  
+picl  picl  PICKLE LAKE                                      Canada                            269.8380   51.4798   315.1000  NRCan/GFZ           INTERNAL                  
+pie1  ReferenceHourlyIGLOS-PP pie1  Pie Town                 United States                     251.8811   34.3015  2347.7109  JPL                 EXTERNAL H-MASER          
+pimo  ReferenceHourlyIGLOS-PP pimo  Quezon City              Philippines                       121.0777   14.6357    95.5320  JPL                 INTERNAL                  
+pin1  pin1  Pinyon Flat                                      Unitied States                    243.5400   33.6100  1256.1700  SIO                 INTERNAL                  
+pngm  New HourlyIGLOS-PP pngm  Lombrum                       Papua New Guinea                  147.3660   -2.0432   116.3000  GA                  INTERNAL                  
+pohn  HourlyIGLOS-PP pohn  Pohnpei                           Micronesia                        158.2101    6.9599    90.7000  GA                  INTERNAL                  
+pol2  ReferenceHourly  pol2  Bishkek                         Kyrgyzstan                         74.6943   42.6798  1714.2000  JPL                 INTERNAL                  
+polv  ReferenceHourlyIGLOS-PP polv  Poltava                  Ukraine                            34.5429   49.6026   178.1000  System.NET          INTERNAL                  
+pots  ReferenceHourlyIGLOS-PP pots  Potsdam                  Germany                            13.0661   52.3793   144.4000  GFZ                 INTERNAL                  
+pove  IGLOS-PP pove  Porto Velho                             Brazil                            296.1037   -8.7093   119.6000  IBGE                INTERNAL                  
+prds  ReferenceHourlyIGLOS-PP prds  Calgary                  Canada                            245.7065   50.8713  1247.9000  NRCan               EXTERNAL H-MASER          
+ptag  IGLOS-PP ptag  Taguig City                             Philippines                       121.0408   14.5354    86.6300  NAMRIA              INTERNAL                  
+ptbb  Hourly  ptbb  Braunschweig                             Germany                            10.4597   52.2962   130.2000  BKG                 EXTERNAL ACTIVE H-MASER   
+ptvl  New  IGLOS-PP ptvl  Port Vila                          Vanuatu                           168.3150  -17.7494    86.4410  GA                  INTERNAL                  
+qaq1  ReferenceHourlyIGLOS-PP qaq1  Qaqortoq / Julianehaab   Greenland                         313.9522   60.7152   110.4000  DTU Space           EXTERNAL RUBIDIUM         
+qiki  Reference   qiki  Qikiqtarjuaq (Baffin Island)         Canada                            295.9663   67.5593    13.3000  NRCan/GSD           INTERNAL                  
+quin  ReferenceHourly  quin  Quincy                          United States                     239.0556   39.9746  1105.7651  JPL                 INTERNAL                  
+rabt  ReferenceHourly  rabt  Rabat                           Morocco                           353.1457   33.9981    90.1000  UNAVCO              INTERNAL                  
+ramo  Reference IGLOS-PP ramo  Mitzpe Ramon                  Israel                             34.7631   30.5978   893.1000  GSM                 INTERNAL                  
+rbay  ReferenceHourlyIGLOS-PP rbay  Richardsbay              South Africa                       32.0784  -28.7955    31.7927  NGI                 INTERNAL                  
+rcmn  IGLOS-PP rcmn  NAIROBI                                 Kenya                              36.8938   -1.2210  1607.5400  RCMRD                                         
+recf  IGLOS-PP recf  Recife                                  Brazil                            325.0485   -8.0510    20.2000  IBGE                INTERNAL                  
+redu  HourlyIGLOS-PP redu  Redu                              Belgium                             5.1449   50.0015   369.9000  ESOC                EXTERNAL CESIUM           
+reso  Reference   reso  Resolute (Cornwallis Island)         Canada                            265.1067   74.6908    34.9000  NRCan/GSD           INTERNAL                  
+reun  ReferenceHourlyIGLOS-PP reun  Le Tampon                France                             55.5717  -21.2083  1558.4000  IGN-SGN             INTERNAL                  
+reyk  HourlyIGLOS-PP reyk  Reykjavik                         Iceland                           338.0445   64.1388    93.1000  BKG                 INTERNAL                  
+rgdg  New HourlyIGLOS-PP rgdg  Rio Grande                    Argentina                         292.2485  -53.7858    32.3640  CNES                INTERNAL                  
+riga  ReferenceHourlyIGLOS-PP riga  Riga                     Latvia                             24.0587   56.9486    34.7000  LUAI                INTERNAL                  
+rio2  HourlyIGLOS-PP rio2  Rio Grande                        Argentina                         292.2489  -53.7855    32.0000  GFZ                 INTERNAL                  
+riop  riop  Riobamba                                         Ecuador                           281.3489   -1.6506  2793.0000  IG                  INTERNAL                  
+roap  HourlyIGLOS-PP roap  San Fernando                      Spain                             353.7937   36.4643    73.7000  ROA                 EXTERNAL H-MASER          
+rock  rock  Simi Valley                                      United States                     241.3236   34.2357   553.3900  USGS                INTERNAL                  
+roth  IGLOS-PP roth  Rothera Station                         Antarctica                        291.8743  -67.5714    39.7930  NCL                 INTERNAL                  
+salu  IGLOS-PP salu  SÃ£o Luis                             Brazil                            315.7875   -2.5935    18.9000  IBGE                INTERNAL QUARTZ           
+samo  New  IGLOS-PP samo  Fagalii Village District, Apia     Samoa                             188.2616  -13.8492    76.9000  GA                  INTERNAL                  
+sant  ReferenceHourly  sant  Santiago                        Chile                             289.3314  -33.1503   723.0746  JPL                 CESIUM                    
+sask  HourlyIGLOS-PP sask  Saskatoon                         Canada                            253.6016   52.1963   580.0000  NRCan               INTERNAL                  
+sass  HourlyIGLOS-PP sass  Sassnitz Island of Ruegen         Germany                            13.6433   54.5136    68.2000  BKG                 INTERNAL                  
+savo  IGLOS-PP savo  Salvador                                Brazil                            321.5677  -12.9392    76.3000  IBGE                INTERNAL QUARTZ           
+sbok  Hourly  sbok  SPRINGBOK                                South Africa                       17.8792  -29.6693  1043.1000  NGI                                           
+sch2  ReferenceHourlyIGLOS-PP sch2  Schefferville            Canada                            293.1674   54.8321   498.2000  NRCan               INTERNAL                  
+scip  IGLOS-PP scip  San Clemente Island                     United States                     241.5100   32.9100   452.8700  SIO                 INTERNAL                  
+scor  ReferenceHourly  scor  Scoresbysund/Ittoqqoormiit      Greenland                         338.0497   70.4853   128.5000  DNSC                EXTERNAL RUBIDIUM         
+scrz  IGLOS-PP scrz  SANTA CRUZ DE LA SIERRA                 Bolivia                           296.8403  -17.7968   442.2000  DGFI-TUM                                      
+scub  ReferenceHourlyIGLOS-PP scub  Santiago de Cuba         Cuba                              284.2377   20.0121    21.9000  GFZ                 INTERNAL                  
+sejn  IGLOS-PP sejn  Sejong                                  South Korea                       127.3032   36.5222   181.1960  NGII                INTERNAL                  
+sele  Reference   sele  Almaty                               Kazakhstan                         77.0168   43.1791  1340.0000  JPL                 INTERNAL                  
+sey1  HourlyIGLOS-PP sey1  La Misere                         Seychelles                         55.4794   -4.6737   537.9123  JPL                 INTERNAL                  
+seyg  IGLOS-PP seyg  Pointe Larue                            Seychelles                         55.5306   -4.6787   -37.0850  CNES                INTERNAL                  
+sfdm  sfdm  Piru                                             United States                     241.2455   34.4598   291.5200  UNAVCO              INTERNAL                  
+sfer  ReferenceHourlyIGLOS-PP sfer  San Fernando             Spain                             353.7944   36.4643    85.8000  ROA                 EXTERNAL H-MASER          
+sgoc  HourlyIGLOS-PP sgoc  Narahenpita, Colombo              Sri Lanka                          79.8742    6.8921   -78.5000  GFZ                 INTERNAL                  
+shao  Reference   shao  Sheshan                              China                             121.2004   31.0996    22.0901  JPL                 INTERNAL                  
+she2  she2  Shediac                                          Canada                            295.4480   46.2207   -15.3000  NRCan/GSD           INTERNAL                  
+simo  Reference   simo  Simonstown                           South Africa                       18.4396  -34.1879    39.4910  HRAO                INTERNAL                  
+sin1  New  IGLOS-PP sin1  Singapore                          Singapore                         103.6794    1.3430    92.5400  DLR                 INTERNAL                  
+sio3  sio3  La Jolla                                         United States                     242.7500   32.8600    34.8800  SIO                 INTERNAL                  
+slor  slor  San Lorenzo                                      Honduras                          272.5635   13.4239    11.9950  IGN-HO                                        
+smst  smst  Nachi Katsuura-cho                               Japan                             135.9370   33.5779    97.5360  HOD, JCG            NONE                      
+sni1  sni1  San Nicolas Island                               United States                     240.4756   33.2479   239.6700  USGS                INTERNAL                  
+sofi  ReferenceHourlyIGLOS-PP sofi  Sofia                    Bulgaria                           23.3947   42.5561  1119.6000  BKG                 INTERNAL                  
+sola  sola  Solar Village                                    Saudi Arabia                       46.4006   24.9107   760.1393  MIT                 INTERNAL                  
+spk1  spk1  Saddle Peak                                      United States                     241.3538   34.0593   440.1300  USGS                INTERNAL                  
+spt0  HourlyIGLOS-PP spt0  Boras                             Sweden                             12.8913   57.7150   219.9000  LMV                 EXTERNAL H-MASER          
+sptu  IGLOS-PP sptu  TupÃ£                                 Brazil                            309.5076  -21.9291   508.7800  IBGE                                          
+ssia  ReferenceHourly  ssia  San Salvador                    El Salvador                       270.8838   13.6973   664.4000  CNR                 INTERNAL                  
+stfu  IGLOS-PP stfu  Palo Alto                               United States                     237.8267   37.4269    20.4100  DLR                 EXTERNAL RUBIDIUM         
+sthl  HourlyIGLOS-PP sthl  Longwood                          United Kingdom                    354.3327  -15.9425   453.2900  JPL                 INTERNAL                  
+stj3  New  IGLOS-PP stj3  ST. JOHN'S                         Canada                            307.3217   47.5954   154.5150  CNES / NRCan        EXTERNAL OSA 3700 PH MASER
+stjo  ReferenceHourlyIGLOS-PP stjo  St. John's               Canada                            307.3223   47.5952   152.8000  NRCan               EXTERNAL H-MASER          
+stk2  HourlyIGLOS-PP stk2  Shintotsukawa                     Japan                             141.8448   43.5286   118.5400  GSI                 EXTERNAL CESIUM           
+str1  HourlyIGLOS-PP str1  Canberra                          Australia                         149.0109  -35.3155   800.0320  GA                  EXTERNAL CESIUM           
+str2  HourlyIGLOS-PP str2  Canberra                          Australia                         149.0102  -35.3162   802.5800  GA                  INTERNAL                  
+sulp  HourlyIGLOS-PP sulp  Lviv                              Ukraine                            24.0145   49.8356   370.5000  NULP                INTERNAL                  
+suth  ReferenceHourly  suth  Sutherland                      South Africa                       20.8105  -32.3802  1799.7659  HRAO                INTERNAL                  
+sutm  ReferenceHourlyIGLOS-PP sutm  Sutherland               South Africa                       20.8109  -32.3814  1797.6000  GFZ                 INTERNAL                  
+sutv  HourlyIGLOS-PP sutv  Sutherland                        South Africa                       20.8105  -32.3802  1799.7659  HRAO                INTERNAL                  
+suva  suva  Suva                                             Fiji                              178.4252  -18.1459    73.0000  PGPSF               INTERNAL                  
+suwn  Reference IGLOS-PP Suwon-shi                           Korea                             127.0542   37.2755    83.9322  NGII                EXTERNAL CESIUM           
+svtl  HourlyIGLOS-PP svtl  Svetloe                           Russian Federation                 29.7809   60.5329    77.1000  IAA                 EXTERNAL H-MASER CH1-80   
+sydn  Hourly  sydn  Sydney                                   Australia                         151.1504  -33.7809    85.6837  GA                  EXTERNAL CESIUM           
+syog  ReferenceHourlyIGLOS-PP syog  East Ongle Island        Antarctica                         39.5837  -69.0070    50.0902  GSI                 EXTERNAL CESIUM           
+tabl  IGLOS-PP tabl  Wrightwood                              United States                     242.3217   34.3819  2228.0300  USGS                INTERNAL                  
+tash  HourlyIGLOS-PP tash  Tashkent                          Uzbekistan                         69.2956   41.3280   439.7000  GFZ                 EXTERNAL RUBIDIUM         
+tcms  Reference   tcms  Hsinchu                              China                             120.9874   24.7980    77.2607  NML                 INTERNAL                  
+tdou  Hourly  tdou  THOHOYANDOU                              South Africa                       30.3840  -23.0799   630.2000  NGI                 INTERNAL                  
+tehn  Reference   tehn  TEHRAN                               Iran                               51.3341   35.6973  1194.5700  NCC                 INTERNAL                  
+tgcv  tgcv  Palmeira                                         Cape Verde                        337.0172   16.7548    35.0000  PGPSF               INTERNAL                  
+thtg  New HourlyIGLOS-PP thtg  Papeete                       French Polynesia                  210.3936  -17.5771    97.9940  CNES                INTERNAL                  
+thti  ReferenceHourlyIGLOS-PP thti  Papeete                  French Polynesia                  210.3936  -17.5771    98.4900  CNES                INTERNAL                  
+thu2  IGLOS-PP thu2  Thule Airbase                           Greenland                         291.1750   76.5370    36.1000  DTU Space           EXTERNAL RUBIDIUM         
+thu3  ReferenceHourly  thu3  Thule Airbase                   Greenland                         291.1750   76.5370    36.1000  DNSC                EXTERNAL RUBIDIUM         
+tid1  HourlyIGLOS-PP tid1  Canberra                          Australia                         148.9800  -35.3992   665.4400  GA                  EXTERNAL H-MASER          
+tid2  tid2  Tidbinbilla                                      Australia                         148.9800  -35.3992   665.3719  JPL                 H-MASER                   
+tidb  ReferenceHourly  tidb  Tidbinbilla                     Australia                         148.9800  -35.3992   665.3719  JPL                 EXTERNAL H-MASER          
+tit2  HourlyIGLOS-PP tit2  Titz                              Germany                             6.4316   51.0353   156.1000  BKG                 INTERNAL                  
+tixi  ReferenceHourlyIGLOS-PP tixi  Tixi                     Russian Federation                128.8664   71.6345    46.9847  SST YEMSP GS SB RAS INTERNAL                  
+tlse  ReferenceHourlyIGLOS-PP tlse  Toulouse                 France                              1.4809   43.5607   207.1900  CNES                INTERNAL                  
+tnml  Reference   tnml  Hsinchu                              China                             120.9873   24.7980    75.8599  NML                 EXTERNAL RUBIDIUM         
+tong  HourlyIGLOS-PP tong  Nuku'alofa, Kolofo'ou             Tonga                             184.8208  -21.1447    56.3000  GA                  INTERNAL                  
+torp  torp  Torrance                                         United States                     241.6694   33.7978    -5.2200  USGS                INTERNAL                  
+tow2  ReferenceHourlyIGLOS-PP tow2  Cape Ferguson            Australia                         147.0557  -19.2693    88.2349  GA                  INTERNAL                  
+trab  Reference   trab  Trabzon                              Turkey                             39.7756   40.9947    99.2000  BKG                 INTERNAL                  
+trak  IGLOS-PP trak  Irvine                                  United States                     242.1966   33.6179   115.7000  SOPAC               INTERNAL                  
+tro1  ReferenceHourlyIGLOS-PP tro1  Tromsoe                  Norway                             18.9396   69.6627   138.0000  Kartverket          EXTERNAL RUBIDIUM         
+tsk2  HourlyIGLOS-PP tsk2  Tsukuba                           Japan                             140.0871   36.1056    69.9300  GSI                 EXTERNAL H-MASER          
+tskb  ReferenceHourly  tskb  Tsukuba                         Japan                             140.0875   36.1057    67.3000  GSI                 EXTERNAL H-MASER          
+tubi  tubi  Gebze                                            Turkey                             29.4507   40.7867   221.8000  TUBITAK MRC         INTERNAL                  
+tukt  tukt  Tuktoyaktuk                                      Canada                            227.0057   69.4382     1.5400  NRCan/GSD           INTERNAL                  
+tuva  HourlyIGLOS-PP tuva  Funafuti                          Tuvalu                            179.1966   -8.5253    38.4000  GA                  INTERNAL                  
+twtf  Reference   twtf  Taoyuan                              Taiwan                            121.1645   24.9536   203.1220  TL                  EXTERNAL STEERED H-MASER  
+ucal  New  IGLOS-PP ucal  Calgary                            Canada                            245.8662   51.0800  1118.8000  DLR                 INTERNAL                  
+uclp  uclp  Los Angeles                                      United States                     241.5581   34.0691   111.5400  USGS                INTERNAL                  
+uclu  Hourly  uclu  Ucluelet                                 Canada                            234.4584   48.9256    10.0000  GSC                 INTERNAL CLOCK            
+ufpr  IGLOS-PP ufpr  Curitiba                                Brazil                            310.7690  -25.4484   925.8000  IBGE                INTERNAL                  
+ulab  ReferenceHourlyIGLOS-PP ulab  Ulaanbataar              Mongolia                          107.0500   47.6700  1611.7000  GFZ                 INTERNAL                  
+uldi  Hourly  uldi  ULUNDI                                   South Africa                       31.4209  -28.2931   607.9000  NGI                                           
+umta  umta  UMTATA                                           South Africa                       28.6725  -31.5488   772.5000  NGI                                           
+unb3  New HourlyIGLOS-PP unb3  Fredericton                   Canada                            293.3583   45.9502    22.8500  UNB                 INTERNAL                  
+unbd  unbd  Fredericton                                      Canada                            293.3585   45.9501    23.1200  DLR                 INTERNAL                  
+unbj  HourlyIGLOS-PP unbj  Fredericton                       Canada                            293.3583   45.9502    22.7500  UNB                 INTERNAL                  
+unbn  IGLOS-PP unbn  Fredericton                             Canada                            293.3583   45.9502    22.8500  UNB                 INTERNAL                  
+unfe  IGLOS-PP unfe  FERRARA                                 Italy                              11.5995   44.8330    81.0100  ASI                 INTERNAL                  
+unsa  ReferenceHourlyIGLOS-PP unsa  Salta                    Argentina                         294.5924  -24.7275  1257.8000  GFZ                 INTERNAL                  
+unx2  New  IGLOS-PP unx2  Sydney                             Australia                         151.2319  -33.9178    87.0700  DLR                 INTERNAL                  
+unx3  IGLOS-PP unx3  Sydney                                  Australia                         151.2319  -33.9178    87.0700  DLR                 INTERNAL                  
+urum  ReferenceHourlyIGLOS-PP urum  Urumqi                   China                              87.6300   43.5900   856.1000  GFZ                 INTERNAL                  
+usn7  Hourly  usn7  Washington                               United States                     282.9337   38.9206    58.9240  USNO                EXTERNAL H-MASER          
+usno  Reference   usno  Washington                           United States                     282.9338   38.9190    48.9000  USNO                steered H-MASER           
+usud  Hourly  usud  Usuda                                    Japan                             138.3620   36.1331  1508.6193  JPL                 H-MASER                   
+uzhl  ReferenceHourlyIGLOS-PP uzhl  Uzhgorod                 Ukraine                            22.2976   48.6320   232.0000  MAO                 INTERNAL                  
+vacs  Hourly  vacs  Vacoas                                   Mauritius                          57.4970  -20.2971   420.4000  JPL                 INTERNAL                  
+vald  HourlyIGLOS-PP vald  Val D'Or                          Canada                            282.4358   48.0971   312.8000  NRCan/GFZ           INTERNAL                  
+vesl  Reference   vesl  Vesleskarvet                         Antarctica                        357.1583  -71.6738   862.4000  HartRAO             INTERNAL                  
+vill  ReferenceHourlyIGLOS-PP vill  Villafranca              Spain                             356.0480   40.4436   647.5000  ESOC                EXTERNAL CESIUM           
+vis0  HourlyIGLOS-PP vis0  Visby                             Sweden                             18.3673   57.6539    79.8000  LMV                 EXTERNAL RUBIDIUM         
+vndp  Reference   vndp  Vandenberg Air Force Base            United States                     239.3836   34.5563   -11.5000  UNAVCO              INTERNAL                  
+voim  IGLOS-PP voim  Ambalavao                               Madagascar                         46.7933  -21.9063  1163.3000  GFZ                 INTERNAL                  
+wab2  wab2  Wabern                                           Switzerland                         7.4642   46.9237   611.0000  METAS               EXTERNAL UTC(CH) Master Cl
+wark  HourlyIGLOS-PP wark  Warkworth                         New Zealand                       174.6628  -36.4344   111.3000  LINZ                EXTERNAL H-MASER          
+warn  HourlyIGLOS-PP warn  Rostock-Warnemuende               Germany                            12.1014   54.1698    50.7000  BKG                 INTERNAL                  
+wes2  Reference IGLOS-PP wes2  Westford                      United States                     288.5067   42.6133    85.0000  NOAA-NGS            EXTERNAL H-MASER          
+wgtn  HourlyIGLOS-PP wgtn  Wellington                        New Zealand                       174.8059  -41.3235    26.0600  LINZ                                          
+whc1  whc1  Whittier                                         United States                     241.9688   33.9799    94.2500  USGS                INTERNAL                  
+whit  ReferenceHourlyIGLOS-PP whit  WHITEHORSE               Canada                            224.7779   60.7505  1427.0000  NRCan               EXTERNAL RUBIDIUM SYMMETRI
+widc  IGLOS-PP widc  Sky Valley                              United States                     243.6082   33.9348   445.0400  USGS                INTERNAL                  
+will  ReferenceHourlyIGLOS-PP will  Williams Lake            Canada                            237.8322   52.2369  1096.0000  GSC                 INTERNAL                  
+wind  ReferenceHourlyIGLOS-PP wind  Windhoek                 Namibia                            17.0894  -22.5749  1734.7000  GFZ                 INTERNAL                  
+wlsn  wlsn  Mt. Wilson                                       United States                     241.9441   34.2261  1705.2600  USGS                INTERNAL                  
+wroc  HourlyIGLOS-PP wroc  Wroclaw                           Poland                             17.0619   51.1131   181.0000  IGG WUELS           INTERNAL                  
+wslr  Hourly  wslr  Whistler                                 Canada                            237.0788   50.1265   909.0000  GSC                 internal clock steering   
+wsrt  ReferenceHourly  wsrt  Westerbork                      Netherlands                         6.6045   52.9146    86.0000  DUT                 EXTERNAL H-MASER          
+wtz3  IGLOS-PP wtz3  Bad Koetzting                           Germany                            12.8786   49.1448   663.4000  DLR                 EXTERNAL H-MASER EFOS 39  
+wtza  Hourly  wtza  Bad Koetzting                            Germany                            12.8789   49.1442   666.0000  BKG                 CESIUM                    
+wtzr  ReferenceHourlyIGLOS-PP wtzr  Bad Koetzting            Germany                            12.8789   49.1442   666.0000  BKG                 EXTERNAL H-MASER EFOS 18  
+wtzs  Hourly  wtzs  Bad Koetzting                            Germany                            12.8786   49.1448   663.4000  BKG                 EXTERNAL H-MASER EFOS 39  
+wtzz  HourlyIGLOS-PP wtzz  Bad Koetzting                     Germany                            12.8789   49.1442   665.8900  BKG                 EXTERNAL H-MASER EFOS 18  
+wuh2  IGLOS-PP wuh2  Wuhan City                              China                             114.3573   30.5317    25.8000  GFZ                 INTERNAL                  
+wuhn  Reference IGLOS-PP wuhn  Wuhan                         China                             114.3573   30.5317    28.2000  WHU                 Rubidium Clock Steered by 
+xian  xian  Lintong                                          China                             109.2215   34.3687   464.4098  JPL                 QUARTZ                    
+xmis  HourlyIGLOS-PP xmis  Christmas Island                  Australia                         105.6885  -10.4500   261.5833  GA                  INTERNAL                  
+yakt  Hourly  yakt  Yakutsk                                  Russian Federation                129.6803   62.0310   103.3700  RDAAC-IRIS          CESIUM                    
+yakz  yakz  Yakutsk                                          Russian Federation                129.6810   62.0310   100.0644  RDAAC-IRIS          INTERNAL                  
+yar2  HourlyIGLOS-PP yar2  Yarragadee                        Australia                         115.3470  -29.0466   241.2906  GA                  EXTERNAL H-MASER          
+yar3  HourlyIGLOS-PP yar3  Yarragadee                        Australia                         115.3471  -29.0465   242.6741  GA                  INTERNAL                  
+yarr  ReferenceHourlyIGLOS-PP yarr  Dongara                  Australia                         115.3470  -29.0466   241.3820  GA                  INTERNAL                  
+yebe  ReferenceHourly  yebe  Yebes                           Spain                             356.9114   40.5249   973.0000  IGN-E               EXTERNAL H-MASER          
+yel2  New  IGLOS-PP yel2  YELLOWKNIFE                        Canada                            245.5192   62.4813   181.0080  CNES / NRCan        EXTERNAL H-MASER          
+yell  ReferenceHourlyIGLOS-PP yell  Yellowknife              Canada                            245.5193   62.4809   181.0000  NRCan               EXTERNAL MASER            
+yibl  Reference   yibl  Yibal                                Oman                               56.1123   22.1865    95.1000  PDO                 INTERNAL                  
+ykro  Hourly  ykro  Yamoussoukro                             Cote d'Ivorie                     354.7599    6.8706   270.0000  JPL                 INTERNAL                  
+yons  HourlyIGLOS-PP yons  SEOUL                             Korea                             127.0013   37.5411    96.8490  SMG                                           
+yssk  Hourly  yssk  Yuzhno-Sakhalinsk                        Russian Federation                142.7167   47.0297    91.2887  RDAAC-IRIS          INTERNAL                  
+zamb  Reference   zamb  Lusaka                               Zambia                             28.3110  -15.4255  1324.9144  HRAO                INTERNAL                  
+zeck  ReferenceHourlyIGLOS-PP zeck  Zelenchukskaya           Russian Federation                 41.5651   43.2884  1166.8000  BKG                 EXTERNAL H-MASER VCH-1003M
+zim2  HourlyIGLOS-PP zim2  Zimmerwald                        Switzerland                         7.4650   46.8771   956.4000  swisstopo           INTERNAL                  
+zim3  New  IGLOS-PP zim3  Zimmerwald                         Switzerland                         7.4650   46.8771   956.4000  swisstopo           INTERNAL                  
+zimj  Reference IGLOS-PP zimj  Zimmerwald                    Switzerland                         7.4651   46.8771   954.3000  swisstopo           INTERNAL                  
+zimm  ReferenceHourly  zimm  Zimmerwald                      Switzerland                         7.4653   46.8771   956.7000  swisstopo           INTERNAL                  
+zwe2  Hourly  zwe2  Zwenigorod                               Russian Federation                 36.7600   55.7000   272.0000  GFZ                 INTERNAL                  

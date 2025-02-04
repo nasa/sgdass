@@ -1,0 +1,155 @@
+
+build:	
+#
+	@echo "Building gvh started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`         | tee  > $(BUILD_LOG)
+	@echo " "                                                                                  | tee -a $(BUILD_LOG)
+	cd  $(GVH_ROOT); cd vcat;  source $(GVH_ROOT)/support/gvh_vars; umask 0002; make lib    -j $(NUM_PROC) | tee -a $(BUILD_LOG)
+	cd  $(GVH_ROOT); cd gvh;   source $(GVH_ROOT)/support/gvh_vars; umask 0002; make static -j $(NUM_PROC) | tee -a $(BUILD_LOG)
+	cd  $(GVH_ROOT); cd gvh;   source $(GVH_ROOT)/support/gvh_vars; umask 0002; make shared -j 1           | tee -a $(BUILD_LOG)
+	cd  $(GVH_ROOT); cd gvh;   source $(GVH_ROOT)/support/gvh_vars; umask 0002; make bin    -j $(NUM_PROC) | tee -a $(BUILD_LOG)
+	@echo " "                                                                                  | tee -a $(BUILD_LOG)
+	@echo "Building gvh finihsed at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`         | tee -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+.PHONY: install
+install:
+	if ( -d $(GVH_PREFIX)         == 0 ) mkdir -p $(GVH_PREFIX)
+	if ( -d $(GVH_PREFIX)/lib     == 0 ) mkdir    $(GVH_PREFIX)/lib
+	if ( -d $(GVH_PREFIX)/bin     == 0 ) mkdir    $(GVH_PREFIX)/bin
+	if ( -d $(GVH_PREFIX)/include == 0 ) mkdir    $(GVH_PREFIX)/include
+	cp $(GVH_ROOT)/include/vcat.i        $(GVH_PREFIX)/include/
+	cp $(GVH_ROOT)/include/gvh.i         $(GVH_PREFIX)/include/
+	cp $(GVH_ROOT)/include/gvh_solve.i   $(GVH_PREFIX)/include/
+	cp $(GVH_ROOT)/include/gvf_db.i      $(GVH_PREFIX)/include/
+#
+        ifeq ($(GVH_OS),Linux)
+	    if ( -l $(GVH_PREFIX)/lib/libvcat.so     ) rm $(GVH_PREFIX)/lib/libvcat.so
+	    if ( -l $(GVH_PREFIX)/lib/libvcat.so.1   ) rm $(GVH_PREFIX)/lib/libvcat.so.1
+	    if ( -f $(GVH_PREFIX)/lib/libvcat.so.1.0 ) rm $(GVH_PREFIX)/lib/libvcat.so.1.0  
+	    if ( -l $(GVH_PREFIX)/lib/libgvh.so      ) rm $(GVH_PREFIX)/lib/libgvh.so
+	    if ( -l $(GVH_PREFIX)/lib/libgvh.so.1    ) rm $(GVH_PREFIX)/lib/libgvh.so.1
+	    if ( -f $(GVH_PREFIX)/lib/libgvh.so.1.0  ) rm $(GVH_PREFIX)/lib/libgvh.so.1.0  
+	    cp $(GVH_ROOT)/lib/libvcat.so.1.0          $(GVH_PREFIX)/lib/
+	    cp $(GVH_ROOT)/lib/libgvh.so.1.0           $(GVH_PREFIX)/lib/
+	    ln -s $(GVH_PREFIX)/lib/libvcat.so.1.0  $(GVH_PREFIX)/lib/libvcat.so.1
+	    ln -s $(GVH_PREFIX)/lib/libvcat.so.1.0  $(GVH_PREFIX)/lib/libvcat.so
+	    ln -s $(GVH_PREFIX)/lib/libgvh.so.1.0   $(GVH_PREFIX)/lib/libgvh.so.1
+	    ln -s $(GVH_PREFIX)/lib/libgvh.so.1.0   $(GVH_PREFIX)/lib/libgvh.so
+        endif
+        ifeq ($(GVH_OS),Darwin)
+	    if ( -l $(GVH_PREFIX)/lib/libvcat.dylib   ) rm $(GVH_PREFIX)/lib/libvcat.dylib
+	    if ( -f $(GVH_PREFIX)/lib/libvcat.1.dylib ) rm $(GVH_PREFIX)/lib/libvcat.1.dylib
+	    if ( -l $(GVH_PREFIX)/lib/libgvh.dylib    ) rm $(GVH_PREFIX)/lib/libgvh.dylib
+	    if ( -f $(GVH_PREFIX)/lib/libgvh.1.dylib  ) rm $(GVH_PREFIX)/lib/libgvh.1.dylib  
+	    cp $(GVH_ROOT)/lib/libvcat.1.dylib          $(GVH_PREFIX)/lib/
+	    cp $(GVH_ROOT)/lib/libgvh.1.dylib           $(GVH_PREFIX)/lib/
+	    ln -s $(GVH_PREFIX)/lib/libvcat.1.dylib     $(GVH_PREFIX)/lib/libvcat.dylib
+	    ln -s $(GVH_PREFIX)/lib/libgvh.1.dylib      $(GVH_PREFIX)/lib/libgvh.dylib 
+	    install_name_tool -id $(GVH_PREFIX)/lib/libvcat.dylib $(GVH_PREFIX)/lib/libvcat.1.dylib          
+	    install_name_tool -id $(GVH_PREFIX)/lib/libgvh.dylib  $(GVH_PREFIX)/lib/libgvh.1.dylib          
+        endif
+	cp $(GVH_ROOT)/lib/libgvh.a          $(GVH_PREFIX)/lib/
+	cp $(GVH_ROOT)/lib/libvcat.a         $(GVH_PREFIX)/lib/
+#
+	cp $(GVH_ROOT)/support/export_gvh_vars  $(GVH_PREFIX)/bin/gvh_vars
+	cp $(GVH_ROOT)/bin/gvf_db               $(GVH_PREFIX)/bin/
+	cp $(GVH_ROOT)/bin/gvf_transform        $(GVH_PREFIX)/bin/
+	cp $(GVH_ROOT)/bin/gvf_supr_promote     $(GVH_PREFIX)/bin/
+	cp $(GVH_ROOT)/bin/gvf_grambig_reset    $(GVH_PREFIX)/bin/
+	cp $(GVH_ROOT)/bin/gvf_repair_db        $(GVH_PREFIX)/bin/
+	cp $(GVH_ROOT)/bin/gvf_set_par          $(GVH_PREFIX)/bin/
+	cp $(GVH_ROOT)/scripts/gvf_export.py    $(GVH_PREFIX)/bin
+	cp $(GVH_ROOT)/scripts/gvf_import.py    $(GVH_PREFIX)/bin
+	cp $(GVH_ROOT)/scripts/copy_gvf.py      $(GVH_PREFIX)/bin
+	cp $(GVH_ROOT)/scripts/del_gvf.py       $(GVH_PREFIX)/bin
+	cp $(GVH_ROOT)/scripts/delver_gvf.py    $(GVH_PREFIX)/bin
+        ifeq ($(GVH_OS),Darwin)
+	      install_name_tool -change $(GVH_ROOT)/lib/libgvh.1.dylib  $(GVH_PREFIX)/lib/libgvh.1.dylib  $(GVH_PREFIX)/bin/gvf_db
+	      install_name_tool -change $(GVH_ROOT)/lib/libgvh.1.dylib  $(GVH_PREFIX)/lib/libgvh.1.dylib  $(GVH_PREFIX)/bin/gvf_transform
+	      install_name_tool -change $(GVH_ROOT)/lib/libgvh.1.dylib  $(GVH_PREFIX)/lib/libgvh.1.dylib  $(GVH_PREFIX)/bin/gvf_supr_promote
+	      install_name_tool -change $(GVH_ROOT)/lib/libgvh.1.dylib  $(GVH_PREFIX)/lib/libgvh.1.dylib  $(GVH_PREFIX)/bin/gvf_grambig_reset
+	      install_name_tool -change $(GVH_ROOT)/lib/libgvh.1.dylib  $(GVH_PREFIX)/lib/libgvh.1.dylib  $(GVH_PREFIX)/bin/gvf_repair_db
+	      install_name_tool -change $(GVH_ROOT)/lib/libgvh.1.dylib  $(GVH_PREFIX)/lib/libgvh.1.dylib  $(GVH_PREFIX)/bin/gvf_set_par
+	      install_name_tool -change $(GVH_ROOT)/lib/libvcat.1.dylib $(GVH_PREFIX)/lib/libvcat.1.dylib $(GVH_PREFIX)/bin/gvf_db
+	      install_name_tool -change $(GVH_ROOT)/lib/libvcat.1.dylib $(GVH_PREFIX)/lib/libvcat.1.dylib $(GVH_PREFIX)/bin/gvf_transform
+	      install_name_tool -change $(GVH_ROOT)/lib/libvcat.1.dylib $(GVH_PREFIX)/lib/libvcat.1.dylib $(GVH_PREFIX)/bin/gvf_supr_promote
+	      install_name_tool -change $(GVH_ROOT)/lib/libvcat.1.dylib $(GVH_PREFIX)/lib/libvcat.1.dylib $(GVH_PREFIX)/bin/gvf_grambig_reset
+	      install_name_tool -change $(GVH_ROOT)/lib/libvcat.1.dylib $(GVH_PREFIX)/lib/libvcat.1.dylib $(GVH_PREFIX)/bin/gvf_repair_db
+	      install_name_tool -change $(GVH_ROOT)/lib/libvcat.1.dylib $(GVH_PREFIX)/lib/libvcat.1.dylib $(GVH_PREFIX)/bin/gvf_set_par
+        endif
+	@echo "=== Installation of gvh is completed ==="
+
+uninstall:
+	if ( -f $(GVH_PREFIX)/include/vcat.i        ) rm -f $(GVH_PREFIX)/include/vcat.i
+	if ( -f $(GVH_PREFIX)/include/gvh.i         ) rm -f $(GVH_PREFIX)/include/gvh.i
+	if ( -f $(GVH_PREFIX)/include/gvh_solve.i   ) rm -f $(GVH_PREFIX)/include/gvh_solve.i
+	if ( -f $(GVH_PREFIX)/include/gvf_db.i      ) rm -f $(GVH_PREFIX)/include/gvf_db.i
+#
+	if ( -f $(GVH_PREFIX)/lib/libgvh.a          ) rm -f $(GVH_PREFIX)/lib/libgvh.a
+	if ( -l $(GVH_PREFIX)/lib/libgvh.so         ) rm -f $(GVH_PREFIX)/lib/libgvh.so
+	if ( -l $(GVH_PREFIX)/lib/libgvh.so.1       ) rm -f $(GVH_PREFIX)/lib/libgvh.so.1
+	if ( -l $(GVH_PREFIX)/lib/libgvh.dylib      ) rm -f $(GVH_PREFIX)/lib/libgvh.dylib      
+	if ( -f $(GVH_PREFIX)/lib/libgvh.so.1.0     ) rm -f $(GVH_PREFIX)/lib/libgvh.so.1.0
+	if ( -f $(GVH_PREFIX)/lib/libgvh.1.dylib    ) rm -f $(GVH_PREFIX)/lib/libgvh.1.dylib    
+	if ( -f $(GVH_PREFIX)/lib/libvcat.a         ) rm -f $(GVH_PREFIX)/lib/libvcat.a
+	if ( -l $(GVH_PREFIX)/lib/libvcat.so        ) rm -f $(GVH_PREFIX)/lib/libvcat.so
+	if ( -l $(GVH_PREFIX)/lib/libvcat.so.1      ) rm -f $(GVH_PREFIX)/lib/libvcat.so.1
+	if ( -l $(GVH_PREFIX)/lib/libvcat.dylib     ) rm -f $(GVH_PREFIX)/lib/libvcat.dylib
+	if ( -f $(GVH_PREFIX)/lib/libvcat.so.1.0    ) rm -f $(GVH_PREFIX)/lib/libvcat.so.1.0
+	if ( -f $(GVH_PREFIX)/lib/libvcat.1.dylib   ) rm -f $(GVH_PREFIX)/lib/libvcat.1.dylib   
+#
+	if ( -f $(GVH_PREFIX)/bin/gvh_vars          ) rm -f $(GVH_PREFIX)/bin/gvh_vars
+	if ( -f $(GVH_PREFIX)/bin/gvf_db            ) rm -f $(GVH_PREFIX)/bin/gvf_db
+	if ( -f $(GVH_PREFIX)/bin/gvf_transform     ) rm -f $(GVH_PREFIX)/bin/gvf_transform
+	if ( -f $(GVH_PREFIX)/bin/gvf_supr_promote  ) rm -f $(GVH_PREFIX)/bin/gvf_supr_promote
+	if ( -f $(GVH_PREFIX)/bin/gvf_grambig_reset ) rm -f $(GVH_PREFIX)/bin/gvf_grambig_reset
+	if ( -f $(GVH_PREFIX)/bin/gvf_repair_db     ) rm -f $(GVH_PREFIX)/bin/gvf_repair_db
+	if ( -f $(GVH_PREFIX)/bin/gvf_set_par       ) rm -f $(GVH_PREFIX)/bin/gvf_set_par
+	if ( -f $(GVH_PREFIX)/bin/gvf_export.py     ) rm -f $(GVH_PREFIX)/bin/gvf_export.py
+	if ( -f $(GVH_PREFIX)/bin/gvf_import.py     ) rm -f $(GVH_PREFIX)/bin/gvf_import.py
+	if ( -f $(GVH_PREFIX)/bin/copy_gvf.py       ) rm -f $(GVH_PREFIX)/bin/copy_gvf.py
+	if ( -f $(GVH_PREFIX)/bin/del_gvf.py        ) rm -f $(GVH_PREFIX)/bin/del_gvf.py
+	if ( -f $(GVH_PREFIX)/bin/delver_gvf.py     ) rm -f $(GVH_PREFIX)/bin/delver_gvf.py
+
+clean:	
+	cd  $(GVH_ROOT)/vcat; source $(GVH_ROOT)/support/gvh_vars; make clean
+	cd  $(GVH_ROOT)/gvh;  source $(GVH_ROOT)/support/gvh_vars; make clean
+
+distclean:	
+	@./reconfigure -d > /tmp/gvh_last_configure.txt
+	@-chmod 666 /tmp/gvh_last_configure.txt
+	if ( -f $(CONF_LOG)                         ) rm -f $(CONF_LOG)                         
+	if ( -f $(BUILD_LOG)                        ) rm -f $(BUILD_LOG)
+	cd  $(GVH_ROOT)/vcat; source $(GVH_ROOT)/support/gvh_vars; make clean
+	cd  $(GVH_ROOT)/gvh;  source $(GVH_ROOT)/support/gvh_vars; make clean
+	if ( -f $(GVH_ROOT)/gvh/gvh_version.f       ) rm -f $(GVH_ROOT)/gvh/gvh_version.f
+	if ( -f $(GVH_ROOT)/include/gvh.i           ) rm -f $(GVH_ROOT)/include/gvh.i
+	if ( -f $(GVH_ROOT)/temp/conf.log           ) rm -f $(GVH_ROOT)/temp/conf.log
+	if ( -f $(GVH_ROOT)/support/gvh_vars        ) rm -f $(GVH_ROOT)/support/gvh_vars
+	if ( -f $(GVH_ROOT)/support/export_gvh_vars ) rm -f $(GVH_ROOT)/support/export_gvh_vars
+	support/purge      gvh
+	support/purge      vcat
+	support/purge      scripts
+	support/purge      support
+	support/purge      doc
+	support/purge      include
+	support/purge      temp
+	support/purge      ./
+        
+.PHONY: doc
+doc:    
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "VDA format description" --header-spacing 10 -q --minimum-font-size 20 -s Letter -B 25. -T 25.0 -L 25. -R 25.0 vda.html vda.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "VDA format description" --header-spacing 10 -q --minimum-font-size 20 -s Letter -B 25. -T 25.0 -L 25. -R 25.0 gvf.html gvf.pdf
+
+GVH_BASENAME = `basename $(GVH_ROOT)`
+tar:	distclean
+	rm Makefile
+	if ( -f temp/conf.log           ) rm -f temp/conf.log
+	if ( -f support/gvh_vars        ) rm -f support/gvh_vars
+	if ( -f support/export_gvh_vars ) rm -f support/export_gvh_vars
+	if ( -f /tmp/gvh-$(GVH_VERSION).tar.bz2 ) rm -f /tmp/gvh-$(GVH_VERSION).tar.bz2 
+	cd ../; tar -cf - gvh_$(GVH_VERSION) | \
+                lbzip2 -c > /tmp/gvh-$(GVH_VERSION).tar.bz2 
+	cp /tmp/gvh-$(GVH_VERSION).tar.bz2 /astrogeo.org/gvh
+	echo "Tar-file /tmp/gvh-$(GVH_VERSION).tar.bz2" 
+	sync

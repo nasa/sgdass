@@ -1,0 +1,138 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of configure. It creates the     *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ### 18-MAY-2004    configure   v1.5 (c)  L. Petrov 15-MAY-2019 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv SPC_VERSION      "20241125"
+#
+setenv PETOOLS_VERSION_MIN "20241115"
+setenv SPC_PREFIX       $HOME
+setenv SPC_ROOT        `dirname $0`
+if ( $SPC_ROOT == '.' ) setenv SPC_ROOT `pwd`
+setenv SPC_PETOOLS      ""
+setenv SPC_LAPACK       ""
+setenv SPC_CC           "gcc"
+setenv SPC_FC           "gfortran"
+setenv SPC_LDFLAGS      ""
+setenv SPC_BIN          ${SPC_ROOT}/bin
+setenv SPC_OS           `uname`
+setenv SPC_NOOPT        "NO"
+setenv CONF_LOG         ${SPC_ROOT}/temp/conf.log
+setenv BUILD_LOG        ${SPC_ROOT}/temp/build.log 
+#
+# These directories are for the maintainer only
+#
+setenv PETOOLS_SOURCE_DIR      /progs/petools_20241115
+setenv SPD_SOURCE_DIR          /progs/spd_20241125
+setenv LAPACK_SOURCE_DIR       /dist/lapack-3.5.0
+set SPC_DEBUG = 0
+#
+set numarg = $#argv 
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#  
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SPC_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SPC_NOOPT "YES"
+          set find_option = 1
+     endif
+#  
+     set match_prefix=`echo $arg | awk '{print index ($1,"--with-petools")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SPC_PETOOLS `echo $arg | awk '{printf substr($1,16)}'`
+          set find_option = 1
+     endif
+     set match_prefix=`echo $arg | awk '{print index ($1,"--without-petools")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SPC_PETOOLS ""
+          set find_option = 1
+     endif
+#  
+     set match_prefix=`echo $arg | awk '{print index ($1,"--with-lapack")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SPC_LAPACK `echo $arg | awk '{printf substr($1,15)}'`
+          set find_option = 1
+     endif
+     set match_prefix=`echo $arg | awk '{print index ($1,"--with-lapack")}'`
+          setenv SPC_LAPACK ""
+          set find_option = 1
+     endif
+#
+     set match_cc = `echo $arg | awk '{print index($1,"CC")}'`
+     if ( $match_cc > 0 ) then
+	  setenv SPC_CC   `echo $arg | awk '{printf substr($0,4)}'`
+          set find_option = 1
+     endif
+#
+     set match_fc = `echo $arg | awk '{print index($1,"FC")}'`
+     if ( $match_fc > 0 ) then
+	  setenv SPC_FC   `echo $arg | awk '{printf substr($0,4)}'`
+          set find_option = 1
+     endif
+#
+     set match_ldflags = `echo $arg | awk '{print index($1,"LDFLAGS")}'`
+     if ( $match_ldflags > 0 ) then
+	  setenv SPC_LDFLAGS `echo $arg | awk '{printf substr($0,9)}'`
+          set find_option = 1
+     endif
+#  
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $SPC_ROOT/doc/spd_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#  
+     if ( "$arg" == "--debug" || "$arg" == "-d" ) then
+          set SPC_DEBUG = 1
+          set find_option = 1
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set   date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set   host_name   = `uname -n`
+echo "spd config  $date_stamp  on  $host_name" >! $CONF_LOG
+echo $0 $argv >> $CONF_LOG
+if ( $SPC_DEBUG == 0 ) then
+     support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+  else
+     csh -x support/config.csh | tee -a $CONF_LOG
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run make"
+     exit 0
+  else
+     echo "Error in configuration."
+     exit $config_status 
+endif

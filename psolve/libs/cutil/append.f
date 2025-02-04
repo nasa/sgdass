@@ -1,0 +1,44 @@
+      FUNCTION APPEND(STRING1,STRING2)
+      IMPLICIT NONE
+!
+! 1.  APPEND PROGRAM SPECIFICATION
+!
+! 1.1 Append STRING2 to STRING1 and return the concatenation
+!
+! 1.2 REFERENCES:
+!
+! 2.  APPEND INTERFACE
+!
+! 2.1 Parameter File
+!
+! 2.2 INPUT Variables:
+!
+      CHARACTER*(*) STRING1,STRING2
+!
+! STRING1,STRING2 - Two strings to be concatenated
+!
+! 2.3 OUTPUT Variables:
+!
+      CHARACTER*(*) APPEND
+!
+! APPEND - The concatenation of the two input strings
+!
+! 2.4 COMMON BLOCKS USED
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES:
+!       CALLED SUBROUTINES:
+!
+! 3.  LOCAL VARIABLES
+!
+      INTEGER*2 TRIMLEN
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!
+! 5.  APPEND PROGRAM STRUCTURE
+!
+      APPEND=STRING1(1:TRIMLEN(STRING1))//STRING2
+      RETURN
+      END

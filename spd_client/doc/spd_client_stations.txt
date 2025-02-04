@@ -1,0 +1,279 @@
+I Overview
+----------
+
+  Computation of slant path delay through the neutral atmosphere for
+reduction of SLR, GPS, VLBI and DORIS data is performed by three 
+procedures. The first procedure, data acquisition is performed by
+the designated server. The server downloads the numerical weather model
+GEOS-FPIT (Rienecker et al. 2008) developed and maintained by the Goddard 
+Modeling and Assimilation Office. The model has resolution 
+0.625 deg x 0.5 deg x 72 layers x 3 hours, runs from 2000.01.01 through 
+presents, updated 4 times a day and has latency 10-15 hours. The output of 
+the numerical weather model among other parameters contains thickness of 
+atmospheric layers, air temperature, and specific humidity at each grid 
+point. These parameters are used for computing refractivities at three
+wavelength ranges: 532nm, 1064 nm, and 1mm-30m (radio). The refractivity 
+accounts for both dry air and water vapor. The data acquisition procedure 
+stores for each epoch 3D refractivity field at a regular grid with 
+the height range from -1000, to 80000 km above the reference ellipsoid.
+The data acquisition procedure runs every hour and check whether the new output
+from the GEOS-FPIT model become available.
+
+  The second procedure computes slant path delay for a designated set of 
+stations. The path delay are computed on a regular, but non-uniform grid
+over azimuth and elevation. For each station, each epoch, each direction
+the trajectory of the wavefront is computed by solving a system of non-liner 
+differential equations of the 4th order that are the solution of the 
+variational problem of wave propagation in accordance with the Fermat 
+principle. Then the path delay is computed by integrating the refractivity
+along the trajectory from the receiver (i.e. observing station) to the 
+top of the atmosphere defined at the height of 80 km. All slant path 
+delay for all directions, all stations for a given epochs are stored in 
+an output file. Path delays for designated "continuous" stations are computed
+immediately after completion of the data acquisition procedure.
+
+  The third procedure is incorporated into a space geodesy data reduction
+software, such as GEODYN and Calc/Solve. The procedure determines the time 
+range of observations and the list of stations. It downloads files with slant 
+path delay on an azimuth-elevation grid. For each  station it expands the path
+delay over the tensor product of the 3D B-spline basis that runs over azimuth, 
+elevation, and time. Then, using these expansion coefficients, slant path 
+delay and its partial derivatives with respect to the path delay in zenith
+direction are computed to a given moment of time, given elevation and azimuth 
+of the geodetic observation.
+
+  The essential pre-requisite in this model is that the position of the 
+receiver is known with accuracy 1 meter and the emitter is assumed to
+be at distance greater than 1000 km.
+
+II. Routines:
+
+  The package SPD_CLIENT provides two routines for the the third procedure
+that are supposed to be called from a space geodesy data reduction software.
+The first routine, SPD_LOAD_BSPD, loads the data from a directory with 
+expansion coefficients in bspd format. The second routine, SPD_INTRP_DELAY,
+compute path delay by interpolation.
+
+a) SPD_LOAD_BSPD:
+
+   Routine  SPD_LOAD_BSPD  reads a list of directories with slant     
+   path delays in binary format, finds files for the specified list   
+   of stations ad the specified date range [MJD_BEG/TAI_BEG,          
+   MJD_END/TAI_END].  It reads the path delays and for each station   
+   computes te coefficients of the 3D B-spline expansion of path      
+   delay over mapping value, azimuth and time. Mapping values is      
+   a function of elevation angle. It is the ratio of path delay at    
+   a given elevation angle to the path delay at zenith direction for  
+   the ISA 1976 Standard Atmosphere. The coefficients are written in  
+   fields of array of objects SPD.                                    
+                                                                      
+   Slant path delay for a given station may be present in several     
+   directories. If so, the definition in the first directories will   
+   take the precedence. That mean, if the data for a given station    
+   present in i-th directory, the i+1, i+2, etc will not be sought.   
+                                                                      
+ ________________________ Input parameters: _________________________ 
+                                                                      
+         L_DIR ( INTEGER*4 ) -- The number of directories with        
+                                slant path delays in BSPD format.     
+         C_DIR ( CHARACTER ) -- List of directories with slant path   
+                                delay in BSPD format.                 
+                                Dimension: L_DIR.                     
+ SPD_BIAS_FILE ( CHARACTER ) -- File with biases of slant path delay. 
+                                NONE means no biases to slant path    
+                                delay will be applied.                
+  APD_NAME ( CHARACTER ) -- Model of partial derivatives with        
+                            respect to atmosphere path delay in       
+                            zenith direction. Supported models:       
+                    NMFW -- Niell (1996) mapping function (wet).      
+                    NMFH -- Niell (1996) mapping function             
+                            (hydrostatic) on the mean epoch.          
+             TOTAL_SCALE -- mapping function for the case when        
+                            residual atmosphere is considered         
+                            proportional to the total atmosphere.     
+                            The partial derivative is defined as      
+                            a ratio of the total slant path delay to  
+                            the total path delay in the zenith        
+                            direction.                                
+             WATER_SCALE -- mapping function for the case when        
+                            residual atmosphere is considered         
+                            proportional to the water vapor           
+                            contribution to the atmosphere.           
+                            The partial derivative is defined as a    
+                            ratio of the water vapor contribution of  
+                            slant path delay to the water vapor       
+                            contribution to path delay in the zenith  
+                             direction.                               
+          GAUSSIAN_LAYER -- mapping function for the case when the    
+                            dependence of concentration of the        
+                            residual atmosphere is described with     
+                            the Gaussian model with the specified     
+                            height and the specified full width half  
+                            maximum (FWHM).                           
+ LAYER_HEIGHT ( REAL*8 ) -- If the partial derivative model is        
+                            GAUSSIAN_LAYER, then APD_PAR1 is the      
+                            layer height in meters. Otherwise, it is  
+                            zero.                                     
+ LAYER_FWHM   ( REAL*8 ) -- If the partial derivative model is        
+                            GAUSSIAN_LAYER, then APD_PAR1 is the      
+                            layer FWHM in meters. Otherwise, it is    
+                            zero.                                     
+         L_STA ( INTEGER*4 ) -- The number of stations for which      
+                                slant path delay will be interpolated.
+         C_STA ( CHARACTER ) -- A list of station names for which     
+                                slant path delay will be interpolated.
+                                The name should be in the list of     
+                                stations for which the path delay     
+                                have been computed. Dimension: L_STA. 
+       MJD_BEG ( INTEGER*4 ) -- Integer Modified Julian Date of the   
+                                beginning of the interval of          
+                                interpolation. Units: days.           
+       TAI_BEG ( REAL*8    ) -- TAI time since the midnight of the    
+                                beginning of the interval of          
+                                interpolation. Units: sec.            
+       MJD_END ( INTEGER*4 ) -- Integer Modified Julian Date of the   
+                                end of the interval of interpolation. 
+                                Units: days.                          
+       TAI_END ( REAL*8    ) -- TAI time since the midnight of the    
+                                end of the interval of                
+                                interpolation. Units: sec.            
+                                                                      
+ _________________________ Output parameters: _______________________ 
+                                                                      
+      SPD ( SPD_DEL__TYPE ) -- Array of objects with Slant Path       
+                               Delays. Routine SPD_LOAD_BSPD will     
+                               populate internal fields of SPD        
+                               array. Dimension: L_STA.               
+                                                                      
+ ________________________ Modified parameters: ______________________ 
+                                                                      
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                           Input: switch IUER=0 -- no error messages  
+                                  will be generated even in the case  
+                                  of error. IUER=-1 -- in the case of 
+                                  error the message will be put on    
+                                  stdout.                             
+                           Output: 0 in the case of successful        
+                                   completion and non-zero in the     
+                                   case of error.                     
+
+b) SPD_LOAD_BSPD:
+
+   Routine SPD_INTRP_DELAY computes slant path delay, slant path      
+   delay rate, partial derivative of slant path delay on the delay    
+   in zenith direction, and partial derivative of slant path delay on 
+   the delay in zenith direction. These computations are based on     
+   the coefficients of expansion of path delay over 3D B-spline basis.
+                                                                      
+   It is assumed routine SPD_LOAD_BSPD was been called before, it has 
+   computed the coefficients of expansion slant path delay over       
+   B-spline basis and written them into array of SPD objects for      
+   a number of stations, including the station STA_NAM in this        
+   routine.                                                           
+                                                                      
+ ________________________ Input parameters: _________________________ 
+                                                                      
+ STA_NAM ( CHARACTER ) -- Station name. The station should be from    
+                          the list supplied to SPD_LOAD_BSPD.          
+   L_STA ( INTEGER*4 ) -- The number of stations for which the        
+                          B-spline expansion coefficients has been    
+                          computed by routine SPD_LOAD_BSPD.          
+     SPD ( SPD_DEL__TYPE ) -- Array of objects with Slant Path        
+                          Delays. The internal fields of SPD array    
+                          contains the coefficient of B-spline        
+                          expansion of path delay. Dimension: L_STA.  
+    ELEV ( REAL*8    ) -- Elevation angle. Units: radian.             
+    AZIM ( REAL*8    ) -- Azimuth counted from North to East.         
+                          Units: radian.                              
+ ELEV_RATE ( REAL*8  ) -- Rate of changes of elevation angle.         
+                          Units: rad/s.                               
+ AZIM_RATE ( REAL*8  ) -- Rate of changes of azimuth angle.           
+                          Units: rad/s.                               
+ MJD_OBS ( INTEGER*4 ) -- Integer Modified Julian Date of the         
+                          observation at midnight. Units: days.       
+ TAI_BEG ( INTEGER*4 ) -- TAI time since the midnight of the          
+                          observation. Units: sec.                    
+                                                                      
+ _________________________ Output parameters: _______________________ 
+                                                                      
+ SPD_DELAY         ( REAL*8     ) -- Slant path delay. Units: s.      
+ SPD_RATE          ( REAL*8     ) -- Time derivative of slant path    
+                                     delay. Units: dimensionless      
+ SPD_DELAY_DER_ZEN ( REAL*8     ) -- Partial derivative of slant path 
+                                     delay at a given AZ,EL over      
+                                     the path delay in zenith         
+                                     direction using only wet         
+                                     contribution to path delay       
+                                     (mapping function).              
+                                     Units: dimensionless.            
+ SPD_RATE_DER_ZEN  ( REAL*8     ) -- Partial derivative of slant path 
+                                     rate at a given AZ,EL over       
+                                     the path delay in zenith         
+                                     direction using only wet         
+                                     contribution to path delay.      
+                                     Units: 1/sec                     
+                                                                      
+ ________________________ Modified parameters: ______________________ 
+                                                                      
+    IUER ( INTEGER*4, OPT ) -- Universal error handler.               
+                           Input: switch IUER=0 -- no error messages  
+                                  will be generated even in the case  
+                                  of error. IUER=-1 -- in the case of 
+                                  error the message will be put on    
+                                  stdout.                             
+                           Output: 0 in the case of successful        
+                                   completion and non-zero in the     
+                                   case of error.                     
+
+3) Auxilary program spd_3d_toser
+
+   The second procedure computes path delay in a file in ascii 
+spd_3d format , one file per epoch. That file contains path delay for 
+all the stations of a given epoch. SPD_LOAD_BSPD expects to find
+slant path in a file in binary format bspd. The data in bspd formats
+holds all path delays for a given station. The server that computes 
+path delays in ascii format also also invokes program spd_3d_toser 
+that transforms the results in binary bspd format. That program
+is also provided by the SPD_CLIENT package.
+
+Usage: spd_3d_toser {dir_in} {pref_out} {create/update} [ivrb]
+
+1st argument dir_in is the directory with files with path delays
+in spd_3d format. The second argument is the prefix that is prepended
+to the output files, usually full path directory name and some word.
+The third argument is either create or update. If create is selected
+the new output files will be created. If update is selected, the output
+files will be read and new records will be appended to the end.
+The fourth optional argument is verbosity level. irvb=0 means silent mode,
+ivrb=1 means normal verbosity (default), and ivrb=2 shows the progress
+of the operation.
+
+NB: No gaps in the time series of slant path delay is allowed. If a gap will
+be found, an error message will be issued.
+
+
+III. Example:
+-------------
+
+     spd_show -- example of computing path delay at a given epoch.
+
+
+
+IV: References: 
+---------------
+
+
+Petrov, L., ICESAT-2 Algorithm Technical Base Document for Atmospheric
+delay correction to laser altimetry ranges, 2015, submitted
+
+Petrov, L., Modeling of path delay in the neutral atmosphere: a paradigm shift,
+to appear in the Proceedings of the 12th European VLBI Network Symposium and 
+Users Meeting, 7-10 October 2014 Cagliari, Italy
+http://arxiv.org/abs/1502.06678
+
+Rienecker, M.M., Suarez, M.J., Todling, R., Bacmeister, J., Takacs, L., 
+Liu, H.C., Sienkiewicz, W.M., Koster, R.D., Gelaro, R., Stajner I., 
+and Nielsen E., ``The GEOS Data Assimilation System --- Documentation 
+of Versions 5.0.1, 5.1.0, and 5.2.0.'', NASA/TM--2008--104606, 2008. 
+http://gmao.gsfc.nasa.gov/pubs/docs/tm27.pdf
+

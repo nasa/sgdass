@@ -1,0 +1,84 @@
+model name      : Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz
+40    cores
+384Gb memory
+================================================================
+ Date: 2021.07.28-22:13:35
+ Dimension:          500  Number of iterations:           10
+INVS Dimension:      500 Wall time:        0.045257 s  CPU time:        0.039401
+INVS Dimension:      500 Wall time:        0.036227 s  CPU time:        0.031065
+INVS Dimension:      500 Wall time:        0.035697 s  CPU time:        0.030859
+INVS Dimension:      500 Wall time:        0.036415 s  CPU time:        0.030536
+INVS Dimension:      500 Wall time:        0.035719 s  CPU time:        0.030133
+INVS Dimension:      500 Wall time:        0.036782 s  CPU time:        0.030861
+INVS Dimension:      500 Wall time:        0.034744 s  CPU time:        0.030503
+INVS Dimension:      500 Wall time:        0.036309 s  CPU time:        0.030585
+INVS Dimension:      500 Wall time:        0.036141 s  CPU time:        0.030103
+INVS Dimension:      500 Wall time:        0.035405 s  CPU time:        0.030358
+ Date: 2021.07.28-22:13:36
+ Dimension:         1000  Number of iterations:           10
+INVS Dimension:     1000 Wall time:        0.152726 s  CPU time:        0.131885
+INVS Dimension:     1000 Wall time:        0.147845 s  CPU time:        0.126939
+INVS Dimension:     1000 Wall time:        0.146640 s  CPU time:        0.126042
+INVS Dimension:     1000 Wall time:        0.146360 s  CPU time:        0.125401
+INVS Dimension:     1000 Wall time:        0.146505 s  CPU time:        0.126333
+INVS Dimension:     1000 Wall time:        0.146164 s  CPU time:        0.126490
+INVS Dimension:     1000 Wall time:        0.146454 s  CPU time:        0.126946
+INVS Dimension:     1000 Wall time:        0.146110 s  CPU time:        0.126605
+INVS Dimension:     1000 Wall time:        0.144500 s  CPU time:        0.125890
+INVS Dimension:     1000 Wall time:        0.144991 s  CPU time:        0.125779
+ Date: 2021.07.28-22:13:37
+ Dimension:         4096  Number of iterations:           10
+INVS Dimension:     4096 Wall time:        2.435571 s  CPU time:        2.285445
+INVS Dimension:     4096 Wall time:        2.447991 s  CPU time:        2.302451
+INVS Dimension:     4096 Wall time:        2.384527 s  CPU time:        2.243214
+INVS Dimension:     4096 Wall time:        2.482421 s  CPU time:        2.336290
+INVS Dimension:     4096 Wall time:        2.386005 s  CPU time:        2.244462
+INVS Dimension:     4096 Wall time:        2.550831 s  CPU time:        2.404526
+INVS Dimension:     4096 Wall time:        2.439411 s  CPU time:        2.289954
+INVS Dimension:     4096 Wall time:        2.397380 s  CPU time:        2.248745
+INVS Dimension:     4096 Wall time:        2.369148 s  CPU time:        2.219738
+INVS Dimension:     4096 Wall time:        2.429808 s  CPU time:        2.277302
+ Date: 2021.07.28-22:14:02
+ Dimension:        10000  Number of iterations:            2
+INVS Dimension:    10000 Wall time:        9.647587 s  CPU time:        9.210864
+INVS Dimension:    10000 Wall time:        9.356545 s  CPU time:        8.917962
+ Date: 2021.07.28-22:14:21
+ Dimension:        20000  Number of iterations:            2
+INVS Dimension:    20000 Wall time:       39.074087 s  CPU time:       37.976000
+INVS Dimension:    20000 Wall time:       38.850270 s  CPU time:       37.729762
+ Date: 2021.07.28-22:15:40
+ Dimension:        30000  Number of iterations:            2
+INVS Dimension:    30000 Wall time:       96.532933 s  CPU time:       92.979827
+INVS Dimension:    30000 Wall time:       96.979493 s  CPU time:       93.379621
+ Date: 2021.07.28-22:18:56
+ Dimension:        40000  Number of iterations:            2
+INVS Dimension:    40000 Wall time:      174.302796 s  CPU time:      168.418928
+INVS Dimension:    40000 Wall time:      176.581854 s  CPU time:      170.728286
+ Date: 2021.07.28-22:24:52
+ Dimension:        50000  Number of iterations:            2
+INVS Dimension:    50000 Wall time:      349.347446 s  CPU time:      340.143704
+INVS Dimension:    50000 Wall time:      339.560864 s  CPU time:      329.380904
+ Date: 2021.07.28-22:36:31
+ Dimension:        60000  Number of iterations:            1
+INVS Dimension:    60000 Wall time:      482.678101 s  CPU time:      475.895853
+ Date: 2021.07.28-22:44:51
+ Dimension:        70000  Number of iterations:            1
+INVS Dimension:    70000 Wall time:      686.801515 s  CPU time:      670.257882
+ Date: 2021.07.28-22:56:36
+ Dimension:        80000  Number of iterations:            1
+INVS Dimension:    80000 Wall time:     1053.003121 s  CPU time:     1040.028323
+ Date: 2021.07.28-23:14:40
+ Dimension:        90000  Number of iterations:            1
+INVS Dimension:    90000 Wall time:     1253.658302 s  CPU time:     1232.280146
+ Date: 2021.07.28-23:36:06
+ Dimension:       100000  Number of iterations:            1
+INVS Dimension:   100000 Wall time:     1679.324972 s  CPU time:     1658.139274
+ Date: 2021.07.29-00:04:56
+ Dimension:       150000  Number of iterations:            1
+INVS Dimension:   150000 Wall time:     4260.076050 s  CPU time:     4219.323398
+ Date: 2021.07.29-01:17:50
+ Dimension:       200000  Number of iterations:            1
+INVS Dimension:   200000 Wall time:     8405.708251 s  CPU time:     8333.338903
+ Date: 2021.07.29-03:41:04
+ Dimension:       250000  Number of iterations:            1
+INVS Dimension:   250000 Wall time:    15110.023970 s  CPU time:    15011.905426

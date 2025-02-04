@@ -1,0 +1,157 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *  C-shell program for configuration of sur_sked. It creates Makefile. *
+# *                                                                      *
+# *  ###  15-JUN-2016   configure   v2.2 (c)  L. Petrov 20-NOV-2020 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+setenv  LANG   C
+setenv  LC_ALL C
+unalias *
+#
+support/csh_test.csh
+set status = $status
+if ( $status != 0 ) then
+     echo " "
+     echo "./configure: Please fix your shell and then try again"
+     exit 1
+endif
+#
+# -- Initialization
+#
+setenv NERS_VERSION         "20210824"
+#
+setenv PETOOLS_VERSION_MIN  "20200501"
+setenv NERS_PREFIX          /opt
+setenv NERS_PYTHON          "UNKNOWN"
+setenv NERS_ROOT           `dirname $0`
+if ( $NERS_ROOT == '.' )    setenv NERS_ROOT `pwd`
+setenv PETOOLS_PREFIX       NO
+setenv CFITSIO_PREFIX       NO
+setenv SPC_PREFIX           NO
+setenv MK5_CC               "gcc"
+setenv MK5_FC               "gfortran"
+setenv MK5_LDFLAGS          ""
+setenv ners_debug           0
+setenv NERS_NOOPT           "NO"
+setenv CONF_LOG             ${NERS_ROOT}/temp/conf.log
+setenv BUILD_LOG            ${NERS_ROOT}/temp/build.log
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv NERS_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_prefix > 0 ) then
+          setenv ners_debug 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv NERS_NOOPT "YES"
+          set find_option = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_PREFIX "$str"
+          set find_option = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--without-petools")}'`
+     if ( $match_petools > 0 ) then
+	  setenv PETOOLS_PREFIX NO
+          set find_option = 1
+     endif
+#
+     set match_python = `echo $arg | awk '{print index($1,"--python-dir")}'`
+     if ( $match_python > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,14)}'`
+	  setenv NERS_PYTHON "$str"
+          set find_option = 1
+     endif
+#
+     set match_python = `echo $arg | awk '{print index($1,"--without-python")}'`
+     if ( $match_python > 0 ) then
+	  setenv NERS_PYTHON "NO"
+          set find_option = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $NERS_ROOT/doc/ners_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     set match_cc = `echo $arg | awk '{print index($1,"CC")}'`
+     if ( $match_cc > 0 ) then
+	  setenv MK5_CC   `echo $arg | awk '{printf substr($0,4)}'`
+          set find_option = 1
+     endif
+#
+     set match_fc = `echo $arg | awk '{print index($1,"FC")}'`
+     if ( $match_fc > 0 ) then
+	  setenv MK5_FC   `echo $arg | awk '{printf substr($0,4)}'`
+          set find_option = 1
+     endif
+#
+     set match_ldflags = `echo $arg | awk '{print index($1,"LDFLAGS")}'`
+     if ( $match_ldflags > 0 ) then
+	  setenv MK5_LDFLAGS `echo $arg | awk '{printf substr($0,9)}'`
+          set find_option = 1
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo NERS: $NERS_VERSION"
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+echo "NERS config  $date_stamp  on  $host_name" >&! $CONF_LOG
+echo "$0 $argv" >> $CONF_LOG
+if ( $NERS_PYTHON == "UNKNOWN" ) then
+     setenv NERS_PYTHON "NO"
+endif
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+if ( $ners_debug == 0 ) then
+     support/config.csh | tee -a temp/conf.log
+     set config_status = $status
+  else
+     csh -xf support/config.csh | tee -a temp/conf.log
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed." | tee -a temp/conf.log
+     echo "Now run  make"               | tee -a temp/conf.log
+     exit 0
+  else
+     echo "Error in configuration."     | tee -a temp/conf.log
+     exit $config_status
+endif

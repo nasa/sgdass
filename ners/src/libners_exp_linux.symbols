@@ -1,0 +1,4 @@
+FOO {
+  global: ners_get_eop; ners_get_series; ners_init; ners_load; ners_inq; ners_quit; ners_get_utcmtai; ners_azelha_comp; ners_get_eop_; ners_get_series_; ners_init_; ners_load_; ners_inq_; ners_quit_; ners_get_utcmtai_; ners_version; ners_get_version_; ners_azelha_comp_; # explicitly list symbols to be exported
+  local: *;         # hide everything else
+};

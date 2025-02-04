@@ -1,0 +1,98 @@
+Processing of dual-band data with Calc/Solve.
+---------------------------------------------
+
+  It should be noted that Calc/Solve treatment of dual-band is a little 
+bit tricky. Due to historical reasons, Calc/Solve considers observations 
+at two bands as different experiments. This approach was justified for 
+processing early data at site ONSALSA. That site has two antennas: ONASLA85
+which had S-band only receiver and ONSALA60 which before 1988 did not 
+had S-band received, but had only X-band receiver. This was an exceptional
+transitional situation, but, unfortunately, for a long it was treated as 
+a rule. Program DBEDIT creates two separate files for a VLBI experiment:
+one for low band (S), another for the high band (X). Calc/Solve does not
+have an ability to process gently data with three or mode bands.
+
+  Initially, the database version 1 that has letter X in the suffix of its 
+name has only results of post-correlator processing of X-band data, and the 
+database with letter S in the suffix has results of processing of S-band 
+data. Such databases are called incomplete. In  order to make the database 
+complete a user should 1) first load the database with letter X in the suffix;
+2) load the database with letter S in the the suffix; 3) run either program
+GAMB, which called by striking letter A in OPTIN menu, or program IONO 
+which called by striking letter [ in OPTIN menu. These programs are for 
+resolving group delay ambiguities and computing ionospheric contribution to 
+delay (GAMB) or only for computing ionospheric contribution to the time 
+delay (IONO). In addition to their main business, they performs the second 
+very important function: they copy 27 lcodes with S-band related information 
+from the database file with suffix S in its name to the database with 
+suffix X in its name. After that the database with suffix S will not be needed 
+for Calc/Solve, since Solve can find everything that it is able to digest in 
+the database with suffix X in its name. GAMB and IONO must be the first 
+programs which are executed when an incomplete database is processed. 
+The database becomes complete.
+
+  A complete database contains 8 observables per observation:
+
+    X-band group delay
+    X-band phase delay
+    X-band single band delay (or narrow-band delay)
+    X-band phase delay rate
+    S-band group delay
+    S-band phase delay
+    S-band single band delay (or narrow-band delay)
+    S-band phase delay rate
+
+  When Solve builds the equations of conditions which arise in the LSQ problem
+it puts a linear combination of these eight observables in the right-hand 
+side. The specific choice of the coefficients of of this linear combination is 
+called "solution type". Calc/Solve supports 21 solution types for complete
+database and 8 solutions types for an incomplete database.
+
+  Solution type is selected by hitting + in the last page of OPTIN menu
+in interactive solutions, or by specifying  keyword TYPE in the $DATA section
+of a batch control file. Solution types, which are unavailable for an 
+incomplete database, are marked with asterisk in the menu.
+
+  Among other solutions types, Solve supports "Group delay X-band" and
+"Group delay S-band" solution type. So one can make S-band solution using
+the database with suffix with letter "X". In the past database with letter
+X in the suffix were called "X-band database", and database with letter S
+in the suffix were called "S-band databases". This is misleading. A complete
+database with letter X in the suffix should be considered as an XS database.
+S-band in the XS databases were temporarily separated from the X-band database 
+by DBEDIT and happily re-united together with Solve a little bit later. 
+
+  So, a compete database has both X and S band data. An interactive Solve 
+allows to switch solution type any time using menu. In order to make an S-band
+solution, one should not look for another database file, but it is sufficient
+to select "group delay S-band" in the many at the last page of OPTIN, run
+solution and get residuals. Results will be the same as if the database file
+with letter S in the suffix were loaded.
+
+  It is legitimate to make the following trick: to run interactive solution
+with one solution type, for example, "group delay S-band", then switch solution 
+type, for instance to "group delay X-band" and then compute residuals 
+once again without running new solutions, by hitting key @ in the OPTIN
+menu. This trick will produce X-band residuals with respect to the S-band group 
+delay solutions. The technique like that may be useful for resolving group 
+or phase ambiguities in difficult cases.
+
+  If the database is incomplete, then the only way to use dual-band 
+ionosphere-free linear combination of observables is to select solution
+type "Group delay only" and apply so-called calibration for ionosphere.
+This means that a quantity <ionosphere free linear combination of X/S group 
+delay observables minus X-band group delay> previously computed and stored
+in the databases will be added to group delay observables. This is equivalent
+to using "G-GXS combination" soltution type for a complete database. 
+Sometimes we have to use incomplete databses because S-band data were either
+unavailable or lost, but ionosphere contribution can be obtained from
+external datasets.
+
+  A caveat. Although Solve supports 21 solutions types, it has only
+two slots for suppression flags: one for all group delay type of observation
+types and another for phase delay observation types. This means that a user
+switches from one group delay solution type to another, for example from
+"G-Gxs combination" to "Group delay S-band", the same suppression status
+will be applied which may not always be desirable.
+
+  Read also $MK5_ROOT/help/elim_05.hlp

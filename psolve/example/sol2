@@ -1,0 +1,24 @@
+#!/bin/csh -f
+if ( -f $2 == 0 )then
+     echo "Cannot find control file $2"
+     exit 1
+endif
+if ( $1 == PE ) set log_file = $pel
+if ( $1 == P1 ) set log_file = $p1l
+if ( $1 == P2 ) set log_file = $p2l
+if ( $1 == P3 ) set log_file = $p3l
+#
+$Tl/sol $1 $2 no >>& $log_file
+set sol_status = $status
+if ( $sol_status != 0 ) then
+     $Tl/sol $1 $2 auto  >>& $log_file
+     if ( $sol_status != 0 ) then
+          $Tl/sol $1 $2 auto  >>& $log_file
+          if ( $sol_status != 0 ) then
+               $Tl/sol $1 $2 auto  >>& $log_file
+               if ( $sol_status != 0 ) then
+                    $Tl/sol $1 $2 auto  >>& $log_file
+               endif
+          endif
+     endif
+endif

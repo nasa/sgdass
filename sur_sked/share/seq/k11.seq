@@ -1,0 +1,25 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+#  Frequency sequence used for KOKEE12 tie experiments
+#
+#  Astronomical convention is used for band definition
+#  For instance notation 2004.1 32.0 means the band
+#  that covers range [2004.1, 2036.1] MHz
+#
+#  Last updated by L. Petrov on 2023.07.01_14:11:20
+#
+HDS_NAME  v02
+MOD_NAME  k01
+#
+STATION KOKEE12M  K2  udc_01  rdbe
+#
+#  Bnd Low_frq bandwidh
+#
+BAND C  8416.4  32.0  dir
+BAND C  8480.4  32.0  dir
+BAND C  8512.4  32.0  dir
+BAND C  8544.4  32.0  dir
+BAND C  8672.4  32.0  dir
+BAND C  8704.4  32.0  dir
+BAND C  8800.4  32.0  dir
+BAND C  8864.4  32.0  dir

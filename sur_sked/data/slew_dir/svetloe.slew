@@ -1,0 +1,24 @@
+# Station slew format of  2018.02.02
+#
+# rms over azimith:   4.5 s
+# rms over elevation: 4.7 s
+#
+# 2018.01.24 Slewing rate and settle time is adjusted according to epa001 experiment
+# 2018.03.02 Changed EL_MIN, EM_MAX from 5, 85  to 10, 80
+#
+SHORT_NAME:  SVETLOE   Sv
+LAST_UPDATE: SVETLOE   2018.03.02
+COORD:       SVETLOE   meters    2730173.983   1562442.587  5529969.046
+MOUNT:       SVETLOE   char       ALTAZ
+SLEW_AZ:     SVETLOE   deg/sec    1.33
+SLEW_EL:     SVETLOE   deg/sec    0.51
+ACCL_AZ:     SVETLOE   deg/sec^2  0.05
+ACCL_EL:     SVETLOE   deg/sec^2  0.18
+TSETTLE_AZ:  SVETLOE   sec        4.0
+TSETTLE_EL:  SVETLOE   sec       26.0
+EL_MIN:      SVETLOE   deg       10.0
+EL_MAX:      SVETLOE   deg       80.0
+AZ_RANGE:    SVETLOE   deg      -78.0   78.0  282.0  438.0
+RECORDER:    SVETLOE   char      mark5
+PREOB:       SVETLOE   sec       10.0
+POSTOB:      SVETLOE   sec        2.0

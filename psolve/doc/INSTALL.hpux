@@ -1,0 +1,44 @@
+	I. Installation of Calc/Solve under HP-UX.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For installation of Calc/Solve under HP-UX you need
+
+1) Fortran90 HP compiler version 2.0 or higher. Calc/Solve has been tested 
+   with Fortran90 HP version 2.4 and 2.5 . It is known that it cannot be 
+   compiled with Fortran90 HP version 1.0, since that compiler has too many 
+   bugs and does not not conform Fortran specifications. If you are unfortunate
+   to have this ancient compiler you have to upgrade it first. It is unclear 
+   whether Calc/Solve can be compiled with Fortran90 HP 2.0,2.1,2.2 or 2.3 .
+
+   Compiler should be invoked as f95 and as f90. If it does not, you need 
+   to set an alias or a wrapper shell program for calling the compiler. 
+   For example,
+
+   #!/bin/csh -f
+   /bin/f90 $argv
+
+
+2) C compiler. HP-UX cc or gcc work fine. Compiler should be invoked as cc
+   and as c89. If it does not, you need to make an alias, syslink or a 
+   wrapper script.
+
+3) It was reported that at some systems compilation aborted with 
+   "Segmentaion fault" message. The problem was traced and the HP-UX "make"
+   was the reason. If you experience this problem you have to install
+   gmake vrsion 3.70 or higher and add the line 
+
+      setenv SOLVE_MAKE gmake
+      
+   in your $MK5_ROOT/local/bin.lcl  file.
+
+4) Install zip and unzip. 
+   http://www.info-zip.org/pub/infozip/
+
+5) Install wget 
+   http://www.gnu.org/software/wget/wget.html
+
+6) After that you can install Mark5 VLBI Analysis Software Calc/Solve.
+   Refer to installation instruction in $MK5_ROOT/help/INSTALL
+
+
+2003.07.25_09:24:11

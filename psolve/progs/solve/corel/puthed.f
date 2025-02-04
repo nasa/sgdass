@@ -1,0 +1,18 @@
+      SUBROUTINE PUTHED(ROWNAM,COLNAM,ROWS,COLS,ROWNUM,COLNUM)
+      IMPLICIT   NONE ! Updated by Jim Ryan for I*4 compliance, Sept 2002
+      CHARACTER*(*) ROWNAM,COLNAM
+      INTEGER*2  ROWS, COLS, ROWNUM, COLNUM, TRIMLEN
+      INTEGER*4  IOS
+!
+      INCLUDE 'corpar.i'
+      INCLUDE 'corcom.i'
+!
+      WRITE ( LUOUT, 92, IOSTAT=IOS ) ROWNUM,ROWS,ROWNAM(1:TRIMLEN(ROWNAM))
+      CALL FERR ( INT2(IOS), "Writing header", INT2(0), INT2(0) )
+   92 FORMAT(/,2X,I5,1X,I5,1X,A)
+      WRITE ( LUOUT, 93, IOSTAT=IOS ) DATE
+      CALL FERR ( INT2(IOS), "Writing header", INT2(0), INT2(0) )
+   93 FORMAT(A)
+!
+      RETURN
+      END

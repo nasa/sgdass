@@ -1,0 +1,13 @@
+#!/bin/csh
+setenv SOLVE_PREFIX     /opt64
+setenv SOLVE_INCLUDE    /opt64/include
+setenv SPOOL_DIR        /scr/psolve/spool_dir
+setenv WORK_DIR         /scr/psolve/work_dir
+setenv CGM_DIR          /scr/psolve/cgm_dir
+setenv GVF_DIR          /l2/gvf
+setenv PIMA_SCR         undefined
+setenv SOLVE_VERSION    20241125
+setenv SOLVE_STP_DIR    /cont/stp
+setenv SOLVE_PS_VIEWER  /usr/bin/display
+setenv SOLVE_GIF_VIEWER /usr/bin/display
+setenv SOLVE_GVF_DIR    /l2/gvf

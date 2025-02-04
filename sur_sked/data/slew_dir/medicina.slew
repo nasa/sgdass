@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  MEDICINA  Mc
+LAST_UPDATE: MEDICINA  2018.01.20
+COORD:       MEDICINA  meters     4461369.985   919596.819  4449559.208
+MOUNT:       MEDICINA  char       ALTAZ
+SLEW_AZ:     MEDICINA  deg/sec    0.75
+SLEW_EL:     MEDICINA  deg/sec    0.50
+ACCL_AZ:     MEDICINA  deg/sec^2  0.82
+ACCL_EL:     MEDICINA  deg/sec^2  0.31
+TSETTLE_AZ:  MEDICINA  sec        3.0
+TSETTLE_EL:  MEDICINA  sec        3.0
+EL_MIN:      MEDICINA  deg       15.0
+EL_MAX:      MEDICINA  deg       88.5
+AZ_RANGE:    MEDICINA  deg      -90.0 90.0 270.0 450.0
+RECORDER:    MEDICINA  char      mark5
+PREOB:       MEDICINA  sec       10.0
+POSTOB:      MEDICINA  sec        2.0

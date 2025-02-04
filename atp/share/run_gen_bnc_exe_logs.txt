@@ -1,0 +1,65 @@
+started:  2024-04-16 20:47:32.942323  PID:  861555
+get_logs: getting logs dictionary from cddis
+get_logs: getting local logs list
+get_logs: getting diff. between cddis and local
+get_logs: downloading from cddis
+get_logs: finished at  2024-04-16 21:11:17.823013
+PID =  861555  runtime:  0:23:44.880690
+started:  2024-04-17 21:01:11.377391  PID:  1181223
+get_logs: getting logs dictionary from cddis
+
+ERROR in accessing  https://cddis.nasa.gov/archive/vlbi/ivsdata/aux/2023/y3094a/
+See the log file  /f2/anc/temp/wget_2023y3094a_01181223.log
+So we are skipping this directory
+get_logs: getting local logs list
+get_logs: getting diff. between cddis and local
+get_logs: downloading from cddis
+get_logs: finished at  2024-04-17 21:21:57.837493
+PID =  1181223  runtime:  0:20:46.460102
+started:  2024-04-17 21:21:57.893260
+write_log_paths_to_file: getting log list
+write_log_paths_to_file: writting log list to file
+Wrote log paths to:  /progs/atp_20230928/share/vlbi_log_file_paths.txt
+write_log_paths_to_file: finished at  2024-04-17 21:21:58.021193
+PID =  1189344  runtime:  0:00:00.127933
+started:  2024-04-18 20:02:30.976708  PID:  1596033
+get_logs: getting logs dictionary from cddis
+\get_logs.py: Interrupted
+started:  2024-04-18 20:03:12.784598  PID:  1596130
+get_logs: getting logs dictionary from cddis
+
+ERROR in accessing  https://cddis.nasa.gov/archive/vlbi/ivsdata/aux/2023/ohg144/
+See the log file  /f2/anc/temp/wget_2023ohg144_01596130.log
+So we are skipping this directory
+
+ERROR in accessing  https://cddis.nasa.gov/archive/vlbi/ivsdata/aux/2024/i24016/
+See the log file  /f2/anc/temp/wget_2024i24016_01596130.log
+So we are skipping this directory
+
+ERROR in accessing  https://cddis.nasa.gov/archive/vlbi/ivsdata/aux/2024/i24102/
+See the log file  /f2/anc/temp/wget_2024i24102_01596130.log
+So we are skipping this directory
+get_logs: getting local logs list
+get_logs: getting diff. between cddis and local
+get_logs: downloading from cddis
+get_logs: finished at  2024-04-18 20:36:16.066192
+PID =  1596130  runtime:  0:33:03.281594
+started:  2024-04-18 20:36:16.126470
+write_log_paths_to_file: getting log list
+write_log_paths_to_file: writting log list to file
+Wrote log paths to:  /progs/atp_20230928/share/vlbi_log_file_paths.txt
+write_log_paths_to_file: finished at  2024-04-18 20:36:16.254302
+PID =  1605709  runtime:  0:00:00.127832
+started:  2024-04-22 15:55:25.650942  PID:  2424204
+get_logs: getting logs dictionary from cddis
+get_logs: getting local logs list
+get_logs: getting diff. between cddis and local
+get_logs: downloading from cddis
+get_logs: finished at  2024-04-22 16:08:23.858896
+PID =  2424204  runtime:  0:12:58.207954
+started:  2024-04-22 16:08:23.913202
+write_log_paths_to_file: getting log list
+write_log_paths_to_file: writting log list to file
+Wrote log paths to:  /progs/atp_20230928/share/vlbi_log_file_paths.txt
+write_log_paths_to_file: finished at  2024-04-22 16:08:24.041392
+PID =  2430907  runtime:  0:00:00.128190

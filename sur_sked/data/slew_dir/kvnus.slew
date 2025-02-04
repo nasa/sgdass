@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  KVNUS     Ku
+LAST_UPDATE: KVNUS     2018.01.20
+COORD:       KVNUS     meters     -3287268.1566 4023449.1207 3687380.1796
+MOUNT:       KVNUS     char       ALTAZ
+SLEW_AZ:     KVNUS     deg/sec    2.95
+SLEW_EL:     KVNUS     deg/sec    2.95
+ACCL_AZ:     KVNUS     deg/sec^2  3.00
+ACCL_EL:     KVNUS     deg/sec^2  3.00
+TSETTLE_AZ:  KVNUS     sec        2.0 
+TSETTLE_EL:  KVNUS     sec        2.0 
+EL_MIN:      KVNUS     deg       10.0
+EL_MAX:      KVNUS     deg       88.0
+AZ_RANGE:    KVNUS     deg      -85.0 85.0 275.0 445.0
+RECORDER:    KVNUS     char      mark5
+PREOB:       KVNUS     sec        2.0
+POSTOB:      KVNUS     sec        2.0

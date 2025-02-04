@@ -1,0 +1,16 @@
+Global numerical weather model MERRA is used for this computation.
+It has 72 terrain following levels from the surface to 1 Pa level,
+0.67 deg resolution over longitude, 0.5 deg resolution over
+latitude and 6 hour time resolution.
+
+Reference that describes MERRA:
+
+  Rienecker, M.M., M.J. Suarez, R. Gelaro, R. Todling, J. Bacmeister, 
+  E. Liu, M.G. Bosilovich, S.D. Schubert, L. Takacs, G.-K. Kim, S. Bloom, 
+  J. Chen, D. Collins, A. Conaty, A. da Silva, et al. (2011), 
+  MERRA: NASA's Modern-Era Retrospective Analysis for Research and 
+  Applications. J. Climate, 24, 3624-3648, doi:10.1175/JCLI-D-11-00015.1. 
+  http://journals.ametsoc.org/doi/abs/10.1175/JCLI-D-11-00015.1
+
+The data were downloaded from
+ftp://goldsmr3.sci.gsfc.nasa.gov/data/opendap/MERRA/MAI6NVANA.5.2.0

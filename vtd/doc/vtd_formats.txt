@@ -1,0 +1,1527 @@
+Formats of apriori files for VTD.
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+I.  Preliminaries
+#################
+
+1.1) Date format:
+
+     Internally dates are kept in VTD in a pair of variables:
+     MJD of INTEGER*4 type and TAI of REAL*8 type. TAI keeps
+     time alapsed from the midnight. External dates can be
+     presetned in two fromats: Solve format compatible with
+     ISO 8601 and VEX format.
+
+1.1.1) Solve format presents the date in the form
+  
+       YYYY.MM.DDThh:mm:ss.ssssssssss
+       where YYYY stands for year
+               MM stands for the month number
+               DD stands for the day of month
+               hh stands for the hour
+               mm stands for the minute
+               ss stands for the second. Decimal point
+                  and the fractional part are optional
+
+       Example: 2010.06.20T10:45:51.120391
+       This format is compatible with ISO 8601.
+
+       VTD also accepts date with chanracter "_" instead of "T"
+       in the 11-th position for better readability.
+       Example: 2010.06.20_10:46:36
+       This format is incompatible with ISO 8601.
+
+1.1.2) VEX format presnts the date in the form
+
+       YYYYyDDDdHHhNNmSS.SSSSSSs
+
+       where YYYY stands for year
+              DDD stands for the day of year
+               HH stands for the hour
+               NN stands for the minute
+               SS stands for the second. Decimal point
+                  and the fractional part are optional
+
+       Examples:
+
+       2010y171d10h49m19.129803s
+       2010y171d10h50m49s
+
+1.2) Angles
+
+     Angles are presented in the form
+     DDD_MM_SS.SSSSS or HH_MM_SS.SSSSS
+     where DDD is degree
+            MM is arcminue
+            SS is arcsecond. Decimal point
+               and the fractional part are optional
+
+     or    HH  is hour
+           MM  is minute
+           SS  is second of time. Decimal point
+               and the fractional part are optional
+
+     Delimeters "_" or ":" are acceptable
+
+     Examples: 
+
+     -64_21_58.19083
+     +64:21:58
+      10:52:02.282921
+      10_54_57
+
+II.  Data formats
+#################
+
+ 1) LEAP_SECOND:
+ ===============
+    Label:   # LEAP_SECOND file  Version of 2004.01.29
+    Purpose: Data file im LEAP_SECOND format contains the dates of
+             of the difference TAI-UTC as a function of UTC time tag.
+             TAI stands for international atmoic time 
+             (Temps Atomique International), and UTC is a non-differential
+             step-wise function of time.
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/leapsec.dat
+
+    Comment  character: #
+    Data record format:
+
+    Field   1:6   A6    Delimiter: Date: 
+    Field   7:27  A21   Date as UTC time tag in Solve format.  
+    Field  28:38  A11   Delimtere:   TAI-UTC: 
+    Field  39:43  F5.1  The difference TAI minus UTC
+
+
+ 2) DE_EPHEMERIDES: 
+ ==================
+    Label:   ?
+    Purpose: Table of Chebyshev coefficients for expansion of positions
+             of the Sun, Moon and 9 major planets.
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/DE403_JPL.dat
+
+    Comment  character:  n/a
+    Data record format:  I completely forgot, sorry. It is rather complicated
+
+ 3) STATION_DESCRIPTION:
+ =======================
+    Label:   # STATION DESCRIPTION   Format version of 2004.01.26
+    Purpose: Defines name of the tectinoic plate, type of the 
+             mounting, and the value of axis offset for stations.
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/station.desc
+    
+    Comment  character:  #
+    Data record format:
+
+    Field   1:8   A8    IVS Site name
+    Field  12:15  A4    Antenna mounting code: AZEL, EQUA, X-YN, X-YE, RICH
+    Field  18:25  F8.5  Antenna offset (m)
+    Field  28:31  A4    Tectonic plate according to NUVEL 
+    Field  35:80  A46   Comments
+
+ 4) SOURCE_COORDINATES:
+ ======================
+    Three formats are supported
+
+ 4.1) SOU-MODFILE
+
+    Label:   $$  SOU-MODFILE Format pre-2000
+    Purpose: Defines IVS source name, source right ascension,
+             source declination, and the semi-major axis of the
+             error ellipse.
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/glo.src
+
+    Comment  character:  $
+    Data record format:
+
+    2357-326  00 00 20.399945     -32 21 01.23327     0.60  ! J0000-3221
+ 
+    Field   1:4   A4    Delimeter. Must be blank     
+    Field   5:12  A8    IVS name of the source. For 98% sources IVS name 
+                        coincides with B1950 name. For remaining sources 
+                        a common name is used.
+
+    Field  15:16  I2    Hours of right ascension
+    Field  18:19  I2    Minutes of right ascension
+    Field  21:28  F9.6  Seconds of right ascension
+    Field  35:37  I3    Degrees of declination
+    Field  39:40  I3    Minutes of declination
+    Field  42:49  F8.5  Arcseconds of declination
+    Field  53:58  F6.2  Semi-major axis of the error ellipse. 
+                        Units: milli-arcseconds.
+                        Value 999.99 indicates that no estimate of the error
+                        ellipse is availble. NB: in that case there may be no 
+                        compact source at that position.
+    Field  61:128 A58   Comments
+
+ 4.2) CAT-FORMAT
+
+    Label:   $$  SOU-MODFILE Format pre-2000
+    Purpose: Defines IVS source name, IAU J2000 name, source right ascension,
+             source declination, information about errors, and correlated
+             flux densities.
+    Type:    Ascii
+    Example: http://astrogeo.org/rfc
+
+    Comment  character:  #
+    Data record format:
+
+    Field    1:1    A1    Category: C (calibrator), N (non-calibrator), U (unreliable coordinates)
+    Field    4:11   A8    IVS name (B1950)
+    Field   13:22   A10   IAU name (J2000.0)
+    Field   25:26   I2    Right ascension: hours 
+    Field   28:29   I2    Right ascension: minutes
+    Field   31:39   F9.6  Right ascension: seconds
+    Field   41:43   I3    Declination: degrees
+    Field   45:46   I3    Declination: minutes
+    Field   48:57   F8.5  Declination: seconds
+    Field   58:63   F6.2  Inflated error in right ascension in mas
+    Field   65:70   F6.2  Inflated error in declination in mas
+    Field   73:78   F6.3  Correlation between right ascension and declination
+    Field   80:85   I6    Number of observations used
+    Field   88:88   A1    Blank or < or - for X-band total flux density integrated over entire map
+    Field   89:92   F4.2  X-band total flux density integrated over entire map,  Jy
+    Field   94:94   A1    Blank or < or - for X-band unresolved flux density at VLBA baselines, Jy
+    Field   95:98   F4.2  X-band unresolved flux density at long VLBA baselines, Jy
+    Field  101:101  A1    Blank or < or - for S-band total flux density integrated over entire map
+    Field  102:105  F4.2  S-band total flux density integrated over entire map,  Jy
+    Field  107:107  A1    Blank or < or - for S-band unresolved flux density at VLBA baselines
+    Field  108:111  F4.2  S-band unresolved flux density at long VLBA baselines, Jy
+    Field  114:116  A3    Used Band: X, S or X/S
+    Field  119:130  A12   Catalogue name
+    
+           Missing value: -1.0 
+           minus in columns 88, 94, 101 or 107 means that no data in the following column present
+           <     in columns 88, 94, 101 or 107 means that the upper limit of the flux density is presented in the following column.
+
+ 4.3) GETPAR SOU-FORMAT
+
+    Label:   # GETPAR_SOU format version 1.0  of 2001.05.25
+    Purpose: Contains estimates of right ascension and declination of
+             sources, as well as their formal uncertainties and 
+             correlations between right ascension and declination 
+             of the same source.
+    Type:    Ascii
+    Example: http://astrogeo.org/rfc
+
+    Comment  character:  #
+    Data record format:
+
+            Field  Format  Units  Meaning 
+    Field  1:8     A8     --      record type identifier: SOU_GCO:
+    Field  11:18   A8     --      IVS source name.
+    Field  25:26   I2     hours   right ascension. hours part
+    Field  27:27   A1     --      separator "_"
+    Field  28:29   I2     min.    right ascension. minutes part
+    Field  30:30   A1     --      separator "_"
+    Field  31:41   F11.8  sec.    right ascension. seconds part
+    Field  46:55   F10.4  mas     formal error of right ascension
+    Field  62:64   I3     deg.    declination. degrees part.
+    Field  65:65   A1     --      separator "_"
+    Field  66:67   I2     arcmin  declination. arcminutes part.
+    Field  68:68   A1     --      separator "_"
+    Field  69:78   F10.7  arcsec  declination. arcseconds part.
+    Field  83:92   F10.4  mas     formal uncertainty of declination
+    Field  99:104  F6.4   d/l     correlation between the estimates of 
+                                  right ascension and declination.
+    Field  116:122 I7     --      the number of observations of this source 
+                                  used in solution.
+    Field  133:139 I7     --      total number of observations of this source.
+    Field  151:155 I5     --      the number of sessions of this source used in
+                                  solution.
+    Field  166:170 I5     --      total number of sessions with this source.
+    Field  182:191 A10 	  --      the date of the first session with this source 
+                                  used in solution. format: yyyy.mm.dd 
+                                  (as integer numbers).
+    Field  203:212 A10 	  --      the date of the last session with this source 
+                                  used in solution. format: 
+                                  yyyy.mm.dd (as integer numbers).
+ 
+ 5) STATION_COORDINATES:
+ =======================
+    Label:   $$  SIT-MODFILE Format 2001.09.26
+    Purpose: Defines position of stations at the specified epoch.
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/glo.sit
+    
+    Comment  character:  #
+    Epoch of the station catalogue in date Solve formatis defined 
+    in the 3rd row at fields 11:21. 
+
+    Data record format:
+
+    Field   1:4    A4     Delimeter. Must be blank
+    Field   5:12   A8     IVS station name
+    Field  13:15   A3     Delimeter. Must be blank
+    Field  16:27   F12.3  Station X-coordinate in meters
+    Field  28:31   A4     Delimeter. Must be blank
+    Field  32:43   F12.3  Station Y-coordinate in meters
+    Field  45:47   A4     Delimeter. Must be blank
+    Field  48:59   F12.3  Station Z-coordinate in meters
+    Field  60:128  A49    Comments
+
+
+ 6) STATION_VELOCITIES:
+ ======================
+    Label:   $$  VEL-MODFILE Format 2001.09.26
+    Purpose: Defines secular velocities of stations
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/glo.vel
+    
+    Comment  character:  #
+    Data record format:
+
+    Field   1:4    A4     Delimeter. Must be blank
+    Field   5:12   A8     IVS station name
+    Field  13:20   A8     Delimeter. Must be blank
+    Field  21:28   F8.2   Station velocity along X-axis in mm/year
+    Field  29:36   A8     Delimeter. Must be blank
+    Field  37:44   F8.2   Station velocity along Y-axis in mm/year
+    Field  45:52   A8     Delimeter. Must be blank
+    Field  53:60   F8.2   Station velocity along Z-axis in mm/year
+    Field  62:128  A47    Comments
+
+
+ 7) STATION_ECCENTRICITIES:
+ ==========================
+    Label:   # ECC-FORMAT V 1.0   ECCENTRICITY FILE
+    Purpose: Defines a monument number for each VLBI station and an
+             eccentricity vector from the monument to the antenna's 
+             reference point (axis intersection)
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/ECCDAT.ecc
+    
+    Comment  character:  #
+    Data record format:
+
+    Field   3:10  IVS station name
+    Field  12:15  Monument number
+    Field  18:33  Starting date of validity of the eccentricity vector
+    Field  18:21  Year  of starting date of validity
+    Field  23:24  Month of starting date of validity
+    Field  26:27  Day of month of starting date of validity
+    Field  29:30  Hour (UTC) of starting date of validity
+    Field  32:33  Minute (UTC) of starting date of validity
+    Field  36:51  Ending date of validity of validity of the eccentricity vector
+    Field  36:39  Year  of ending date of validity
+    Field  41:42  Month of ending date of validity
+    Field  44:45  Day of month of ending date of validity
+    Field  47:48  Hour (UTC) of ending date of validity
+    Field  50:51  Minute (UTC) of ending date of validity
+    Field  54:63  First coordinate of eccentricity (in meters)   	 
+    Field  65:74  Second coordinate of eccentricity (in meters)   	 
+    Field  76:85  Third coordinate of eccentricity (in meters)   	 
+    Field  88:90  Type of eccentricity data. Set meaning of eccentricity 
+                  coordinates.
+                  Two types are supported:
+                  NEU  -- 1-st coordinate is a north projection;
+                          2-nd coordinate is an east projection;
+                          3-rd coordinate is a vertical projection directed up
+                         (more precisely speaking it is directed along
+                          a normal to the ellipsoid)
+                  XYZ  -- 1-st coordinate is a X-coordinate in crust 
+                               fixed system;
+                          2-nd coordinate is a Y-coordinate in crust 
+                               fixed system;
+                          3-rd coordinate is a Z-coordinate in crust 
+                               fixed system.
+
+ 8) AEM_FILE:
+ ============
+
+ 9) ERM_FILE:
+ ============
+
+10) HARMONIC_EOP_FILE:
+======================
+    Lable:   HEO  Format version of 2007.08.23
+    Purpose: Describes small harmonic variations in the Earth
+             orientation. "Small" means that the squares of the 
+             rotation angles can be neglected.
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/heo_20091201.heo
+
+       A file in HEO format consists of records of variable length in
+    ASCII coding. The records are separated by a character with decimal
+    code 13. The records of the following types are supported:
+   
+    1) Header record;
+    2) N-record: Model name record;
+    3) E-record: Time epoch record;
+    4) H-record: Harmonic definition records;
+    5) A-record: Amplitude definition records;
+    6) V-record: Velocities definition records;
+    7) S-record: Amplitude errors definition records;
+    8) R-record: Velocities errors definition records;
+    9) Trailer record.
+   
+       Records which start from # character are considered as comments.
+   
+       The first record of a valid file in HEO format is the header record.
+    It is followed by the model name record, time epoch record and then by one
+    or more harmonic definition records and one or more harmonic definition
+    records. The last record is a trailer record. All harmonic definition records
+    should precede amplitude and velocity definition records. Names of a harmonic
+    in the amplitude or velocity records should be defined in the harmonic
+    definition record. The number of velocity records can be less than the number
+    of amplitude records, and the number of amplitude records can be less than
+    the number of harmonic records. If a harmonic is not defined in an amplitude
+    records, its amplitude is considered to be zero. If a harmonic is not defined
+    in a velocity records, the rate of change of the amplitude of that harmonic
+    is considered to be zero.
+   
+       Records format:
+   
+    1) A header record contains the string
+       "HEO  Format version of 2007.08.23 "
+   
+       The header record allows to distinguish the valid file in the
+       HEO format from files in other formats and tells to a parsing software
+       that is the version of the format.
+   
+   
+    2) A name record defines the name of the model of the harmonic Earth
+       orientation variations.
+   
+    Format of an N-record:
+    ----------------------
+   
+    Field  1:1   A1     -- Records ID: letter N (decimal code 78).
+    field  2:3   a2     -- delimiters: blanks.
+    Field  4:80  A77    -- 77-letter long model name. May contain any
+                           characters in the decimal range [32, 255].
+   
+    3) An epoch record defines the epoch of the expansion.
+       An expansion may have mixed terms (t-t0)*sin(at+p), (t-t0)*cos(at+p),
+       where t is time. The E-record defines the epoch t0 in mixed terms.
+       If an expansion does not have mixed terms, then the epoch defined in
+       this record is not used. Time scale TDT is used for defining the
+       reference epoch.
+   
+    Format of a E-record:
+    ---------------------
+   
+    Field  1:1   A1     -- Records ID: letter E (decimal code 69).
+    field  2:2   a2     -- delimiters: blanks.
+    Field  4:7   I4     -- Year
+    field  8:8   a1     -- delimiter: letter . (decimal code 46).
+    Field  9:10  I2     -- The index of the month in the year in the range [1,12]
+    field 11:11  a1     -- delimiter: letter . (decimal code 46).
+    Field 12:13  I2     -- The index of the day in the month in the range [1,31]
+    field 14:14  a1     -- delimiter: letter - (decimal code 45).
+    Field 15:16  I2     -- Hour in the range [0,23]
+    field 17:17  a1     -- delimiter: letter : (decimal code 58).
+    Field 18:19  I2     -- Minute in the range [0,23]
+    field 20:20  a1     -- delimiter: letter : (decimal code 58).
+    Field 21:24  F4.1   -- Seconds in the range [0.0, 59.9]
+   
+   
+    4) A harmonic definition record defines the argument of the harmonic in
+       the form {phase + freq*(t-tr) + 1/2*accel*(t-tr)**2}  where t is
+       time in TDT time scale and tr is the reference epoch J2000.0,
+       01 January 2000, 12 hours TDT. The file cannot contain more than one
+       definition of the same harmonic.
+   
+   
+    Format of an H-record:
+    ----------------------
+   
+    Field  1:1   A1     -- Records ID: letter H (decimal code 72).
+    field  2:3   a2     -- delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long harmonic name. May contain any
+                           characters with decimal codes 32-255, but blanks
+                           are allowed only at the end of the harmonic name.
+                           This field should not necessarily have a special
+                           meaning. Parsing software should not try to
+                           interpret this name.
+    field 12:13  a2     -- delimiters: blanks.
+    Field 14:25  F11.9  -- Phase of the harmonic in float format.
+                           Units: rad.
+    field 26:27  a2     -- delimiters: blanks.
+    Field 28:46  D19.12 -- Frequency of the harmonic in float format.
+                           Units: rad/sec.
+    field 47:48  a2     -- delimiters: blanks.
+    Field 49:59  D11.4  -- Acceleration of the harmonic in float format.
+                           Units: rad/sec**2.
+    field 60:60  a1     -- delimiters: blanks.
+    field 61:80  A20    -- Comment. Parser ignores contents of this field.
+   
+   
+    5) An amplitude record specifies the harmonic and 4 amplitudes of
+       the variation of the Earth orientation: the in_phase polar motion
+       (PM_amp_cos), the out_of_phase polar motion (PM_amp_sin), the in_phase
+       rotation around E3 axis (E3_amp_cos), adn the out_of_phase rotation
+       around E3 axis (E3_amp_sin). A file cannot contain more than one amplitude
+       record for the same harmonic. The harmonic referred in an amplitude record
+       must be defined in the preceding harmonic definition record.
+   
+       These amplitudes allows to define instantaneous small Euler angles of
+       the perturbations in the Earth rotation with respect to an apriori model
+       in this way:
+   
+       E1 = [ PM_amp_cos + PM_vel_cos*(t-t0) ] *
+            cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+          + [ PM_amp_sin + PM_vel_sin*(t-t0) ] *
+            sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+   
+       E2 = [ PM_amp_cos + PM_vel_cos*(t-t0) ] *
+            sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+          - [ PM_amp_sin + PM_vel_sin*(t-t0) ] *
+            cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+   
+       E3 = [ E3_amp_cos + E3_vel_cos*(t-t0) ] *
+            cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+          + [ E3_amp_sin + E3_vel_sin*(t-t0) ] *
+            sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+   
+       Where
+   
+       E1 -- rotation around axis 1 (+Y angle of the polar motion)
+       E2 -- rotation around axis 2 (+X angle of the polar motion)
+       E3 -- rotation around axis 3 (-1.0027*Ut1 angle of the Earth's rotation)
+   
+       t-tr  -- The interval of time in scale TAU elapsed since
+                01 January 2000, 12 hours TAI, in seconds
+       t-t0  -- The interval of time in scale TAI elapsed since the reference
+                epoch for the expansion defined in the E-record, in seconds.
+   
+   
+    Format of a A-record
+    ---------------------
+   
+    Field  1:1   A1     -- Record ID: letter A (decimal code 65).
+    field  2:3   a2     -- Delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                           must be defined in a preceding H-record.
+    field 12:13  a2     -- Delimiters: blanks.
+    Field 14:25  F12.0  -- PM_amp_cos -- cosine amplitude of the small angle
+                           of polar motion. Units: prad.
+    field 26:26  a1     -- delimiter: blank.
+    Field 27:38  F12.0  -- PM_amp_sin -- sine amplitude of the small angle
+                           of polar motion. Units: prad.
+    field 39:39  a2     -- Delimiters: blanks.
+    Field 41:52  F12.0  -- E3_amp_cos -- cosine amplitude of the small angle
+                           of the Earth rotation around axis 3. Units: prad.
+    field 53:53  a1     -- Delimiter: blank.
+    Field 54:65  F12.0  -- E3_amp_sin -- sine amplitude of the small angle
+                           of the Earth rotation around axis 3. Units: prad.
+   
+   
+    6) A velocity record specifies rates of changes of the amplitudes of
+       the harmonic of the variation of the Earth orientation: in phase polar
+       motion (PM_vel_cos), out_of_phase polar motion (PM_vel_sin), in_phase
+       rotation around E3 axis (E3_vel_cos), out_of_phase rotation around
+       E3 axis (E3_vel_sin). A file cannot contain more than one velocity
+       record for the same harmonic. The harmonic referred in an velocity record
+       must be defined in the preceding harmonic definition record.
+   
+   
+    Format of a V-record
+    ---------------------
+   
+    Field  1:1   A1     -- Record ID: letter A (decimal code 65).
+    field  2:3   a2     -- Delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                           must be defined in a preceding H-record.
+    field 12:13  a2     -- Delimiters: blanks.
+    Field 14:25  F12.0  -- PM_vel_cos -- rate of change of the cosine amplitude
+                           of the small angle of polar motion.
+                           Units: 10^{-21} rad/sec.
+    field 26:26  a1     -- delimiter: blank.
+    Field 27:38  F12.0  -- PM_amp_sin -- rate of change of the sine amplitude
+                           of the small angle of polar motion.
+                           Units: 10^{-21} rad/sec.
+    field 39:40  a2     -- Delimiters: blanks.
+    Field 41:52  F12.0  -- E3_amp_cos -- rate of change of the cosine amplitude
+                           of the small angle of the Earth rotation around axis 3.
+                           Units: 10^{-21} rad/sec.
+    field 53:53  a1     -- Delimiter: blank.
+    Field 54:65  F12.0  -- E3_amp_sin -- rate of change of the sine amplitude
+                           of the small angle of the Earth rotation around
+                           axis 3. Units: 10^{-21} rad/sec.
+   
+    7) An amplitude error record specifies the harmonic and 4 formal uncertainties
+       of amplitudes of the variation of the Earth orientation: the error of the
+       in_phase polar motion (PM_amp_cos_err), the error of the out_of_phase
+       polar motion (PM_amp_sin_err), the error of the in_phase rotation around
+       E3 axis (E3_amp_cos_err), and the error of the out_of_phase rotation around
+       E3 axis (E3_amp_sin). A file cannot contain more than one amplitude error
+       record for the same harmonic. If information about errors of the amplitude
+       of the harmonic is unavilalbe, the record can be omitted. The harmonic
+       referred in an amplitude error record must be defined in the preceding
+       harmonic definition record.
+   
+   
+    Format of a S-record
+    ---------------------
+   
+    Field  1:1   A1     -- Record ID: letter A (decimal code 83).
+    field  2:3   a2     -- Delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                           must be defined in a preceding H-record.
+    field 12:13  a2     -- Delimiters: blanks.
+    Field 15:26  F12.1  -- PM_amp_cos_err -- cosine amplitude of the small
+                           angle of polar motion. Units: prad.
+    field 27:27  a1     -- delimiter: blank.
+    Field 28:39  F12.1  -- PM_amp_sin_err -- sine amplitude of the small
+                           polar motion. Units: prad.
+    field 40:41  a2     -- Delimiters: blanks.
+    Field 42:53  F12.1  -- E3_amp_cos_err -- cosine amplitude of the small
+                           angleof the Earth rotation around axis 3. Units: prad.
+    field 54:54  a1     -- Delimiter: blank.
+    Field 55:66  F12.1  -- E3_amp_sin_err -- sine amplitude of the small angle
+                           of the Earth rotation around axis 3. Units: prad.
+   
+   
+    8) A velocity error record specifies errors of rates of changes of the
+       amplitudes of the harmonic of the variation of the Earth orientation:
+       the in_phase polar motion (PM_vel_cos_err), the out_of_phase polar motion
+       (PM_vel_sin_err), the in_phase rotation around E3 axis (E3_vel_cos_err),
+       and the out_of_phase rotation around E3 axis (E3_vel_sin_err).
+       A file cannot contain more than one velocity record for the same harmonic.
+       If information about errors of the rate of change of amplitude of the
+       harmonic is unavilalbe, the record can be omitted. The harmonic referred
+       in an velocity record must be defined in the preceding harmonic
+       definition record.
+   
+   
+    Format of a R-record
+    ---------------------
+   
+    Field  1:1   A1     -- Record ID: letter R (decimal code 82).
+    field  2:3   a2     -- Delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                           must be defined in a preceding H-record.
+    field 12:13  a2     -- Delimiters: blanks.
+    Field 14:25  F12.0  -- PM_vel_cos_err -- error of the rate of change of
+                           the cosine amplitude of the small angle of polar
+                           motion. Units: 10^{-21} rad/sec.
+    field 26:26  a1     -- delimiter: blank.
+    Field 27:38  F12.0  -- PM_amp_sin_err -- error of the rate of change of
+                           the sine amplitude of the small angle of polar motion.
+                           Units: 10^{-21} rad/sec.
+    field 39:40  a2     -- Delimiters: blanks.
+    Field 41:52  F12.0  -- E3_amp_cos_err -- error of rate of change of
+                           the cosine amplitude of the small angle of the Earth
+                           rotation around axis 3.
+                           Units: 10^{-21} rad/sec.
+    field 53:53  a1     -- Delimiter: blank.
+    Field 54:65  F12.0  -- E3_amp_sin_err -- error of rate of change of the sine
+                           amplitude of the small angle of the Earth rotation
+                           around axis 3. Units: 10^{-21} rad/sec.
+   
+   
+    9) Trailer record is the same as the header record.
+
+11) EOP_SERIES:
+===============
+    Label:   EOP-MOD Ver 2.0  
+    Purpose: Define the time series of the Earth orientation parameters,
+             such as pole coordinates and UT1-TAI angle.
+    Type:    Ascii, records of fixed length
+    Example: $(VTD_ROOT)/share/vlbi_apr.erp
+    NB:      1) All records of this file must have lenght 76 bytes
+             2) non-standrd units are used
+
+    Comment  character:  #
+    Header record format:
+
+    Filed  1:15      Label: EOP-MOD Ver 2.0  
+    Field 18:26 F9.1 Julain date (TAI) of the first data record     
+    Field 28:33 F6.2 Time step in days
+    Field 34:39 I6   The number of records
+    Field 42:48 A7   Meaning of the 4th column 
+    Field 52:56 A5   Meaning is lost
+    Field 57:76 A18  Delimeter: blank
+
+    Data record format:
+
+    Filed  1:9  F9.1 Julian date (TAI)
+    Filed 11:17 F7.4 X pole coordinate. Units: 0.1 arcsec
+    Filed 19:25 F7.4 Y pole coordinate. Units: 0.1 arcsec
+    Filed 27:35 I9   UT1-TAI. Units: micrisecond of time
+    Filed 36:76 A41  some information not used by VTD. 
+                     Its meaning is forgotten
+
+
+
+12) POSVAR_MOD:  (HARMONIC_MODEL)
+=================================
+    Label:   HARPOS  Format version of 2002.12.12
+    Purpose: Describes site displacements which can
+             be represented by a finite set of harmonic components.
+    Type:    Ascii
+    Example: $(VTD_ROOT)/share/2007b_oclo.hps
+
+      A file in HARPOS format consists of records of variable length in
+    ASCII coding. The records are separated by a character with decimal
+    code 13. The records of the following types are supported:
+     
+    1) Header record;
+    2) Harmonic definition records;
+    3) Site definition records;
+    4) Displacement definition records;
+    5) Trailer record.
+     
+       Records which start from # character are considered as comments.
+     
+       Each valid file in HARPOS format has the first header record, one
+    or more harmonic definition records, one or more site definition
+    records and one or more displacement definition records. The last
+    record is a trailer record. All harmonic definition records should
+    precede site definition records. All site definition records should
+    precede displacement definition records.
+     
+       Records format:
+     
+    1) A header record contains the string
+       "HARPOS Format version of 2002.12.12"
+     
+       The header record allows to distinguish the valid file in the
+       HARPOS format from files in other formats.
+     
+    2) A harmonic definition record defines the argument of the harmonic in
+       the form {phase + freq*(t-t0) + 1/2*accel*(t-t0)**2}  where t is
+       time in TDT time scale and t0 is the reference epoch J2000.0,
+       01 January 2000, 12 hours TDT. The file cannot contain more than one
+       definition of the same harmonic.
+     
+    Format of an H-record:
+    ----------------------
+     
+    Field  1:1   A1     -- Records ID: letter H (decimal code 72).
+    field  2:3   a2     -- delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long harmonic name. May contain any
+                           characters with decimal codes 32-255, but blanks
+                           are allowed only at the end of the harmonic name.
+                           This field should not necessarily have a special
+                           meaning. Parsing software should not try to
+                           interpret this name.
+    field 12:13  a2     -- delimiters: blanks.
+    Field 14:26  D13.6  -- Phase of the harmonic in float format.
+                           Units: rad.
+    field 27:28  a2     -- delimiters: blanks.
+    Field 29:47  D19.12 -- Frequency of the harmonic in float format.
+                           Units: rad/sec.
+    field 48:49  a2     -- delimiters: blanks.
+    Field 50:59  D10.3  -- Acceleration of the harmonic in float format.
+                           Units: rad/sec**2.
+    field 60:80  a21    -- delimiters: blanks.
+     
+    3) A site definition record defines the site identifier and site
+       coordinates in a crust-fixed reference frame. The file cannot
+       contain more than one definition of the same site.
+     
+    Format of an S-record:
+    ----------------------
+     
+    Field  1:1   A1     -- Record ID. Should be letter S (decimal code 83)
+    Field  2:3   A2     -- Delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long site identifier. May contain
+                           any characters with decimal codes 32-255, but
+                           blanks are allowed only at the end of the site
+                           identifier. This site identifier should be
+                           unique among S-records. This field should not
+                           necessarily have a special meaning. Parsing
+                           software should not try to interpret it.
+    field 12:13  a2     -- delimiters: blanks.
+    Field 14:26  F13.4  -- Site X coordinate in a crust fixed reference
+                           frame. Units: meters.
+    field 27:27  a1     -- delimiters: blanks.
+    Field 28:40  F13.4  -- Site Y coordinate in a crust fixed reference
+                           frame. Units: meters.
+    field 41:41  a1     -- delimiters: blanks.
+    Field 42:54  F13.4  -- Site Z coordinate in a crust fixed reference
+                           frame. Units: meters.
+    field 55:56  a2     -- delimiters: blanks.
+    Field 57:64  F8.4   -- Site geocentric latitude, positive to north,
+                           in degrees. This field is for information only.
+                           Parsing software MUST ignore it.
+    field 65:65  a1     -- delimiters: blanks.
+    Field 66:73  F8.4   -- Site longitude, positive towards east,
+                           in degrees. This field is for information only.
+                           Parsing software MUST ignore it.
+    field 74:74  a1     -- delimiters: blanks.
+    Field 75:80  F6.1   -- Site height above the reference ellipsoid
+                           in meters. This field is for information only.
+                           Parsing software MUST ignore it.
+     
+    4) A data record specifies the site, the harmonic and 6 amplitudes of
+       displacements: Up cosine, East cosine, North cosine, Up sine,
+       East sine, North sine. A file cannot contain more than one data
+       record for the same harmonic, the same site. The site and the
+       harmonic referred in a data record must be defined in the preceding
+       site and harmonic definition records.
+     
+       Notation "Up cosine" and "Up sine" amplitudes of the displacement
+       means that the radial component of the topocentric vector of the
+       displacement, which is parallel to the vector from the geocenter to
+       the site, depends on time in the following way:
+     
+       D_up= Ampl_cos_up * cos {phase + freq*(t-t0) + 1/2*accel*(t-t0)**2} +
+             Ampl_sin_up * sin {phase + freq*(t-t0) + 1/2*accel*(t-t0)**2}
+     
+       Analogously, "East cosine", "East sine" amplitudes define time
+       dependence of the east component of the displacement vector, and
+       "North cosine", "North sine" define time dependence of the north
+       component.
+     
+    Format of a D-record:
+    ---------------------
+     
+    Field  1:1   A1     -- Record ID: letter D (decimal code 68).
+    field  2:3   a2     -- delimiters: blanks.
+    Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                           must be defined in a preceding H-record.
+    field 12:13  a2     -- delimiters: blanks.
+    Field 14:21  A8     -- 8-letter long site identifier. The site
+                           identifier must be defined in a preceding
+                           S-record.
+    field 22:24  a3     -- delimiters: blanks.
+    Field 25:32  F8.5   -- Cosine amplitude of the Up component of the
+                           displacement vector. Up direction is along the
+                           vector from the geocenter to the site.
+                           Units: meters.
+    field 33:33  A1     -- delimiter: blank.
+    Field 34:41  F8.5   -- Cosine amplitude of the East component of the
+                           displacement vector. Units: meters.
+    field 42:42  a1     -- delimiter: blank.
+    Field 43:50  F8.5   -- Cosine amplitude of the North component of the
+                           displacement vector. Units: meters.
+    field 51:53  a3     -- delimiter: blanks.
+    Field 54:61  F8.5   -- Sine amplitude of the Up component of the
+                           displacement vector. Up direction is along the
+                           vector from the geocenter to the site.
+                           Units: meters.
+    field 62:62  a1     -- delimiter: blank.
+    Field 63:70  F8.5   -- Sine amplitude of the East component of the
+                           displacement vector. Units: meters.
+    field 71:71  a1     -- delimiter: blank.
+    Field 72:79  F8.5   -- Sine amplitude of the North component of the
+                           displacement vector. Units: meters.
+    field 80:80  a1     -- delimiter: blank.
+     
+     
+    5) Trailer record is the same as the header record.
+   
+
+13) POSVAR_MOD:  (TIME_SERIES):
+===============================
+    Label:   BINDISP
+    Purpose: describing time series of site position 
+             variations. A file in this format contains three 
+             components of the 
+             displacement vector of a specific site equally sampled 
+             within a certain time range.
+    Type:    Binary, little endian
+    Example: http://astrogeo.org/scr/aplo_bds
+
+
+       A file consists of records of fixed length. Record length is 
+    8 bytes. A file has 8 header records and at least one data record 
+    which follows header records.
+
+    Header record 1:
+    ----------------
+    
+    Field  1:8  A8   -- Magic record. Should be "BINDISP " for  
+                        a valid file.
+    
+    Header record 2:
+    ----------------
+    
+    Field 1:4   I*4  -- Integer modified Julian of the format 
+                        revision date.
+    Field 5:5   A1   -- Identifier for used binary integer format.
+                        Supported identifiers:
+                        B -- big endian format
+                        L -- little endian format
+    Field 6:6   A1   -- Identifier for used binary float format.
+                        Supported identifiers:
+                        I -- IEEE 754/854 format.
+                        D -- Dec format.
+    Field 7:8   I*2  -- Reserved. filled with binary value 0.
+    
+    Header record 3:
+    ----------------
+    
+    Field 1:8   A8   -- 8-letter long site identifier. May contain 
+                        any characters with decimal codes 32-255, but 
+                        blanks are allowed only at the end of the site 
+                        identifier. This field should not necessarily 
+                        have a special meaning. Parsing software should
+                        not try to interpret it.
+    
+    Header record 4:
+    ----------------
+    
+    Field 1:4   I*4  -- The total number of data records.
+    Field 5:8   R*4  -- Sampling interval in seconds: the interval
+                        between two consecutive epochs.
+    
+    Header record 5:
+    ----------------
+    
+    Field 1:8   R*8  -- X site coordinate in a crust fixed reference 
+                        frame. Units: meter.
+    
+    Header record 6:
+    ----------------
+    
+    Field 1:8   R*8  -- Y site coordinate in a crust fixed reference 
+                        frame. Units: meter.
+    
+    Header record 7:
+    ----------------
+    
+    Field 1:8   R*8  -- Z site coordinate in a crust fixed reference 
+                        frame. Units: meter.
+    
+    Header record 8:
+    ----------------
+    
+    Field 1:4   I*4  -- Integer modified Julian data at the midnight
+                        of the time epoch of the first data record.
+    Field 5:8   R*4  -- Time in TDT elapsed from the midnight od
+                        the time epoch of the first data record,
+                        in seconds.
+    
+    Data record:
+    ------------
+    
+    Field 1:2   I*2  -- X coordinate of site displacement for a given 
+                        epoch in a crust-fixed reference system. 
+                        Units: 1.D-5 meter.
+    
+    Field 3:4   I*2  -- Y coordinate of site displacement for a given 
+                        epoch in a crust-fixed reference system. 
+                        Units: 1.D-5 meter.
+    
+    Field 5:6   I*2  -- Z coordinate of site displacement for a given 
+                        epoch in a crust-fixed reference system. 
+                        Units: 1.D-5 meter.
+    
+    Field 7:8   I*2  -- Reserved. Filled with binary value 0.
+    
+      Comments:
+    
+      1. Data records follow in chronological order. No records can be 
+         missed. The epoch of the J+1 th record is the epoch of the 
+         J -th record plus the sampling interval. The epoch of the K-th 
+         physical record of the file is (MJD,TDT) + (K-9)*Sample_interval. 
+         Physical records are counted from 1.
+    
+      2. Maximal displacements in site positions which can be described  
+         in this file cannot exceed by modulo 327mm.
+    
+
+13) POSVAR_MOD:  (B_S_LINE):
+============================
+    Label:   BSPPOS Format version of 2007.10.30"
+    Purpose: To describe site displacements which can
+             be represented as the sum of the polynomial of the first 
+             degree and an expansion with the B-spline basis. The expansion 
+             is defined on a expanded non-descending sequence of knots. 
+             The first and the last knot has multiplicity 1-degree, other 
+             knots are represented as simple. The sequence may have several 
+             consecutive knots with equal epochs, except the first and 
+             the last. The number of knots with the same epochs should 
+             not exceed the degree of the B-spline basis. The expanded 
+             sequence of knots has indexes 
+             1-degree, 1-degree+1, ... 0, 1, 2, ... N, N+1, N+2, ... N+degree,
+             i.e. in the expanded sequence the first and the last knot 
+             are split into the set of knots with the number of elements 
+             equal to the degree.
+
+             BSPPOS file provides the number of knots, the degree of 
+             the B-spline basis, apriori site position, time epochs of 
+             knots, estimates of B-spline coefficients, global site position, 
+             and global site velocity.
+ 
+       A file in BSPPOS format consists of records of variable length in
+    ASCII coding. The records are separated by a character with decimal
+    code 13. The records of the following types are supported:
+     
+     1) Header record
+     2) Solution identifier
+     3) Solution date
+     4) Record that specifies the total number of sites
+     5) Site definition record
+     6) Record that specifies the B-spline degree
+     7) Record that specifies the number of knots for spline for this site
+     8) Record that specifies the reference epoch for site positions
+     9) Record that specifies position at reference epoch 
+    10) Record that specifies site velocity 
+    11) Record that specifies epoch of the spline 
+    12) Record that specifies B-spline coefficients
+    13) Record that specifies elements of the covarinace matrix of B-spline 
+        coefficients (optional)
+    14) Trailer record
+     
+       The records should be placed in this order. Records 5-10 are repeated 
+    for each site, records 11-12 are repeated for each spline knot and each
+    site.
+    
+       Records which start from # character are considered as comments.
+     
+     
+     1. Header record
+        A header record contains the string
+        "BSPPOS Format version of 2007.10.30"
+     
+        The header record allows to distinguish the valid file in the
+        BSPPOS format from files in other formats.
+      
+     2. Solution identifier
+    
+        Field  1:7    A7   Field ID: SOL_ID:
+        Field  8:10   a3   Delimiter (blank)
+        Field  11:43  A32  Text identifying the solution
+       
+    
+     3. Solution date
+    
+        Field  1:9    A9   Field ID: SOL_DATE:
+        Field  10:10  a1   Delimiter (blank)
+        Field  11:29  A19  Date of the solution in ISO format
+       
+     4. Record that specifies the total number of sites
+    
+        Field  1:6    A6   Field ID: N_STA:
+        Field  7:7    a1   Delimiter (blank)
+        Field  8:11   I4   The total number of sites
+    
+     5. Site definition record
+    
+        Field  1:2    A2    Field ID: S:
+        Field  3:3    a3    Site ID: an arbitrary sequence of letters.
+                            NB: parsing software SHOULD NOT ATTEMPT to interpret
+        Field  8:11   I4    The total number of sites
+        Field 12:13   a2    Delimiter (blanks)
+        Field 14:26   F13.5 X-coordinate of the site in the crust fixed coordinate system
+        Field 27:27   a1    Delimiter (blank)
+        Field 28:40   F13.5 Y-coordinate of the site in the crust fixed coordinate system
+        Field 41:41   a1    Delimiter (blank)
+        Field 42:54   F13.5 Z-coordinate of the site in the crust fixed coordinate system
+        Field 12:13   a2    Delimiter (blanks)
+        Field 57:64   F8.4  Site geocentric latitude.
+        Field 65:65   a1    Delimiter (blank)
+        Field 66:73   F8.4  Site geocentric longitude positive to East in [0,360]
+        Field 74:74   a1    Delimiter (blank)
+        Field 75:80   F5.1  Site height above the reference ellipsoid
+       
+    
+     6. Record that specifies the B-spline degree
+    
+        Field  1:6    A6    Field ID: L_DEG:
+        Field  7:7    a1    Delimiter (blank)
+        Field  8:11   I4    Spline degree
+        Field 12:18   a7    Delimiter  STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+    
+     7. Record that specifies the number of knots for spline for this site
+    
+        Field  1:6    A6    Field ID: N_NOD:
+        Field  7:7    a1    Delimiter (blank)
+        Field  8:11   I4    The number of knots for this site
+        Field 12:18   a7    Delimiter  STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+    
+     8. Record that specifies the reference epoch for site positions
+    
+        Field  1:6    A6    Field ID: R_EPC:
+        Field  7:18   a12   Delimiter        STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+        Field 33:34   a2    Delimiter (blanks)
+        Field 35:57   A23   Reference epoch for site positions in TAI in ISO format.
+    
+     9. Record that specifies position at reference epoch 
+    
+        Field  1:6    A6    Field ID: P_EST:
+        Field  7:18   a12   Delimiter        STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+        Field 33:34   a2    Delimiter (blanks)
+        Field 35:48   F14.6 X component of site position at the reference epoch in meters
+        Field 49:49   a1    Delimiter (blanks)
+        Field 50:63   F14.6 Y component of site position at the reference epoch in meters
+        Field 64:64   a1    Delimiter (blanks)
+        Field 65:78   F14.6 Z component of site position at the reference epoch in meters
+    
+    10. Record that specifies site velocity 
+    
+        Field  1:6    A6    Field ID: P_EST:
+        Field  7:18   a12   Delimiter        STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+        Field 33:34   a2    Delimiter (blanks)
+        Field 35:48   F14.6 X component of site velocity in m/s
+        Field 49:49   a1    Delimiter (blanks)
+        Field 50:63   F14.6 Y component of site velocity in m/s
+        Field 64:64   a1    Delimiter (blanks)
+        Field 65:78   F14.6 Z component of site velocity in m/s
+    
+    11. Record that specifies epoch of the spline 
+    
+        Field  1:6    A6    Field ID: EPOCH:
+        Field  7:7    a1    Delimiter (blank)
+        Field  8:11   I4    The knot index starting from 1-L_DEG
+        Field 12:18   a7    Delimiter  STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+        Field 35:57   A23   Epoch of the knot in TAI in ISO fort mat.
+    
+    12. Record that specifies B-spline coefficients
+    
+        Field  1:6    A6    Field ID: EPOCH:
+        Field  7:7    a1    Delimiter (blank)
+        Field  8:11   I4    The knot index starting from 1-L_DEG
+        Field 12:18   a7    Delimiter  STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+        Field 33:35   a3    Delimiter (blanks)
+        Field 36:48   F13.6 B-spline coefficient for X component of position of this site, this knot
+        Field 49:49   a1    Delimiter (blanks)
+        Field 50:62   F13.6 B-spline coefficient for Y component of position of this site, this knot
+        Field 63:63   a1    Delimiter (blanks)
+        Field 64:76   F13.6 B-spline coefficient for Z component of position of this site, this knot
+    
+    13. Record that specifies elements of the covariance matrix of B-spline 
+        coefficients (optional). Covariance matrix is a 4-dimensional array
+        in the crust-fixed terrestrial coordinate system. The first two 
+        dimensions run through the knot indexes + global position + global 
+        velocity. The second two dimensions, the 3rd and the 4th, run through
+        components of the coordinate vectors: X, Y, Z.
+    
+        Field  1:6    A6    Field ID: EPOCH:
+        Field  7:18   a12   Delimiter (blank)
+        Field 12:18   a7    Delimiter  STA: 
+        Field 19:22   I4    Site index. The index of the site definition
+                            record for this site, counted from 1
+        Field 23:24   a2    Delimiter (blanks)
+        Field 25:32   A8    Site name specified in the preceding site definition
+                            record
+        Field 33:41   a9    Delimiters
+        Field 43:43   I1    The first component of the displacement vector in the 
+                            terrestrial coordinate system. Components runs as 
+                            X, Y, and Z.
+        Field 49:49   a1    Delimiter (blanks)
+        Field 50:52   a3    Delimiters
+        Field 53:56   I4    The first covariance element index. Index starts from 
+                            1-L_DEG and runs through N_NOD+L_DEG-1. The element 
+                            with index N_NOD+L_DEG+1 corresponds to the global 
+                            position, the element with index N_NOD+L_DEG corresponds 
+                            to the global velocity, other indexes correspond to knot
+                            index.
+        Field 57:65   a9    Delimiters
+        Field 66:66   I1    The second component of the displacement vector in the 
+                            terrestrial coordinate system. Components runs as 
+                            X, Y, and Z.
+        Field 67:75   a9    Delimiters
+        Field 76:79   I4    The second covariance element index. Index starts from 
+                            1-L_DEG and runs through N_NOD+L_DEG-1. The element 
+                            with index N_NOD+L_DEG+1 corresponds to the global 
+                            position, the element with index N_NOD+L_DEG corresponds 
+                            to the global velocity, other indexes correspond to knot
+                            index.
+        Field 80:86   a7    Delimiters
+        Field 87:99   D13.6 The element of the covariance matrix
+    
+    
+    14. Trailer record
+    
+        The same as the header record, string:
+        "BSPPOS Format version of 2007.10.30"
+
+
+14) ANTENNA_DEFORMATIONS_FILE: 	
+==============================
+    Label:   $ Antenna Gravity Deformation File  Format Version of 2008.04.25
+    Purpose: Contains the table of the antenna focus line as a function
+             of elevation angle.
+    Type:    ascii
+    Example: $(VTD_ROOT)/share/agd.dat
+
+    Comment  character: #
+    Data record format:
+
+     1:5   A3    Delimeter: "AGD  "
+     6:13  A8    IVS station name
+    14:15  A2    Delimiter: blank
+    16:22  A7    Focus type
+    23:24  A2    Delimiter: blank
+    25:28  F4.1  Elevation (in deg)
+    29:30  A2    Delimiter: blank
+    31:37  F7.3  Focus length change (in mm)
+
+15) SLANTED_PATH_DELAY_BIAS_FILE:   
+=================================
+    Label:   SPD_3D_BIAS   Format version of 2010.05.18
+    Purpose: Detine empirical bias and scale facord for the 
+             slanted path delay model. Teh non-hydrostatic
+             component of the Slanted path delay is to 
+             be multiplied by the scale and added the bias.
+    Example: n/a
+    Comment  character: #
+    Data record format:
+
+
+       A file in the SPD_ASCII format consists of records of variable
+    length in ASCII coding. The records are separated by a character with
+    decimal code 13. The records are grouped into sections. Sections follow
+    in this order:
+    
+     1) N-record -- defines the number of records in further other
+                    sections.
+    
+     2) S-record -- defines name and coordinates of stations for which path
+                    delay have been computed.
+    
+     3) B-record -- defines bias and scaling factor
+    
+    
+    Format of an N-record:
+    ----------------------
+    
+    Field  1:1   A1    -- Record ID: letter "N".
+    field  2:3   a2       delimiter: blank.
+    Field  4:7   I4    -- Number of M-records in the file. i.e. brief algorithm
+                          description and options used during computations.
+    field  8:9   a2       delimiter: blank.
+    field 10:13  I4    -- Number of I-records in the file, i.e. the number of
+                          lines with a brief description of the numeric
+                          model of the atmosphere used during computation.
+    field 14:15  a2       delimiter: blank.
+    field 16:21  I6    -- Number of S-records in the file, i.e. the number
+                          of stations.
+    field 22:23  a2       delimiter: blank.
+    field 24:27  I4    -- Number of E-records in the file, i.e. the number
+                          elevations in the grid.
+    field 28:29  a2       delimiter: blank.
+    field 30:33  I4    -- Number of A-records in the file, i.e. the number
+                          azimuths in the grid.
+    
+    
+    Format of an S-record:
+    ----------------------
+    
+    Field  1:1   A1    -- Record ID: letter "S".
+    field  2:3   a2       delimiter: blanks.
+    field  4:9   I6    -- station index
+    field 10:11  a2       delimiter: blanks.
+    Field 12:19  A8    -- 8-letter long site identifier. May contain
+                          any characters with decimal codes 32-255, but
+                          blanks are allowed only at the end of the site
+                          identifier. This site identifier should be unique
+                          among S-records. This field should not
+                          necessarily have a special meaning. Parsing
+                          software SHOULD NOT TRY TO INTERPRET it.
+    field 20:21  a2       delimiter: blanks.
+    Field 22:33  F12.3 -- X site coordinate in a crust fixed reference
+                          frame. Units: meters.
+    field 34:34  a1       delimiter: blank.
+    Field 35:46  F13.4 -- Y site coordinate in a crust fixed reference
+                          frame. Units: meters.
+    field 47:47  a1       delimiter: blank.
+    Field 48:59  F13.4 -- Z site coordinate in a crust fixed reference
+                          frame. Units: meters.
+    field 60:61  a2       delimiter: blanks.
+    Field 62:69  F8.4  -- Site geocentric latitude, positive to north,
+                          in degrees. This field is for information only.
+                          Parsing software MUST ignore it.
+    field 70:70  a1       delimiter: blank.
+    Field 71:78  F8.4  -- Site longitude, positive towards east,
+                          in degrees. This field is for information only.
+                          Parsing software MUST ignore it.
+    field 79:80  a2       delimiter: blank.
+    Field 81:86  F6.1  -- Site height above the reference ellipsoid in
+                          meters. This field is for information only.
+                          Parsing software MUST ignore it.
+    field 87:87  a1       delimiter: blank.
+    Field 88:93  F6.1  -- Site height above the geoid in meters. This field
+                          is for information only.
+                          Parsing software MUST ignore it.
+    
+    Format of an B-record:
+    ----------------------
+    
+    Field  1:1   A1    -- Record ID: letter "B".
+    field  2:11  a10   -- delimeter: blank
+    Field 12:19  A8    -- 8-letter long site identifier. 
+    field 20:24  a5    -- delimeter: blank
+    Field 25:34  D10.3 -- Slanted path delay offset. Units: seconds
+    field 35:37  a3    -- delimeter: blank
+    Field 38:44  F7.4  -- Slatned path delay scale factor
+
+
+
+16) EXTERNAL_DELAY_DIR: 		
+=======================
+    Label:   spd_3d_bin  1.0 version of 2009.01.07 LE
+    Purpose: Contains results of computing slanted path delay of 
+             radiowave propagation through the 3D, continuous,
+             heterogeneous atmosphere. The path delay is defined as 
+             a difference in the propagation time between the emitter 
+             and the receiver through the atmosphere and the propagation 
+             between these two points along the geodetic line in 
+             vacuum. The path delay is computed for a set of stations for
+             a certain epoch at a regular grid of azimuths and elevations.
+             The grid is equidistant at azimuths and non-equidistant at 
+             elevation angles. The values of path delays computed on 
+             a grid can be used for computing coefficients of the 
+             interpolating functions that enable us to compute
+             the path delay in an arbitrary direction.
+    Example: http://astrogeo.org/spd_data/spd_6h_bin
+    Type:    Binary, little endian.
+
+    File in spd_3d_bin format consists of rescords of 7 types.
+    The type of each reacord is determined by the first 
+    8-characters ling field prefix. The records follow in this order:
+
+    LAB_REC -- Defines offsets, sizes and the number of other records
+    TIM_REC -- Defines the start time, stop time of DEL records 
+               and the time step 
+    STA_REC -- Defines station coordinates
+    MOD_REC -- Defines the slanted path model type and the model description
+    MET_REC -- Defines escription of the numerical weather model used 
+               for computation
+    ELV_REC -- Defines the elevation axis for the 2D grid of
+               path delays through the neutral atmosphere
+    AZM_REC -- Defines the azimuth axis for the 2D grid of
+               path delays through the neutral atmosphere
+    DEL_REC -- Defines the surface pressure surface temperature
+               and the 2D grid of path delay through the neutral atmosphere.
+
+    The file contains only onre record of the fesit seven tpyes and usually 
+    more than one record of DEL_REC. Each DEL_REC corresponds to one time 
+    epoch. The time epochs follow each other in chronological order with
+    the same time step, without gaps. The time epoch of a specific DEL_REC
+    is determined bny its index in the file, time of the first epoch, and
+    the time step.
+
+    Decription of individual records:
+
+    LAB__REC 
+           CHARACTER  PREF*8     ! prefix: LAB_REC 
+           INTEGER*8  LEN        ! length of the LAB_REC record
+           CHARACTER  FMT_LAB*40 ! Format label
+           INTEGER*8  OFF_TIM    ! Offset of the TIM record in bytes wrt the file beginning      
+           INTEGER*8  OFF_STA    ! Offset of the STA record in bytes wrt the file beginning      
+           INTEGER*8  OFF_MOD    ! Offset of the MOD record in bytes wrt the file beginning      
+           INTEGER*8  OFF_MET    ! Offset of the MET record in bytes wrt the file beginning      
+           INTEGER*8  OFF_ELV    ! Offset of the ELV record in bytes wrt the file beginning      
+           INTEGER*8  OFF_AZM    ! Offset of the AZM record in bytes wrt the file beginning      
+           INTEGER*8  OFF_DEL    ! Offset of the first TIM record in bytes wrt the file beginning
+           INTEGER*8  LEN_TIM    ! Length of the TIM record in bytes
+           INTEGER*8  LEN_STA    ! Length of the STA record in bytes
+           INTEGER*8  LEN_MOD    ! Length of the MOD record in bytes
+           INTEGER*8  LEN_MET    ! Length of the MET record in bytes
+           INTEGER*8  LEN_ELV    ! Length of the ELV record in bytes
+           INTEGER*8  LEN_AZM    ! Length of the AZM record in bytes
+           INTEGER*8  LEN_DEL    ! Length of the DEL record in bytes
+	   INTEGER*4  TOT_NUM_DEL ! The number of DEL records
+
+    TIM_REC
+           CHARACTER  PREF*8     ! prefix: TIM_REC 
+           INTEGER*8  NREC       ! The number of time epochs the file contains
+	   INTEGER*4  MJD_BEG    ! Modified Julian date at TAI     ! Modified Julian date at TAI for the first epochfor the first epoch
+	   INTEGER*4  MJD_END    ! Modified Julian date at TAI for the last epoch
+	   REAL*8     TAI_BEG    ! TAI for the first epoch. Units: seconds
+	   REAL*8     TAI_END    ! TAI for the last epoch. Untis: seconds
+	   REAL*8     TIM_STEP   ! Time step. Units: seconds
+
+    STA_REC
+           CHARACTER  PREF*8     ! prefix: STA_REC 
+           CHARACTER  NAME*8     ! Station name. NB: the station name does NOT necessarily
+                                 ! controrms any convention. It may be an arbitrary combination
+                                 ! of characters. Parser software should NOT assign any meaning 
+                                 ! to this field
+	   REAL*8     COO_CFS(3) ! Station coordinates in the crust-fixed coordinate system.
+                                 ! Units: meters
+	   REAL*8     PHI_GCN    ! Station geocentric latitude. Units: radians
+	   REAL*8     PHI_GDT    ! Station geodetic latitude. Units: radians
+	   REAL*8     HEI_ELL    ! Station height above the reference ellipsoid. Units: meters
+	   REAL*8     HEI_GEOID  ! Station height above the geoid. Units: meters
+
+    MOD_REC
+           CHARACTER  PREF*8     ! prefix: MOD_REC 
+	   INTEGER*4  N_RFR      ! Number of components of the model
+	   CHARACTER  SPD_TYPE(3)*8 ! Array of names of the slanted path delay model components.
+                                    ! Supported values: 
+                                    !   total    -- Total path delay through the neutral atmosphere
+                                    !   hydro    -- Path delay through the hydrostatic component of the atmosphere
+                                    !   non-hydr -- Path delay through the non-hydrostatic component of the atmosphere
+                                    !   undef    -- Undefined, not used
+           INTEGER*8  N_LINES       ! Number of lines with model description
+           INTEGER*8  LEN_TEXT      ! Length of the text with model description in bytes
+           CHARACTER*1, POINTER :: TEXT(:) ! Text with the model description as a string that contains \n characters 
+                                           ! of length LEN_TEXT + 1 (the last character is \0)
+    MET_REC
+           CHARACTER  PREF*8     ! Prefix: STA_REC 
+           INTEGER*8  N_LINES    ! Number of lines with numerical weather model description
+           INTEGER*8  LEN_TEXT   ! Length of the text with teh numerical model description in bytes
+           CHARACTER*1, POINTER :: TEXT(:) ! Text with the numerical weather model description as 
+                                           ! a string that contains \n characters of length 
+                                           ! LEN_TEXT + 1 (the last character is \0)
+    ELV_REC
+           CHARACTER  PREF*8     ! Prefix: ELV_REC
+	   INTEGER*8  N_EL	 ! The number of elements along the elevation angle axis
+	   REAL*4,    POINTER ::   ELEV(:) ! Array of elevation angles. Dimension: N_EL, 
+                                           ! Units: radians. Array is sorted in decreasing order.
+    AZM_REC
+           CHARACTER  PREF*8
+	   INTEGER*8  N_AZ       ! The number of elements along the azimuth axis
+	   REAL*4,    POINTER ::   AZIM(:) ! Array of azimuth angles. Dimension: N_AZ, 
+                                           ! Units: radians. Array is sorted in increasing order.
+    DEL_REC
+           CHARACTER  PREF*8
+	   REAL*4     SURF_PRES  ! Surface pressure. Units: Pascal
+	   REAL*4     SURF_TEMP  ! Surface air temperature. Units: Kelvin
+	   REAL*4,    POINTER ::   DEL(:,:,:) ! 3D array of slanted path delay components. 
+                                              ! The first  axis runs over elevation angles.
+                                              ! Dimension: N_EL defined in ELV_REC
+                                              ! The second axis runs over azimuth angles
+                                              ! Dimension: N_AZ defined in AZM_REC
+                                              ! The third  runs over components.
+                                              ! Dimension: N_RFR defined in MOD_REC
+                                              ! Units: seconds
+
+17) IONOSPHERE_DATA_FILE:           
+=========================
+    Label:   VIONO Little-Endian  Format of 2010.05.08       
+    Purpose: Contains the total electron contents of the ionosphere
+             presented at the regular 3D grid with axes: longitude,
+             latitude, and time.
+             
+             
+    Type:    Binary, little endian
+    Example: http://astrogeo.org/viono/codg_01.vio 
+
+    Format description:
+
+    The file in VIONO format consists of the header record and one 
+    or more data records.
+
+    HEADER:
+            CHARACTER  LABEL*48   ! File label
+            CHARACTER  MODEL*16   ! Model name
+	    CHARACTER  AUTHOR*16  ! Name of the model author
+	    INTEGER*4  NLON       ! The number of grid steps along longitude axis
+	    INTEGER*4  NLAT       ! The number of grid steps along latitude axis
+	    INTEGER*4  NEPC       ! The number of grid steps along time axis
+	    INTEGER*4  MJD_BEG    ! MJD at TAI of the first epoch
+	    INTEGER*2  MISSING    ! Missing value
+	    INTEGER*2  FILLER(3)  ! fillers
+	    REAL*8     UTC_BEG    ! UTC Time tag of the first epoch. Units: seconds
+	    REAL*8     TIM_STEP   ! Time step along the time axis. Units: seconds
+	    REAL*8     SCALE      ! The scaling factor which should be applied to raw TEC values. Units: TECU
+	    REAL*8     LON_MIN    ! Longitude at the beginning of the longitude axis. Units: radians
+	    REAL*8     LAT_MIN    ! Latitude  at the beginning of the latitude  axis. Units: radians
+	    REAL*8     LON_STEP   ! Longitude step along the longitude axis. Units: radians
+	    REAL*8     LAT_STEP   ! Latitude  step along the latitude  axis. Units: radians
+	    REAL*8     HEIGHT     ! Height of the ionosphere. Units: meters
+
+    DATA RECORD:
+            INTEGER*2, POINTER :: TEC_VAL(:,:) ! TEC values on a 2D longitude/latitude grid.
+                                               ! Dimenstions: NLON,NLAT. Units: dimensionless
+
+    TEC_VAL array must by miltiplied by SCALE. Units of the results: TECU.
+
+
+18) HYDROSTATIC_MAPPING_FUNCTION:  (MMF)
+========================================
+    WET_MAPPING_FUNCTION:          (MMF)
+    WET_ZENITH_DELAY:              (MMF)
+
+    Label:   # MMF_MOD   Format of 2008.09.21
+    Purpose: contains coefficients of polynomials that expand the mean
+             mapping function in the neutral atmosphere for the set 
+             observing stations.
+    Example: $(VTD_ROOT)/share/mmf.mod
+
+    A file in MMF_EPO format consists of records of variable length
+    in ASCII coding. The records are separated by a character with decimal
+    code 13. The records are grouped into sections. Sections follow
+    in this order:
+  
+    1) Header record -- the first record should have a signature:
+                        TROPO_PATH_DELAY  Format version of 2007.10.04
+     
+                        The header record allows to distinguish a valid
+                        file in the TROPO_PATH_DELAY  format from files
+                        in other formats.
+     
+    2) M-record section
+       M-record  has letter M in the first field. The M record keeps the
+                 model identifier.
+     
+    3) N-record section
+     
+    4) S-record section
+     
+    5) D-record section
+     
+    6) Trailer record -- the last record is the same as the header record.
+     
+     
+    Format of an S-record:
+    ----------------------
+     
+    Field  1:1   A1    -- Record ID. Should be letter S (decimal code 83).
+    field  2:2   a1       delimiter: blanks.
+    Field  4:11  A8    -- 8-letter long site identifier. May contain
+                          any characters with decimal codes 32-255, but
+                          blanks are allowed only at the end of the site
+                          identifier. This site identifier should be unique
+                          among S-records. This field should not
+                          necessarily have a special meaning. Parsing
+                          software should not try to interpret it.
+    field 12:13  a2       delimiter: blanks.
+    Field 14:26  F13.4 -- X site coordinate in a crust fixed reference
+                          frame. Units: meters.
+    field 27:27  a1       delimiter: blank.
+    Field 28:40  F13.4 -- Y site coordinate in a crust fixed reference
+                          frame. Units: meters.
+    field 27:27  a1       delimiter: blank.
+    Field 42:54  F13.4 -- Z site coordinate in a crust fixed reference
+                          frame. Units: meters.
+    field 55:56  a2       delimiter: blanks.
+    Field 57:64  F8.4  -- Site geocentric latitude, positive to north,
+                          in degrees. This field is for information only.
+                          Parsing software MUST ignore it.
+    field 65:65  a1       delimiter: blank.
+    Field 66:73  F8.4  -- Site longitude, positive towards east,
+                          in degrees. This field is for information only.
+                          Parsing software MUST ignore it.
+    field 74:74  a1       delimiter: blank.
+    Field 75:80  F6.1  -- Site height above the reference ellipsoid in
+                          meters. This field is for information only.
+                          Parsing software MUST ignore it.
+                                                   

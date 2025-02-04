@@ -1,0 +1,18 @@
+# CDDIS file definition  Version 1.0  of 2019.10.22
+#
+# 2020.06.01  Dirk Behrend   created
+#
+Short_description:    Session description file
+Long_description:     VLBI session description file provided by scheduler
+Format_file_name:     /vlbi/gsfc/sked/schedule_descrip.txt
+Reference:            n/a
+DOI:                  n/a
+Filenaming_scheme:    @{date{%Y}}/@{sess}/@{sess}.txt
+File_location:        /vlbi/ivsdata/aux
+Product_ID:           VLBI_SESSION_AUX_DESCRIP
+Data_type:            VLBI
+Data_content_type:    Misc
+Data_format:          ascii
+Validate_proc:        session_txt.py
+Magic:                None
+Compression_type:     none

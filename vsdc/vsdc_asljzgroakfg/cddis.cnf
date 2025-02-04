@@ -1,0 +1,22 @@
+# VSDC_CONFIG file. Version 1.04 of 2021.05.10
+#
+# Last update on 2021.05.10_19:10:19
+#
+DATA_CENTER:      CDDIS
+DDF_DIR:          /cont/vsdc/ddf
+URL_LOGIN:        https://depot.cddis.eosdis.nasa.gov/CDDIS_FileUpload/login
+URL_SUBMIT:       https://depot.cddis.eosdis.nasa.gov/CDDIS_FileUpload/upload/
+URL_SWIN_LOGIN:   https://depot.cddis.eosdis.nasa.gov/CDDIS_FileUpload/login
+URL_SWIN_SUBMIT:  https://depot.cddis.eosdis.nasa.gov/CDDIS_FileUpload/uploadLargeFile/
+TAR_SWIN_EXCLUDE: ""
+CURL_EXTRA_OPTS:  ""
+WGET_EXTRA_OPTS:  ""
+URL_DDF_FILES:    https://ivscc.gsfc.nasa.gov/products-data/ddfs/
+CDDIS_COOKIES:    /cont/vsdc/cddis.cookies
+NETRC_FILE:       /cont/vsdc/cddis.netrc
+SUBMIT_LOG:       /cont/vsdc/cddis.log
+MASTER_DIR:       /cont/master_files
+MASTER_URL:       https://cddis.nasa.gov/archive/vlbi/ivscontrol
+NS_CODES_URL:     https://cddis.nasa.gov/archive/vlbi/ivscontrol/ns-codes.txt
+NS_CODES_FILE:    /cont/ns-codes.txt
+LARGE_TMP_DIR:    /s0/temp

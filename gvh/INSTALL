@@ -1,0 +1,18 @@
+Dependencies:    vtd(cfitsio), petools(readline,atlas,X11)
+
+Libraries VTD and PETOOLS should be installed
+
+Under tcsh or csh, you 
+
+1) execute source your_install_directory/petools_vars
+
+2) configure gvh with command 
+   ./configure --prefix=...  --with-petools=...  --with-vtd=...
+
+   where ... should be replaced with appropriate directories where
+   the packages were installed and where you want to install gvh.
+
+3) make
+
+4) make install
+

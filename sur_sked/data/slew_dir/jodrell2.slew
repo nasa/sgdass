@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  JODRELL2  Jb
+LAST_UPDATE: JODRELL2  2018.01.20
+COORD:       JODRELL2  meters     3822626.040  -154105.650  5086486.040
+MOUNT:       JODRELL2  char       ALTAZ
+SLEW_AZ:     JODRELL2  deg/sec    0.33
+SLEW_EL:     JODRELL2  deg/sec    0.33
+ACCL_AZ:     JODRELL2  deg/sec^2  0.016
+ACCL_EL:     JODRELL2  deg/sec^2  0.022
+TSETTLE_AZ:  JODRELL2  sec        2.0
+TSETTLE_EL:  JODRELL2  sec        2.0
+EL_MIN:      JODRELL2  deg        1.0
+EL_MAX:      JODRELL2  deg       90.0
+AZ_RANGE:    JODRELL2  deg      -90.0 -30.0 270.0 330.0 
+RECORDER:    JODRELL2  chaar     mark5
+PREOB:       JODRELL2  chaar     10.0
+POSTOB:      JODRELL2  chaar      2.0

@@ -1,0 +1,37 @@
+  Slant path delay is computed by direct integration of differential 
+equations of electromagnetic wave propagation.  Equation of 
+propagation are the solution of the variational problem of wave 
+propagation between the emitter and receiver. According to the 
+Fermat principle, the trajectory of propagation is that that minimizes 
+travel time.
+
+  It is assumed the receiver is located at the infinity. Therefore,
+the problem to find the trajectory is reduced to a solution of a system 
+of non-linear differential equations of the 4th order with mixed initial 
+conditions.
+
+  After the trajectory of wave propagation is found, the path delay is 
+computed by integrating the refractivity over the trajectory.
+
+  Path delay is computed on a regular grid of azimuths elevations. 
+The grid is equidistant over azimuth and non-equidistant over elevation 
+angle. The minimum elevation is 3 degrees. To generate the elevation 
+grid, an equidistant sequence m_i is formed on the interval 
+[M(90), M(3deg)], where M is the mapping function of the ISA standard 
+atmosphere. Then for each element of sequence m_i, elevation is 
+computed as Mi(m_i),. where Mi is the function inverse to the mapping 
+function M(e).
+
+  In addition to path delay, surface atmospheric pressure, partial 
+pressure of water vapor, air temperature, atmospheric opacity, and 
+atmospheric brightness temperature are computed for each station 
+for the range of frequencies. Opacity is computed by integrating 
+specific opacity along the trajectory. The atmospheric brightness 
+temperature temperature is found by integrating the deferral equation 
+of radiative transfer under condition of local thermal equilibrium. 
+The frequencies for computation of opacity and atmosphere brightness 
+temperature are selected to have interpolation errors below 0.3% over 
+the range of 1 to 360 GHz, with an exception of the range of oxygen 
+absorption [56, 64] GHz. The atmospheric brightness temperature 
+includes the contribution of the cosmic background radiation.
+

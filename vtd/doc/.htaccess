@@ -1,0 +1,7 @@
+AddType      text/plain                hps  csh  inp  dat  syn
+AddType      application/postscript    ps
+Addtype      application/netcdf        nc
+AddEncoding  x-gzip                    gz
+AddEncoding  x-bzip2                   bz2
+XBitHack     on
+Options      +Includes

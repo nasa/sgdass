@@ -1,0 +1,36 @@
+use_deltran version 1.0  of  2001.12.20
+
+   Program USE_DELTRAN  works as a user program in Solve. It is used  
+   for comparison of two two databases which correspond to the same   
+   experiment but were produced by different fringing. It is assumed  
+   1) databases has at least 80% of the same observations.            
+   2) Program SET_DELTRAN has run with the alternative database.      
+                                                                      
+   Program SET_DELTRAN created an intermediate file which keeps       
+   delays phases, suppression status and some other information about 
+   alternative session.                                               
+                                                                      
+   USE_DELTRAN reads this intermediate file and tries to match each   
+   observation from the intermediate file (and therefore from the     
+   alternative database) with the observation from the current        
+   database. All observations in the current database which were not  
+   matched with alternative database are marked as outliers.          
+   USE_DELTRAN changes suppression status for matched observations    
+   in current database to the values from the alternative database.   
+   It sets mode calibration USERMCAL which would keep for 6           
+   observables: group delay at both bands, phase delay at both bands, 
+   phase delay rate at both bands to the value: CURRENT_DATABASE      
+   minus ALTERNATIVE_DATABASE. Program USE_DELTRAN also sets status   
+   flag: to use USERMCAL calibration.                                 
+                                                                      
+   When USERMCAL mode calibration is on, then Solve will effectively  
+   use delays, phases, phase rates from alternative database. When    
+   USERMCAL mode calibrations off, then Solve will use delays, rates  
+   and phases from the current database.                              
+                                                                      
+   Caveat: After using USE_DELTRAN the number of suppressed           
+   observations may increase. Observations will be suppressed if      
+   1) they were suppressed in the current database;                   
+   2) they were suppressed in the alternative database;               
+   3) they were not matched between the current and alternative       
+      database;                                                       

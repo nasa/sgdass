@@ -1,0 +1,36 @@
+--- src/pima_get_evn_gain.f.orig	2015-12-26 06:00:55.000000000 +0300
++++ src/pima_get_evn_gain.f	2020-11-10 20:29:42.758055707 +0300
+@@ -14,7 +14,7 @@
+        INTEGER*4  IUER
+        CHARACTER  EVN_GAIN_FILE*(*)
+        INTEGER*4  MP, MIND
+-      PARAMETER  ( MP = 1024 )
++      PARAMETER  ( MP = 65536 )
+        PARAMETER  ( MIND = 128 )
+        CHARACTER, ALLOCATABLE :: BUF(:)*256
+        LOGICAL*1  LEX
+@@ -71,10 +71,11 @@
+  !
+                POLY_TYP = 0
+                IF ( BUF(J1)(IND(1,3):IND(2,3)) == 'ELEV' .OR. &
+-     &             BUF(J1)(IND(1,3):IND(2,3)) == 'ALTAZ'     ) THEN
+-                   POLY_TYP = 1
+-                 ELSE IF ( BUF(J1)(IND(1,3):IND(2,3)) == 'ZEN' ) THEN
+-                   POLY_TYP = 2
++     &             BUF(J1)(IND(1,3):IND(2,3)) == 'EQUAT'     ) THEN
++                   POLY_TYP = PIMA__GA_ELEV
++                 ELSE IF ( BUF(J1)(IND(1,3):IND(2,3)) == 'ZEN' .OR. &
++     &                     BUF(J1)(IND(1,3):IND(2,3)) == 'ALTAZ'    ) THEN
++                   POLY_TYP = PIMA__GA_ZEN
+                   ELSE
+                     CALL CLRCH ( STR )
+                     CALL INCH  ( J1, STR )
+@@ -237,7 +238,7 @@
+                        DO 450 J5=1,PIM%STA(IND_STA)%GAIN(PIM%CONF%FRQ_GRP)%NPOL
+                           PIM%STA(IND_STA)%GAIN(PIM%CONF%FRQ_GRP)%SENS(J4,J5) = DPFU(J5)
+  !
+-                         PIM%STA(IND_STA)%GAIN(PIM%CONF%FRQ_GRP)%TYP(J4,J5) = PIMA__GA_ELEV
++                         PIM%STA(IND_STA)%GAIN(PIM%CONF%FRQ_GRP)%TYP(J4,J5) = POLY_TYP
+                           PIM%STA(IND_STA)%GAIN(PIM%CONF%FRQ_GRP)%X_TYP(J4,J5) = 1
+                           PIM%STA(IND_STA)%GAIN(PIM%CONF%FRQ_GRP)%Y_TYP(J4,J5) = 1
+                           PIM%STA(IND_STA)%GAIN(PIM%CONF%FRQ_GRP)%X_VAL(J4,J5) = 0.0D0

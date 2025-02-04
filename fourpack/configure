@@ -1,0 +1,150 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of fourpack. It creates the      *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ###  15-JUN-2009   configure    v1.4 (c) L. Petrov 15-MAY-2019 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv FOURPACK_VERSION    "20220220"
+setenv PETOOLS_VERSION_MIN "20200501"
+setenv FOURPACK_PREFIX     /opt
+setenv FOURPACK_ROOT       `dirname $0`
+if ( $FOURPACK_ROOT == '.' ) setenv FOURPACK_ROOT `pwd`
+setenv PETOOLS_DIR      $HOME
+setenv MKL_DIR          ""
+setenv FFTW_DIR         "/usr/lib"
+setenv FFTW_OS          `uname`
+setenv FOURPACK_SHARED  "YES"
+setenv FOURPACK_NOOPT   "NO"
+setenv CONF_LOG         ${FOURPACK_ROOT}/temp/conf.log
+setenv BUILD_LOG        ${FOURPACK_ROOT}/temp/build.log
+setenv fourpack_debug   0
+#
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--debug")}'`
+     if ( $match_prefix > 0 ) then
+          setenv fourpack_debug 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv FOURPACK_NOOPT YES
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv FOURPACK_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_DIR "$str"
+          set find_option = 1
+     endif
+#
+     set match_fftw=`echo $arg | awk '{print index ($1,"--with-fftw")}'`
+     if ( $match_fftw > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv FFTW_DIR "$str"
+          set find_option  = 1
+     endif
+#
+     set match_mkl=`echo $arg | awk '{print index ($1,"--with-mkl=")}'`
+     if ( "$match_mkl" > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv MKL_DIR  "$str"
+          set find_option  = 1
+     endif
+#
+     set match_nomkl=`echo $arg | awk '{print index ($1,"--without-mkl")}'`
+     if ( $match_nomkl > 0 ) then
+	  setenv MKL_DIR  "" 
+          set find_option  = 1
+     endif
+#
+     set match_nopetools=`echo $arg | awk '{print index ($1,"--without-petools")}'`
+     if ( $match_nopetools > 0 ) then
+	  echo "petools is a mandatory library"
+	  exit 1
+     endif
+#
+     set match_fftw=`echo $arg | awk '{print index ($1,"--without-fftw")}'`
+     if ( $match_fftw > 0 ) then
+	  echo "fftw is a mandatory library"
+	  exit 1
+     endif
+#
+     set match_shared=`echo $arg | awk '{print index ($1,"--enable-shared")}'`
+     if ( $match_shared > 0 ) then
+	  setenv FOURPACK_SHARED "YES"
+          set find_option  = 1
+     endif
+#
+     set match_noshared=`echo $arg | awk '{print index ($1,"--disbable-shared")}'`
+     if ( $match_noshared > 0 ) then
+	  setenv FOURPACK_SHARED "NO"
+          set find_option  = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $FOURPACK_ROOT/doc/fourpack_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "fourpack: $FOURPACK_VERSION"
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set    date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set    host_name   = `uname -n`
+echo "fourpack config  $date_stamp  on  $host_name" >! $CONF_LOG
+echo $0 $argv >> $CONF_LOG
+if ( $fourpack_debug == 1 ) then
+     csh -x support/config.csh | tee -a $CONF_LOG   
+   else
+     support/config.csh | tee -a $CONF_LOG   
+endif 
+if ( `grep Error $CONF_LOG` == "" ) then
+     set config_status = 0
+  else 
+     set config_status = 1
+endif 
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run gmake"
+     exit $config_status 
+  else
+     exit $config_status 
+endif

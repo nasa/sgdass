@@ -1,0 +1,401 @@
+
+build:	
+	@echo "Building vtd started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`                |  tee  > $(BUILD_LOG)
+	@echo " "                                                                                         |  tee -a $(BUILD_LOG)
+	cd  $(VTD_ROOT); cd fitslib; source $(VTD_ROOT)/support/vtd_vars; umask 0002; make -j $(NUM_PROC) |& tee -a $(BUILD_LOG)
+	cd  $(VTD_ROOT); cd src;     source $(VTD_ROOT)/support/vtd_vars; umask 0002; make -j $(NUM_PROC) |& tee -a $(BUILD_LOG)
+	cd  $(VTD_ROOT); cd utils;   source $(VTD_ROOT)/support/vtd_vars; umask 0002; make -j $(NUM_PROC) |& tee -a $(BUILD_LOG)
+	cd  $(VTD_ROOT); cd example; source $(VTD_ROOT)/support/vtd_vars; umask 0002; make -j $(NUM_PROC) |& tee -a $(BUILD_LOG)
+	@echo "Building vtd finihsed at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`                |  tee -a $(BUILD_LOG)
+	@echo " "                                                                                         |  tee -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+.PHONY: install
+install:
+	if ( -d $(VTD_PREFIX)           == 0 ) mkdir -p $(VTD_PREFIX)
+	if ( -d $(VTD_PREFIX)/bin       == 0 ) mkdir    $(VTD_PREFIX)/bin
+	if ( -d $(VTD_PREFIX)/lib       == 0 ) mkdir    $(VTD_PREFIX)/lib
+	if ( -d $(VTD_PREFIX)/include   == 0 ) mkdir    $(VTD_PREFIX)/include
+	if ( -d $(VTD_PREFIX)/share     == 0 ) mkdir    $(VTD_PREFIX)/share
+	if ( -d $(VTD_PREFIX)/share/vtd == 0 ) mkdir    $(VTD_PREFIX)/share/vtd
+	if ( -d $(VTD_DATA)             == 0 ) mkdir -p $(VTD_DATA)
+	cp $(VTD_ROOT)/bin/bindisp_merge                $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/difxvtd                      $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/gti_update                   $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/pd_iono                      $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/viono_to_heb                 $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/viono_merge                  $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/viono_show_header            $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_example_01               $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_example_02               $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_example_03               $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_example_04               $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_example_05               $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_example_06               $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_control_update           $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/bin/vtd_inq                      $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/scripts/vtd_apriori_update.py    $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/scripts/vtd_exe.py               $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/scripts/vtd_local.py             $(VTD_PREFIX)/bin
+	cp $(VTD_ROOT)/support/export_vtd_vars          $(VTD_PREFIX)/bin/vtd_vars
+	cp $(VTD_ROOT)/support/export_vtd_vars          $(VTD_PREFIX)/bin/export_vtd_vars
+	cp $(VTD_ROOT)/support/export_vtd_vars.sh       $(VTD_PREFIX)/bin/vtd_vars.sh
+	cp $(VTD_ROOT)/support/export_vtd_vars.sh       $(VTD_PREFIX)/bin/export_vtd_vars.sh
+
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_example_01
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_example_02
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_example_03
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_example_04
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_example_05
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_example_06
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/bindisp_merge
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/difxvtd
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/gti_update
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/pd_iono
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_control_update
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_inq
+	-chmod o+rx,g+rx,u+rwx $(VTD_PREFIX)/bin/vtd_apriori_update.py
+	-chmod o=r,g=rw,u=rw   $(VTD_PREFIX)/bin/export_vtd_vars
+	-chmod o=r,g=rw,u=rw   $(VTD_PREFIX)/bin/vtd_vars
+	-chmod o=r,g=rw,u=rw   $(VTD_PREFIX)/bin/vtd_vars.sh
+	-chmod o=r,g=rw,u=rw   $(VTD_PREFIX)/bin/export_vtd_vars.sh
+	cp $(VTD_ROOT)/src/libvtd.a                 $(VTD_LIB)/libvtd.a
+	cp $(VTD_ROOT)/fitslib/libfitslib.a         $(VTD_LIB)/libfitslib.a
+        ifeq ($(VTD_OS),Linux)
+	    cp $(VTD_ROOT)/src/libvtd.so.1.0            $(VTD_LIB)/libvtd.so.1.0
+	    cp $(VTD_ROOT)/fitslib/libfitslib.so.1.0    $(VTD_LIB)/libfitslib.so.1.0
+	    if ( -l $(VTD_LIB)/libvtd.so       ) rm $(VTD_LIB)/libvtd.so
+	    if ( -l $(VTD_LIB)/libvtd.so.1     ) rm $(VTD_LIB)/libvtd.so.1
+	    if ( -l $(VTD_LIB)/libfitslib.so   ) rm $(VTD_LIB)/libfitslib.so 
+	    if ( -l $(VTD_LIB)/libfitslib.so.1 ) rm $(VTD_LIB)/libfitslib.so.1
+	    ln -s $(VTD_LIB)/libvtd.so.1.0     $(VTD_LIB)/libvtd.so.1
+	    ln -s $(VTD_LIB)/libvtd.so.1.0     $(VTD_LIB)/libvtd.so
+	    ln -s $(VTD_LIB)/libfitslib.so.1.0 $(VTD_LIB)/libfitslib.so.1 
+	    ln -s $(VTD_LIB)/libfitslib.so.1.0 $(VTD_LIB)/libfitslib.so
+        endif
+        ifeq ($(VTD_OS),Darwin)
+	    cp $(VTD_ROOT)/src/libvtd.1.dylib           $(VTD_LIB)/libvtd.1.dylib
+	    cp $(VTD_ROOT)/fitslib/libfitslib.1.dylib   $(VTD_LIB)/libfitslib.1.dylib
+	    if ( -l $(VTD_LIB)/libvtd.dylib     ) rm $(VTD_LIB)/libvtd.dylib    
+	    if ( -l $(VTD_LIB)/libfitslib.dylib ) rm $(VTD_LIB)/libfitslib.dylib 
+	    install_name_tool -id $(VTD_LIB)/libvtd.1.dylib     $(VTD_LIB)/libvtd.1.dylib
+	    install_name_tool -id $(VTD_LIB)/libfitslib.1.dylib $(VTD_LIB)/libfitslib.1.dylib
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_example_01
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_example_02
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_example_03
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_example_04
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_example_05
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_example_06
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/bindisp_merge
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/difxvtd
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/gti_update  
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/pd_iono
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/viono_merge
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/viono_show_header
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/viono_to_heb
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_control_update
+	    install_name_tool -change $(VTD_ROOT)/src/libvtd.1.dylib $(VTD_LIB)/libvtd.1.dylib $(VTD_PREFIX)/bin/vtd_inq
+	    ln -s $(VTD_LIB)/libvtd.1.dylib      $(VTD_LIB)/libvtd.dylib
+	    ln -s $(VTD_LIB)/libfitslib.1.dylib  $(VTD_LIB)/libfitslib.dylib
+        endif
+	cp $(VTD_ROOT)/include/aem.i                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/astro_constants.i    $(VTD_INC)/
+	cp $(VTD_ROOT)/include/bindisp.i            $(VTD_INC)/
+	cp $(VTD_ROOT)/include/de440_eph.i          $(VTD_INC)/
+	cp $(VTD_ROOT)/include/e3zt_dickman1993.i   $(VTD_INC)/
+	cp $(VTD_ROOT)/include/e3zt_re2014.i        $(VTD_INC)/
+	cp $(VTD_ROOT)/include/e3zt_yoder1981.i     $(VTD_INC)/
+	cp $(VTD_ROOT)/include/eec.i                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/eec_peta.i           $(VTD_INC)/
+	cp $(VTD_ROOT)/include/ephedisp.i           $(VTD_INC)/
+	cp $(VTD_ROOT)/include/erm.i                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/harpos.i             $(VTD_INC)/
+	cp $(VTD_ROOT)/include/heo.i                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/hw95_2d_0002.i       $(VTD_INC)/
+	cp $(VTD_ROOT)/include/hw95_2d_02.i         $(VTD_INC)/
+	cp $(VTD_ROOT)/include/hw95_3d_0002.i       $(VTD_INC)/
+	cp $(VTD_ROOT)/include/hw95_3d_02.i         $(VTD_INC)/
+	cp $(VTD_ROOT)/include/iers1996_heo.i       $(VTD_INC)/
+	cp $(VTD_ROOT)/include/love_const.i         $(VTD_INC)/
+	cp $(VTD_ROOT)/include/love_numbers.i       $(VTD_INC)/
+	cp $(VTD_ROOT)/include/mhb2000_addon_heo.i  $(VTD_INC)/
+	cp $(VTD_ROOT)/include/mhb2000_heo.i        $(VTD_INC)/
+	cp $(VTD_ROOT)/include/mhb2000_transf_heo.i $(VTD_INC)/
+	cp $(VTD_ROOT)/include/nut_const.i          $(VTD_INC)/
+	cp $(VTD_ROOT)/include/ren2000_heo.i        $(VTD_INC)/
+	cp $(VTD_ROOT)/include/sotid_data.i         $(VTD_INC)/
+	cp $(VTD_ROOT)/include/sotid_type.i         $(VTD_INC)/
+	cp $(VTD_ROOT)/include/sta_bsp.i            $(VTD_INC)/
+	cp $(VTD_ROOT)/include/ueop.i               $(VTD_INC)/
+	cp $(VTD_ROOT)/include/viono.i              $(VTD_INC)/
+	cp $(VTD_ROOT)/include/vtd.i                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/vtd.h                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/sou_map.i            $(VTD_INC)/
+	cp $(VTD_ROOT)/include/anti.i               $(VTD_INC)/
+	cp $(VTD_ROOT)/include/agd.i                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/trp.i                $(VTD_INC)/
+	cp $(VTD_ROOT)/include/bsppos.i             $(VTD_INC)/
+	cp $(VTD_ROOT)/include/wahr1980_heo.i       $(VTD_INC)/
+	if ( ! -f $(VTD_DATA)/2007b_oclo.hps )         cp $(VTD_ROOT)/share/2007b_oclo.hps         $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/de440.eph  )             cp $(VTD_ROOT)/share/de440.eph              $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/ECCDAT.ecc )             cp $(VTD_ROOT)/share/ECCDAT.ecc             $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/glo.src )                cp $(VTD_ROOT)/share/glo.src                $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/glo.sit )                cp $(VTD_ROOT)/share/glo.sit                $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/glo.vel )                cp $(VTD_ROOT)/share/glo.vel                $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/sou.prl )      	       cp $(VTD_ROOT)/share/sou.prl     	   $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/heo_20231023.heo )       cp $(VTD_ROOT)/share/heo_20231023.heo       $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/leapsec.dat )            cp $(VTD_ROOT)/share/leapsec.dat            $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/mean_pole.txt )          cp $(VTD_ROOT)/share/mean_pole.txt          $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/mmf.mod )      	       cp $(VTD_ROOT)/share/mmf.mod      	   $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/source.names )           cp $(VTD_ROOT)/share/source.names           $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/station.desc )           cp $(VTD_ROOT)/share/station.desc           $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/struc_01.cnf )           cp $(VTD_ROOT)/share/struc_01.cnf           $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/vlbi_apr.erp )           cp $(VTD_ROOT)/share/vlbi_apr.erp           $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/titan_apr.src )          cp $(VTD_ROOT)/share/titan_apr.src          $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/titan_apr.nzo )          cp $(VTD_ROOT)/share/titan_apr.nzo          $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/RA120314-120314.scf )    cp $(VTD_ROOT)/share/RA120314-120314.scf    $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/2018_CODG3070.18I.Z )    cp $(VTD_ROOT)/share/2018_CODG3070.18I.Z    $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/2019_CODG3640.19I.Z )    cp $(VTD_ROOT)/share/2019_CODG3640.19I.Z    $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/vlbi_apr.erp )           cp $(VTD_ROOT)/share/vlbi_apr.erp           $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/vsgd_s1_s2_ib_aplo.hps   )  cp $(VTD_ROOT)/share/vsgd_s1_s2_ib_aplo.hps   $(VTD_DATA)
+	if ( ! -f $(VTD_DATA)/vsgd_s1_s2_noib_aplo.hps )  cp $(VTD_ROOT)/share/vsgd_s1_s2_noib_aplo.hps $(VTD_DATA)
+	if ( ! -f $(VTD_DATA)/zero.vel )               cp $(VTD_ROOT)/share/zero.vel               $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/mmf.mod )                cp $(VTD_ROOT)/share/mmf.mod                $(VTD_DATA)/
+	if ( ! -f $(VTD_DATA)/raes03ci.scf )           cp $(VTD_ROOT)/share/raes03ci.scf           $(VTD_DATA)/
+	cp $(VTD_ROOT)/share/*CODG*.Z                  $(VTD_DATA)/
+	cp $(VTD_ROOT)/share/apr_update.conf        $(VTD_DATA)/apr_update.conf        
+	cp $(VTD_ROOT)/temp/vtd_test_01.cnf         $(VTD_DATA)/vtd_test_01.cnf
+	cp $(VTD_ROOT)/temp/vtd_test_02.cnf         $(VTD_DATA)/vtd_test_02.cnf
+	cp $(VTD_ROOT)/temp/vtd_test_03.cnf         $(VTD_DATA)/vtd_test_03.cnf
+	cp $(VTD_ROOT)/temp/vtd_example_04.com      $(VTD_DATA)/vtd_example_04.com
+	@echo "=== Installation of vtd is completed ==="
+
+utils:
+	cd  $(VTD_ROOT); cd utils;   source $(VTD_ROOT)/support/vtd_vars; umask 0002; make -j $(NUM_PROC) |& tee -a $(BUILD_LOG)
+
+uninstall_include:
+	if ( -f $(VTD_INC)/aem.i                ) rm -f $(VTD_INC)/aem.i    
+	if ( -f $(VTD_INC)/astro_constants.i    ) rm -f $(VTD_INC)/astro_constants.i
+	if ( -f $(VTD_INC)/bindisp.i            ) rm -f $(VTD_INC)/bindisp.i    
+	if ( -f $(VTD_INC)/bsp.i                ) rm -f $(VTD_INC)/bsp.i        
+	if ( -f $(VTD_INC)/de440_eph.i          ) rm -f $(VTD_INC)/de440_eph.i
+	if ( -f $(VTD_INC)/e3zt_dickman1993.i   ) rm -f $(VTD_INC)/e3zt_dickman1993.i
+	if ( -f $(VTD_INC)/e3zt_re2014.i        ) rm -f $(VTD_INC)/e3zt_re2014.i
+	if ( -f $(VTD_INC)/e3zt_yoder1981.i     ) rm -f $(VTD_INC)/e3zt_yoder1981.i
+	if ( -f $(VTD_INC)/eec.i                ) rm -f $(VTD_INC)/eec.i
+	if ( -f $(VTD_INC)/eec_peta.i           ) rm -f $(VTD_INC)/eec_peta.i
+	if ( -f $(VTD_INC)/ephedisp.i           ) rm -f $(VTD_INC)/ephedisp.i
+	if ( -f $(VTD_INC)/erm.i                ) rm -f $(VTD_INC)/erm.i
+	if ( -f $(VTD_INC)/harpos.i             ) rm -f $(VTD_INC)/harpos.i
+	if ( -f $(VTD_INC)/heo.i                ) rm -f $(VTD_INC)/heo.i
+	if ( -f $(VTD_INC)/hw95_2d_0002.i       ) rm -f $(VTD_INC)/hw95_2d_0002.i
+	if ( -f $(VTD_INC)/hw95_2d_02.i         ) rm -f $(VTD_INC)/hw95_2d_02.i
+	if ( -f $(VTD_INC)/hw95_3d_0002.i       ) rm -f $(VTD_INC)/hw95_3d_0002.i
+	if ( -f $(VTD_INC)/hw95_3d_02.i         ) rm -f $(VTD_INC)/hw95_3d_02.i
+	if ( -f $(VTD_INC)/iers1996_heo.i       ) rm -f $(VTD_INC)/iers1996_heo.i
+	if ( -f $(VTD_INC)/love_const.i         ) rm -f $(VTD_INC)/love_const.i
+	if ( -f $(VTD_INC)/love_numbers.i       ) rm -f $(VTD_INC)/love_numbers.i
+	if ( -f $(VTD_INC)/mhb2000_addon_heo.i  ) rm -f $(VTD_INC)/mhb2000_addon_heo.i
+	if ( -f $(VTD_INC)/mhb2000_heo.i        ) rm -f $(VTD_INC)/mhb2000_heo.i
+	if ( -f $(VTD_INC)/mhb2000_transf_heo.i ) rm -f $(VTD_INC)/mhb2000_transf_heo.i
+	if ( -f $(VTD_INC)/nut_const.i          ) rm -f $(VTD_INC)/nut_const.i
+	if ( -f $(VTD_INC)/ren2000_heo.i        ) rm -f $(VTD_INC)/ren2000_heo.i
+	if ( -f $(VTD_INC)/sotid_data.i         ) rm -f $(VTD_INC)/sotid_data.i
+	if ( -f $(VTD_INC)/sotid_type.i         ) rm -f $(VTD_INC)/sotid_type.i
+	if ( -f $(VTD_INC)/sta_bsp.i            ) rm -f $(VTD_INC)/sta_bsp.i
+	if ( -f $(VTD_INC)/ueop.i               ) rm -f $(VTD_INC)/ueop.i
+	if ( -f $(VTD_INC)/viono.i              ) rm -f $(VTD_INC)/viono.i
+	if ( -f $(VTD_INC)/vtd.i                ) rm -f $(VTD_INC)/vtd.i
+	if ( -f $(VTD_INC)/vtd.h                ) rm -f $(VTD_INC)/vtd.h
+	if ( -f $(VTD_INC)/sou_map.i            ) rm -f $(VTD_INC)/sou_map.i
+	if ( -f $(VTD_INC)/anti.i               ) rm -f $(VTD_INC)/anti.i
+	if ( -f $(VTD_INC)/agd.i                ) rm -f $(VTD_INC)/agd.i
+	if ( -f $(VTD_INC)/trp.i                ) rm -f $(VTD_INC)/trp.i
+	if ( -f $(VTD_INC)/bsppos.i             ) rm -f $(VTD_INC)/bpspos.i
+	if ( -f $(VTD_INC)/wahr1980_heo.i       ) rm -f $(VTD_INC)/wahr1980_heo.i
+
+uninstall: uninstall_include
+	if ( -f $(VTD_LIB)/libvtd.a             ) rm -f $(VTD_LIB)/libvtd.a
+	if ( -l $(VTD_LIB)/libvtd.so            ) rm -f $(VTD_LIB)/libvtd.so
+	if ( -l $(VTD_LIB)/libvtd.so.1          ) rm -f $(VTD_LIB)/libvtd.so.1
+	if ( -f $(VTD_LIB)/libvtd.so.1.0        ) rm -f $(VTD_LIB)/libvtd.so.1.0
+	if ( -l $(VTD_LIB)/libvtd.dylib         ) rm -f $(VTD_LIB)/libvtd.dylib
+	if ( -f $(VTD_LIB)/libvtd.1.dylib       ) rm -f $(VTD_LIB)/libvtd.1.dylib
+	if ( -f $(VTD_LIB)/libfitslib.a         ) rm -f $(VTD_LIB)/libfitslib.a
+	if ( -l $(VTD_LIB)/libfitslib.so        ) rm -f $(VTD_LIB)/libfitslib.so
+	if ( -l $(VTD_LIB)/libfitslib.so.1      ) rm -f $(VTD_LIB)/libfitslib.so.1
+	if ( -f $(VTD_LIB)/libfitslib.so.1.0    ) rm -f $(VTD_LIB)/libfitslib.so.1.0
+	if ( -f $(VTD_LIB)/libfitslib.1.dylib   ) rm -f $(VTD_LIB)/libfitslib.1.dylib
+	if ( -l $(VTD_LIB)/libfitslib.dylib     ) rm -f $(VTD_LIB)/libfitslib.dylib
+	if ( -f $(VTD_DATA)/2007b_oclo.hps      ) rm -f $(VTD_DATA)/2007b_oclo.hps
+	if ( -f $(VTD_DATA)/heo_20210608.heo    ) rm -f $(VTD_DATA)/heo_20210608.heo        
+	if ( -f $(VTD_DATA)/heo_20220720.heo    ) rm -f $(VTD_DATA)/heo_20220720.heo
+	if ( -f $(VTD_DATA)/heo_20221229.heo    ) rm -f $(VTD_DATA)/heo_20221229.heo
+	if ( -f $(VTD_DATA)/heo_20231223.heo    ) rm -f $(VTD_DATA)/heo_20231223.heo
+	if ( -f $(VTD_DATA)/de440.eph           ) rm -f $(VTD_DATA)/de440.eph
+	if ( -f $(VTD_DATA)/DE403_JPL.dat       ) rm -f $(VTD_DATA)/DE403_JPL.dat       
+	if ( -f $(VTD_DATA)/ECCDAT.ecc          ) rm -f $(VTD_DATA)/ECCDAT.ecc
+	if ( -f $(VTD_DATA)/apr_update.conf     ) rm -f $(VTD_DATA)/apr_update.conf     
+	if ( -f $(VTD_DATA)/glo.src             ) rm -f $(VTD_DATA)/glo.src
+	if ( -f $(VTD_DATA)/glo.sit             ) rm -f $(VTD_DATA)/glo.sit
+	if ( -f $(VTD_DATA)/glo.vel             ) rm -f $(VTD_DATA)/glo.vel
+	if ( -f $(VTD_DATA)/sou.prl             ) rm -f $(VTD_DATA)/sou.prl
+	if ( -f $(VTD_DATA)/leapsec.dat         ) rm -f $(VTD_DATA)/leapsec.dat     
+	if ( -f $(VTD_DATA)/mean_pole.txt       ) rm -f $(VTD_DATA)/mean_pole.txt
+	if ( -f $(VTD_DATA)/mmf.mod      	) rm -f $(VTD_DATA)/mmf.mod
+	if ( -f $(VTD_DATA)/source.names        ) rm -f $(VTD_DATA)/source.names
+	if ( -f $(VTD_DATA)/station.desc        ) rm -f $(VTD_DATA)/station.desc
+	if ( -f $(VTD_DATA)/struc_01.cnf        ) rm -f $(VTD_DATA)/struc_01.cnf
+	if ( -f $(VTD_DATA)/vlbi_apr.erp        ) rm -f $(VTD_DATA)/vlbi_apr.erp
+	if ( -f $(VTD_DATA)/vsgd_s1_s2_ib_aplo.hps   ) rm -f $(VTD_DATA)/vsgd_s1_s2_ib_aplo.hps
+	if ( -f $(VTD_DATA)/vsgd_s1_s2_noib_aplo.hps ) rm -f $(VTD_DATA)/vsgd_s1_s2_noib_aplo.hps
+	if ( -f $(VTD_DATA)/zero.vel            ) rm -f $(VTD_DATA)/zero.vel
+	if ( -f $(VTD_DATA)/mmf.mod             ) rm -f $(VTD_DATA)/mmf.mod
+	if ( -f $(VTD_DATA)/vtd_test_01.cnf     ) rm -f $(VTD_DATA)/vtd_test_01.cnf
+	if ( -f $(VTD_DATA)/vtd_test_02.cnf     ) rm -f $(VTD_DATA)/vtd_test_02.cnf
+	if ( -f $(VTD_DATA)/vtd_test_03.cnf     ) rm -f $(VTD_DATA)/vtd_test_03.cnf
+	if ( -f $(VTD_DATA)/vtd_example_04.com  ) rm -f $(VTD_DATA)/vtd_example_04.com
+	if ( -f $(VTD_DATA)/titan_apr.src       ) rm -f $(VTD_DATA)/titan_apr.src
+	if ( -f $(VTD_DATA)/titan_apr.nzo       ) rm -f $(VTD_DATA)/titan_apr.nzo
+	if ( -f $(VTD_DATA)/RA120314-120314.scf ) rm -f $(VTD_DATA)/RA120314-120314.scf
+	if ( -f $(VTD_DATA)/raes03ci.scf        ) rm -f $(VTD_DATA)/raes03ci.scf
+	if ( -f $(VTD_DATA)/2016_CODG2100.16I.Z ) rm -f $(VTD_DATA)/2016_CODG2100.16I.Z
+	if ( -f $(VTD_DATA)/2018_CODG3070.18I.Z ) rm -f $(VTD_DATA)/2018_CODG3070.18I.Z
+	if ( -f $(VTD_DATA)/2019_CODG3640.19I.Z ) rm -f $(VTD_DATA)/2019_CODG3640.19I.Z 
+	if ( -f $(VTD_PREFIX)/bin/vtd_example_01        ) rm -f $(VTD_PREFIX)/bin/vtd_example_01            
+	if ( -f $(VTD_PREFIX)/bin/vtd_example_02        ) rm -f $(VTD_PREFIX)/bin/vtd_example_02            
+	if ( -f $(VTD_PREFIX)/bin/vtd_example_03        ) rm -f $(VTD_PREFIX)/bin/vtd_example_03            
+	if ( -f $(VTD_PREFIX)/bin/vtd_example_04        ) rm -f $(VTD_PREFIX)/bin/vtd_example_04            
+	if ( -f $(VTD_PREFIX)/bin/vtd_example_05        ) rm -f $(VTD_PREFIX)/bin/vtd_example_05            
+	if ( -f $(VTD_PREFIX)/bin/vtd_example_06        ) rm -f $(VTD_PREFIX)/bin/vtd_example_06            
+	if ( -f $(VTD_PREFIX)/bin/bindisp_merge         ) rm -f $(VTD_PREFIX)/bin/bindisp_merge             
+	if ( -f $(VTD_PREFIX)/bin/difxvtd               ) rm -f $(VTD_PREFIX)/bin/difxvtd
+	if ( -f $(VTD_PREFIX)/bin/gti_update            ) rm -f $(VTD_PREFIX)/bin/gti_update                
+	if ( -f $(VTD_PREFIX)/bin/pd_iono               ) rm -f $(VTD_PREFIX)/bin/pd_iono                   
+	if ( -f $(VTD_PREFIX)/bin/viono_to_heb          ) rm -f $(VTD_PREFIX)/bin/viono_to_heb         
+	if ( -f $(VTD_PREFIX)/bin/viono_merge           ) rm -f $(VTD_PREFIX)/bin/viono_merge
+	if ( -f $(VTD_PREFIX)/bin/viono_show_header     ) rm -f $(VTD_PREFIX)/bin/viono_show_header
+	if ( -f $(VTD_PREFIX)/bin/vtd_control_update    ) rm -f $(VTD_PREFIX)/bin/vtd_control_update        
+	if ( -f $(VTD_PREFIX)/bin/vtd_inq               ) rm -f $(VTD_PREFIX)/bin/vtd_inq
+	if ( -f $(VTD_PREFIX)/bin/vtd_exe.py            ) rm -f $(VTD_PREFIX)/bin/pts/vtd_exe.py            
+	if ( -f $(VTD_PREFIX)/bin/vtd_local.py          ) rm -f $(VTD_PREFIX)/bin/vtd_local.py          
+	if ( -f $(VTD_PREFIX)/bin/vtd_apriori_update.py ) rm -f $(VTD_PREFIX)/bin/vtd_apriori_update.py 
+	if ( `ls -c1 $(VTD_ROOT)/share/*CODG*.Z` != 0   ) rm -f $(VTD_DATA)/*CODG*.Z
+
+	@echo "=== Un-installation of vtd is completed ==="
+
+clean:	
+	cd src;     make clean      
+	cd utils;   make clean      
+	cd fitslib; make clean      
+	cd example; make clean      
+	if ( -f $(VTD_ROOT)/support/sun_preproc.o   ) rm -f $(VTD_ROOT)/support/sun_preproc.o
+	if ( -f $(VTD_ROOT)/temp/vtd_test_01.cnf    ) rm -f $(VTD_ROOT)/support/vtd_test_01.cnf
+	if ( -f $(VTD_ROOT)/temp/vtd_test_02.cnf    ) rm -f $(VTD_ROOT)/support/vtd_test_02.cnf
+	if ( -f $(VTD_ROOT)/temp/vtd_test_03.cnf    ) rm -f $(VTD_ROOT)/support/vtd_test_03.cnf
+	if ( -f $(VTD_ROOT)/temp/vtd_example_04.com ) rm -f $(VTD_ROOT)/support/vtd_example_04.com
+	if ( -f $(VTD_ROOT)/bin/vtd_example_01      ) rm -f $(VTD_ROOT)/bin/vtd_example_01
+	if ( -f $(VTD_ROOT)/bin/vtd_example_02      ) rm -f $(VTD_ROOT)/bin/vtd_example_02
+	if ( -f $(VTD_ROOT)/bin/vtd_example_03      ) rm -f $(VTD_ROOT)/bin/vtd_example_03
+	if ( -f $(VTD_ROOT)/bin/vtd_example_04      ) rm -f $(VTD_ROOT)/bin/vtd_example_04
+	if ( -f $(VTD_ROOT)/bin/vtd_example_05      ) rm -f $(VTD_ROOT)/bin/vtd_example_05
+	if ( -f $(VTD_ROOT)/bin/vtd_example_06      ) rm -f $(VTD_ROOT)/bin/vtd_example_06
+
+distclean:	
+	@./reconfigure -d > /tmp/vtd_last_configure.txt
+	@-chmod 666 /tmp/vtd_last_configure.txt
+	cd src;     make clean
+	cd utils;   make clean      
+	cd fitslib; make clean
+	cd example; make distclean
+	if ( -f $(CONF_LOG)                         ) rm -f $(CONF_LOG)                         
+	if ( -f $(BUILD_LOG)                        ) rm -f $(BUILD_LOG)
+	if ( -f $(VTD_ROOT)/include/vtd.i           ) rm -f $(VTD_ROOT)/include/vtd.i
+	if ( -f $(VTD_ROOT)/include/vtd_local.i     ) rm -f $(VTD_ROOT)/include/vtd_local.i
+	if ( -f $(VTD_ROOT)/temp/conf.log           ) rm -f $(VTD_ROOT)/temp/conf.log 
+	if ( -f $(VTD_ROOT)/temp/vtd_test_01.cnf    ) rm -f $(VTD_ROOT)/support/vtd_test_01.cnf
+	if ( -f $(VTD_ROOT)/temp/vtd_test_02.cnf    ) rm -f $(VTD_ROOT)/support/vtd_test_02.cnf
+	if ( -f $(VTD_ROOT)/temp/vtd_test_03.cnf    ) rm -f $(VTD_ROOT)/support/vtd_test_03.cnf
+	if ( -f $(VTD_ROOT)/temp/vtd_example_04.com ) rm -f $(VTD_ROOT)/support/vtd_example_04.com
+	if ( -f $(VTD_ROOT)/bin/vtd_test_01         ) rm -f $(VTD_ROOT)/bin/vtd_test_01
+	if ( -f $(VTD_ROOT)/support/sun_preproc.o   ) rm -f $(VTD_ROOT)/support/sun_preproc.o
+	if ( -f $(VTD_ROOT)/support/export_vtd_vars ) rm -f $(VTD_ROOT)/support/export_vtd_vars
+	if ( -f $(VTD_ROOT)/support/export_vtd_vars.sh ) rm -f $(VTD_ROOT)/support/export_vtd_vars.sh
+	if ( -f $(VTD_ROOT)/support/vtd_vars        ) rm -f $(VTD_ROOT)/support/vtd_vars
+	if ( -f $(VTD_ROOT)/support/vtd_vars.sh     ) rm -f $(VTD_ROOT)/support/vtd_vars.sh
+	if ( -f $(VTD_ROOT)/utils/vtd_inq.o         ) rm -f $(VTD_ROOT)/utils/gti_inq.o
+	if ( -f $(VTD_ROOT)/utils/gti_update.o      ) rm -f $(VTD_ROOT)/utils/gti_update.o
+	if ( -f $(VTD_ROOT)/Makefile                ) rm -f $(VTD_ROOT)/Makefile
+	if ( -f $(VTD_ROOT)/bin/check_cfitsio_version.e ) rm -f $(VTD_ROOT)/bin/check_cfitsio_version.e
+	if ( -f $(VTD_ROOT)/bin/vtd_example_01          ) rm -f $(VTD_ROOT)/bin/vtd_example_01
+	if ( -f $(VTD_ROOT)/bin/vtd_example_02          ) rm -f $(VTD_ROOT)/bin/vtd_example_02
+	if ( -f $(VTD_ROOT)/bin/vtd_example_03          ) rm -f $(VTD_ROOT)/bin/vtd_example_03
+	if ( -f $(VTD_ROOT)/bin/vtd_example_04          ) rm -f $(VTD_ROOT)/bin/vtd_example_04
+	if ( -f $(VTD_ROOT)/bin/vtd_example_05          ) rm -f $(VTD_ROOT)/bin/vtd_example_05
+	if ( -f $(VTD_ROOT)/bin/vtd_example_06          ) rm -f $(VTD_ROOT)/bin/vtd_example_06
+	if ( -f $(VTD_ROOT)/bin/bindisp_merge           ) rm -f $(VTD_ROOT)/bin/bindisp_merge
+	if ( -f $(VTD_ROOT)/bin/difxvtd                 ) rm -f $(VTD_ROOT)/bin/difxvtd
+	if ( -f $(VTD_ROOT)/bin/gti_update              ) rm -f $(VTD_ROOT)/bin/gti_update
+	if ( -f $(VTD_ROOT)/bin/pd_iono                 ) rm -f $(VTD_ROOT)/bin/pd_iono
+	if ( -f $(VTD_ROOT)/bin/viono_to_heb            ) rm -f $(VTD_ROOT)/bin/viono_to_heb
+	if ( -f $(VTD_ROOT)/bin/viono_merge             ) rm -f $(VTD_ROOT)/bin/viono_merge
+	if ( -f $(VTD_ROOT)/bin/vtd_control_update      ) rm -f $(VTD_ROOT)/bin/vtd_control_update
+	if ( -f $(VTD_ROOT)/bin/vtd_apriori_update.py   ) rm -f $(VTD_ROOT)/bin/vtd_apriori_update.py
+	if ( -f $(VTD_ROOT)/bin/vtd_local.py            ) rm -f $(VTD_ROOT)/bin/vtd_local.py
+	if ( -f $(VTD_ROOT)/bin/vtd_exe.py              ) rm -f $(VTD_ROOT)/bin/vtd_exe.py
+	if ( -f $(VTD_ROOT)/bin/vtd_inq                 ) rm -f $(VTD_ROOT)/bin/vtd_inq
+	if ( -f support/check_cfitsio_version.o         ) rm -f support/check_cfitsio_version.o
+	@support/purge      fitslib
+	@support/purge      src
+	@support/purge      example
+	@support/purge      support
+	@support/purge      scripts
+	@support/purge      doc
+	@support/purge      include
+	@support/purge      utils
+	@support/purge      share
+	@support/purge      ./
+	@rm -f $(VTD_ROOT)/temp/*    >& /dev/null ; set status = 0
+	@rm -f $(VTD_ROOT)/doc/*.dvi >& /dev/null ; set status = 0
+	@rm -f $(VTD_ROOT)/doc/*.aux >& /dev/null ; set status = 0
+	@rm -f $(VTD_ROOT)/doc/*.log >& /dev/null ; set status = 0
+	@echo "=== Deep cleaning of vtd is completed ==="
+
+.PHONY: doc
+doc:    
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_intro.rdc    txt   $(VTD_ROOT)/doc/vtd_intro.txt
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_intro.rdc    html  $(VTD_ROOT)/doc/vtd_intro.html 
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_apriori.rdc  txt   $(VTD_ROOT)/doc/vtd_apriori.txt
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_apriori.rdc  html  $(VTD_ROOT)/doc/vtd_apriori.html
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_keywords.rdc txt   $(VTD_ROOT)/doc/vtd_keywords.txt
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_keywords.rdc html  $(VTD_ROOT)/doc/vtd_keywords.html
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_keywords.rdc syn   $(VTD_ROOT)/doc/vtd_keywords.syn
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_apriori_update.rdc  txt   $(VTD_ROOT)/doc/vtd_apriori_update.txt
+	@$(PETOOLS_ROOT)/psolve/bin/redoc $(VTD_ROOT)/doc/vtd_apriori_update.rdc  html  $(VTD_ROOT)/doc/vtd_apriori_update.html
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "Introduction to VTD" --header-spacing 10 -q --minimum-font-size 24             -s Letter -B 25. -T 25.0 -L 25. -R 25.0 vtd_intro.html    vtd_intro.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "VTD keywords"        --header-spacing 10 -q --minimum-font-size 16 --zoom 1.33 -s Letter -B 25. -T 25.0 -L 25. -R 25.0 vtd_keywords.html vtd_keywords.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "VTD a priori"        --header-spacing 10 -q --minimum-font-size 24 --zoom 1.33  -s Letter -B 25. -T 25.0 -L 25. -R 25.0 vtd_apriori.html  vtd_apriori.pdf
+
+VTD_BASENAME = `basename $(VTD_ROOT)`
+tar:	distclean doc
+	@cp -pv /apr/sou/source.names  $(VTD_ROOT)/share/
+	@cp -pv /apr/sou/sou.prl       $(VTD_ROOT)/share/
+	@cp -pv /apr/sou/glo.src       $(VTD_ROOT)/share/
+	@cp -pv /apr/sta/glo.sit       $(VTD_ROOT)/share/
+	@cp -pv /apr/sta/glo.vel       $(VTD_ROOT)/share/
+	@cp -pv /apr/sta/station.desc  $(VTD_ROOT)/share/
+	@cp -pv /apr/sta/ECCDAT.ecc    $(VTD_ROOT)/share/
+	@if ( -f Makefile ) rm Makefile
+	@if ( -f temp/vtd_test_01.cnf    ) rm -f temp/vtd_test_01.cnf 
+	@if ( -f temp/conf.log           ) rm -f temp/conf.log
+	@if ( -f support/export_vtd_vars ) rm -f support/export_vtd_vars
+	@if ( -f support/vtd_vars        ) rm -f support/vtd_vars
+	@if ( -f support/export_vtd_vars.sh ) rm -f support/export_vtd_vars.sh
+	@if ( -f support/vtd_vars.sh        ) rm -f support/vtd_vars.sh
+	@if ( -f support/check_cfitsio_version.o ) rm -f support/check_cfitsio_version.o
+	@if ( -f /tmp/vtd-$(VTD_VERSION).tar.bz2 ) rm -f /tmp/vtd-$(VTD_VERSION).tar.bz2 
+	cd ../; tar -cf - vtd_$(VTD_VERSION) | \
+                lbzip2 -c > /tmp/vtd-$(VTD_VERSION).tar.bz2 
+	@support/distribution_update.csh $(VTD_VERSION)
+	@echo "The tar-file /tmp/vtd-$(VTD_VERSION).tar.bz2 is copied to the Web, documentation is updated"
+	@sync

@@ -1,0 +1,14 @@
+#
+#  Experiment description
+#
+EXP_NAME:  r1447
+CORPLACE:  Bonn
+EXPSERNO:  0
+EXP_CODE:  r1447
+EXP_DESC:  Regular geodetic VLBA experiment
+MK3_DBNM:  $10SEP07XQ
+DB_NAME:   20100907_q
+PI_NAME:   Goddard VLBI group
+REC_MODE:  Nchan:14 Rbw:256 Bps:2
+BITSAMPL:  2
+SAMPLRAT:  256000000.0

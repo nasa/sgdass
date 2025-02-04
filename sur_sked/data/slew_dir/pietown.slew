@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  PIETOWN   PT
+LAST_UPDATE: PIETOWN   2018.01.27
+COORD:       PIETOWN   meters     -1640953.713    -5014816.027     3575411.878   
+MOUNT:       PIETOWN   char       ALTAZ
+SLEW_AZ:     PIETOWN   deg/sec    1.37167
+SLEW_EL:     PIETOWN   deg/sec    0.48833
+ACCL_AZ:     PIETOWN   deg/sec^2  0.75
+ACCL_EL:     PIETOWN   deg/sec^2  0.25
+TSETTLE_AZ:  PIETOWN   sec        6.0
+TSETTLE_EL:  PIETOWN   sec        6.0
+EL_MIN:      PIETOWN   deg        2.0
+EL_MAX:      PIETOWN   deg       90.0
+AZ_RANGE:    PIETOWN   deg      -90.0 90.0 270.0 450.0
+RECORDER:    PIETOWN   char      mark5c
+PREOB:       PIETOWN   sec        0.0
+POSTOB:      PIETOWN   sec        2.0

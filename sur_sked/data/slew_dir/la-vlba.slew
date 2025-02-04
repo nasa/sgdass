@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  LA-VLBA   LA
+LAST_UPDATE: LA-VLBA   2018.01.27
+COORD:       LA-VLBA   meters     -1449752.361    -4975298.593     3709123.926   
+MOUNT:       LA-VLBA   char       ALTAZ
+SLEW_AZ:     LA-VLBA   deg/sec    1.36667 
+SLEW_EL:     LA-VLBA   deg/sec    0.49167 
+ACCL_AZ:     LA-VLBA   deg/sec^2  0.75
+ACCL_EL:     LA-VLBA   deg/sec^2  0.25
+TSETTLE_AZ:  LA-VLBA   sec        6.0
+TSETTLE_EL:  LA-VLBA   sec        6.0
+EL_MIN:      LA-VLBA   deg        2.0
+EL_MAX:      LA-VLBA   deg       90.0
+AZ_RANGE:    LA-VLBA   deg      -90.0 90.0 270.0 450.0
+RECORDER:    LA-VLBA   char      mark5c
+PREOB:       LA-VLBA   sec        0.0
+POSTOB:      LA-VLBA   sec        2.0

@@ -1,0 +1,59 @@
+Software SPD_CLIENT provides a library and several 
+executables for implementing interface to slant path 
+delay, atmosphere opacity and antenna temperature on 
+client side and a client routines for computing path 
+delay path for satellite or air-borne altimetry by
+interacting with the SPD server.
+
+1) Two are public routines are required for computing path delay
+   using the time series of slant path delay expanded 
+   over azimuth and elevation for a set of stations:
+
+   SPD_LOAD_BSPD   -- load the data from a directory with expansion 
+                      coefficients in bspd format
+   SPD_INTRP_DELAY -- compute path delay by interpolation
+
+
+   Executable spd_3d_toser transforms the expansion coefficients
+   from ascii SPD format to binary BSPD format.
+
+  Two example programs are provided:
+
+spd_show -- example of computing path delay at a given epoch.
+
+sob_show -- example of computing opacity and atmosphere brightness
+            temperature at a given epoch.
+
+2) Three public routines that are required for computing path 
+   delay for altimetry:
+
+   spd_cli_init     -- parsing control file, initialization, and 
+                       checking whether the SPD server is running.
+   
+   spd_cli_get_2pd  -- sending request to compute path delay to
+                       the SPD server, waiting for the response,
+                       parsing the results.
+
+   spd_cli_quit     -- deallocation of dynamic memory.
+
+   These three routines can be called from Fortran, C, or MATLAB.
+
+   Three examples are provided:
+
+   spd_cli_example_fortran.f
+   spd_cli_example_c.c
+   spd_cli_example_fortran.f
+  
+3) Three public routines that are required for computing path 
+
+   spd_res_intrp     --
+
+   get_spd_res       --
+
+   get_spd_res_azel  --
+
+4) Include files:
+  
+   spd.i
+   spd_local.i
+   spc.h

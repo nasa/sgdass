@@ -1,0 +1,263 @@
+SHELL = /bin/csh
+build:	
+	@echo "Building PIMA started at  " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`    | tee  > $(BUILD_LOG)
+	@echo " "                                                                              | tee -a $(BUILD_LOG)
+	cd  src;     source ../support/pima_vars; umask 0002; make -j $(NUM_PROC) pima_static_lib  | tee -a $(BUILD_LOG)
+	cd  src;     source ../support/pima_vars; umask 0002; make -j 1           pima_shared_lib  | tee -a $(BUILD_LOG)
+	cd  src;     source ../support/pima_vars; umask 0002; make -j $(NUM_PROC) pima_bin         | tee -a $(BUILD_LOG)
+	@echo "Building pima finihsed at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`    | tee -a $(BUILD_LOG)
+	@echo " "                                                                              | tee -a $(BUILD_LOG)
+	@echo "=== Please run make install ==="
+
+pima_install:
+        ifeq ($(PETOOLS_OS),Linux)
+	      cp $(PIMA_ROOT)/lib/libpima.so.1.0          $(PIMA_PREFIX)/lib/libpima.so.1.0
+        endif
+        ifeq ($(PETOOLS_OS),Darwin)
+	      cp $(PIMA_ROOT)/lib/libpima.1.dylib           $(PIMA_PREFIX)/lib/libpima.1.dylib
+	      install_name_tool -id $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib
+        endif
+	cp $(PIMA_ROOT)/bin/pima                          $(PIMA_PREFIX)/bin/pima
+	cp $(PIMA_ROOT)/lib/libpima.a                     $(PIMA_PREFIX)/lib/libpima.a
+
+pima:	build pima_install
+
+.PHONY: install
+install:
+	if ( -d $(PIMA_PREFIX)     == 0               ) mkdir -p $(PIMA_PREFIX)
+	if ( -d $(PIMA_PREFIX)/bin == 0               ) mkdir    $(PIMA_PREFIX)/bin 
+	if ( -d $(PIMA_PREFIX)/lib == 0               ) mkdir    $(PIMA_PREFIX)/lib
+	if ( -d $(PIMA_PREFIX)/doc == 0               ) mkdir    $(PIMA_PREFIX)/doc
+	if ( -d $(PIMA_PREFIX)/share == 0             ) mkdir    $(PIMA_PREFIX)/share
+	if ( -d $(PIMA_PREFIX)/share/pima == 0        ) mkdir    $(PIMA_PREFIX)/share/pima
+	cp $(PIMA_ROOT)/lib/libpima.a                       $(PIMA_PREFIX)/lib/libpima.a
+        ifeq ($(PETOOLS_OS),Linux)
+	      cp $(PIMA_ROOT)/lib/libpima.so.1.0            $(PIMA_PREFIX)/lib/libpima.so.1.0
+	      if ( -l $(PIMA_PREFIX)/lib/libpima.so  ) rm   $(PIMA_PREFIX)/lib/libpima.so
+	      ln -s   $(PIMA_PREFIX)/lib/libpima.so.1.0     $(PIMA_PREFIX)/lib/libpima.so
+        endif
+        ifeq ($(PETOOLS_OS),Darwin)
+	      cp $(PIMA_ROOT)/lib/libpima.1.dylib           $(PIMA_PREFIX)/lib/libpima.1.dylib
+	      if ( -l $(PIMA_PREFIX)/lib/libpima.dylib ) rm $(PIMA_PREFIX)/lib/libpima.dylib 
+	      install_name_tool -id $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib
+	      ln -s   $(PIMA_PREFIX)/lib/libpima.1.dylib    $(PIMA_PREFIX)/lib/libpima.dylib 
+        endif
+	cp $(PIMA_ROOT)/bin/pima                            $(PIMA_PREFIX)/bin/pima
+	cp $(PIMA_ROOT)/bin/pima_inq                        $(PIMA_PREFIX)/bin/pima_inq
+	cp -f $(PIMA_ROOT)/bin/bandpass_mask_gen            $(PIMA_PREFIX)/bin/bandpass_mask_gen
+	cp -f $(PIMA_ROOT)/bin/get_freq_table_from_fits     $(PIMA_PREFIX)/bin/get_freq_table_from_fits
+	cp -f $(PIMA_ROOT)/bin/get_source_table_from_fits   $(PIMA_PREFIX)/bin/get_source_table_from_fits
+	cp -f $(PIMA_ROOT)/bin/get_station_table_from_fits  $(PIMA_PREFIX)/bin/get_station_table_from_fits
+	cp -f $(PIMA_ROOT)/bin/log_to_antab                 $(PIMA_PREFIX)/bin/log_to_antab
+	cp -f $(PIMA_ROOT)/bin/fitsh                        $(PIMA_PREFIX)/bin/fitsh
+	cp -f $(PIMA_ROOT)/bin/fitsd                        $(PIMA_PREFIX)/bin/fitsd
+	cp -f $(PIMA_ROOT)/bin/uva_merge                    $(PIMA_PREFIX)/bin/uva_merge
+	cp -f $(PIMA_ROOT)/bin/fft_speed_test               $(PIMA_PREFIX)/bin/fft_speed_test
+	cp -f $(PIMA_ROOT)/bin/fits_tim_avr                 $(PIMA_PREFIX)/bin/fits_tim_avr
+	cp -f $(PIMA_ROOT)/bin/fits_to_map                  $(PIMA_PREFIX)/bin/fits_to_map
+	cp -f $(PIMA_ROOT)/bin/fits_to_radplot              $(PIMA_PREFIX)/bin/fits_to_radplot
+	cp -f $(PIMA_ROOT)/bin/fits_to_uvplot               $(PIMA_PREFIX)/bin/fits_to_uvplot
+	cp -f $(PIMA_ROOT)/bin/fits_to_cfd                  $(PIMA_PREFIX)/bin/fits_to_cfd
+	cp -f $(PIMA_ROOT)/bin/extra_gain                   $(PIMA_PREFIX)/bin/extra_gain
+	cp -f $(PIMA_ROOT)/bin/corr_gain                    $(PIMA_PREFIX)/bin/corr_gain
+	cp -f $(PIMA_ROOT)/bin/fits_check_cls               $(PIMA_PREFIX)/bin/fits_check_cls             
+	cp -f $(PIMA_ROOT)/bin/acta_plot                    $(PIMA_PREFIX)/bin/acta_plot
+        ifeq ($(PETOOLS_OS),Darwin)
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/pima
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/pima_inq
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/bandpass_mask_gen
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/get_freq_table_from_fits
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/get_source_table_from_fits
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/get_station_table_from_fits
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/log_to_antab
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fitsd
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fitsh
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/uva_merge
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fft_speed_test
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fits_tim_avr
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fits_to_map
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fits_to_radplot
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fits_to_uvplot
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fits_to_cfd
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/extra_gain
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/corr_gain
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/fits_check_cls
+	      install_name_tool -change $(PIMA_ROOT)/lib/libpima.1.dylib $(PIMA_PREFIX)/lib/libpima.1.dylib $(PIMA_PREFIX)/bin/acta_plot
+        endif
+	cp -f $(PIMA_ROOT)/share/pima/ivs_gains.key           $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/kvn_gains.key           $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/mktxt_header.txt        $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/pima_manual_difmap.cnf  $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/pima_wis_big.inp        $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/pima_wis_huge.inp       $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/pima_wis_small.inp      $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/psolve_bas.cnt          $(PIMA_SHARE_DIR)/
+	cp -f $(PIMA_ROOT)/share/pima/r1447.desc              $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/r1447_s_fine.bps        $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/r1447_x_fine.bps        $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/spd_config_template.txt $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/uva.tmpl                $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/vlba_gains.key          $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/vlbi_station.names      $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/share/pima/vtd_pima.cnf            $(PIMA_SHARE_DIR)/
+	cp -f $(PIMA_ROOT)/examples/pima_basic.vtd            $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/examples/r1447_s_pima.cnt          $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/examples/r1447_x_pima.cnt          $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/examples/vcat.conf                 $(PIMA_PREFIX)/share/pima/
+	if ( -f $(PIMA_PREFIX)/share/pima/pima_small_measure_1thr.wis == 0 ) $(FOURPACK_PREFIX)/bin/create_fftw_plan MEASURE 1 $(PIMA_ROOT)/share/pima/pima_wis_small.inp /tmp/pima_small_measure_1thr.wis
+	if ( -f $(PIMA_PREFIX)/share/pima/pima_small_measure_1thr.wis == 0 ) mv /tmp/pima_small_measure_1thr.wis $(PIMA_PREFIX)/share/pima/
+	cp -f $(PIMA_ROOT)/scripts/pf.py                      $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pr.py                      $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pt.py                      $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pu.py                      $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pir.py                     $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pbu.py                     $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/automap.py                 $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/imadir.py                  $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pictdir.py                 $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/dimap                      $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pima_mupet_01.dfm          $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pima_mupet_02.dfm          $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pima_exe.py                $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pima_local.py              $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/scripts/pima_fftw_plan_create.csh  $(PIMA_PREFIX)/bin/
+	cp -f $(PIMA_ROOT)/doc/pima_keywords.txt              $(PIMA_PREFIX)/doc/
+	cp -f $(PIMA_ROOT)/doc/pima_keywords.html             $(PIMA_PREFIX)/doc/
+	cp -f $(PIMA_ROOT)/doc/pima_keywords.pdf              $(PIMA_PREFIX)/doc/
+	cp -f $(PIMA_ROOT)/doc/pima_user_guide.pdf            $(PIMA_PREFIX)/doc/
+	cp -f $(PIMA_ROOT)/doc/pima_user_guide.html           $(PIMA_PREFIX)/doc/
+	cp -f $(PIMA_ROOT)/doc/pima_wrapper.html              $(PIMA_PREFIX)/doc/
+	cp -f $(PIMA_ROOT)/doc/pima_wrapper.pdf               $(PIMA_PREFIX)/doc/
+	cp -f $(PIMA_ROOT)/doc/pima_amp.pdf                   $(PIMA_PREFIX)/doc/
+	
+	@echo "=== Installation of pima is completed ==="
+
+uninstall:
+	cd  src;  source ../support/pima_vars
+	if ( -f $(PIMA_PREFIX)/lib/libpima.a       ) rm $(PIMA_PREFIX)/lib/libpima.a
+	if ( -l $(PIMA_PREFIX)/lib/libpima.so      ) rm $(PIMA_PREFIX)/lib/libpima.so
+	if ( -f $(PIMA_PREFIX)/lib/libpima.so.1.0  ) rm $(PIMA_PREFIX)/lib/libpima.so.1.0
+	if ( -l $(PIMA_PREFIX)/lib/libpima.dylib   ) rm $(PIMA_PREFIX)/lib/libpima.dylib
+	if ( -f $(PIMA_PREFIX)/lib/libpima.1.dylib ) rm $(PIMA_PREFIX)/lib/libpima.1.dylib
+	if ( -f $(PIMA_PREFIX)/bin/pima 	                  ) rm -f $(PIMA_PREFIX)/bin/pima
+	if ( -f $(PIMA_PREFIX)/bin/pima_inq 	                  ) rm -f $(PIMA_PREFIX)/bin/pima_inq
+	if ( -f $(PIMA_PREFIX)/bin/bandpass_mask_gen              ) rm -f $(PIMA_PREFIX)/bin/bandpass_mask_gen
+	if ( -f $(PIMA_PREFIX)/bin/get_freq_table_from_fits       ) rm -f $(PIMA_PREFIX)/bin/get_freq_table_from_fits
+	if ( -f $(PIMA_PREFIX)/bin/get_source_table_from_fits     ) rm -f $(PIMA_PREFIX)/bin/get_source_table_from_fits
+	if ( -f $(PIMA_PREFIX)/bin/get_staition_table_from_fits   ) rm -f $(PIMA_PREFIX)/bin/get_staition_table_from_fits
+	if ( -f $(PIMA_PREFIX)/bin/log_to_antab                   ) rm -f $(PIMA_PREFIX)/bin/log_to_antab
+	if ( -f $(PIMA_PREFIX)/bin/fitsh                          ) rm -f $(PIMA_PREFIX)/bin/fitsh
+	if ( -f $(PIMA_PREFIX)/bin/fitsd                          ) rm -f $(PIMA_PREFIX)/bin/fitsd
+	if ( -f $(PIMA_PREFIX)/bin/uva_merge                      ) rm -f $(PIMA_PREFIX)/bin/uva_merge
+	if ( -f $(PIMA_PREFIX)/bin/fft_speed_test                 ) rm -f $(PIMA_PREFIX)/bin/fft_speed_test
+	if ( -f $(PIMA_PREFIX)/bin/fits_tim_avr                   ) rm -f $(PIMA_PREFIX)/bin/fits_tim_avr
+	if ( -f $(PIMA_PREFIX)/bin/fits_to_map                    ) rm -f $(PIMA_PREFIX)/bin/fits_to_map
+	if ( -f $(PIMA_PREFIX)/bin/fits_to_radplot                ) rm -f $(PIMA_PREFIX)/bin/fits_to_radplot
+	if ( -f $(PIMA_PREFIX)/bin/fits_to_uvplot                 ) rm -f $(PIMA_PREFIX)/bin/fits_to_uvplot
+	if ( -f $(PIMA_PREFIX)/bin/fits_to_cfd                    ) rm -f $(PIMA_PREFIX)/bin/fits_to_cfd
+	if ( -f $(PIMA_PREFIX)/bin/extra_gain                     ) rm -f $(PIMA_PREFIX)/bin/extra_gain
+	if ( -f $(PIMA_PREFIX)/bin/corr_gain                      ) rm -f $(PIMA_PREFIX)/bin/corr_gain
+	if ( -f $(PIMA_PREFIX)/bin/fits_check_cls                 ) rm -f $(PIMA_PREFIX)/bin/fits_check_cls
+	if ( -f $(PIMA_PREFIX)/bin/acta_plot                      ) rm -f $(PIMA_PREFIX)/bin/acta_plot
+	if ( -f $(PIMA_PREFIX)/bin/check_cfitsio_version.e        ) rm -f $(PIMA_PREFIX)/bin/check_cfitsio_version.e
+	if ( -f $(PIMA_PREFIX)/share/pima/ivs_gains.key           ) rm -f $(PIMA_PREFIX)/share/pima/ivs_gains.key
+	if ( -f $(PIMA_PREFIX)/share/pima/kvn_gains.key           ) rm -f $(PIMA_PREFIX)/share/pima/kvn_gains.key
+	if ( -f $(PIMA_PREFIX)/share/pima/mktxt_header.txt        ) rm -f $(PIMA_PREFIX)/share/pima/mktxt_header.txt    
+	if ( -f $(PIMA_PREFIX)/share/pima/pima_basic.vtd          ) rm -f $(PIMA_PREFIX)/share/pima/pima_basic.vtd
+	if ( -f $(PIMA_PREFIX)/share/pima/pima_manual_difmap.cnf  ) rm -f $(PIMA_PREFIX)/share/pima/pima_manual_difmap.cnf
+	if ( -f $(PIMA_PREFIX)/share/pima/pima_wis_big.inp        ) rm -f $(PIMA_PREFIX)/share/pima/pima_wis_big.inp
+	if ( -f $(PIMA_PREFIX)/share/pima/pima_wis_huge.inp       ) rm -f $(PIMA_PREFIX)/share/pima/pima_wis_huge.inp
+	if ( -f $(PIMA_PREFIX)/share/pima/pima_wis_small.inp      ) rm -f $(PIMA_PREFIX)/share/pima/pima_wis_small.inp
+	if ( -f $(PIMA_SHARE_DIR)/psolve_bas.cnt                  ) rm -f $(PIMA_SHARE_DIR)/psolve_bas.cnt
+	if ( -f $(PIMA_PREFIX)/share/pima/r1447.desc              ) rm -f $(PIMA_PREFIX)/share/pima/r1447.desc
+	if ( -f $(PIMA_PREFIX)/share/pima/r1447_s_fine.bps        ) rm -f $(PIMA_PREFIX)/share/pima/r1447_s_fine.bps
+	if ( -f $(PIMA_PREFIX)/share/pima/r1447_s_pima.cnt        ) rm -f $(PIMA_PREFIX)/share/pima/r1447_s_pima.cnt
+	if ( -f $(PIMA_PREFIX)/share/pima/r1447_x_fine.bps        ) rm -f $(PIMA_PREFIX)/share/pima/r1447_x_fine.bps
+	if ( -f $(PIMA_PREFIX)/share/pima/r1447_x_pima.cnt        ) rm -f $(PIMA_PREFIX)/share/pima/r1447_x_pima.cnt
+	if ( -f $(PIMA_PREFIX)/share/pima/spd_config_template.txt ) rm -f $(PIMA_PREFIX)/share/pima/spd_config_template.txt
+	if ( -f $(PIMA_PREFIX)/share/pima/uva.tmpl                ) rm -f $(PIMA_PREFIX)/share/pima/uva.tmpl
+	if ( -f $(PIMA_PREFIX)/share/pima/vcat.conf               ) rm -f $(PIMA_PREFIX)/share/pima/vcat.conf
+	if ( -f $(PIMA_PREFIX)/share/pima/vlba_gains.key          ) rm -f $(PIMA_PREFIX)/share/pima/vlba_gains.key
+	if ( -f $(PIMA_PREFIX)/share/pima/vlbi_station.names      ) rm -f $(PIMA_PREFIX)/share/pima/vlbi_station.names
+	if ( -f $(PIMA_SHARE_DIR)/vtd_pima.cnf                    ) rm -f $(PIMA_SHARE_DIR)/vtd_pima.cnf
+	if ( -f $(PIMA_PREFIX)/bin/pf.py                      ) rm -f $(PIMA_PREFIX)/bin/pf.py
+	if ( -f $(PIMA_PREFIX)/bin/pr.py                      ) rm -f $(PIMA_PREFIX)/bin/pr.py
+	if ( -f $(PIMA_PREFIX)/bin/pt.py                      ) rm -f $(PIMA_PREFIX)/bin/pt.py
+	if ( -f $(PIMA_PREFIX)/bin/pu.py                      ) rm -f $(PIMA_PREFIX)/bin/pu.py
+	if ( -f $(PIMA_PREFIX)/bin/pir.py                     ) rm -f $(PIMA_PREFIX)/bin/pir.py
+	if ( -f $(PIMA_PREFIX)/bin/pbu.py                     ) rm -f $(PIMA_PREFIX)/bin/pbu.py
+	if ( -f $(PIMA_PREFIX)/bin/automap.py                 ) rm -f $(PIMA_PREFIX)/bin/automap.py
+	if ( -f $(PIMA_PREFIX)/bin/imadir.py                  ) rm -f $(PIMA_PREFIX)/bin/imadir.py
+	if ( -f $(PIMA_PREFIX)/bin/pictdir.py                 ) rm -f $(PIMA_PREFIX)/bin/pictdir.py
+	if ( -f $(PIMA_PREFIX)/bin/dimap                      ) rm -f $(PIMA_PREFIX)/bin/dimap
+	if ( -f $(PIMA_PREFIX)/bin/pima_mupet_01.dfm          ) rm -f $(PIMA_PREFIX)/bin/pima_mupet_01.dfm
+	if ( -f $(PIMA_PREFIX)/bin/pima_mupet_02.dfm          ) rm -f $(PIMA_PREFIX)/bin/pima_mupet_02.dfm
+	if ( -f $(PIMA_PREFIX)/bin/pima_exe.py                ) rm -f $(PIMA_PREFIX)/bin/pima_exe.py
+	if ( -f $(PIMA_PREFIX)/bin/pima_local.py              ) rm -f $(PIMA_PREFIX)/bin/pima_local.py
+	if ( -f $(PIMA_PREFIX)/bin/pima_fftw_plan_create.csh  ) rm -f $(PIMA_PREFIX)/bin/pima_fftw_plan_create.csh
+	if ( -f $(PIMA_PREFIX)/doc/pima_keywords.txt          ) rm -f $(PIMA_PREFIX)/doc/pima_keywords.txt
+	if ( -f $(PIMA_PREFIX)/doc/pima_keywords.html         ) rm -f $(PIMA_PREFIX)/doc/pima_keywords.html
+	if ( -f $(PIMA_PREFIX)/doc/pima_keywords.pdf          ) rm -f $(PIMA_PREFIX)/doc/pima_keywords.pdf
+	if ( -f $(PIMA_PREFIX)/doc/pima_user_guide.pdf        ) rm -f $(PIMA_PREFIX)/doc/pima_user_guide.pdf
+	if ( -f $(PIMA_PREFIX)/doc/pima_user_guide.html       ) rm -f $(PIMA_PREFIX)/doc/pima_user_guide.html
+	if ( -f $(PIMA_PREFIX)/doc/pima_wrapper.html          ) rm -f $(PIMA_PREFIX)/doc/pima_wrapper.html
+	if ( -f $(PIMA_PREFIX)/doc/pima_wrapper.pdf           ) rm -f $(PIMA_PREFIX)/doc/pima_wrapper.pdf
+	if ( -f $(PIMA_PREFIX)/doc/pima_amp.pdf               ) rm -f $(PIMA_PREFIX)/doc/pima_amp.pdf
+	-mv  $(PIMA_PREFIX)/share/pima/pima*.wis /tmp/
+
+clean:	
+	cd  src;  source ../support/pima_vars; make clean
+
+distclean:	clean
+	@./reconfigure -d > /tmp/pima_last_configure.txt
+	-chmod 666 /tmp/pima_last_configure.txt
+	@cd  src;  source $(PIMA_ROOT)/support/pima_vars; make clean
+	@find src/ -name "*.o*" -exec rm {} \;
+	@cd  src;  source $(PIMA_ROOT)/support/pima_vars; make -f ../support/check_cfitsio_version.mak clean
+	@if ( -f $(CONF_LOG)                    ) rm -f $(CONF_LOG)                         
+	@if ( -f $(BUILD_LOG)                   ) rm -f $(BUILD_LOG)
+	@if ( -f $(PIMA_ROOT)/support/pima_vars ) rm -f $(PIMA_ROOT)/support/pima_vars
+	@if ( -f $(PIMA_ROOT)/bin/check_cfitsio_version.o ) rm -f $(PIMA_ROOT)/bin/check_cfitsio_version.o
+	@if ( -f $(PIMA_ROOT)/bin/check_cfitsio_version.e ) rm -f $(PIMA_ROOT)/bin/check_cfitsio_version.e
+	@if ( -f $(PIMA_ROOT)/script/pima_local.py        ) rm -f $(PIMA_ROOT)/script/pima_local.py
+	@if ( -f $(PIMA_ROOT)/script/dimap                ) rm -f $(PIMA_ROOT)/script/dimap
+	@support/purge $(PIMA_ROOT)/temp
+	@support/purge $(PIMA_ROOT)/bin
+	@support/purge $(PIMA_ROOT)/scripts
+	@support/purge $(PIMA_ROOT)/src
+	@support/purge $(PIMA_ROOT)/doc
+	@support/purge $(PIMA_ROOT)/share/pima
+	@support/purge $(PIMA_ROOT)/data
+	@support/purge $(PIMA_ROOT)/support
+	@support/purge $(PIMA_ROOT)/obsolete
+	@support/purge $(PIMA_ROOT)/include
+	@support/purge $(PIMA_ROOT)/
+	@rm -f examples/* >& /dev/null ; set status = 0
+	@rm -f doc/*.aux  >& /dev/null ; set status = 0
+	@rm -f doc/*.log  >& /dev/null ; set status = 0
+	@rm -f doc/*.dvi  >& /dev/null ; set status = 0
+	@rm -fR  script/__pycache__    >& /dev/null ; set status = 0
+
+.PHONY: doc
+doc:    
+	@$(PIMA_PSOLVE_DIR)/psolve/bin/redoc $(PIMA_ROOT)/doc/pima_keywords.rdc txt   $(PIMA_ROOT)/doc/pima_keywords.txt
+	@$(PIMA_PSOLVE_DIR)/psolve/bin/redoc $(PIMA_ROOT)/doc/pima_keywords.rdc html  $(PIMA_ROOT)/doc/pima_keywords.html
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "PIMA keywords"   --header-spacing 10 -q --minimum-font-size 12 --zoom 1.33 -s Letter -B 25. -T 25.0 -L 25. -R 25.0 pima_keywords.html pima_keywords.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "PIMA user guide" --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0 pima_user_guide.html pima_user_guide.pdf
+	@cd doc ; wkhtmltopdf --footer-center '-[page]-' --footer-spacing 10 --header-center "PIMA wrappers"   --header-spacing 10 -q --minimum-font-size 16 -s Letter -B 25. -T 25.0 -L 25. -R 25.0 pima_wrapper.html pima_wrapper.pdf
+
+PIMA_BASENAME = `basename $(PIMA_ROOT)`
+tar:	distclean doc
+	@rm Makefile
+	@if ( -f temp/conf.log                  ) rm -f temp/conf.log
+	@if ( -f temp/old_conf.log              ) rm -f temp/old_conf.log
+	@cd  src;  source $(PIMA_ROOT)/support/pima_vars; make -f ../support/check_cfitsio_version.mak clean
+	@if ( -f $(PIMA_ROOT)/bin/check_cfitsio_version.e ) rm -f $(PIMA_ROOT)/bin/check_cfitsio_version.e 
+	@if ( -f $(PIMA_ROOT)/support/pima_vars ) rm -f $(PIMA_ROOT)/support/pima_vars
+	@if ( -f /tmp/pima-$(PIMA_VERSION).tar.bz2 ) rm -f /tmp/pima-$(PIMA_VERSION).tar.bz2 
+	cd ../; tar --exclude="*obj_noopt*" --exclude="*obsolete*" --exclude="*bin_noopt*" -cf - pima_$(PIMA_VERSION) | \
+                lbzip2 -c > /tmp/pima-$(PIMA_VERSION).tar.bz2 
+	@echo "Tar-file /tmp/pima-$(PIMA_VERSION).tar.bz2" 
+	@support/distribution_update.csh $(PIMA_VERSION)
+	@echo "The tar-file is uploaded to the Web, documentation is updated"
+	@sync

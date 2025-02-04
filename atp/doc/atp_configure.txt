@@ -1,0 +1,27 @@
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+
+  --debug                 prints debugging information during configurtation
+
+  --noopt                 disables all optimizations. May be useful for 
+                          debugging since more checks are imposed in
+                          non-optimized mode.
+
+Installation directories:
+
+  --prefix=PREFIX              install architecture-independent files in PREFIX
+                               [$HOME]
+
+  --with-petools=[dir name]    specifies directory name where package petools
+                               is installed (default $HOME )
+
+  --with-ners=[dir name]       specifies directory name where package ners
+                               is installed (default: $HOME )

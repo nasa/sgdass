@@ -1,0 +1,38 @@
+#!/bin/csh
+# ************************************************************************
+# *                                                                      *
+# *   Program geo_import_install makes the final steps for installing    *
+# *   geo_import. it creates file geo_import in according with user      *
+# *   preferences and makes it executable.                               *
+# *                                                                      *
+# * ### 2000.10.19 geo_import_install v1.0 (c) L. Petrov 14-JUL-2000 ### *
+# *                                                                      *
+# ************************************************************************
+if ( $?MK5_ROOT == 0 ) then
+    echo "---  Environment variable MK5_ROOT was not defined  ---"
+    exit ( 2 )
+endif
+#
+set MK5_BIN = ${MK5_ROOT}/bin
+set LOCAL_FIL = ${MK5_ROOT}/local/solve.lcl
+#
+if (-f $LOCAL_FIL) then
+#
+# --- Create geo_import
+#
+    ${MK5_BIN}/use_local geo_import.templ ${LOCAL_FIL} csh ${MK5_BIN}/geo_import
+    if ( $status != 0 ) then
+         echo "geo_import: *** Error in ${LOCAL_FIL} was detected"
+         echo "                Please correct this file"
+	 exit -2
+    endif
+#
+# --- Make it executable
+#
+    chmod +x ${MK5_BIN}/geo_import
+  else
+    echo "geo_import: *** $LOCAL_FIL file was not found. "
+    echo "                Installation of CALC/SOLVE is not possible"
+    exit -3
+endif
+echo "geo_import is successfully installed"

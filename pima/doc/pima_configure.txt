@@ -1,0 +1,77 @@
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+      --debug             run configuration in a verbose mode suitable for debugging
+      --noopt             disable optimizations. Usefull for debugging
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$HOME]
+
+  --pima-fits=[directory]    Directory where FITS files for examples will
+                             be downloaded
+
+  --pima-scratch=[directory] Directory where temporary files for examples
+                             will be written
+
+  --stable-share=[directory] Directory where PIMA searches for same files with
+                             a priori information. PIMA does not write there
+                             and therefore, the files in that directory are
+                             not overwritten with the new PIMA installation.
+
+  --pima-exp-dir=[directory] Directory where PIMA expects to find VLBI experiment 
+                             subdirectories 
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+Required Packages:
+  --with-PACKAGE[=ARG]         use PACKAGE [ARG=yes]
+  --without-PACKAGE            do not use PACKAGE (same as --with-PACKAGE=no)
+
+  --with-petools=[dir name]    specifies directory name where package petools
+                               is installed (default  /opt)
+
+  --with-ners=[dir name]       specifies directory name where package ners
+                               is installed (default: /opt )
+
+  --with-vtd=[dir name]        specifies directory name where package vtd
+                               is installed (default: /opt )
+
+  --with-spd_client=[dir name] specifies directory name where package spd_client
+                               is installed (default: /opt )
+
+  --with-gvh=[dir name]        specifies directory name where package gvh
+                               is installed (default: /opt )
+
+  --with-fourpack=[dir name]   specifies directory name where package fourpack
+                               is installed (default: /opt )
+
+  --with-cfitsio=[dir name]    specifies directory name where package cfitsio
+                               is installed (default: /opt )
+
+  --with-curl=[dir name]       specifies directory name where package curl
+                               is installed (default: /usr). Curl may or 
+                               may not be needed depending how cfitsio was 
+                               compiled.
+
+  --with-solve=[dir name]      Installation directory for psolve
+                               (default: /opt )
+
+  --without-solve              disables interface between PIMA and psolve
+
+  --without-python             do not install pima scripts that require 
+                               python3.2 or newer
+
+  --with-difmap                specifies directory names where package difmap
+                               is installed (default: /opt )
+
+  --without-difmap             disables interface between PIMA and difmap

@@ -1,0 +1,73 @@
+#!/bin/csh -f
+set init = $1
+#
+# setenv DSOUC_IGNORE   YES
+limit stacksize       4000000
+setenv DSOUC_IGNORE   YES
+setenv SPOOL_STAT_FMT SRC_LONG
+if ( $init == "P9" ) then
+     setenv MK5_ROOT /vlbi
+     setenv SOLVE_DIR $MK5_ROOT/bin
+     setenv PATH "/home/lpetrov/bin:/home/lpetrov/tools:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/X11R6/bin:/opt/bin:/vlbi/bin:."
+endif
+#
+if ($#argv == 0) then 
+    $MK5_ROOT/bin/solve $init 
+    set solve_status = $status
+  else
+    set flag = "silent"
+    if ( $3 == "auto" ) then
+         set flag = "silent-autorestart"
+      else if ( $3 == "a" ) then
+         set flag = "silent-autorestart"
+      else if ( $3 == "no" ) then
+         set flag = "silent-norestart"
+      else if ( $3 == "n" ) then
+         set flag = "silent-norestart"
+      else if ( $3 != "" ) then
+         if (-f $3) then
+            else 
+              echo "spl: Secondary follow-up program $3 was not found"
+	      exit 1
+         endif
+#
+         if (-x $3) then
+            else 
+              echo "spl: Secondary follow-up program $3 is not executable"
+	      exit 1
+         endif
+    endif
+    set solve_status = 1
+    if (-f $2) then
+        echo "batch SOLVE on `uname -n` started " \
+             " at " `date '+%H:%M:%S %d-%h-%Y' | tr "[a-z]" "[A-Z]"` 
+        echo "Solve initials: $init"
+        echo "Control file $2 "
+	echo "PATH is $PATH"
+	echo "SOLVE_DIR is $SOLVE_DIR"
+	echo "MK5_ROOT is $MK5_ROOT"
+        $MK5_ROOT/bin/solve $init $2 $flag 
+	set solve_status = $status
+#
+	if ( solve_status == 0 && -f $3 ) then
+#
+# ---------- Run follow-up program
+#
+	     if ( $3 == "no" ) then
+	          exit 0
+	       else if ( $3 == "n" ) then
+	          exit 0
+	       else if ( $3 == "a" ) then
+	          exit 0
+	       else if ( $3 == "auto" ) then
+	          exit 0
+	       else
+	          $3 $2 $init
+             endif
+        endif
+      else
+        echo "Control file $2 was not found"
+	set solve_status = 1
+    endif
+endif
+exit $solve_status

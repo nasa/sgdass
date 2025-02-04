@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  GBT-VLBA  GB
+LAST_UPDATE: GBT-VLBA  2018.01.27
+COORD:       GBT-VLBA  meters      882589.645    -4924872.321     3943729.363   
+MOUNT:       GBT-VLBA  char       ALTAZ
+SLEW_AZ:     GBT-VLBA  deg/sec    0.283
+SLEW_EL:     GBT-VLBA  deg/sec    0.3 
+ACCL_AZ:     GBT-VLBA  deg/sec^2  0.05
+ACCL_EL:     GBT-VLBA  deg/sec^2  0.05
+TSETTLE_AZ:  GBT-VLBA  sec       20.0
+TSETTLE_EL:  GBT-VLBA  sec       20.0
+EL_MIN:      GBT-VLBA  deg        5.0
+EL_MAX:      GBT-VLBA  deg       90.0
+AZ_RANGE:    GBT-VLBA  deg      -90.0 90.0 270.0 450.0
+RECORDER:    GBT-VLBA  char      mark5c
+PREOB:       GBT-VLBA  sec        0.0
+POSTOB:      GBT-VLBA  sec        2.0

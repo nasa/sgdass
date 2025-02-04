@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  VERAOGSW  Vo
+MOUNT:       VERAOGSW  char       ALTAZ
+LAST_UPDATE: VERAOGSW  2018.01.20
+COORD:       VERAOGSW  meters    -4491068.872  3481544.914  2887399.655
+SLEW_AZ:     VERAOGSW  deg/sec    2.0
+SLEW_EL:     VERAOGSW  deg/sec    2.0
+EL_MIN:      VERAOGSW  deg       15.0
+EL_MAX:      VERAOGSW  deg       84.5
+ACCL_AZ:     VERAOGSW  deg/sec^2  2.00
+ACCL_EL:     VERAOGSW  deg/sec^2  2.00
+TSETTLE_AZ:  VERAOGSW  sec        2.00
+TSETTLE_EL:  VERAOGSW  sec        2.00
+AZ_RANGE:    VERAOGSW  deg       -90.0  90.0 270.0 450.0
+RECORDER:    VERAOGSW  char       vera2000
+PREOB:       VERAOGSW  sec        10.0
+POSTOB:      VERAOGSW  sec         2.0

@@ -1,0 +1,61 @@
+                       Set a priori clock model.            SET_ACM    05/10/98
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+     A priori clock model should be applied to theoretical in the case when
+contribution of clocks exceeds 0.0001 sec. SET_ACM provides user interface
+for displaying values of a priori clock model, adding new parameters of 
+a priori clock model for specified station, deletion parameters of a priori
+clock model for those stations where it has been applied.
+
+     Command synopsis:
+
+(A)  Add parameters of a priori clock model for a station where it has not 
+     been already applied.
+
+(D)  Delete a priori clock model for a station where it has been already 
+     applied.
+
+(H)  Look at on-line help file.
+
+(O)  Quit SET_ACM without saving changes in a priori clock model.
+
+(S)  Quit SET_ACM after saving changes in a priori clock model.
+
+(R)  Refresh screen.
+
+     How to use SET_ACM
+
+1. To add a priori clock model the for certain station we hit A. SET_ACM asks
+   us the letter-code of the station. Type letter code. Typing <Enter> causes
+   abort of the operation. Then we should enter the value of clock offset
+   NB: in seconds!! This value will be added to theoretical delay. Thus, if
+   we noticed on listing of our preliminary solution that clocks of NY ALESUND
+   had adjustments 179823473.222 ns we should enter this value in seconds
+   (or something near to it) with the same sign. For example: 0.17982
+   Typing <Enter> causes abort of the operation. Then SET_ACM asks us to enter 
+   a priori clock rate. NB: in sec/sec!! If we don't need it we should enter 
+   0, since typing <Enter> with empty input causes abort of the operation. 
+
+2. If we need delete a priori clock model for a certain site we enter D
+   and then SET_ACM asks as letter-code of the station. SET_ACM asks us
+   a confirmation of the operation before deletion. To confirm it we should 
+   type Y
+
+3. If we need change a priori clock model for a certain station we should 
+   firstly delete model and then add it again.
+
+4. To apply a priori clock model to theoretical delays and rates we should
+   hit S. Hitting O causes leaving SET_ACM without saving update of a priori
+   clock model. Applied values of a priori clock model are printed at the
+   header of spool file. These values are stored in database when we make
+   its update. They are read by SDBH when the database or superfile is read.
+
+
+   RESTRICTIONS:
+
+1) We are able to apply a priori clock model for only 4 stations in one 
+   session.
+
+2) Clock offset should not exceed by modulo 100.0 seconds.
+
+3) Clock rate should not exceed by modulo 1.d-3 sec/sec.

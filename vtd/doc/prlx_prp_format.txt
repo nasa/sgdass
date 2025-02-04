@@ -1,0 +1,33 @@
+Format of the VTD a priori file of proper motions and parallaxes.
+
+Last update: 2023.03.14
+
+A file with the VTD a priori file of proper motions and parallaxes
+consists of lines of variable length in ascii format. The first
+line, so-called UNIX magic, identifies the format name and revision:
+
+# Source proper motion and parallax. File format  1.0  of 2023.03.11
+
+  Lines with # in the first position, except the first line, 
+are considered as comments and are discarded by the parser. Empty
+lines are allowed. They are discarded buy the parser.
+
+  A data record consists of 6 fields separated by a blank (decimal code 32)
+and/or exclamation sign.
+
+  Field  Format  Meaning
+
+   1-8    A8     IVS source name that usually follows B-name IAU convention
+
+  11-20   A10    J-name  IAU source name
+
+  23-32   F10.4  Proper motion in right ascension in mas/yr. The proper motion
+                 is not scaled by 1/cos(declination)
+
+  35-44   F10.4  Proper motion in declination in mas 
+
+  47-54   F8.4   Parallax in mas
+
+  56-56   A1     Delimiter
+
+  58-121  A64    Comment

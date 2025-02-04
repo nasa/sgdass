@@ -1,0 +1,38 @@
+# VTD_IONO_MOD data for delay computation.  Format of 2016.09.11
+#
+# Generated on 2016.11.29-11:19:29
+# by VTD  version  1.57  Revision of 2016.11.17
+#
+# Start time: 2015.01.18-14:01:39.1
+# Stop  time: 2015.01.18-14:01:39.8
+#
+# ----------------------------------------------------------------------------------------------------------------------------------------------------
+#
+#  Format description:
+#
+# Filed      Position  Format   Units          Meaning
+# -----      --------  ------   -----          -------
+# Poi ID     1:9       I9       n/a            A unique integer number that identifies the point
+# MJD        11:15     I5       day            Integer modified Julian date at  the midnight
+# TAI        17:23     F7.1     sec            Time of the emission in TAI scale
+# X_emi      26:38     F13.4    meter          X-coordinate of the emitter  in the crust fixed system
+# Y_emi      40:52     F13.4    meter          Y-coordinate of the emitter  in the crust fixed system
+# Z_emi      54:66     F13.4    meter          Z-coordinate of the emitter  in the crust fixed system
+# X_bou      69:81     F13.4    meter          X-coordinate of the receiver in the crust fixed system
+# Y_bou      83:95     F13.4    meter          Y-coordinate of the receiver in the crust fixed system
+# Z_bou      97:109    F13.4    meter          Z-coordinate of the receiver in the crust fixed system
+# Del_iono  112:122    1PD11.4  sec            Phase ionospheric delay at frequency 1GHz
+#
+# ----------------------------------------------------------------------------------------------------------------------------------------------------
+#                           Position of the emitter                     Position of the bouncing point
+#  Poi ID   MJD   TAI     X-coordinate  Y-coordinate  Z-coordinate    X-coordinate  Y-coordinate  Z-coordinate Delay at 1GHz
+#                                                                                                              sec
+#
+   361194 57040 50499.1   2682227.0721 -4991867.3310 -2930240.7601   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07
+   361194 57040 50499.2   2682227.0722 -4991867.3320 -2930240.7602   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07
+   361194 57040 50499.3   2682227.0723 -4991867.3330 -2930240.7603   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07
+   361194 57040 50499.4   2682227.0724 -4991867.3340 -2930240.7604   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07
+   361194 57040 50499.5   2682227.0725 -4991867.3350 -2930240.7605   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07
+   361194 57040 50499.6   2682227.0726 -4991867.3360 -2930240.7606   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07
+   361194 57040 50499.7   2682227.0727 -4991867.3370 -2930240.7607   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07
+   361194 57040 50499.8   2682227.0728 -4991867.3380 -2930240.7608   2679750.9122 -4987258.9772 -2927517.4343  -1.6012D-07

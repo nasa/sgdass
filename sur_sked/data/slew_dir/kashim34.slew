@@ -1,0 +1,21 @@
+# Station slew format of  2018.02.02
+#
+# 2018.02.06  L. Petrov  changed ercorder ffrom mark5c to ads3000
+# 2018.02.09  L. Petrov  changed PREOB from 10.0 to 30.0
+#
+SHORT_NAME:  KASHIM34  Kb
+LAST_UPDATE: KASHIM34  2018.02.09
+COORD:       KASHIM34  meters    -3997649.228  3276690.770  3724278.790   
+MOUNT:       KASHIM34  char       ALTAZ
+SLEW_AZ:     KASHIM34  deg/sec    0.80
+SLEW_EL:     KASHIM34  deg/sec    0.64
+ACCL_AZ:     KASHIM34  deg/sec^2  0.25
+ACCL_EL:     KASHIM34  deg/sec^2  0.20
+TSETTLE_AZ:  KASHIM34  sec       20.0
+TSETTLE_EL:  KASHIM34  sec       20.0
+EL_MIN:      KASHIM34  deg        7.0
+EL_MAX:      KASHIM34  deg       88.0
+AZ_RANGE:    KASHIM34  deg      -270.0 -90.0  90.0 270.0
+RECORDER:    KASHIM34  char      ads3000
+PREOB:       KASHIM34  sec       30.0
+POSTOB:      KASHIM34  sec        2.0

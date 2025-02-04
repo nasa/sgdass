@@ -1,0 +1,969 @@
+! >>>>> Include block for package VTD ( VLBI Theoretical Delay )
+! >>>>> 2004.01.26  (c)  L. Petrov  v 2.00  2024.09.12_17:40:40
+!
+      INCLUDE    'de440_eph.i'
+      INCLUDE    'ueop.i'
+      INCLUDE    'sotid_type.i'
+      INCLUDE    'sotid_data.i'
+      INCLUDE    'harpos.i'
+      INCLUDE    'bindisp.i'
+      INCLUDE    'sou_map.i'
+      INCLUDE    'heo.i'
+      INCLUDE    'eec.i'
+      INCLUDE    'aem.i'
+      INCLUDE    'eec_peta.i'
+      INCLUDE    'anti.i'
+      INCLUDE    'agd.i'
+      INCLUDE    'trp.i'
+      INCLUDE    'spd.i'
+      INCLUDE    'viono.i'
+      INCLUDE    'ners.i'
+!
+      INTEGER*4  VTD__M_STA, VTD__M_BAS, VTD__M_SOU, VTD__M_SRC, &
+     &           VTD__MSES_STA, VTD__MSES_SOU, VTD__M_EPC, &
+     &           VTD__M_ECC, VTD__M_PSF, VTD__M_SDI, &
+     &           VTD__M_LPS, VTD__M_STR, VTD__M_BND, VTD__M_SCC, &
+     &           VTD__M_NZO, VTD__M_SPL, VTD__M_NOD, VTD__M_ERM, &
+     &           VTD__M_ERD, VTD__M_FRQ, VTD__M_BSP, VTD__M_HMD, &
+     &           VTD__M_HPF, VTD__M_TST, VTD__M_SPD, VTD__M_EPD, &
+     &           VTD__M_IOF, VTD__MEM,   VTD__MEPH, VTD__M_ATX, &
+     &           VTD__M_PCO
+      INTEGER*4  VTD__M_CNF
+      PARAMETER  ( VTD__M_STA =   256 ) ! Maximal number of stations
+      PARAMETER  ( VTD__M_BAS =   (VTD__M_STA*(VTD__M_STA+1))/2 ) !
+      PARAMETER  ( VTD__M_SOU = 65536 ) ! Maximal number of sources in one session
+      PARAMETER  ( VTD__M_SRC = 65536 ) ! Maximal total number of sources
+      PARAMETER  ( VTD__M_EPC =     4 ) ! The maximum number of breaks in coordinates
+      PARAMETER  ( VTD__M_ECC =    64 ) ! The maximum number of eccentricites
+      PARAMETER  ( VTD__M_PSF =    16 ) ! The maximum number of position variation files
+      PARAMETER  ( VTD__M_SDI =    32 ) ! The number of knots for interpolation
+      PARAMETER  ( VTD__M_CNF =    71 ) ! The number of parameters in control file
+      PARAMETER  ( VTD__M_LPS =    64 ) ! Maximum number of entries for leap-sec
+      PARAMETER  ( VTD__M_STR = 16384 ) ! Maximum number of source structure entries
+      PARAMETER  ( VTD__M_ATX = 262144) ! Maximum number of ANTEX lines
+      PARAMETER  ( VTD__M_PCO = 128   ) ! Maximum number of PCO objects
+      PARAMETER  ( VTD__M_BND =     2 ) ! Maximum number of bands
+      PARAMETER  ( VTD__M_SCC =     4 ) ! Maximum number of source catalogues
+      PARAMETER  ( VTD__M_NZO =   512 ) ! Maximum number of near zone objects
+      PARAMETER  ( VTD__M_SPL =     5 ) ! Maximum spline degree
+      PARAMETER  ( VTD__M_NOD =  8192 ) ! Maximum number of nodes for B-spline
+      PARAMETER  ( VTD__M_ERM = 16384 ) ! Maximum number of knots of ERM B-spline
+      PARAMETER  ( VTD__M_ERD =     3 ) ! Maximum degree of ERM B-spline
+      PARAMETER  ( VTD__M_SPD =     3 ) ! Maximum degree of spline position B-spline
+      PARAMETER  ( VTD__M_FRQ =    32 ) ! Maximum channels in one band for ionospheric delay computations
+      PARAMETER  ( VTD__M_BSP =   128 ) ! max number of statations with apriori B-spline
+      PARAMETER  ( VTD__M_HMD =   256 ) ! max number of statations with apriori harmonic model
+      PARAMETER  ( VTD__M_HPF =    64 ) ! max number of frequencies for harmonic site position variations
+      PARAMETER  ( VTD__MEM   =   128 ) ! Maxumum number of chunks memory explicitly allocated by VTD
+      PARAMETER  ( VTD__MEPH  = 32768 ) ! Maxumum number of ephemeride records in the the ephemeride file
+      PARAMETER  ( VTD__M_EPD =     4 ) ! Maxumum number of external path delay file directories
+      PARAMETER  ( VTD__M_IOF =    16 ) ! Maxumum number of ionosphere model file directories
+      PARAMETER  ( VTD__M_TST =    32 ) ! Array of variables for tests
+!
+      INCLUDE    'bsppos.i'
+!
+      CHARACTER  VTD__LABEL*26, VTD_CNF__LABEL*50
+      PARAMETER  ( VTD__LABEL = 'VTD 20241125  version 2.1 ' )
+      PARAMETER  ( VTD_CNF__LABEL = '# VTD Control file.   Format version of 2024.05.02' )
+!
+! --- NB: VTD__M_SDI should be the same as M__PSV from bindisp.i
+!
+      INTEGER*4    VTD__M_PLA
+      PARAMETER  ( VTD__M_PLA = 10 )
+      INTEGER*4    VTD__COO, VTD__VEL, VTD__ACC
+      PARAMETER  ( VTD__COO = 1 )
+      PARAMETER  ( VTD__VEL = 2 )
+      PARAMETER  ( VTD__ACC = 3 )
+      TYPE       VTD_STA__TYPE
+            CHARACTER   IVS_NAME*8
+            CHARACTER   SHORT_NAME*2
+            CHARACTER   FIILER_1*2
+	    INTEGER*4   MJD
+	    REAL*8      TAI
+!
+	    INTEGER*4   N_EPC       ! The number of epochs for site positions
+	    INTEGER*4   MJD_REF     ! Reference
+	    REAL*8      TAI_REF     ! epoch
+	    INTEGER*4   MJD_EPC(VTD__M_EPC)  ! Date of the
+	    REAL*8      TAI_EPC(VTD__M_EPC)  ! epoch start
+	    REAL*8      COO_TRS(3,VTD__M_EPC)  ! Station coordinate per epoch
+	    REAL*8      VEL_TRS(3)             ! Station global velocity
+	    REAL*8      AXIS_OFFSET
+	    CHARACTER   MOUNT_TYPE*4
+            CHARACTER   ANTEX_TYPE*20
+!
+	    INTEGER*4   N_ECC
+	    INTEGER*4   ECC_MJD_BEG(VTD__M_ECC)
+	    INTEGER*4   ECC_MJD_END(VTD__M_ECC)
+	    REAL*8      ECC_TAI_BEG(VTD__M_ECC)
+	    REAL*8      ECC_TAI_END(VTD__M_ECC)
+	    REAL*8      ECC_TRS(3,VTD__M_ECC)
+	    REAL*8      ANT_DIAM
+	    INTEGER*4   CDP_NUMBER
+	    CHARACTER   IERS_DOME_NAME*12
+	    CHARACTER   STA_TYP*1
+	    CHARACTER   FILLER_2*3
+!
+            REAL*8      BEG_TRS(3)
+	    REAL*8      HEI_ELL
+	    REAL*8      GAC_ELL
+	    REAL*8      AXIS_TRS(3)
+	    REAL*8      LONG
+	    REAL*8      LAT_GCN
+	    REAL*8      LAT_GDT
+	    REAL*8      RAD
+	    REAL*8      REN_TO_TRS(3,3)
+	    REAL*8      UEN_TO_TRS(3,3)
+	    REAL*8      MOM_COO_TRS(3)
+	    REAL*8      MOM_VEL_TRS(3)
+	    REAL*8      MOM_ACC_TRS(3)
+	    REAL*8      COO_CRS(3)
+	    REAL*8      VEL_CRS(3)
+	    REAL*8      ACC_CRS(3)
+	    REAL*8      ELEV
+	    REAL*8      AZ
+	    REAL*8      PARAL_ANG
+	    REAL*8      PARAL_ANG_RATE
+	    REAL*8      FEED_ANG
+	    REAL*8      FEED_ANG_RATE
+	    REAL*8      ELEV_DER
+	    REAL*8      AZ_DER
+	    REAL*8      AXIS_DELAY_DER
+	    REAL*8      AXIS_RATE_DER
+	    REAL*8      ANT_THERMAL_DEL
+	    REAL*8      ANT_GRAVITY_DEL
+!
+	    REAL*8      TOPO_S_CRS(3) ! Topocentric source position for this observation
+	    REAL*8      TOPO_S_DIST   ! Topocentric distatnce ot the source
+	    REAL*8      TOPO_S_CRS_RATE(3) ! and its rate
+!
+	    REAL*8      ATM_PRES
+	    REAL*8      AIR_TEMP
+	    REAL*8      AIR_TEMP_EFF
+!
+	    REAL*8      PSV_TIM_BEG(VTD__M_PSF)
+	    REAL*8      PSV_TIM(VTD__M_SDI,VTD__M_PSF)
+	    REAL*8      PSV_POS(VTD__M_SDI,3,VTD__M_PSF)
+	    REAL*8      PSV_SPL(VTD__M_SDI,3,VTD__M_PSF)
+!
+	    REAL*8      TROP_HZD
+	    REAL*8      TROP_WZD
+	    REAL*8      TROP_DEL
+	    REAL*8      TROP_DEL_RATE
+!
+	    REAL*8      TROP_ZEN_DER
+	    REAL*8      TROP_ZEN_RATE
+	    REAL*8      TROP_TILT_N_DER
+	    REAL*8      TROP_TILT_E_DER
+!
+	    REAL*8      TEC
+	    REAL*8      IONO_MAP
+	    REAL*8      IONO_DEL
+	    REAL*8      IONO_RATE
+	    INTEGER*4   IONO_STATUS
+!
+	    REAL*8      TROP_AXOF_TAU
+	    REAL*8      TROP_AXOF_RAT
+	    REAL*8      DELAY_AXOF_VTD
+	    REAL*8      RATE_AXOF_VTD
+	    REAL*8      DELAY_AXOF_CALC
+	    REAL*8      RATE_AXOF_CALC
+!
+	    REAL*8      SUR_PRS
+	    REAL*8      SUR_PWP
+	    REAL*8      SUR_TEM
+!
+	    TYPE ( BSPPOS__TYPE ) :: BSP
+	    LOGICAL*4   FL_BSP
+!
+	    INTEGER*4   STATUS
+      END TYPE   VTD_STA__TYPE
+!
+      TYPE       VTD_SOU__TYPE
+            CHARACTER   IVS_NAME*8
+            CHARACTER   J2000_NAME*10
+	    CHARACTER   FILLER_1*6
+!
+	    REAL*8      ALPHA
+	    REAL*8      DELTA
+	    REAL*8      DIST
+	    REAL*8      PRLX
+	    REAL*8      SOU_CRS(3)  ! Full vector
+	    REAL*8      S_CRS(3)    ! Unit vector
+            REAL*8      SAPP_CRS(3) ! Unit vector, apparent position
+            REAL*8      SAPP_CRS_RATE(3) ! Unit vector, apparent position rate
+!
+	    REAL*8      ALPHA_RATE
+	    REAL*8      DELTA_RATE
+	    REAL*8      DIST_RATE
+	    REAL*8      SOU_CRS_RATE(3)
+	    REAL*8      S_CRS_RATE(3)
+!
+	    TYPE      ( SOUMAP__TYPE ) :: MAP(VTD__M_BND)
+	    LOGICAL*4   FL_STRUC(VTD__M_BND)
+	    CHARACTER   IMAGE_BAND(VTD__M_BND)*1
+	    INTEGER*4   MAP_USAGE_CODE(VTD__M_BND)
+!
+	    REAL*8      TAI_REF
+	    INTEGER*4   MJD_REF
+	    INTEGER*4   IND_NZO
+	    INTEGER*4   IND_STRU(VTD__M_BND)
+	    CHARACTER   NZO_NAME*8
+	    CHARACTER   OBJ_TYPE*1
+	    CHARACTER   FILLER_2*3
+      END TYPE   VTD_SOU__TYPE
+!
+      TYPE       VTD_NZO__TYPE
+	    CHARACTER  NAME*8
+       	    INTEGER*4  MJD_BEG
+	    INTEGER*4  TIM_CODE
+	    REAL*8     TIM_BEG
+	    INTEGER*4  DEG_SPL              ! Degree of the spline
+	    INTEGER*4  NOD_SPL              ! Number of nodes for spline
+	    REAL*8,    POINTER :: PHASE_WINDUP(:,:)
+	    REAL*8,    POINTER :: TIM_ARR(:)
+	    REAL*8,    POINTER :: SPL_ARR(:,:)
+	    REAL*8,    POINTER :: SPL_RLT_ARR(:)
+	    INTEGER*4  NZO_COO_SYS     ! VTD__CRS, VTD__TRS
+	    INTEGER*4  NZO_COO_ORIGIN  ! VTD__SS_BAR, VTD__EM_BAR, VTD__GEOCENTER 
+            INTEGER*4  NORAD_ID
+            INTEGER*4  IAU_DESIGNATOR
+            CHARACTER  FIL_EPH*128
+	    CHARACTER  OBJ_TYPE*7
+	    CHARACTER  OBJ_USED*1
+	    CHARACTER  FILLER_1*8
+      END TYPE   VTD_NZO__TYPE
+!
+      TYPE       VTD_CONF__TYPE
+	    INTEGER*4  MJD_START
+	    INTEGER*4  MJD_STOP
+	    REAL*8     TAI_START
+	    REAL*8     TAI_STOP
+!
+	    CHARACTER  FINAM_STADESC*256
+	    CHARACTER  FINAM_STACOO*256
+	    CHARACTER  FINAM_STAVEL*256
+	    CHARACTER  FINAM_STAECC*256
+	    CHARACTER  FINAM_SOUCOO(VTD__M_SCC)*256
+	    CHARACTER  FINAM_SOUPRL_PRP*256
+	    CHARACTER  DIR_NZO*256
+	    CHARACTER  FINAM_DE_EPH*256
+	    CHARACTER  FINAM_LEAPSEC*256
+	    CHARACTER  FINAM_EOP*256
+	    CHARACTER  FINAM_ERM*256
+	    CHARACTER  FINAM_AEM*256
+            CHARACTER  FINAM_HEO*256
+	    CHARACTER  FINAM_ANTI*256
+	    CHARACTER  FINAM_AHM*256
+	    CHARACTER  FINAM_AGD*256
+	    CHARACTER  FINAM_MMF*256
+	    CHARACTER  FINAM_PHASE_OFFS*256
+	    CHARACTER  SPD_MODEL*256
+	    CHARACTER  SPD_BIAS_FILE*256
+	    CHARACTER  DIR_EPD(VTD__M_EPD)*256
+            CHARACTER  IONO_MODEL*256
+	    CHARACTER  IONO_FILE(VTD__M_IOF)*256
+	    CHARACTER  SOU_DEBIAS_MODEL*256
+	    INTEGER*4  ATM_PARTIAL_TYPE
+	    INTEGER*4  EOP_TIME_SCALE
+	    INTEGER*4  UZT_MODEL
+	    INTEGER*4  UZT_USE
+            INTEGER*4  PREC_EXP
+            INTEGER*4  NUT_EXP
+	    INTEGER*4  NUT_GDS
+	    INTEGER*4  EPD_TYPE(4)
+	    INTEGER*4  EPD_USATE(4)
+	    INTEGER*4  ATHD_DATA_FROM
+	    REAL*8     ATHD_LAG
+	    REAL*8     ATM_PARTIAL_PAR(2)
+	    REAL*8     IONOSPHERE_SCALE
+!
+	    INTEGER*4  STD_2ND_MODEL
+	    INTEGER*4  STD_3RD_MODEL
+	    INTEGER*4  STD_ZF_MODEL
+	    INTEGER*4  PTD_MODEL
+	    INTEGER*4  MEAN_POLE_MODEL
+	    CHARACTER  POSVAR_FIL(VTD__M_PSF)*256
+	    INTEGER*4  POSVAR_MOD(VTD__M_PSF)
+	    INTEGER*4  POSVAR_INT(VTD__M_PSF)
+	    INTEGER*4  POSVAR_USE(VTD__M_PSF)
+	    INTEGER*4  EROT_COMPAT
+!
+	    INTEGER*4  METEO_DEF
+	    INTEGER*4  HMF_MODEL
+	    INTEGER*4  WMF_MODEL
+	    INTEGER*4  HZD_MODEL
+	    INTEGER*4  WZD_MODEL
+	    INTEGER*4  ATD_PARTIALS
+	    INTEGER*4  GRS_METRIC
+	    INTEGER*4  AXOF_MODEL
+	    INTEGER*4  TROP_AXOF_COUPL
+	    INTEGER*4  TROP_GEOM_COUPL
+	    INTEGER*4  GAL_ABR
+	    INTEGER*4  GEOM_EXPR_FAR_ZONE
+	    INTEGER*4  GEOM_EXPR_NEAR_ZONE
+	    INTEGER*4  PARALLACTIC_ANGLE
+	    INTEGER*4  DOPPLER_EXPR
+!
+	    CHARACTER  FINAM_STRUC*256
+	    LOGICAL*4  FL_RATE
+!
+	    INTEGER*4  IVRB     !  Verbosity level
+	    LOGICAL*4  FL_WARN  !  Warning flag
+!
+	    CHARACTER  CONFIG_FINAM*256
+	    INTEGER*4  TEST(VTD__M_TST)
+	    INTEGER*4  STATUS
+      END TYPE   VTD_CONF__TYPE
+!
+      TYPE       VTD_POSVAR__TYPE
+            INTEGER*4  N_PSVHAR   ! Number of harmonics
+            INTEGER*4  N_PSVSTA   ! Number of sites
+	    INTEGER*4  PSV_TYPE   ! Type of position variations
+!
+	    INTEGER*4  STS_BSPPOS !
+!
+            ADDRESS__TYPE  LEN_NAMSIT
+            ADDRESS__TYPE  LEN_HARVAL
+            ADDRESS__TYPE  LEN_HARDSP
+            ADDRESS__TYPE  LEN_STACOO
+            ADDRESS__TYPE  LEN_BDSFIL
+            ADDRESS__TYPE  LEN_BDSSAM
+            ADDRESS__TYPE  LEN_BDSFMJ
+            ADDRESS__TYPE  LEN_BDSFSC
+            ADDRESS__TYPE  LEN_BDSLMJ
+            ADDRESS__TYPE  LEN_BDSLSC
+            ADDRESS__TYPE  LEN_BDSNSA
+!
+	    ADDRESS__TYPE  ADR_NAMSIT
+            ADDRESS__TYPE  ADR_HARVAL
+            ADDRESS__TYPE  ADR_HARDSP
+            ADDRESS__TYPE  ADR_STACOO
+            ADDRESS__TYPE  ADR_BDSFIL
+            ADDRESS__TYPE  ADR_BDSSAM
+            ADDRESS__TYPE  ADR_BDSFMJ
+            ADDRESS__TYPE  ADR_BDSFSC
+            ADDRESS__TYPE  ADR_BDSLMJ
+            ADDRESS__TYPE  ADR_BDSLSC
+            ADDRESS__TYPE  ADR_BDSNSA
+!
+	    INTEGER*4  STS_NAMSIT
+            INTEGER*4  STS_HARVAL
+            INTEGER*4  STS_HARDSP
+	    INTEGER*4  STS_STACOO
+	    INTEGER*4  STS_BDSFIL
+	    INTEGER*4  STS_BDSSAM
+	    INTEGER*4  STS_BDSFMJ
+	    INTEGER*4  STS_BDSFSC
+	    INTEGER*4  STS_BDSLMJ
+	    INTEGER*4  STS_BDSLSC
+	    INTEGER*4  STS_BDSNSA
+	    REAL*8     RD_AREA
+!
+            INTEGER*4  TIM_PSVFIL  ! Date of last modification of the file
+!                                  ! with position variations stored in the
+!                                  ! native UNIX format
+	    ADDRESS__TYPE  MEM_LEN
+            ADDRESS__TYPE  MEM_ADR
+	    INTEGER*4  STATUS
+            CHARACTER  BDS_ENDIAN*1
+            CHARACTER  BDS_FLOAT*1
+	    CHARACTER  FILLER*6
+	    TYPE     ( BSPPOS__TYPE ), POINTER :: BSP(:) => NULL()
+      END TYPE   VTD_POSVAR__TYPE
+!
+      TYPE       VTD_MOMENT__TYPE
+	    INTEGER*4  MJD
+	    REAL*8     TAI
+	    REAL*8     TDB
+	    REAL*8     TDT
+	    CHARACTER  SOU_NAM*8
+!
+	    REAL*8     XPL
+	    REAL*8     YPL
+	    REAL*8     UT1_M_TAI
+	    REAL*8     XPL_RATE
+	    REAL*8     YPL_RATE
+	    REAL*8     UT1_RATE
+	    REAL*8     S_ANG
+	    REAL*8     S_ANG_RATE
+	    REAL*8     TRS_TO_CRS(3,3)
+	    REAL*8     TRS_TO_CRS_DER1(3,3)
+	    REAL*8     TRS_TO_CRS_DER2(3,3)
+	    REAL*8     DTRS_TO_CRS_DEOP(3,3,3)
+	    REAL*8     DTRS_TO_CRS_DER1_DEOP(3,3,3)
+	    REAL*8     PLAN(3,3,VTD__M_PLA)
+	    REAL*8     NZO_RLT
+	    INTEGER*4  STATUS
+      END TYPE   VTD_MOMENT__TYPE
+!
+      TYPE       VTD_PCO__TYPE
+            TYPE(RINEX_FREQ_TYPE), POINTER :: RINEX_FREQ(:) => NULL()
+            CHARACTER  ANTENNA_TYPE*20
+            REAL*8     DELEV
+            REAL*8     DAZI
+            REAL*8     BOUND_LOW_ELEV
+            REAL*8     BOUND_HIGH_ELEV
+            INTEGER*4  NFREQ  ! Number of objects of RINEX_FREQ_TYPE
+            INTEGER*4  STATUS
+      END TYPE   VTD_PCO__TYPE
+!
+      TYPE :: RINEX_FREQ_TYPE
+            REAL*8,    POINTER :: PHASE_PAT(:,:) => NULL()
+            REAL*8     UEN(3)
+            CHARACTER  FREQ_NAME*3
+            REAL*8     FREQ ! Central frequency
+            INTEGER*4  NAZ  ! Number of grids over azumith
+            INTEGER*4  NEL  ! Number of grids over elevations
+      END TYPE RINEX_FREQ_TYPE
+!
+      TYPE VTD_LEAPS__TYPE
+	   INTEGER*4  L_LPS
+	   INTEGER*4  MJD_LPS(VTD__M_LPS)
+	   REAL*8     TAI_LPS(VTD__M_LPS)
+	   REAL*8     UTC_M_TAI(VTD__M_LPS)
+	   INTEGER*4  STATUS
+      END TYPE VTD_LEAPS__TYPE
+!
+      TYPE VTD_ERM__TYPE
+           SEQUENCE
+           CHARACTER  FINAM*128
+	   INTEGER*4  STATUS
+           INTEGER*4  DEGREE(3)
+           INTEGER*4  MJD_BEG
+           INTEGER*4  MJD_END
+           REAL*8     TAI_BEG
+           REAL*8     TAI_END
+	   REAL*8     TIME_SPAN(3)
+!
+	   INTEGER*4  NKNOTS(3)
+           REAL*8     TIM(1-VTD__M_ERD:VTD__M_ERM,3)
+           REAL*8     VAL(1-VTD__M_ERD:VTD__M_ERM,3)
+           REAL*8     ERR(1-VTD__M_ERD:VTD__M_ERM,3)
+	   REAL*8     COV(1-VTD__M_ERD:VTD__M_ERM,VTD__M_ERD,3)
+      END  TYPE VTD_ERM__TYPE
+!
+      INTEGER*4  STRUC__NON, STRUC__MAP, STRUC__DEL, STRUC__GAU 
+      PARAMETER  ( STRUC__NON =     0 )
+      PARAMETER  ( STRUC__MAP = 59341 )
+      PARAMETER  ( STRUC__DEL = 59342 )
+      PARAMETER  ( STRUC__GAU = 59343 )
+!
+      TYPE VTD_STRUC__TYPE
+           CHARACTER  SOU_NAME*10
+	   CHARACTER  BAND*1
+	   INTEGER*4  MJD_BEG
+	   INTEGER*4  MJD_END
+	   REAL*8     SEC_BEG
+	   REAL*8     SEC_END
+           REAL*8     PHASE_CENTER_PIXEL(2)
+	   INTEGER*4  USAGE_CODE
+	   CHARACTER  MAP_FILE*128
+      END TYPE VTD_STRUC__TYPE
+!
+      TYPE       VTD__OBS_TYPE
+	   INTEGER*4   DELAY_TYPE
+!
+	   INTEGER*4   L_FRQ  ! The number of frequency channels
+	   CHARACTER*2 PLRZ   ! Polarization: RR, LL, RL, LR or NO
+	   INTEGER*4   STATUS ! Status: VTD__UNDF, VTD__BND, VTD__CHN
+	   INTEGER*4   N_BND  ! Number of bands
+	   CHARACTER   EXP_NAME*16  ! Experiment name
+	   CHARACTER   SCAN_NAME*16 ! Scan name
+!
+	   REAL*8      FRQ(VTD__M_FRQ,VTD__M_BND)  ! Array of cyclic frequencies
+	   REAL*8      WEI(VTD__M_FRQ,VTD__M_BND)  ! Array of weights per channel
+!
+	   REAL*8      FRQ_REF(VTD__M_BND)      ! Reference frequency per band
+	   REAL*8      FRQ_ION_EFF(VTD__M_BND)  ! Effective ionosphere frequency
+!                                               ! for this type of delay
+      END  TYPE  VTD__OBS_TYPE
+!
+      INTEGER*4    VTD__BND, VTD__CHN, VTD__SPC
+      PARAMETER  ( VTD__BND  = 6001 ) ! Frequency channel setup is undefined, 
+!                                           but the reference frequency and 
+!                                           effective ionospheric frequencies 
+!                                           are known
+      PARAMETER  ( VTD__CHN =  6002 ) ! Frequency channel setup is known
+      PARAMETER  ( VTD__SPC =  6003 ) ! Spacecraft
+!
+! --- Delay types
+!
+      INTEGER*4    VTD__PL__DTP, VTD__PH__DTP, VTD__SL__DTP, VTD__SH__DTP, &
+     &             VTD__ML__DTP, VTD__MH__DTP, &
+     &             VTD__PLPH__DTP, VTD__SLSH__DTP, VTD__MLMH__DTP, &
+     &             VTD__PHML__DTP, VTD__PHMH__DTP, VTD__PLML__DTP, &
+     &             VTD__PLMH__DTP
+      CHARACTER*4  VTD__PL__DTC, VTD__PH__DTC, VTD__SL__DTC, VTD__SH__DTC, &
+     &             VTD__ML__DTC, VTD__MH__DTC, &
+     &             VTD__PLPH__DTC, VTD__SLSH__DTC, VTD__MLMH__DTC, &
+     &             VTD__PHML__DTC, VTD__PHMH__DTC, &
+     &             VTD__PLML__DTC, VTD__PLMH__DTC
+      PARAMETER  ( VTD__PL__DTP   = 3001,  VTD__PL__DTC   = 'PL  ' )
+      PARAMETER  ( VTD__PH__DTP   = 3002,  VTD__PH__DTC   = 'PH  ' )
+      PARAMETER  ( VTD__SL__DTP   = 3003,  VTD__SL__DTC   = 'SL  ' )
+      PARAMETER  ( VTD__SH__DTP   = 3004,  VTD__SH__DTC   = 'SH  ' )
+      PARAMETER  ( VTD__ML__DTP   = 3005,  VTD__ML__DTC   = 'ML  ' )
+      PARAMETER  ( VTD__MH__DTP   = 3006,  VTD__MH__DTC   = 'MH  ' )
+      PARAMETER  ( VTD__PLPH__DTP = 3007,  VTD__PLPH__DTC = 'PLPH' )
+      PARAMETER  ( VTD__SLSH__DTP = 3008,  VTD__SLSH__DTC = 'SLSH' )
+      PARAMETER  ( VTD__MLMH__DTP = 3009,  VTD__MLMH__DTC = 'MLMH' )
+      PARAMETER  ( VTD__PHML__DTP = 3010,  VTD__PHML__DTC = 'PHML' )
+      PARAMETER  ( VTD__PHMH__DTP = 3011,  VTD__PHMH__DTC = 'PHMH' )
+      PARAMETER  ( VTD__PLML__DTP = 3012,  VTD__PLML__DTC = 'PLML' )
+      PARAMETER  ( VTD__PLMH__DTP = 3013,  VTD__PLMH__DTC = 'PLMH' )
+!
+      TYPE       VTD__TYPE
+            TYPE ( VTD_CONF__TYPE     ) :: CONF
+            TYPE ( VTD_STA__TYPE      ) :: STA(VTD__M_STA)
+            TYPE ( VTD_SOU__TYPE      ) :: SOU(VTD__M_SOU)
+            TYPE ( UEOP__TYPE         ) :: UEOP
+            TYPE ( DE440__TYPE        ) :: DE_EPH
+            TYPE ( DE440_HEA__TYPE    ) :: DE_EPH_HEA
+            TYPE ( STATID__STRU       ) :: STATID(VTD__M_STA)
+            TYPE ( TIDCNF__STRU       ) :: TIDCNF_STD
+            TYPE ( TIDCNF__STRU       ) :: TIDCNF_PTD
+            TYPE ( VTD_MOMENT__TYPE   ) :: MOM
+            TYPE ( TIMTID__STRU       ) :: TIMTID
+            TYPE ( VTD_POSVAR__TYPE   ) :: POSVAR(VTD__M_PSF)
+	    TYPE ( VTD_LEAPS__TYPE    ) :: LEAPSEC
+	    TYPE ( VTD_STRUC__TYPE    ) :: STRUC(VTD__M_STR)
+	    TYPE ( HEO__STRUC         ) :: HEO(M__HEO)
+	    TYPE ( VTD_ERM__TYPE      ) :: ERM
+	    TYPE ( VTD_NZO__TYPE      ) :: NZO(VTD__M_NZO)
+	    TYPE ( AEM__TYPE          ) :: AEM
+	    TYPE ( ANTENNA_DATA__TYPE ) :: ANTI
+	    TYPE ( AGD_DATA__TYPE     ) :: AGD
+	    TYPE ( TRP_MMF_MOD__TYPE  ) :: MMF(VTD__M_STA)
+            TYPE ( SPD_DEL__TYPE      ) :: SPD_3D(VTD__M_STA)
+	    TYPE ( SPD_3D_MF__TYPE    ) :: MF
+            TYPE ( IONO__TYPE         ) :: IONO
+            TYPE ( NERS__TYPE         ) :: NERS
+            TYPE ( VTD_PCO__TYPE      ),   POINTER :: PCO(:) => NULL()
+!
+	    INTEGER*4  L_STA
+	    INTEGER*4  L_SOU
+	    INTEGER*4  L_NZO
+	    INTEGER*4  L_STR
+	    INTEGER*4  L_HEO
+	    INTEGER*4  L_ANT_TYPE
+!
+	    CHARACTER  HEO_NAME*128
+	    REAL*8     HEO_EPOCH_SEC
+!
+	    INTEGER*4  MJD_BEG
+	    INTEGER*4  MJD_END
+	    REAL*8     TAI_BEG
+	    REAL*8     TAI_END
+	    REAL*8     UV_COOR(3)
+!
+	    INTEGER*4  MEM_CHN
+	    ADDRESS__TYPE  MEM_LEN(VTD__MEM)
+	    ADDRESS__TYPE  MEM_ADR(VTD__MEM)
+!
+	    INTEGER*4  STATUS_STA
+	    INTEGER*4  STATUS_SOU
+	    INTEGER*4  STATUS_EPH
+	    INTEGER*4  STATUS_EOP
+	    INTEGER*4  STATUS_AEM
+	    INTEGER*4  STATUS_NUT
+	    INTEGER*4  STATUS_ANTI
+	    INTEGER*4  STATUS_AHM
+	    INTEGER*4  STATUS_AGD
+	    INTEGER*4  STATUS_MMF
+	    INTEGER*4  STATUS_SPD(VTD__M_STA)
+	    INTEGER*4  STATUS
+!
+	    CHARACTER  SESS_NAME*10  ! session name
+	    INTEGER*4  LOAD_REUSE    ! Flag whether reuse loaded values
+!
+	    INTEGER*4  LAST_FIELD ! Because of a bug in Sun compiler we need this field
+      END TYPE   VTD__TYPE
+!
+      TYPE VTD_2P__TYPE
+           REAL*8     TAI
+           REAL*8     COO_EMI(3)
+           REAL*8     COO_REC(3)
+           REAL*8     DEL
+           INTEGER*4  MJD
+           INTEGER*4  IND_PT
+      END TYPE VTD_2P__TYPE
+!
+      INTEGER*4  VTD__UNDF, VTD__INIT, VTD__DESC, VTD__COOR, VTD__STRT, &
+     &           VTD__LOAD, VTD__NOAV, VTD__ALLC, VTD__BYPS, VTD__NERS
+      PARAMETER  ( VTD__UNDF = 0 )
+      PARAMETER  ( VTD__INIT = 1205938721 )
+      PARAMETER  ( VTD__DESC = 1783254063 )
+      PARAMETER  ( VTD__COOR = 2036492761 )
+      PARAMETER  ( VTD__STRT = 1301857342 )
+      PARAMETER  ( VTD__LOAD = 1419304723 )
+      PARAMETER  ( VTD__ALLC = 1983218327 )
+      PARAMETER  ( VTD__NOAV = 1029487522 )
+      PARAMETER  ( VTD__BYPS = 1872024145 )
+      PARAMETER  ( VTD__NERS = 1690283177 )
+      REAL*8       VTD__TIME_TOL
+      PARAMETER  ( VTD__TIME_TOL = 1.D-4 ) ! Time tolerance
+!
+      INTEGER*4  LOAD_REUSE_YES, LOAD_REUSE_NO
+      PARAMETER  ( LOAD_REUSE_YES = 1723843034 )
+      PARAMETER  ( LOAD_REUSE_NO  = 1205712047 )
+!
+      INTEGER*4  VTD__EARLIEST_MJD, VTD__LATEST_MJD
+      REAL*8     VTD__EARLIEST_TAI, VTD__LATEST_TAI, VTD__MIN_INTRV
+      PARAMETER  ( VTD__EARLIEST_MJD = 40000, VTD__EARLIEST_TAI = -3024000.00001D0 ) ! -35 days
+      PARAMETER  ( VTD__LATEST_MJD   = 80000, VTD__LATEST_TAI   =  3024000.00001D0 ) !  35 days
+      PARAMETER  ( VTD__MIN_INTRV    = 0.99999D0 )
+      REAL*8       VTD__REA, VTD__RMN, VTD__FE, VTD__EXC_SQ, VTD__ACC_EQU, &
+     &             VTD__GRV_H, VTD__GRV_LAT
+      PARAMETER  ( VTD__REA     = 6378136.7D0 )       ! Earth's equatorial radius
+      PARAMETER  ( VTD__RMN     = 6371000.8D0 )       ! Earth's mean volumetric radius
+      PARAMETER  ( VTD__FE      = 1.D0/298.257D0 )    ! Earth's flattening
+      PARAMETER  ( VTD__EXC_SQ  = 2.D0*VTD__FE - VTD__FE**2 )   ! Earth's eccentricity
+      PARAMETER  ( VTD__ACC_EQU = 9.7803184558D0 )    ! Equatorial gravity acc.
+      PARAMETER  ( VTD__GRV_H   = -2.D0*VTD__ACC_EQU/VTD__REA ) ! D(ACC_EQU)/DH
+      PARAMETER  ( VTD__GRV_LAT = 0.001931663  )      ! D(ACC_EQU)/D(phi)
+!
+      REAL*8       VTD__HEIGHT_MIN, VTD__HEIGHT_MAX
+      PARAMETER  ( VTD__HEIGHT_MIN = 0.995D0*VTD__REA )
+      PARAMETER  ( VTD__HEIGHT_MAX = 1.005D0*VTD__REA )
+!
+      INTEGER*4    UZT__NONE, UZT__DICKMAN1993, UZT__DICKMAN_PRINCIPLE, &
+     &             UZT__DICKMAN_SHORT, UZT__RE2014, UZT__RE2014_SHORT, &
+     &             UZT__ADD, UZT__SUBTRACT, UZT__INTERPOLATE
+      PARAMETER  ( UZT__NONE              =    0 )
+      PARAMETER  ( UZT__DICKMAN1993       = 6001 )
+      PARAMETER  ( UZT__DICKMAN_PRINCIPLE = 6002 )
+      PARAMETER  ( UZT__DICKMAN_SHORT     = 6003 )
+      PARAMETER  ( UZT__RE2014            = 6011 )
+      PARAMETER  ( UZT__RE2014_SHORT      = 6012 )
+      PARAMETER  ( UZT__ADD               = 6021 )
+      PARAMETER  ( UZT__INTERPOLATE       = 6022 )
+      PARAMETER  ( UZT__SUBTRACT          = 6023 )
+!
+      INTEGER*4    VTD__MPL_IERS2010, VTD__MPL_IERS2022
+      PARAMETER  ( VTD__MPL_IERS2010 = 397812238 )
+      PARAMETER  ( VTD__MPL_IERS2022 = 829243143 )
+!
+      INTEGER*4  VTD__TAI, VTD__TDT, VTD__TDB, VTD__UTC, VTD__UT1
+      PARAMETER  ( VTD__TAI =  7001 )
+      PARAMETER  ( VTD__TDT =  7002 )
+      PARAMETER  ( VTD__TDB =  7003 )
+      PARAMETER  ( VTD__UTC =  7004 )
+      PARAMETER  ( VTD__UT1 =  7005 )
+!
+      INTEGER*4    VTD__BRS, VTD__IERS1992, VTD__GRS, VTD__EME, VTD__ECF
+      PARAMETER  ( VTD__BRS      = 7101 )
+      PARAMETER  ( VTD__IERS1992 = 7102 )
+      PARAMETER  ( VTD__GRS      = 7103 )
+      PARAMETER  ( VTD__EME      = 7104 )
+      PARAMETER  ( VTD__ECF      = 7105 )
+!
+! --- Constants for nutation models
+!
+      INTEGER*4    NUT__GDS_YES, NUT__GDS_NO
+      PARAMETER  ( NUT__GDS_YES = 5101 )
+      PARAMETER  ( NUT__GDS_NO  = 5102 )
+!
+! --- Constants for precession model
+!
+      INTEGER*4    PREC__LIESKE1977,   PREC__SIMON1994,     &
+     &             PREC__IERS1996,     PREC__CAPITAINE2003, &
+     &             PREC__CAPITAINE2005
+      PARAMETER  ( PREC__LIESKE1977    = 12001 )
+      PARAMETER  ( PREC__SIMON1994     = 12002 )
+      PARAMETER  ( PREC__IERS1996      = 12003 )
+      PARAMETER  ( PREC__CAPITAINE2003 = 12004 )
+      PARAMETER  ( PREC__CAPITAINE2005 = 12005 )
+!
+      INTEGER*4    VTD__NONE, VTD__YES, VTD__IMA, VTD__CALC, VTD__CALC9, &
+     &             VTD__CALC10, VTD__USE, VTD__REQ, VTD__NO_SARG
+      PARAMETER  ( VTD__NONE    =    0 )
+      PARAMETER  ( VTD__YES     =    1 )
+      PARAMETER  ( VTD__IMA     = 4801 )
+      PARAMETER  ( VTD__CALC    = 4802 )
+      PARAMETER  ( VTD__CALC9   = 4803 )
+      PARAMETER  ( VTD__CALC10  = 4804 )
+      PARAMETER  ( VTD__USE     = 4805 )
+      PARAMETER  ( VTD__REQ     = 4806 )
+      PARAMETER  ( VTD__NO_SARG = 4807 )
+!
+! --- Constants for tropospheric delay models/mapping function codes
+!
+      INTEGER*4    VTD__NMFH,  VTD__NMFW,     VTD__SAA,      VTD__MM95, &
+     &             VTD__NE,    VTD__TNMFH,    VTD__TNMFW,    VTD__MMF,  &
+     &             VTD__SPD,   VTD__GL,       VTD__TOTS,     VTD__WATS, &
+     &             VTD__METEO, VTD__IONO_350, VTD__IONO_400, VTD__IONO_450, &
+     &             VTD__IONO_500
+      PARAMETER  ( VTD__NMFH     = 9001 )
+      PARAMETER  ( VTD__NMFW     = 9002 )
+      PARAMETER  ( VTD__SAA      = 9003 )
+      PARAMETER  ( VTD__MM95     = 9004 )
+      PARAMETER  ( VTD__NE       = 9005 )
+      PARAMETER  ( VTD__TNMFH    = 9006 )
+      PARAMETER  ( VTD__TNMFW    = 9007 )
+      PARAMETER  ( VTD__MMF      = 9008 )
+      PARAMETER  ( VTD__GL       = 9009 )
+      PARAMETER  ( VTD__TOTS     = 9010 )
+      PARAMETER  ( VTD__WATS     = 9011 )
+      PARAMETER  ( VTD__SPD      = 9012 )
+      PARAMETER  ( VTD__METEO    = 9013 )
+      PARAMETER  ( VTD__IONO_350 = 9014 )
+      PARAMETER  ( VTD__IONO_400 = 9015 )
+      PARAMETER  ( VTD__IONO_450 = 9016 )
+      PARAMETER  ( VTD__IONO_500 = 9017 )
+!
+! --- Constants for VLBI theoretical delay expression
+!
+      INTEGER*4    VTD__KS1999, VTD__PK2001, VTD__LT, VTD__CS2006, VTD__JN2019
+      PARAMETER  ( VTD__KS1999 =  9991 )
+      PARAMETER  ( VTD__PK2001 =  9992 )
+      PARAMETER  ( VTD__LT     =  9993 )
+      PARAMETER  ( VTD__CS2006 =  9994 )
+      PARAMETER  ( VTD__JN2019 =  9995 )
+!
+      INTEGER*4    VTD__NZO_ITER
+      PARAMETER  ( VTD__NZO_ITER = 3 )
+      INTEGER*4    VTD__I92_TO_BRS, VTD__I92_TO_GRS, VTD__GRS_TO_I92, &
+     &             VTD__GRS_TO_BRS, VTD__BRS_TO_GRS, VTD__BRS_TO_I92
+      PARAMETER  ( VTD__I92_TO_BRS = 8401 )
+      PARAMETER  ( VTD__I92_TO_GRS = 8402 )
+      PARAMETER  ( VTD__GRS_TO_I92 = 8403 )
+      PARAMETER  ( VTD__GRS_TO_BRS = 8404 )
+      PARAMETER  ( VTD__BRS_TO_GRS = 8405 )
+      PARAMETER  ( VTD__BRS_TO_I92 = 8406 )
+!
+! --- Constants for TRS metric
+!
+      INTEGER*4    VTD__METRIC_ITRF1992, VTD__METRIC_ITRF1996, &
+     &             VTD__METRIC_ITRF2000, VTD__METRIC_IAU2000
+      PARAMETER  ( VTD__METRIC_ITRF1992 = 8001 )
+      PARAMETER  ( VTD__METRIC_ITRF1996 = 8002 )
+      PARAMETER  ( VTD__METRIC_ITRF2000 = 8003 )
+      PARAMETER  ( VTD__METRIC_IAU2000  = 8004 )
+!
+      CHARACTER  VTD__PLANAM(VTD__M_PLA)*8
+      REAL*8     VTD__GM(VTD__M_PLA)
+      INTEGER*4  VTD__$INC1
+!
+! --- Planet names and their GM extracted from the header of DE_EPH ephemerides
+!
+      DATA ( VTD__PLANAM(VTD__$INC1), VTD__GM(VTD__$INC1),  &
+     &       VTD__$INC1=1,VTD__M_PLA )                      &
+     &       /                                              &
+     &       'SUN     ',    1.327124400179869D+20,          &
+     &       'MERCURY ',    2.203208048641792D+13,          &
+     &       'VENUS   ',    3.248585988264596D+14,          &
+     &       'EARTH   ',    3.986004356081032D+14,          &
+     &       'MARS    ',    4.282831425806711D+13,          &
+     &       'JUPITER ',    1.267127678577959D+17,          &
+     &       'SATURN  ',    3.794062606113728D+16,          &
+     &       'URANUS  ',    5.794549007071871D+15,          &
+     &       'NEPTUNE ',    6.836534063879259D+15,          &
+     &       'MOON    ',    4.902799107879761D+12           &
+     &       /
+!
+      INTEGER*4  VTD__SUN,  VTD__MERC, VTD__VENU, VTD__EART, VTD__MARS, &
+     &           VTD__JUPT, VTD__SATU, VTD__URAN, VTD__NEPT, VTD__MOON
+!
+      PARAMETER  ( VTD__SUN =   1  )
+      PARAMETER  ( VTD__MERC =  2  )
+      PARAMETER  ( VTD__VENU =  3  )
+      PARAMETER  ( VTD__EART =  4  )
+      PARAMETER  ( VTD__MARS =  5  )
+      PARAMETER  ( VTD__JUPT =  6  )
+      PARAMETER  ( VTD__SATU =  7  )
+      PARAMETER  ( VTD__URAN =  8  )
+      PARAMETER  ( VTD__NEPT =  9  )
+      PARAMETER  ( VTD__MOON = 10  )
+!
+      REAL*8     VTD__C, VTD__RFR, VTD__LB, VTD__LG
+      PARAMETER  ( VTD__C   = 299792458.0D0 )
+      PARAMETER  ( VTD__RFR = 3.13D-4 ) ! Refractivity parameter
+      PARAMETER  ( VTD__LB  = 1.55051976772D-8 )
+      PARAMETER  ( VTD__LG  = 6.969290134D-10  )
+!
+      INTEGER*4   VTD__NDER
+      PARAMETER ( VTD__NDER = 64 )
+      INTEGER*4  VTD__DER_E1,    VTD__DER_E2,   VTD__DER_E3,   &
+     &           VTD__DER_ST1X,  VTD__DER_ST1Y, VTD__DER_ST1Z, &
+     &           VTD__DER_ST2X,  VTD__DER_ST2Y, VTD__DER_ST2Z, &
+     &           VTD__DER_RA,    VTD__DER_DL,                  &
+     &           VTD__DER_AT1,   VTD__DER_AT2,                 &
+     &           VTD__DER_ATN1,  VTD__DER_ATE1,                &
+     &           VTD__DER_ATN2,  VTD__DER_ATE2,                &
+     &           VTD__DER_POS1,  VTD__DER_POS2, VTD__DER_POS3, &
+     &           VTD__DER_VEL1,  VTD__DER_VEL2, VTD__DER_VEL3, &
+     &           VTD__DER_AXF1,  VTD__DER_AXF2,                &
+     &           VTD__DER_IONO1, VTD__DER_IONO2
+!
+      INTEGER*4  VTD__ELEV1, VTD__ELEV2, VTD__AZIM1, VTD__AZIM2, &
+     &           VTD__TROP1, VTD__TROP2, VTD__IONO1, VTD__IONO2, &
+     &           VTD__TRP_HZD1, VTD__TRP_HZD2, VTD__TRP_WZD1, VTD__TRP_WZD2, &
+     &           VTD__PARAL1, VTD__PARAL2, VTD__STRUC, VTD__ACCLR, &
+     &           VTD__FEED1, VTD__FEED2, VTD__SUR_PRS1, VTD__SUR_PRS2, &
+     &           VTD__SUR_PWP1, VTD__SUR_PWP2, VTD__SUR_TEM1, VTD__SUR_TEM2, &
+     &           VTD__DER_GAMMA, VTD__UVX, VTD__UVY, VTD__UVW
+      INTEGER*4  VTD__DER_EOP(3), VTD__DER_STA1(3), VTD__DER_STA2(3), &
+     &           VTD__DER_POS(3), VTD__DER_VEL(3)
+      INTEGER*4  VTD__DEL_GCN1, VTD__DEL_GCN2, VTD__COR_FD1, VTD__COR_FD2
+!
+      PARAMETER ( VTD__DER_E1    =  1 ) ! Partial derivative wrt Earth rotation Euler angle 1
+      PARAMETER ( VTD__DER_E2    =  2 ) ! Partial derivative wrt Earth rotation Euler angle 2
+      PARAMETER ( VTD__DER_E3    =  3 ) ! Partial derivative wrt Earth rotation Euler angle 3
+      PARAMETER ( VTD__DER_ST1X  =  4 ) ! Partial derivative wrt Station 1, X coordinate
+      PARAMETER ( VTD__DER_ST1Y  =  5 ) ! Partial derivative wrt Station 1, Y coordinate
+      PARAMETER ( VTD__DER_ST1Z  =  6 ) ! Partial derivative wrt Station 1, Z coordinate
+      PARAMETER ( VTD__DER_ST2X  =  7 ) ! Partial derivative wrt Station 2, X coordinate
+      PARAMETER ( VTD__DER_ST2Y  =  8 ) ! Partial derivative wrt Station 2, Y coordinate
+      PARAMETER ( VTD__DER_ST2Z  =  9 ) ! Partial derivative wrt Station 2, Z coordinate
+      PARAMETER ( VTD__DER_RA    = 10 ) ! Partial derivative wrt Right ascension
+      PARAMETER ( VTD__DER_DL    = 11 ) ! Partial derivative wrt Declination
+      PARAMETER ( VTD__DER_AT1   = 12 ) ! Partial derivative wrt Station 1, atmospheric zenith path delay
+      PARAMETER ( VTD__DER_AT2   = 13 ) ! Partial derivative wrt Station 2, atmospheric zenith path delay
+      PARAMETER ( VTD__DER_ATN1  = 14 ) ! Partial derivative wrt Station 1, atmospheric north tilt
+      PARAMETER ( VTD__DER_ATE1  = 15 ) ! Partial derivative wrt Station 1, atmospheric east  tilt
+      PARAMETER ( VTD__DER_ATN2  = 16 ) ! Partial derivative wrt Station 2, atmospheric north tilt
+      PARAMETER ( VTD__DER_ATE2  = 17 ) ! Partial derivative wrt Station 2, atmospheric east  tilt
+      PARAMETER ( VTD__DER_POS1  = 18 ) ! Partial derivative wrt Position of the object, X coordinate
+      PARAMETER ( VTD__DER_POS2  = 19 ) ! Partial derivative wrt Position of the object, Y coordinate
+      PARAMETER ( VTD__DER_POS3  = 20 ) ! Partial derivative wrt Position of the object, Z coordinate
+      PARAMETER ( VTD__DER_VEL1  = 21 ) ! Partial derivative wrt Velocity of the object, X coordinate
+      PARAMETER ( VTD__DER_VEL2  = 22 ) ! Partial derivative wrt Velocity of the object, Y coordinate
+      PARAMETER ( VTD__DER_VEL3  = 23 ) ! Partial derivative wrt Velocity of the object, Z coordinate
+      PARAMETER ( VTD__DER_AXF1  = 24 ) ! Partial derivative wrt Antenna axis offset length 1st antenna
+      PARAMETER ( VTD__DER_AXF2  = 25 ) ! Partial derivative wrt Antenna axis offset length 2nd antenna
+      PARAMETER ( VTD__DER_GAMMA = 26 ) ! Partial derivative wrt relativity parameter Gamma
+      PARAMETER ( VTD__DER_IONO1 = 27 ) ! Ionospheric mapping function
+      PARAMETER ( VTD__DER_IONO2 = 28 ) ! Ionospheric mapping function
+      PARAMETER ( VTD__UVX       = 29 ) ! Projection of the baseline vector on the plane tangetial the source along X axis
+      PARAMETER ( VTD__UVY       = 30 ) ! Projection of the baseline vector on the plane tangetial the source along Y axis
+      PARAMETER ( VTD__UVW       = 31 ) ! Projection of the baseline vector on the plane tangetial the source along W axis
+      PARAMETER ( VTD__ELEV1     = 33 ) ! Elevation angle of the 1st antenna
+      PARAMETER ( VTD__ELEV2     = 34 ) ! Elevation angle of the 2nd antenna
+      PARAMETER ( VTD__AZIM1     = 35 ) ! Aximuth angle of the 1st antenna
+      PARAMETER ( VTD__AZIM2     = 36 ) ! Aximuth angle of the 2nd antenna
+      PARAMETER ( VTD__TROP1     = 37 ) ! Slant troposphere path at the 1st antenna
+      PARAMETER ( VTD__TROP2     = 38 ) ! Slant troposphere path at the 2nd antenna
+      PARAMETER ( VTD__IONO1     = 39 ) ! Slant ionosphere  path at the 1st antenna
+      PARAMETER ( VTD__IONO2     = 40 ) ! Slant ionosphere  path at the 2nd antenna
+      PARAMETER ( VTD__TRP_HZD1  = 41 ) ! Hydrostatic troposphere path delay in zentith at the 1st antenna
+      PARAMETER ( VTD__TRP_HZD2  = 42 ) ! Hydrostatic troposphere path delay in zentith at the 2nd antenna
+      PARAMETER ( VTD__TRP_WZD1  = 43 ) ! Non-hydrostatic troposphere path delay in zentith at the 1st antenna
+      PARAMETER ( VTD__TRP_WZD2  = 44 ) ! Non-hydrostatic troposphere path delay in zentith at the 1nd antenna
+      PARAMETER ( VTD__PARAL1    = 45 ) ! Parallactic angle at the 1st antenna
+      PARAMETER ( VTD__PARAL2    = 46 ) ! Parallactic angle at the 2nd antenna
+      PARAMETER ( VTD__STRUC     = 47 ) ! Contribution of the source structure to time delay
+      PARAMETER ( VTD__ACCLR     = 48 ) ! Phase delay acceleration
+      PARAMETER ( VTD__FEED1     = 49 ) ! Feed horn orientation angle at the 1st antenna
+      PARAMETER ( VTD__FEED2     = 50 ) ! Feed horn orientation angle at the 2nd antenna
+      PARAMETER ( VTD__SUR_PRS1  = 51 ) ! Surface atmospheric pressure at the 1st station from the model
+      PARAMETER ( VTD__SUR_PRS2  = 52 ) ! Surface atmospheric pressure at the 2nd station from the model
+      PARAMETER ( VTD__SUR_PWP1  = 53 ) ! Surface parital pressure of water vapor at the 1st station from the model
+      PARAMETER ( VTD__SUR_PWP2  = 54 ) ! Surface parital pressure of water vapor at the 2nd station from the model
+      PARAMETER ( VTD__SUR_TEM1  = 55 ) ! Surface temerature at the 1st station from the model
+      PARAMETER ( VTD__SUR_TEM2  = 56 ) ! Surface temerature at the 2nd station from the model
+      PARAMETER ( VTD__DEL_GCN1  = 57 ) ! Geometric path delay between the geocetner and the 1st station at the moment of the wavefront passing the geocenter
+      PARAMETER ( VTD__DEL_GCN2  = 58 ) ! Geometric path delay between the geocetner and the 2nd station at the moment of the wavefront passing the geocenter
+      PARAMETER ( VTD__COR_FD1   = 59 ) ! Correlated flux density at the high frequency
+      PARAMETER ( VTD__COR_FD2   = 60 ) ! Correlated flux density at the low frequency
+!
+! --- Derivatvies with indexes 61-64 are reserved for future used
+!
+      DATA         VTD__DER_EOP   &
+     &           / &
+     &             VTD__DER_E1,   &
+     &             VTD__DER_E2,   &
+     &             VTD__DER_E3    &
+     &           /
+      DATA         VTD__DER_STA1  &
+     &           / &
+     &             VTD__DER_ST1X, &
+     &             VTD__DER_ST1Y, &
+     &             VTD__DER_ST1Z  &
+     &           /
+      DATA         VTD__DER_STA2  &
+     &           / &
+     &             VTD__DER_ST2X, &
+     &             VTD__DER_ST2Y, &
+     &             VTD__DER_ST2Z  &
+     &           /
+      DATA         VTD__DER_POS   &
+     &           / &
+     &             VTD__DER_POS1, &
+     &             VTD__DER_POS2, &
+     &             VTD__DER_POS3  &
+     &           /
+      DATA         VTD__DER_VEL   &
+     &           / &
+     &             VTD__DER_VEL1, &
+     &             VTD__DER_VEL2, &
+     &             VTD__DER_VEL3  &
+     &           /
+!
+! --- Constants for ionosphere related parameters
+!
+      REAL*8       VTD__FREQ_MIN, VTD__FREQ_MAX, VTD__TEC_MIN, VTD__TEC_MAX
+      PARAMETER  ( VTD__FREQ_MIN =   20.0D6  ) ! Minimal frequency in Hz
+      PARAMETER  ( VTD__FREQ_MAX =    2.0D12 ) ! Minimal frequency in Hz
+      PARAMETER  ( VTD__TEC_MIN  =    0.0D0  ) ! Minimal TEC value in TECU
+      PARAMETER  ( VTD__TEC_MAX  =  600.0D0  ) ! Maximal TEC value in TECU
+      INTEGER*4  VTD__IONO_UNDF, VTD__IONO_GOOD, VTD__IONO_BADF, VTD__IONO_BADT
+      PARAMETER  ( VTD__IONO_UNDF =         0 ) ! Undefined
+      PARAMETER  ( VTD__IONO_GOOD = 818340919 ) ! Ionosphere is computed and good
+      PARAMETER  ( VTD__IONO_BADF = 721012390 ) ! Failure to compute ionsosphere due to bad effective frequency
+      PARAMETER  ( VTD__IONO_BADT = 629189322 ) ! Failure to compute ionsosphere due to bad TEC
+!
+      CHARACTER  VTD__MG*1, VTD__GAL*1, VTD__SS*1, VTD__ES*1, &
+     &           VTD__EM*1, VTD__OR*1,  VTD__GR*1, VTD__GC*1
+      PARAMETER  ( VTD__MG  = 'M' ) ! Extra-galactic object
+      PARAMETER  ( VTD__GAL = 'G' ) ! Galactic object
+      PARAMETER  ( VTD__SS  = 'S' ) ! Near zone object in Solar system
+      PARAMETER  ( VTD__ES  = 'E' ) ! Near zone object near Earth
+      PARAMETER  ( VTD__EM  = 'R' ) ! Radio emitter
+      PARAMETER  ( VTD__OR  = 'O' ) ! Orbiting station
+      PARAMETER  ( VTD__GC  = 'C' ) ! Geocenter
+      PARAMETER  ( VTD__GR  = 'F' ) ! Ground station
+      CHARACTER    VTD__SPA_REC*7, VTD__GEO_SAT*7, VTD__MOO_ORB*7, &
+     &             VTD__MOO_LND*7, VTD__PLA_LND*7, VTD__PLA_ORB*7, &
+     &             VTD__SOL_ORB*7
+      PARAMETER  ( VTD__SPA_REC = 'SPA_REC' )
+      PARAMETER  ( VTD__GEO_SAT = 'GEO_SAT' )
+      PARAMETER  ( VTD__MOO_ORB = 'MOO_ORB' )
+      PARAMETER  ( VTD__MOO_LND = 'MOO_LND' )
+      PARAMETER  ( VTD__PLA_LND = 'PLA_LND' )
+      PARAMETER  ( VTD__PLA_ORB = 'PLA_ORB' )
+      PARAMETER  ( VTD__SOL_ORB = 'SOL_ORB' )
+!
+      CHARACTER  MPL__LABEL*36, VTD__NERS_STR*4
+      PARAMETER  ( MPL__LABEL = 'MEAN_POLE file. Format of 2004.06.15' )
+      PARAMETER  ( VTD__NERS_STR = 'NERS' )
+      INTEGER*4    M_MPL
+      PARAMETER  ( M_MPL = 6 ) ! Number of data records in MPL file
+      CHARACTER    VTD__IONO_PD_FMT*64
+      PARAMETER  ( VTD__IONO_PD_FMT = '# VTD_IONO_MOD data for delay computation.  Format of 2016.09.11' )
+      REAL*8       VTD__EOP_TIM_MAR, VTD__IONO_TIM_MAR
+      PARAMETER  ( VTD__EOP_TIM_MAR  = 2000.0D0 )
+      PARAMETER  ( VTD__IONO_TIM_MAR = 2000.0D0 )
+      INTEGER*4    VTD__MJD_MIN, VTD__MJD_MAX
+      PARAMETER  ( VTD__MJD_MIN = 15019 ) ! Around 1900.0
+      PARAMETER  ( VTD__MJD_MAX = 88069 ) ! Around 2100.0
+!
+      REAL*8 VTD__XMPOL_2010A(0:3), VTD__YMPOL_2010A(0:3), &
+     &       VTD__XMPOL_2010B(0:1), VTD__YMPOL_2010B(0:1), &
+     &       VTD__XMPOL_2022(0:1),  VTD__YMPOL_2022(0:1)
+     INTEGER*4  VTD__REF_MJD_2010
+     PARAMETER  ( VTD__REF_MJD_2010 = 55197 )
+!
+!                           arcsec   arcsec/year arcsec/year**2 arcsec/year**3
+!
+      DATA   VTD__XMPOL_2010A / 0.055974,  0.0018243,   0.00018413,    0.000007024   / ! before 2010.0
+      DATA   VTD__YMPOL_2010A / 0.346346,  0.0017896,  -0.00010729,   -0.000000908   / ! before 2010.0
+!
+      DATA   VTD__XMPOL_2010B / 0.023513,  0.0076141                                 / ! after  2010.0
+      DATA   VTD__YMPOL_2010B / 0.358891, -0.0006287                                 / ! after  2010.0
+!
+      DATA   VTD__XMPOL_2022  / 0.0550,    0.001677                                  /
+      DATA   VTD__YMPOL_2022  / 0.3205,    0.003460                                  /
+!
+! >>>>> End of include block for package VTD
+!

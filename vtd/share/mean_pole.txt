@@ -1,0 +1,13 @@
+MEAN_POLE file. Format of 2004.06.15
+#
+# --- mean pole as implemented in Calc 9.1
+# --- source: $MK5_ROOT/progs/calc/cptdm.f  lines 181-197
+#
+XPOLE_REF:    1945.85  year
+XPOLE_MEAN:   0.0039   arcsec
+XPOLE_DRIFT:  0.00062  arcsec/year
+YPOLE_REF:    1945.85  year
+YPOLE_MEAN:   0.1485   arcsec
+YPOLE_DRIFT:  0.00333  arcsec/year
+#
+MEAN_POLE file. Format of 2004.06.15

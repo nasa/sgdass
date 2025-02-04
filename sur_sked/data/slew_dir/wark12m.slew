@@ -1,0 +1,22 @@
+# Station slew format of  2018.02.02
+#
+#  2018.04.12  pet Changed       AZ_RANGE
+#  2019.01.06  pet Again changed AZ_RANGE
+#  2019.04.14  pet Changed recorder to flexbuf
+#
+SHORT_NAME:  WARK12M   Ww
+LAST_UPDATE: WARK12M   2019.04.14
+COORD:       WARK12M   meters    -5115324.373   477843.314 -3767192.887
+MOUNT:       WARK12M   char       ALTAZ
+SLEW_AZ:     WARK12M   deg/sec    5.0
+SLEW_EL:     WARK12M   deg/sec    1.0
+ACCL_AZ:     WARK12M   deg/sec^2  1.3
+ACCL_EL:     WARK12M   deg/sec^2  1.3
+TSETTLE_AZ:  WARK12M   sec        2.0
+TSETTLE_EL:  WARK12M   sec        2.0
+EL_MIN:      WARK12M   deg        5.0
+EL_MAX:      WARK12M   deg       88.0
+AZ_RANGE:    WARK12M   deg      -180.0  0.0  180.0 360.0
+RECORDER:    WARK12M   char      flexbuf
+PREOB:       WARK12M   sec       10.0
+POSTOB:      WARK12M   sec        8.0

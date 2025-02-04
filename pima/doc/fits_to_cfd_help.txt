@@ -1,0 +1,31 @@
+fits_to_cfd  
+
+NAME: 
+      fits_to_cfd  -- generate the table of the correlated flux density
+                      of a source observed with VLBI using both 
+                      calibrated visibility and image data.
+
+SYNOPSIS
+       fits_to_cfd [-help] [-mode code] [-o output_file] 
+                   fits_vis_file fits_map_file
+
+DESCRIPTION
+
+      fits_to_cfd  -- reads the fits files with calibrated visibility and 
+                      image data, computes 
+                      a) integrated total correlated flux density
+                      b) median correlated flux density at short baselines
+                      c) median correlated flux density at long  baselines
+                      d) rms of the map noise
+                      e) number of used observations
+                      f) number of used scans
+		      Results are written in a two-row table.
+
+OPTIONS
+
+        -help               -- print this message and exit.
+        -o     output_file  -- name of the output file. If omitted, the 
+                               table is printed on the screen.
+        -mode  code         -- code of the computation algorithm. Reserved
+                               for future use.
+

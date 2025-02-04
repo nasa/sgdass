@@ -1,0 +1,20 @@
+#!/bin/csh
+setenv SPC_C            "/usr/bin/gcc  -m64 -mtune=native -fopenmp -fPIC -D LINUX -D LITTLE_ENDIAN -D FORTRAN_TRUE=1 -D FORTRAN_FALSE=0 -D _FILE_OFFSET_BITS=64 -D _LARGEFILE_SOURCE -I ./ -I ../include -I /usr/include -I /usr/local/include -fno-diagnostics-color"
+setenv SPC_F95_NOOPT    "/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -fallow-argument-mismatch -J /f1/progs/spd_client_20241125/module -I ./ -I ../include -fcheck=all -O0 -g"
+setenv SPC_F95_OPT      "/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -fPIC -mtune=native -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -fallow-argument-mismatch -mavx2 -J /f1/progs/spd_client_20241125/module -I ./ -I ../include -mavx -O3  "
+setenv SPC_F95          "/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -fallow-argument-mismatch -J /f1/progs/spd_client_20241125/module -I ./ -I ../include -fcheck=all -O2 -mavx2"
+setenv SPC_F95_PUNCH    "/usr/bin/gfortran -m64 -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -fPIC -mtune=native -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -fallow-argument-mismatch -mavx2 -J /f1/progs/spd_client_20241125/module -I ./ -I ../include -mavx -O3"
+setenv SPC_LINK         "/usr/bin/gfortran  -m64 -fopenmp -Wl,--gc-sections,--no-warn-search-mismatch"
+setenv SPC_C_LINK       "/usr/bin/gfortran  -m64 -fopenmp -Wl,--gc-sections,--no-warn-search-mismatch"
+setenv SPC_ROOT         /f1/progs/spd_client_20241125
+setenv SPC_PREFIX       /opt64
+setenv SPC_BIN          /opt64/bin
+setenv SPC_LIB          /opt64/lib
+setenv SPC_PETOOLS_USE  USE_PETOOLS
+setenv SPC_PETOOLS_INC  "/opt64/include"
+setenv SPC_PETOOLS_LIB  "-L/opt64/lib -lpetools -L /opt64/lib -lreadline -L /opt64/lib64 -lncurses"
+setenv SPC_LAPACK_LIB   "  -L/opt64/lib -lopenblas     -lpthread -lrt -L /opt64/lib -lz -L /opt64/lib -lpng"
+setenv SPC_LDFLAGS      ""
+setenv SPC_OS           Linux
+setenv SPC_OPENMP       -fopenmp
+setenv SPC_VERSION      20241125

@@ -1,0 +1,237 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of petools. It creates the       *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ### 24-MAR-2004   configure   v1.8 (c)  L. Petrov  21-JUN-2021 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+setenv LANG   C
+setenv LC_ALL C
+unalias *
+#
+support/csh_test.csh
+set status = $status
+if ( $status != 0 ) then
+     echo " "
+     echo "./configure: Please fix your shell and then try again"
+     exit 1
+endif
+#
+# -- Initialization
+#
+setenv PETOOLS_VERSION        "20241115"
+setenv PETOOLS_ROOT           `dirname $0`
+if ( $PETOOLS_ROOT == '.' )   setenv PETOOLS_ROOT `pwd`
+setenv PETOOLS_BLAS           "$HOME -lopenblas"
+setenv PETOOLS_PGPLOT         "YES"
+setenv PETOOLS_PGPLOT_TARBALL "$HOME"
+setenv PETOOLS_LOCAL          ""
+setenv PETOOLS_READLINE_DIR   ""
+setenv PETOOLS_NCURSES_DIR    ""
+setenv PETOOLS_ZLIB_DIR       /usr
+setenv PETOOLS_PNG_DIR        /usr
+setenv PETOOLS_PREFIX         $HOME
+setenv MK5_X11_INCLUDE        ""
+setenv MK5_X11_LIB            ""
+setenv MK5_X11_BIN            ""
+setenv MK5_CC                 "gcc"
+setenv MK5_FC                 "gfortran"
+setenv MK5_LDFLAGS            ""
+setenv PETOOLS_DEBUG          0
+setenv PETOOLS_NOOPT          "NO"
+setenv CONF_LOG               $PETOOLS_ROOT/temp/conf.log
+setenv BUILD_LOG              $PETOOLS_ROOT/temp/build.log
+setenv PETOOLS_SHORT_TEST     0
+#
+if ( `uname` == Linux  ) then
+      if ( "`uname -a | grep x86_64`" != "" ) then
+            setenv PETOOLS_BITS  64
+     	  else
+            setenv PETOOLS_BITS  32
+      endif
+   else
+      setenv PETOOLS_BITS       32
+endif
+#
+set DATE_LONG = `date "+%d-%h-%Y %H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_debug = `echo $arg | awk '{print index($1,"--debug")}'`
+     if ( $match_debug > 0 ) then
+	  setenv PETOOLS_DEBUG 1
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv PETOOLS_NOOPT "YES"
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv PETOOLS_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_blas = `echo $arg | awk '{print index($1,"--with-blas")}'`
+     if ( $match_blas > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,13)}'`
+	  setenv PETOOLS_BLAS "$str"
+	  if ( PETOOLS_BLAS == "no" ) setenv PETOOLS_BLAS "no"
+          set find_option = 1
+     endif
+#
+     set match_bits = `echo $arg | awk '{print index($1,"--bits")}'`
+     if ( $match_bits > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,8)}'`
+          setenv PETOOLS_BITS "$str"
+	  if ( $PETOOLS_BITS != "32"  && $PETOOLS_BITS != "64" ) then
+	       echo "wrong value of --bits option: only 32 or 64 are supported"
+	       exit 1
+          endif
+          set find_option = 1
+     endif
+
+     set match_blas = `echo $arg | awk '{print index($1,"--without-blas")}'`
+     if ( $match_blas > 0 ) then
+	  setenv PETOOLS_BLAS "NO"
+          set find_option = 1
+     endif
+#
+     set match_pgplot = `echo $arg | awk '{print index($1,"--without-pgplot")}'`
+     if ( $match_pgplot > 0 ) then
+	  setenv PETOOLS_PGPLOT "NO"
+          set find_option = 1
+     endif
+#
+     set match_pgplot = `echo $arg | awk '{print index($1,"--with-pgplot_tarball")}'`
+     if ( $match_pgplot > 0 ) then
+	  setenv PETOOLS_PGPLOT_TARBALL `echo $arg | awk '{printf substr($1,23)}'`
+	  setenv PETOOLS_PGPLOT "YES"
+          set find_option = 1
+     endif
+#
+     set match_local = `echo $arg | awk '{print index($1,"--with-local")}'`
+     if ( $match_local > 0 ) then
+	  setenv PETOOLS_LOCAL `echo $arg | awk '{printf substr($1,14)}'`
+          set find_option = 1
+     endif
+#
+     set match_readline = `echo $arg | awk '{print index($1,"--with-readline")}'`
+     if ( $match_readline > 0 ) then
+	  setenv PETOOLS_READLINE_DIR `echo $arg | awk '{printf substr($1,17)}'`
+          set find_option = 1
+     endif
+#
+     set match_ncurses = `echo $arg | awk '{print index($1,"--with-ncurses")}'`
+     if ( $match_ncurses > 0 ) then
+	  setenv PETOOLS_NCURSES_DIR `echo $arg | awk '{printf substr($1,16)}'`
+          set find_option = 1
+     endif
+#
+     set match_zlib = `echo $arg | awk '{print index($1,"--with-zlib")}'`
+     if ( $match_zlib > 0 ) then
+	  setenv PETOOLS_ZLIB_DIR `echo $arg | awk '{printf substr($1,13)}'`
+          set find_option = 1
+     endif
+#
+     set match_png = `echo $arg | awk '{print index($1,"--with-png")}'`
+     if ( $match_png > 0 ) then
+	  setenv PETOOLS_PNG_DIR `echo $arg | awk '{printf substr($1,12)}'`
+          set find_option = 1
+     endif
+#
+     set match_includes = `echo $arg | awk '{print index($1,"--x-includes")}'`
+     if ( $match_includes > 0 ) then
+	  setenv MK5_X11_INCLUDE `echo $arg | awk '{printf substr($1,14)}'`
+          set find_option = 1
+     endif
+#
+     set match_libraries = `echo $arg | awk '{print index($1,"--x-libraries")}'`
+     if ( $match_libraries > 0 ) then
+	  setenv MK5_X11_LIB     `echo $arg | awk '{printf substr($1,15)}'`
+          set find_option = 1
+     endif
+#
+     set match_bin = `echo $arg | awk '{print index($1,"--x-bin")}'`
+     if ( $match_bin > 0 ) then
+	  setenv MK5_X11_BIN `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_cc = `echo $arg | awk '{print index($1,"CC")}'`
+     if ( $match_cc > 0 ) then
+	  setenv MK5_CC   `echo $arg | awk '{printf substr($0,4)}'`
+          set find_option = 1
+     endif
+#
+     set match_fc = `echo $arg | awk '{print index($1,"FC")}'`
+     if ( $match_fc > 0 ) then
+	  setenv MK5_FC   `echo $arg | awk '{printf substr($0,4)}'`
+          set find_option = 1
+     endif
+#
+     set match_ldflags = `echo $arg | awk '{print index($1,"LDFLAGS")}'`
+     if ( $match_ldflags > 0 ) then
+	  setenv MK5_LDFLAGS `echo $arg | awk '{printf substr($0,9)}'`
+          set find_option = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $PETOOLS_ROOT/doc/petools_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "petools: "$PETOOLS_VERSION
+          set find_option = 1
+	  exit 0
+     endif
+     if ( "$arg" == "--short-test" ) then
+	  setenv PETOOLS_SHORT_TEST 1
+          set find_option = 1
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+echo  "Configuration of petools $PETOOLS_VERSION on $DATE_LONG "  >! $PETOOLS_ROOT/temp/conf.log
+echo  $0 $argv                                                   >>! $PETOOLS_ROOT/temp/conf.log
+if ( $PETOOLS_DEBUG == 0 ) then
+     support/config.csh
+     set config_status = $status
+   else 
+     csh -x support/config.csh
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     if ( $PETOOLS_SHORT_TEST == 0 ) then
+          echo "Configuration is completed."
+          echo "Now run make"
+     endif
+     exit 0
+  else
+     echo "Error in configuration."
+     exit $config_status
+endif

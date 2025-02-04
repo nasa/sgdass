@@ -1,0 +1,20 @@
+!
+! >>>>> pima_local.i   2011.04.02  v 1.00  --  2025.01.07_19:51:34
+!
+! ----- Local customization
+!
+	CHARACTER  PIMA__VERSION*(8)
+	CHARACTER  PIMA__PREFIX*(6)
+	CHARACTER  PIMA__ROOT*(23)
+	CHARACTER  PIMA__EXP_DIR*(5)
+	CHARACTER  PIMA__FITS_DIR*(4)
+	CHARACTER  PIMA__SHARE_DIR*(19)
+	CHARACTER  PIMA__SCRATCH_DIR*(4)
+!
+	PARAMETER  ( PIMA__VERSION     = '20250107' )
+	PARAMETER  ( PIMA__PREFIX      = '/opt64' )
+	PARAMETER  ( PIMA__ROOT        = '/f1/progs/pima_20250107' )
+	PARAMETER  ( PIMA__EXP_DIR     = '/vlbi' )
+	PARAMETER  ( PIMA__FITS_DIR    = '/tmp' )
+	PARAMETER  ( PIMA__SHARE_DIR   = '/opt64/share/psolve' )
+	PARAMETER  ( PIMA__SCRATCH_DIR = '/tmp' )

@@ -1,0 +1,292 @@
+
+build:
+	@echo "Building spc started  at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`   | tee  > $(BUILD_LOG)
+	@echo " "                                                                            | tee -a $(BUILD_LOG)
+        ifeq ($(SPC_PETOOLS_LIB),$(SPC_ROOT)/lib/libspc.a)
+	      cd  mini_petools; source $(SPC_ROOT)/support/spc_vars; umask 0002; make -j $(NUM_PROC)     | tee -a $(BUILD_LOG)
+        endif
+        ifeq ($(SPC_LAPACK_LIB),$(SPC_ROOT)/lib/libspc.a)
+	      cd  mini_lapack;  source $(SPC_ROOT)/support/spc_vars; umask 0002; make -j $(NUM_PROC)     | tee -a $(BUILD_LOG)
+        endif
+	cd  src;     source $(SPC_ROOT)/support/spc_vars; umask 0002; make spc_shared_lib -j $(NUM_PROC) | tee -a $(BUILD_LOG)
+	cd  src;     source $(SPC_ROOT)/support/spc_vars; umask 0002; make bin            -j $(NUM_PROC) | tee -a $(BUILD_LOG)
+        ifeq ($(SPD_EXAMPLE_AVAILABLE),YES)
+	      cd example; source $(SPC_ROOT)/support/spc_vars; umask 0002;make -j $(NUM_PROC)            | tee -a $(BUILD_LOG)
+        endif
+	@echo " "                                                                            | tee -a $(BUILD_LOG)
+	@echo "Building spc finished at " `date "+%Y.%m.%d %H:%M:%S" | tr "[a-z]" "[A-Z]"`   | tee -a $(BUILD_LOG)
+	@echo "Compilation log is in  $(BUILD_LOG)"
+	@echo " "                                                                            | tee -a $(BUILD_LOG)
+	@echo "=== Now please run make install ==="
+
+.PHONY: install
+install:
+	if ( -d $(SPC_PREFIX)            == 0 ) mkdir $(SPC_PREFIX)
+	if ( -d $(SPC_PREFIX)/lib        == 0 ) mkdir $(SPC_PREFIX)/lib
+	if ( -d $(SPC_PREFIX)/bin        == 0 ) mkdir $(SPC_PREFIX)/bin
+	if ( -d $(SPC_PREFIX)/include    == 0 ) mkdir $(SPC_PREFIX)/include
+	if ( -d $(SPC_PREFIX)/doc        == 0 ) mkdir $(SPC_PREFIX)/doc
+	if ( -d $(SPC_PREFIX)/spd        == 0 ) mkdir $(SPC_PREFIX)/spd
+	if ( -d $(SPC_PREFIX)/spd/share  == 0 ) mkdir $(SPC_PREFIX)/spd/share
+	if ( -d $(SPC_PREFIX)/spd/script == 0 ) mkdir $(SPC_PREFIX)/spd/script
+#
+	cp $(SPC_ROOT)/include/spd.i                  $(SPC_PREFIX)/include/spd.i
+	cp $(SPC_ROOT)/include/spd_local.i            $(SPC_PREFIX)/include/spd_local.i
+	cp $(SPC_ROOT)/include/astro_constants.i      $(SPC_PREFIX)/include/astro_constants.i      
+#
+	cp $(SPC_ROOT)/bin/bspd_util                  $(SPC_PREFIX)/bin/bspd_util
+	cp $(SPC_ROOT)/bin/opa_tatm_spectrum          $(SPC_PREFIX)/bin/opa_tatm_spectrum
+	cp $(SPC_ROOT)/bin/opa_tatm_tipping           $(SPC_PREFIX)/bin/opa_tatm_tipping
+	cp $(SPC_ROOT)/bin/sob_show                   $(SPC_PREFIX)/bin/sob_show
+	cp $(SPC_ROOT)/bin/spc_inq                    $(SPC_PREFIX)/bin/spc_inq
+	cp $(SPC_ROOT)/bin/spd_3d_toser               $(SPC_PREFIX)/bin/spd_3d_toser
+	cp $(SPC_ROOT)/bin/spd_res_azel               $(SPC_PREFIX)/bin/spd_res_azel
+	cp $(SPC_ROOT)/bin/spd_res_ts                 $(SPC_PREFIX)/bin/spd_res_ts
+	cp $(SPC_ROOT)/bin/spd_show                   $(SPC_PREFIX)/bin/spd_show
+#
+	cp $(SPC_ROOT)/lib/libspc.a                   $(SPC_PREFIX)/lib/libspc.a
+	cp $(SPC_ROOT)/lib/libspc_vars.csh            $(SPC_PREFIX)/bin/
+	cp $(SPC_ROOT)/lib/libspc_vars.sh             $(SPC_PREFIX)/bin/
+	cp $(SPC_ROOT)/include/spc.h                  $(SPC_PREFIX)/include/spc.h
+        ifeq ($(SPD_EXAMPLE_AVAILABLE),YES)
+	    cp $(SPC_ROOT)/bin/spd_cli_example_fortran    $(SPC_PREFIX)/bin/spd_cli_example_fortran
+	    cp $(SPC_ROOT)/bin/spd_cli_example_c          $(SPC_PREFIX)/bin/spd_cli_example_c
+	    cp $(SPC_ROOT)/m/spd_cli_init.m               $(SPC_PREFIX)/spd/script/spd_cli_init.m
+	    cp $(SPC_ROOT)/m/spd_cli_quit.m               $(SPC_PREFIX)/spd/script/spd_cli_quit.m
+	    cp $(SPC_ROOT)/m/spd_cli_get_2pd.m            $(SPC_PREFIX)/spd/script/spd_cli_get_2pd.m
+	    cp $(SPC_ROOT)/example/spd_cli_example.dat    $(SPC_PREFIX)/spd/share/spd_cli_example.dat
+	    cp $(SPC_ROOT)/example/spd_cli_example.cnf    $(SPC_PREFIX)/spd/share/spd_cli_example.cnf
+        endif
+        ifeq ($(SPC_OS),Linux)
+	      cp $(SPC_ROOT)/lib/libspc.so.1.0            $(SPC_PREFIX)/lib/libspc.so.1.0
+	      cd $(SPC_PREFIX)/lib; ln -sf libspc.so.1.0  $(SPC_PREFIX)/lib/libspc.so.1
+	      cd $(SPC_PREFIX)/lib; ln -sf libspc.so.1.0  $(SPC_PREFIX)/lib/libspc.so
+        endif
+        ifeq ($(SPC_OS),Darwin)
+	      cp $(SPC_ROOT)/lib/libspc.1.dylib       $(SPC_PREFIX)/lib
+	      if ( -l $(SPC_PREFIX)/lib/libspc.dylib  ) rm $(SPC_PREFIX)/lib/libspc.dylib
+	      cd      $(SPC_PREFIX)/lib; ln -sf libspc.1.dylib  $(SPC_PREFIX)/lib/libspc.dylib
+	      install_name_tool -id     $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/lib/libspc.1.dylib
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/bspd_util
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/opa_tatm_spectrum
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/opa_tatm_tipping
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/sob_show
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/spc_inq
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/spd_3d_toser
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/spd_res_azel
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/spd_res_ts
+	      install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/spd_show
+              ifeq ($(SPD_EXAMPLE_AVAILABLE),YES)
+		    install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/spd_cli_example_fortran
+		    install_name_tool -change $(SPC_ROOT)/lib/libspc.1.dylib $(SPC_PREFIX)/lib/libspc.dylib $(SPC_PREFIX)/bin/spd_cli_example_c
+              endif
+        endif
+	cp $(SPC_ROOT)/doc/spd_3d_format.txt           $(SPC_PREFIX)/doc/spd_3d_format.txt
+	cp $(SPC_ROOT)/doc/spd_client_altimetry.txt    $(SPC_PREFIX)/doc/spd_client_altimetry.txt
+	cp $(SPC_ROOT)/doc/spd_client_stations.txt     $(SPC_PREFIX)/doc/spd_client_stations.txt
+
+
+uninstall:
+	if ( -f $(SPC_PREFIX)/include/spd.i                 ) rm -f $(SPC_PREFIX)/include/spd.i
+	if ( -f $(SPC_PREFIX)/include/spd_local.i           ) rm -f $(SPC_PREFIX)/include/spd_local.i
+	if ( -f $(SPC_PREFIX)/include/astro_constants.i     ) rm -f $(SPC_PREFIX)/include/astro_constants.i 
+	if ( -f $(SPC_PREFIX)/bin/bspd_util                 ) rm -f $(SPC_PREFIX)/bin/bspd_util                 
+	if ( -f $(SPC_PREFIX)/bin/opa_tatm_spectrum         ) rm -f $(SPC_PREFIX)/bin/opa_tatm_spectrum
+	if ( -f $(SPC_PREFIX)/bin/opa_tatm_tipping          ) rm -f $(SPC_PREFIX)/bin/opa_tatm_tipping
+	if ( -f $(SPC_PREFIX)/bin/spc_inq                   ) rm -f $(SPC_PREFIX)/bin/spc_inq
+	if ( -f $(SPC_PREFIX)/bin/sob_show                  ) rm -f $(SPC_PREFIX)/bin/sob_show
+	if ( -f $(SPC_PREFIX)/bin/spd_3d_toser              ) rm -f $(SPC_PREFIX)/bin/spd_3d_toser
+	if ( -f $(SPC_PREFIX)/bin/spd_res_azel              ) rm -f $(SPC_PREFIX)/bin/spd_res_azel
+	if ( -f $(SPC_PREFIX)/bin/spd_res_ts                ) rm -f $(SPC_PREFIX)/bin/spd_res_ts
+	if ( -f $(SPC_PREFIX)/bin/spd_show                  ) rm -f $(SPC_PREFIX)/bin/spd_show
+	if ( -f $(SPC_PREFIX)/lib/libspc.a                  ) rm -f $(SPC_PREFIX)/lib/libspc.a
+	if ( -f $(SPC_PREFIX)/bin/libspc_vars.csh           ) rm -f $(SPC_PREFIX)/bin/libspc_vars.csh
+	if ( -f $(SPC_PREFIX)/bin/libspc_vars.sh            ) rm -f $(SPC_PREFIX)/bin/libspc_vars.sh
+	if ( -f $(SPC_PREFIX)/include/spc.h                 ) rm -f $(SPC_PREFIX)/include/spc.h
+	if ( -f $(SPC_PREFIX)/spd/script/spd_cli_init.m     ) rm -f $(SPC_PREFIX)/spd/script/spd_cli_init.m
+	if ( -f $(SPC_PREFIX)/spd/script/spd_cli_quit.m     ) rm -f $(SPC_PREFIX)/spd/script/spd_cli_quit.m
+	if ( -f $(SPC_PREFIX)/spd/script/spd_cli_get_2pd.m  ) rm -f $(SPC_PREFIX)/spd/script/spd_cli_get_2pd.m
+	if ( -f $(SPC_PREFIX)/spd/share/spd_cli_example.dat ) rm -f $(SPC_PREFIX)/spd/share/spd_cli_example.dat
+	if ( -f $(SPC_PREFIX)/spd/share/spd_cli_example.cnf ) rm -f $(SPC_PREFIX)/spd/share/spd_cli_example.cnf
+        ifeq ($(SPC_OS),Linux)
+	      if ( -f $(SPC_PREFIX)/lib/libspc.so     ) rm -f $(SPC_PREFIX)/lib/libspc.so
+	      if ( -f $(SPC_PREFIX)/lib/libspc.so.1   ) rm -f $(SPC_PREFIX)/lib/libspc.so.1
+	      if ( -f $(SPC_PREFIX)/lib/libspc.so.1.0 ) rm -f $(SPC_PREFIX)/lib/libspc.so.1.0
+        endif
+        ifeq ($(SPC_OS),Darwin)
+	      if ( -l $(SPC_PREFIX)/lib/libspc.dylib   ) rm -f $(SPC_PREFIX)/lib/libspc.dylib
+	      if ( -f $(SPC_PREFIX)/lib/libspc.1.dylib ) rm -f $(SPC_PREFIX)/lib/libspc.1.dylib
+        endif
+	if ( -f $(SPC_PREFIX)/doc/spd_3d_format.txt          ) rm -f $(SPC_PREFIX)/doc/spd_3d_format.txt
+	if ( -f $(SPC_PREFIX)/doc/spd_client_altimetry.txt   ) rm -f $(SPC_PREFIX)/doc/spd_client_altimetry.txt
+	if ( -f $(SPC_PREFIX)/doc/spd_client_stations.txt    ) rm -f $(SPC_PREFIX)/doc/spd_client_stations.txt
+	@rmdir $(SPC_PREFIX)/lib     >& /dev/null; set  status = 0
+	@rmdir $(SPC_PREFIX)/doc     >& /dev/null; set  status = 0
+	@rmdir $(SPC_PREFIX)/bin     >& /dev/null; set  status = 0
+	@rmdir $(SPC_PREFIX)/include >& /dev/null; set  status = 0
+	@rmdir $(SPC_PREFIX)         >& /dev/null; set  status = 0
+
+update:	
+        ifeq ($(SPD_DIR),"")
+	      @echo "Environment variable SPD_DIR is not defined"
+	      @exit 1
+        endif
+        ifeq ($(PETOOLS_DIR),"")
+	      @echo "Environment variable PETOOLS_DIR is not defined"
+	      @exit 1
+        endif
+        ifeq ($(BLAS_DIR),"")
+	      @echo "Environment variable BLAS_DIR is not defined"
+	      @exit 1
+        endif
+#
+	cp -pv $(SPD_SOURCE_DIR)/include/spd.i                        include/
+	cp -pv $(SPD_SOURCE_DIR)/include/spc.i                        include/
+	cp -pv $(SPD_SOURCE_DIR)/src/del_isa.f                        src/
+	cp -pv $(SPD_SOURCE_DIR)/src/nmf.f                            src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_3d_bin_read.f                src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_3d_bin_write.f               src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_3d_read.f                    src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_3d_toser.f                   src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_3d_write.f                   src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_cli.f                        src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_del_init.f                   src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_del_quit.f                   src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_free.f                       src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_gaussian_layer_mf.f          src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_init.f                       src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_intrp_delay.f                src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_load_bspd.f                  src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_load_leapsec.f               src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_load_mf.f                    src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_show.f                       src/
+	cp -pv $(SPD_SOURCE_DIR)/src/sob_show.f                       src/
+	cp -pv $(SPD_SOURCE_DIR)/src/opa_tatm_spectrum.f              src/
+	cp -pv $(SPD_SOURCE_DIR)/src/spd_tai_to_utc.f                 src/
+	cp -pv $(SPD_SOURCE_DIR)/m/spd_init.m                         m/
+	cp -pv $(SPD_SOURCE_DIR)/m/spd_quit.m                         m/
+	cp -pv $(SPD_SOURCE_DIR)/m/spd_get_delay.m                    m/
+#
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/binio.f                 mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl4_1d.f              mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl4_2d.f              mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl4_3d.f              mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl4_4d.f              mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl4.f                 mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl.f                  mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl_1d.f               mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl_2d.f               mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl_3d.f               mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/bspl_4d.f               mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/cha.f                   mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/date_to_time.f          mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/file_info.c             mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/get_cdate.f             mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/get_file_from_dir.f     mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/get_hr_time.c           mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/get_name_from_dir.f     mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/get_system_constant.c   mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/get_unit.f              mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/inode64.c               mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/is_nan.f                mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/ixmn4.f                 mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/jd_to_date.f            mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/list.f                  mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/match_wild.f            mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/mjdsec_to_date.f        mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/probe_address.c         mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/rwfil.f                 mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/sort.f                  mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/tran.f                  mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/wrapper.f               mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/sock_accept.c 	      mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/sock_open_client.c      mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/sock_open_server.c      mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/sock_read_poll.c 	      mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/sock_read.c 	      mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/pet_util/sock_write.c 	      mini_petools/
+
+	cp -pv $(PETOOLS_SOURCE_DIR)/matvec/cheb.f                    mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/matvec/diad_cvt.f                mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/matvec/dp_vv_v.f                 mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/matvec/invsf.f                   mini_petools/
+	cp -pv $(PETOOLS_SOURCE_DIR)/matvec/mul_mv_sv_v.f             mini_petools/
+
+	sed -i "s@GEN_DP_VV_V@DP_VV_V@g"                              mini_petools/dp_vv_v.f
+	sed -i "s@FUNC_BASIC_INVSF  BASIC_INVSF@FUNC_BASIC_INVSF  INVS@g"  mini_petools/invsf.f
+
+	find $(LAPACK_SOURCE_DIR) -name dcopy.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dgbtf2.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dgbtrf.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dgbtrs.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dgemm.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dgemv.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dger.f   -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dlaswp.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dscal.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dswap.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dtbsv.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name dtrsm.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name idamax.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name ieeeck.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name ilaenv.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name iparmq.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name isamax.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name lsame.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name scopy.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sgbtf2.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sgbtrf.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sgbtrs.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sgemm.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sgemv.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sger.f   -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name slaswp.f -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sscal.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name sswap.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name stbsv.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name strsm.f  -exec cp -pv {}      mini_lapack/ \;
+	find $(LAPACK_SOURCE_DIR) -name xerbla.f -exec cp -pv {}      mini_lapack/ \;
+
+clean:	
+	cd mini_petools; source $(SPC_ROOT)/support/spc_vars; make clean >>& /dev/null; set  status = 0
+	cd mini_lapack;  source $(SPC_ROOT)/support/spc_vars; make clean >>& /dev/null; set  status = 0
+	cd src;          source $(SPC_ROOT)/support/spc_vars; make clean >>& /dev/null; set  status = 0
+        ifeq ($(SPD_EXAMPLE_AVAILABLE),YES)
+	      cd example;      source $(SPC_ROOT)/support/spc_vars; make clean >>& /dev/null; set  status = 0
+        endif
+	find lib/ -name "*.*" -exec  rm -f {} \;
+	find bin/ -name "*.*" -exec  rm -f {} \;
+
+distclean: clean
+	./reconfigure -d > /tmp/spd_client_last_configure.txt ; chmod 666 /tmp/spd_client_last_configure.txt
+	@if ( -f temp/conf.log ) rm $(CONF_LOG)
+	@if ( -f temp/conf.log ) rm $(BUILD_LOG)
+	@support/purge mini_lapack
+	@support/purge mini_petools
+	@support/purge m
+	@support/purge src
+	@support/purge doc
+	@support/purge share
+	@support/purge scripts
+        ifeq ($(SPD_EXAMPLE_AVAILABLE),YES)
+	       @support/purge example
+        endif
+	@support/purge support
+	@support/purge include
+	@support/purge ./
+	@echo "spd distribution tree is cleaned"
+
+tar:	distclean
+	@rm Makefile
+	cd ../; tar --exclude="*example*" -cf - spd_client_${SPC_VERSION} | \
+                lbzip2 -c > /tmp/spd_client-$(SPC_VERSION).tar.bz2 
+	cd ../; tar  -cf - spd_client_${SPC_VERSION}/example | \
+                lbzip2 -c > /tmp/spd_client_example-$(SPC_VERSION).tar.bz2 
+	@if ( -d /astrogeo.org/spd ) cp -p README  /astrogeo.org/spd/README_client.txt
+	@if ( -d /astrogeo.org/spd ) cp -p INSTALL /astrogeo.org/spd/INSTALL_client.txt
+	@if ( -d /astrogeo.org/spd ) cp -p doc/spd_client_altimetry.txt /astrogeo.org/spd/spd_client_altimetry.txt
+	@if ( -d /astrogeo.org/spd ) cp -p doc/spd_client_stations.txt  /astrogeo.org/spd/spd_client_stations.txt
+	@if ( -d /astrogeo.org/spd ) cp -p /tmp/spd_client-$(SPC_VERSION).tar.bz2         /astrogeo.org/spd/
+	@if ( -d /astrogeo.org/spd ) cp -p /tmp/spd_client_example-$(SPC_VERSION).tar.bz2 /astrogeo.org/spd/
+	@sync
+	@if ( -d /astrogeo.org/spd ) echo "Tar-balls are copied to /astrogeo.org/spd" 

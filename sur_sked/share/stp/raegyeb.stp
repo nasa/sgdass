@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2020.07.11 L. Petrov Created
+# 2022.04.28 L. Petrov Converted to stp style
+#
+SHORT_NAME:    RAEGYEB   char       Yj
+LAST_UPDATE:   RAEGYEB   char       2020.07.11
+COORD:         RAEGYEB   meters      4848831.233   -261629.789   4122976.316
+MOUNT:         RAEGYEB   char       ALTAZ   
+SLEW_AZ:       RAEGYEB   deg/sec      12.0
+SLEW_EL:       RAEGYEB   deg/sec       6.0
+ACCL_AZ:       RAEGYEB   deg/sec^2     1.0
+ACCL_EL:       RAEGYEB   deg/sec^2     1.0
+TSETTLE_AZ:    RAEGYEB   sec           3.6
+TSETTLE_EL:    RAEGYEB   sec           3.3
+EL_MIN:        RAEGYEB   deg           2.0
+EL_MAX:        RAEGYEB   deg          89.0
+AZ_RANGE:      RAEGYEB   deg         -60.0   60.0  300.0  420.0
+BACKEND:       RAEGYEB   char        rdbe
+RECORDER:      RAEGYEB   char        mark6
+SETMODE:       RAEGYEB   sec 	       4.0
+PREOB:         RAEGYEB   sec           3.0
+POSTOB:        RAEGYEB   sec           2.0
+HOR_AZIM:      RAEGYEB   deg           0  70  75  80  85  95 105 145 150 155 165 185 190 195 360
+HOR_ELEV:      RAEGYEB   deg           5   6   7   8   9   8   6   7   8   9  10   8   7   5   5
+STOW_AZIM:     RAEGYEB   deg          225.0
+STOW_ELEV:     RAEGYEB   deg          90.0
+#
+CLOCK_DATES:   RAEGYEB   sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  RAEGYEB   sec        -0.038E-6

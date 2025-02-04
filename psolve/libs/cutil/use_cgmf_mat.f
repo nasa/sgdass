@@ -1,0 +1,50 @@
+      SUBROUTINE USE_CGMF_MAT(MAT,NP,STRING)
+      IMPLICIT NONE
+!
+! 1.  USE_CGMF_MAT PROGRAM SPECIFICATION
+!
+! 1.1 Access a CGM's matrix.
+!
+! 1.2 REFERENCES:
+!
+! 2.  USE_CGMF_MAT INTERFACE
+!
+! 2.1 Parameter File
+      INCLUDE 'solve.i'
+!
+! 2.2 INPUT Variables:
+!
+      CHARACTER*(*) STRING
+      INTEGER*4 NP
+      REAL*8 MAT(*  )
+!
+! MAT - The matrix
+! NP - Number of parameters
+! STRING - requested access type ('O'=open; 'C'=close; 'R'=read; 'W'=write)
+!
+! 2.3 OUTPUT Variables: None
+!
+! 2.4 COMMON BLOCKS USED
+      CHARACTER*(NAME_SIZE) SAVNAM
+      INTEGER*4 FILDES
+      INTEGER*2 IDIRECT(BLOCK_WORDS)
+      COMMON/SAVCGM/FILDES,IDIRECT
+      COMMON/NAMCGM/SAVNAM
+      SAVE /SAVCGM/,/NAMCGM/
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES:
+!       CALLED SUBROUTINES: cgm_mat
+!
+! 3.  LOCAL VARIABLES
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!
+! 5.  USE_CGMF_MAT PROGRAM STRUCTURE
+!
+      CALL CGM_MAT(IDIRECT,SAVNAM,FILDES,MAT,NP,STRING)
+!
+      RETURN
+      END

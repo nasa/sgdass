@@ -1,0 +1,1 @@
+/f1/progs/vsdc_20240204/vsdc_install.py --prefix=/opt64 --config_dir=/cont --datacenter=CDDIS

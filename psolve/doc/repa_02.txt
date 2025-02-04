@@ -1,0 +1,211 @@
+   User manual for REPA program (REsidual Plotting and Ambiguity resolution)
+ 
+ 
+                                Leonid Petrov
+ 
+ 
+                                2004.12.17
+ 
+ 
+                                Abstract
+ 
+This document describes how to use program REPA,
+the graphics tool for visualization of observables, residuals,
+manual ambiguity resolution and toggle observation suppression status.
+ 
+ 
+Questions and comments about this guide should be sent to:
+ 
+Leonid Petrov ( sgdass@lists.nasa.gov )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ Scenario 1: Look at residuals
+ 
+ 
+2 ................ Scenario 2: Adjust suppression status of one or several points
+ 
+ 
+3 ................ Scenario 2: Change ambiguity of one or several points
+ 
+ 
+4 ................ Scenario 3: Change ambiguity of a group points
+ 
+ 
+5 ................ Scenario 4: Change Suppression status of a group of points
+ 
+ 
+6 ................ Scenario 5: Show dependence of Cable calibration versus air temperature
+ 
+ 
+________________________________________________________________________________
+ 
+        1 Scenario 1: Look at residuals
+        ===============================
+ 
+  Invoke REPA by hitting "P" at the OPTIN menu. REPA creates the window
+with small plots for each baseline. If the total number of baselines exceeds
+25, then REPA will show only one page. There are two ways of looking at
+residuals: a) look at small plots; b) look at big plots. All baselines
+are sorted in alphabet oder. Keys [PageUp], [PageDown] serve for navigation.
+For looking at big plots, position the cursor on a small plot and hit the
+Left Mouse Button. REPA will enter DiaGi mode. Use [PageUp], [PageDown]
+for plotting the next or prior baseline.
+ 
+        2 Scenario 2: Adjust suppression status of one or several points
+        ================================================================
+ 
+  Invoke REPA by hitting "P" at the OPTIN menu. REPA creates the window
+with small plots for each baseline. If the total number of baselines
+exceeds 25, then REPA will show only one page. All baselines are sorted
+in alphabet oder. If you do not see the baseline you are interested in
+at the current plot use keys [PageUp], [PageDown] for scrolling to the
+next or prior page. Select the baseline: position the cursor on a small
+plot and hit the Left Mouse Button. REPA will enter DiaGi mode. Hit [F1]
+key. Now mouse buttons are bound to SngAmb mode (Single point suppression
+status toggle and ambiguity shift). Position the cursor to the point of
+interest and hit the Central Mouse Button. Suppression status will be
+flipped: if the point was good (green color) it becomes bad (red). If
+the point was bad (red color), it becomes good (green). Keep in mind:
+you cannot change suppression status of unrecoverable observations (black
+circles). If the points lay too dense and you have difficulties in
+selecting the right point, you may resize the plot. First hit <ESC> for
+entering DiaGi mode, then use Central Mouse Button for window resizing,
+then fit <F1> for entering SngAmb mode.
+ 
+  REPA updates the plot as soon as you hit the Central Mouse Button, but
+it delays updating scratch file. It stores all entered commands in stack.
+Any time  you can hit <BackSpace> it undoes the latest command and
+decrement the stack counter. If you hit <F10> key, REPA will discard the
+latest command in the stack without writing scratch files, leaves REPA and
+returns to OPTIN. If you hit <HOME> REPA writes the scratch files, leaves
+REPA and returns to OPTIN. If you hit <X> or <Q> REPA writes the scratch
+files and comes back to the Multi_DiaGi level of REPA.
+ 
+        3 Scenario 2: Change ambiguity of one or several points
+        =======================================================
+ 
+  Invoke REPA by hitting "P" at the OPTIN menu. REPA creates the window
+with small plots for each baseline. If the total number of baselines
+exceeds 25, then REPA will show only one page. All baselines are sorted
+in alphabet oder. If you do not see the baseline you are interested in
+at the current plot use keys [PageUp], [PageDown] for scrolling to the
+next or prior page. Select the baseline: position the cursor on a small
+plot and hit the Left Mouse Button. REPA will enter DiaGi mode. Hit [F1]
+key. Now mouse buttons are bound to SngAmb mode (Single point suppression
+status toggle and ambiguity shift). Position the cursor to the point of
+interest and hit the Left Mouse Button if you would like to decrease the
+ambiguity or Right Mouse Button if you would like to increase the
+ambiguity counter. The point will be shifted to the down (Left Mouse Button)
+or up (Right Mouse Button) one ambiguity spacing. The amount of ambiguity
+spacing is shown at the upper right corner of the plot.
+ 
+  It may occur that the point is shifted away from the plotting area.
+In that case the point will be shown just beyond the upper or lower
+border. Command <M> sets the plotting area around only good points,
+command <Alt/M> sets the plotting area around good and bad points,
+command <Ctrl/M> sets the plotting area around all points: good, bad
+and unrecoverable. In addition to that the plotting area may be adjusted
+manually. Hit <ESC> to enter DiaGi mode, then hit the Central Mouse Button
+for adjusting the plotting area, then hit <F1> to come back to SngAmb
+mode/
+ 
+  REPA updates the plot as soon as you hit the Central Mouse Button, but
+it delays updating scratch file. It stores all entered commands in stack.
+Any time  you can hit <BackSpace> it undoes the latest command and
+decrement the stack counter. If you hit <F10> key, REPA will discard the
+latest command in the stack without writing scratch files, leaves REPA and
+returns to OPTIN. If you hit <HOME> REPA writes the scratch files, leaves
+REPA and returns to OPTIN. If you hit <X> or <Q> REPA writes the scratch
+files and comes back to the Multi_DiaGi level of REPA.
+ 
+  You can intermix ambiguity shift and suppression status toggle
+(Central Mouse Button) commands.
+ 
+        4 Scenario 3: Change ambiguity of a group points
+        ================================================
+ 
+  Invoke REPA by hitting "P" at the OPTIN menu. REPA creates the window
+with small plots for each baseline. If the total number of baselines
+exceeds 25, then REPA will show only one page. All baselines are sorted
+in alphabet oder. If you do not see the baseline you are interested in
+at the current plot use keys [PageUp], [PageDown] for scrolling to the
+next or prior page. Select the baseline: position the cursor on a small
+plot and hit the Left Mouse Button. REPA will enter DiaGi mode. Hit [F2]
+key. Now mouse buttons are bound to GrpAmb mode (Group ambiguity shift).
+Position the cursor to the point with respect of which you would like to
+resolve ambiguities and hit the Center Mouse Button. Ambiguities of all
+points will be resolved with respect to the current cursor position.
+ 
+  You may want to change all points at N ambiguities. There are several
+ways to achieve it. One of the ways: enter SngAmb mode by hitting <F1>,
+select any point shift it repeatedly at the desired number of ambiguities.
+If the point goes beyond the plotting area you need to toe adjust the
+plotting area by hitting either <M> (box around all points), <Alt/M)
+(box around good and bad points), <Ctrl/M> (box around good points only).
+Then bit <F2> for entering GrpAmb mode, position the cursor to that point
+and hit Central Mouse Button.
+ 
+  REPA updates the plot as soon as you hit the Central Mouse Button, but
+it delays updating scratch file. It stores all entered commands in stack.
+Any time  you can hit <BackSpace> it undoes the latest command and
+decrement the stack counter. If you hit <F10> key, REPA will discard the
+latest command in the stack without writing scratch files, leaves REPA and
+returns to OPTIN. If you hit <HOME> REPA writes the scratch files, leaves
+REPA and returns to OPTIN. If you hit <X> or <Q> REPA writes the scratch
+files and comes back to the Multi_DiaGi level of REPA.
+ 
+        5 Scenario 4: Change Suppression status of a group of points
+        ============================================================
+ 
+  Invoke REPA by hitting "P" at the OPTIN menu. REPA creates the window
+with small plots for each baseline. If the total number of baselines
+exceeds 25, then REPA will show only one page. All baselines are sorted
+in alphabet oder. If you do not see the baseline you are interested in
+at the current plot use keys [PageUp], [PageDown] for scrolling to the
+next or prior page. Select the baseline: position the cursor on a small
+plot and hit the Left Mouse Button. REPA will enter DiaGi mode. Hit [F3]
+key. Now mouse buttons are bound to GrpTgl mode (Group suppression status
+toggle).
+ 
+  If you want to suppress all observations with residuals by modulo greater
+than some value, position the cursor to the points with that value
+(does not matter +value or -value) and hit the Left Mouse Button.
+ 
+  If you want to restore all observations with residuals by modulo less
+than some value, position the cursor to the points with that value
+(does not matter +value or -value) and hit the Right Mouse Button.
+ 
+  Keep in mind: these two operations are not reciprocal.
+ 
+  REPA updates the plot as soon as you hit the Central Mouse Button, but
+it delays updating scratch file. It stores all entered commands in stack.
+Any time  you can hit <BackSpace> it undoes the latest command and
+decrement the stack counter. If you hit <F10> key, REPA will discard the
+latest command in the stack without writing scratch files, leaves REPA and
+returns to OPTIN. If you hit <HOME> REPA writes the scratch files, leaves
+REPA and returns to OPTIN. If you hit <X> or <Q> REPA writes the scratch
+files and comes back to the Multi_DiaGi level of REPA.
+ 
+        6 Scenario 5: Show dependence of Cable calibration versus air temperature
+        =========================================================================
+ 
+  Invoke REPA by hitting "P" at the OPTIN menu. REPA creates the window
+with small plots for each baseline. If the total number of baselines
+exceeds 25, then REPA will show only one page. All baselines are sorted
+in alphabet oder. Position the cursor away from the small plot and hit
+the button <T>, or position the cursor on the box "Change argument" and
+hit the Left Mouse Button. You will see the menu of supported argument
+types. The current argument type is displayed in the box with darker color.
+Position the cursor to the box with desired argument -- "Air temperature
+at station 1" in our case and hit first Left Mouse Button and then Right
+Mouse Button. You will return back to the Multi_DiaGi window. Position the
+cursor away from the small plot and hit the button <V>, or position the
+cursor on the box "Change value" and hit the Left Mouse Button. You will
+see the menu of supported value types. The current value type is displayed
+in the box with darker color. Position the cursor to the box with desired
+argument -- "CABLE station 1" in our case and hit first Left Mouse Button
+and then Right Mouse Button.
+ 

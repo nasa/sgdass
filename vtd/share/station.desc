@@ -1,0 +1,332 @@
+# STATION DESCRIPTION   Format version of 2013.09.18
+#
+#  Format:
+#
+#   1:8   A8    IVS Site name
+#  12:15  A4    Antenna mounting code: AZEL, EQUA, X-YN, X-YE, RICH
+#  18:25  F8.5  Antenna offset (m)
+#  28:31  A4    Tectonic plate according to NUVEL 
+#  34:38  F5.1  Antenna diameter (m)
+#  39:80  A42   Comments
+#
+#  Antenna axis offsets for 64 stations were taken from solution 2004e
+#
+#  Modifications:
+#
+#  Who  When        What
+#
+#  pet  2006.09.05  Added zero axis offset for of ATCA_014, CEDUNA and MOPRA --
+#  pet  2006.09.05  Added CAMBRIDG, JODRELL2, TORUN, WSTRB-07
+#  pet  2009.02.16  Updated adjusted values of antenna axis offset from
+#                   the 2009a_astro solution
+#  pet  2009.10.04  Updated ASKAP and WARK12M
+#  pet  2012.10.24  Added HART15M
+#  pet  2013.09.18  Added column with antenna diameter
+#  pet  2014.05.19  added ASKAP-32
+#  pet  2014.11.09  added WARK30M
+#  pet  2015.03.28  added ISHIOKA  KALYAZIN RAEGYEB  RAEGSMAR PICOVEL  PDBURE
+#  pet  2015.03.30  Added ASKAP-07 BADRT13V CEBREROS DSS54    GGAO12M  MALARGUE NWNORCIA SARDINIA WETTZ13N  WETTZ13S  ZELRT13V  
+#  pet  2016.03.05  Added JIAMIS66, KASHI35, LMT
+#  pet  2016.05.18  Added ATCA-100
+#  pet  2016.08.30  Changed antenna mounting for WARK30M from AZEL to BWG
+#  pet  2016.11.29  Added IRBENE32 and IRBENE16
+#  pet  2018.06.27  Added DSS35
+#  pet  2018.08.02  Added AGGO
+#  pet  2020.01.17  Added GLT
+#  pet  2020.02.12  Added MACGO12M, NYALE13N, NYALE13S, ONSA13NE, ONSA13SW, SVERT13V
+#  pet  2021.02.01  Added DSS56
+#  pet  2021.08.22  Added ATCA-128
+#  pet  2022.07.08  Added DSS26
+#  pet  2023.12.23  added JILIN12 and METSA13M
+#  pet  2024.02.02  added KASHI12
+#  pet  2024.05.04  added DARNHALL, KNOCKIN, and PICKMERE
+#  pet  2024.05.20  added DEFFORD
+#  pet  2024.11.15  added URUMQI13 and HARTVGS
+#  pet  2024.11.21  added FORTZA12
+#  pet  2024.12.18  added MATVGOS and SKAMPI
+#
+AGGO       AZEL   0.0      SOAM    6.0  Ground survey   
+AIRA       AZEL  -0.0129   EURA   10.0
+ALASKANO   X-YN   7.29035  NOAM   25.9
+ALGOPARK   AZEL   0.0012   NOAM   47.0
+ARECIBO    AZEL   0.0      CARB  300.0
+ASKAP-07   AZEL   0.0      AUST   12.0
+ASKAP-29   AZEL   0.0      AUST   12.0
+ASKAP-32   AZEL   0.0      AUST   12.0
+ATCA-100   AZEL   0.0      AUST   22.0
+ATCA-104   AZEL   0.0      AUST   22.0
+ATCA-109   AZEL   0.0      AUST   22.0
+ATCA-128   AZEL   0.0      AUST   22.0
+ATCAPN5    AZEL   0.0      AUST   22.0
+AUSTINTX   AZEL   0.0      NOAM   12.0
+AZORES     AZEL   0.0      EURA   12.0
+BADARY     AZEL  -0.0056   EURA   32.0
+BADRT13V   AZEL   0.0      EURA   13.0  Guess
+BEIJING    AZEL   0.0      EURA   50.0 
+BERMUDA    AZEL   0.0      NOAM   12.0
+BLKBUTTE   AZEL   0.0      NOAM   12.0
+BLOOMIND   AZEL   0.0      NOAM   12.0
+BR-VLBA    AZEL   2.1328   NOAM   25.0
+BREST      AZEL   0.0      EURA   12.0
+CAMBRIDG   AZEL   0.0      EURA   32.0
+CARNUSTY   AZEL   0.0      EURA   12.0
+CARROLGA   AZEL   0.0      NOAM   12.0
+CEBREROS   AZEL   0.0      EURA   35.0 
+CEDUNA     AZEL   0.0024   AUST   29.6  Ground survey  built in 1969
+CHICHI10   AZEL  -0.0040   PHIL   10.0
+CHLBOLTN   AZEL   0.3060   EURA   12.0 
+CRIMEA     AZEL  -0.0018   EURA   22.0  Ground survey
+CTVASBAY   AZEL   0.0      NOAM    3.6
+CTVASTJ    AZEL   0.0      NOAM    3.6
+CTVASTJ    AZEL   0.0      NOAM    3.6
+DAITO      AZEL   0.0      NOAM    9.9
+DARNHALL   AZEL   0.0      EURA   25.0
+DEADMANL   AZEL   0.0      NOAM    9.9
+DEFFORD    AZEL   0.0      EURA   25.0
+DSS13      AZEL   0.0139   NOAM   34.0
+DSS15      AZEL  -0.0029   NOAM   34.0
+DSS34      BWG    0.000    AUST   34.0
+DSS35      AZEL   0.000    AUST   34.0
+DSS36      AZEL   0.000    AUST   34.0
+DSS26      AZEL   0.000    AUST   34.0
+DSS43      AZEL  -0.0      AUST   70.0
+DSS45      AZEL  -0.0003   AUST   34.0
+DSS54      AZEL   0.0      EURA   34.0
+DSS56      AZEL   0.0      EURA   34.0
+DSS63      AZEL   0.0      EURA   34.0
+DSS65      AZEL  -0.0016   EURA   34.0
+DSS65A     AZEL  -0.0066   EURA   34.0
+EFLSBERG   AZEL   0.0155   EURA  100.0  Ground survey   
+ELY        AZEL   0.0      NOAM    9.9
+EVPTRIYA   AZEL   0.0      EURA   70.0
+FD-VLBA    AZEL   2.1350   NOAM   25.0
+FLAGSTAF   AZEL   0.0      NOAM    9.9
+FORTLEZA   AZEL   0.0044   SOAM   14.2
+FORTZA12   AZEL   0.0      SOAM   12.0
+FORTORDS   AZEL   0.0      PCFC    9.9
+FORT_ORD   AZEL   0.0      PCFC    9.9
+FTD_7900   AZEL   0.0      NOAM    9.9
+GBT        AZEL  -0.0890   NOAM  110.0
+GBT-VLBA   AZEL  -0.0890   NOAM  110.0
+GEOCENTR   AZEL   0.0      HELL    9.9
+GGAO12M    AZEL   0.0      NOAM   12.0  Guess
+GGAO7108   AZEL  -0.0028   NOAM    5.0
+GIFU11     AZEL  -0.0081   EURA   11.0
+GIFU3      AZEL   0.0      EURA    3.0
+GILCREEK   X-YN   7.2834   NOAM   25.9
+GLT        AZEL   0.0      NOAM   12.0
+GOLDECHO   EQUA   6.7060   NOAM   25.9
+GOLDMARS   AZEL   0.0      NOAM   64.0
+GOLDVENU   AZEL   0.9310   NOAM   26.0
+GORF7102   AZEL   0.0      NOAM    9.9
+GRASSE     AZEL   0.0      EURA    9.9
+HALEAKAL   AZEL   0.0      PCFC    9.9
+HARTRAO    EQUA   6.69321  AFRC   26.0  Ground survey   
+HART15M    AZEL   1.4763   AFRC   15.0
+HARTVGS    AZEL   0.0      AFRC   12.0
+HATCREEK   EQUA  -0.0104   NOAM   26.0
+HAYSTACK   AZEL   0.0010   NOAM   37.0
+HN-VLBA    AZEL   2.1308   NOAM   25.0
+HOBART12   AZEL   0.0      AUST   12.0
+HOBART26   X-YE   8.2013   AUST   26.0  Ground survey 
+HOFN       AZEL   0.0      EURA    9.9
+HOHENFRG   AZEL   0.0      EURA    9.9
+HOHNBERG   AZEL   0.0      EURA    9.9
+HRAS_085   EQUA   6.7002   NOAM   25.9
+IRBENE16   AZEL   0.0      EURA   16.0
+IRBENE32   AZEL   0.0      EURA   32.0
+ISHIOKA    AZEL   0.0      NOAM   13.0
+JIAMIS66   AZEL   0.0      NOAM   66.0
+JILIN12    AZEL   0.0      EURA   12.0
+JODRELL1   AZEL   0.458    EURA   76.0
+JODRELL2   AZEL   0.458    EURA   76.0
+JPL_MV1    AZEL   0.0      PCFC    9.9
+KAINAN     AZEL   0.0      EURA    9.9
+KALYAZIN   AZEL   0.0      EURA   64.0
+KANOZAN    AZEL   0.0      NOAM    9.9
+KARLBURG   AZEL   0.0      EURA    9.9
+KASHI12    AZEL   0.0      NOAM   12.0
+KASHI35    AZEL   0.0      NOAM   35.0
+KASHIM11   AZEL   0.0018   NOAM   11.0
+KASHIM34   AZEL  -0.0048   NOAM   34.0
+KASHIMA    AZEL  -0.0025   NOAM   26.0
+KATH12M    AZEL   0.0      AUST   12.0
+KAUAI      X-YN   2.4385   PCFC    9.0
+KIRSBERG   AZEL   0.0      EURA    9.9
+KNOCKIN    AZEL   0.0      EURA   25.0
+KODIAK     AZEL   0.0      NOAM    9.9
+KOGANEI    AZEL   0.0089   NOAM   11.0
+KOGANEI3   AZEL   0.0      NOAM    3.0
+KOKEE      AZEL   0.5191   PCFC   20.0
+KOKEE12M   AZEL   0.0      PCFC   12.0  Guess
+KP-VLBA    AZEL   2.1327   NOAM   25.0
+KUNMING    AZEL   0.0000   EURA   40.0
+KVNPC      AZEL   0.0000   EURA   21.0
+KVNTN      AZEL   0.0000   EURA   21.0
+KVNUS      AZEL   0.0000   EURA   21.0
+KVNYS      AZEL   0.0000   EURA   21.0
+KWAJAL26   AZEL   0.0      PCFC   26.0
+LA-VLBA    AZEL   2.1360   NOAM   25.0
+LEFT85_1   EQUA   6.7182   NOAM    9.9
+LEFT85_3   EQUA   6.7182   NOAM    9.9
+LEFTKOK    AZEL   0.508    PCFC    9.9
+LEONRDOK   AZEL   0.0      NOAM    9.9
+MACGO12M   AZEL   0.0      NOAM   12.0
+LMT        AZEL   3.300    NOAM   50.0
+MADRID64   AZEL   0.0      EURA   64.0
+MALARGUE   AZEL   0.0      SOAM   35.0  Guess
+MAMMOTHL   AZEL   0.0      NOAM    9.9
+MARCUS     AZEL   0.0      PCFC    9.9
+MARPOINT   EQUA   6.6918   NOAM   25.9
+MATERA     AZEL  -0.0034   EURA   20.0
+MATVGOS    AZEL   0.0      EURA   12.0
+MCD_7850   AZEL   0.0      NOAM    9.9
+MEDICINA   AZEL   1.82540  EURA   32.0  Ground survey, Unknown error
+METSAHOV   AZEL   0.0      EURA   13.7
+METSHOVI   AZEL   0.0      EURA    9.9
+METSA13M   AZEL   0.0      EURA   13.0
+MIAMI20    AZEL   0.0077   NOAM   20.0
+MILESMON   AZEL   0.0      NOAM    9.9
+MIURA      AZEL   0.0056   NOAM   11.0
+MIYAZAKI   AZEL   0.0      EURA    9.9
+MIZNAO10   AZEL  -0.0080   NOAM   10.0
+MIZUSGSI   AZEL   0.0      NOAM    9.9
+MK-VLBA    AZEL   2.1340   PCFC   25.0
+MOJAVE12   X-YN  -0.0032   NOAM   12.0
+MOJAVLBA   X_YN   0.0      NOAM   12.0
+MOJ_7288   AZEL   0.0      NOAM   12.0
+MON_PEAK   AZEL   0.0      PCFC    9.9
+MOPRA      AZEL   0.0      AUST   30.0
+MV2ONSLA   AZEL   0.0      EURA    9.9
+NWNORCIA   AZEL   0.0      SOAM   35.0  Guess
+NL-VLBA    AZEL   2.1331   NOAM   25.0
+NOBEYAMA   AZEL   0.0      NOAM   45.0
+NOBEY_6M   AZEL   0.0      NOAM    6.0
+NOME       AZEL   0.0      NOAM    9.9
+NOTO       AZEL   1.8365   EURA   32.0
+NOTOX      AZEL   1.8365   EURA   32.0
+NRAO20     AZEL   0.5138   NOAM   20.0
+NRAO85_1   EQUA   6.7182   NOAM   25.9
+NRAO85_3   EQUA   6.7079   NOAM   25.9
+NRAO_140   EQUA  14.9422   NOAM   43.0
+NYALES20   AZEL   0.5284   EURA   20.0  Ground survey   
+NYALE13N   AZEL   0.0      EURA   13.0
+NYALE13S   AZEL   0.0      EURA   13.0
+OCOTILLO   AZEL   0.0      PCFC    9.9
+OHIGGINS   AZEL  -0.03701  ANTA    9.0  Ground survey, Unknown error   
+#ONSALA60   NASP  -0.00765  EURA   20.0  Ground survey   
+ONSA13NE   AZEL   0.0      EURA   13.0  Guess
+ONSA13SW   AZEL   0.0      EURA   13.0  Guess
+ONSALA60   AZEL  -0.00765  EURA   20.0  Ground survey   
+ONSALA85   EQUA   2.15     EURA   25.0
+OV-VLBA    AZEL   2.1305   NOAM   25.0
+OVRO_130   AZEL   0.0114   NOAM   40.0
+OVRO_90    EQUA   0.0      NOAM   34.0
+OVR_7853   AZEL   0.0      NOAM    9.9
+PARKES     AZEL   0.0      AUST   64.0
+PBLOSSOM   AZEL   0.0      NOAM    9.9
+PDBURE     AZEL   0.0      EURA   15.0
+PENTICTN   AZEL   0.0      NOAM   25.0
+PICKMERE   AZEL   0.0      EURA   25.0
+PICOVEL    NASM   0.0      EURA   30.0
+PIETOWN    AZEL   2.1362   NOAM   25.0
+PINFLATS   AZEL   0.0      PCFC    9.9
+PLATTVIL   AZEL   0.0      NOAM    9.9
+PRESIDIO   AZEL   0.0      NOAM    9.9
+PT_REYES   AZEL   0.0      PCFC    9.9
+PUSCHINO   AZEL   0.0      EURA   22.0
+PVERDES    AZEL   0.0      PCFC    9.9
+QUINCY     AZEL   0.0      NOAM    9.9
+RAEGSMAR   AZEL   0.0      EURA   13.2
+RAEGYEB    AZEL   0.0      EURA   13.2
+RICHMOND   RICH   5.1829   NOAM   18.0
+ROBLED32   EQUA   6.706    EURA   32.0
+SAGARA     AZEL   0.0      NOAM    9.9
+SANPAULA   AZEL   0.0      PCFC    9.9
+SANTIA12   X-YN  -0.0002   SOAM   12.0
+SARDINIA   AZEL   0.0      EURA   64.0
+SC-VLBA    AZEL   2.1362   NOAM   25.0
+SEATTLE1   AZEL   0.0      NOAM    9.9
+SEJONG     AZEL   0.0      EURA   22.0
+SESHAN13   AZEL   0.0      EURA   13.0
+SESHAN25   AZEL   0.0006   EURA   25.0
+SEST       AZEL   0.0      SOAM    9.9
+SHANGHAI   EQUA   1.117    EURA    9.9
+SINTOTU    AZEL   0.0      NOAM    9.9
+SINTOTU3   AZEL   0.0001   NOAM    3.0
+SKAMPI     AZEL   0.0      AFRA   15.0
+SNDPOINT   AZEL   0.0      NOAM    9.9
+SOURDOGH   AZEL   0.0      NOAM    9.9
+SUWON      AZEL   0.0      EURA    9.9
+SVERT13V   AZEL   0.0      EURA   13.0
+SVETLOE    AZEL  -0.0067   EURA   32.0
+SYOWA      AZEL   0.0      ANTA   10.0
+TAKAHAGI   AZEL   0.0      NOAM   32.0
+TATEYAMA   AZEL   0.0065   EURA   11.0
+TIANMA13   AZEL   0.0      EURA   13.0
+TIANMA65   AZEL   0.0      EURA   65.0
+TIDBIN64   AZEL   0.0      AUST   64.0
+TIGOCONC   AZEL   0.0      SOAM    6.0  Ground survey   
+TIGOWTZL   AZEL   0.0      EURA    6.0  Ground survey   
+TITIJIMA   AZEL   0.0      PHIL    9.9
+TOMAKO11   AZEL  -0.0029   EURA   11.0
+TORUN      AZEL   0.0      EURA   32.0
+TOULOUSE   AZEL   0.0      EURA    9.9
+TROMSONO   AZEL   0.0      EURA    9.9
+TRYSILNO   AZEL   0.0      EURA    9.9
+TSUKU3     AZEL   0.0      NOAM    3.0
+TSUKUB32   AZEL   0.0009   NOAM   32.0
+TSUKUBA    AZEL   0.0      NOAM    9.9
+UCHINOUR   AZEL   0.0      NOAM   34.0
+URUMQI     AZEL  -0.0084   EURA   25.0
+URUMQI13   AZEL  -0.0      EURA   13.0
+USSURISK   AZEL   4.0      EURA   70.0
+USUDA64    AZEL   0.0      EURA   64.0
+VANDENBG   AZEL   0.0      PCFC    9.9
+VERAMZSW   AZEL   0.0      NOAM   20.0
+VERAISGK   AZEL   0.0      EURA   20.0
+VERAIRIK   AZEL   0.0      PHIL   20.0
+VERAOGSW   AZEL   0.0      EURA   20.0
+VERNAL     AZEL   0.0      NOAM    9.9
+VICTORIA   AZEL   0.0      NOAM    9.9
+VLA        AZEL   0.0      NOAM   25.0
+VLA-N8     AZEL   0.0      NOAM   25.0
+VLBA85_3   EQUA   6.70336  NOAM   25.0
+VNDNBERG   AZEL  -0.0051   PCFC    9.9
+WARK12M    AZEL   0.0      AUST   12.0
+WARK30M    BWG    2.500    AUST   30.0  Drawing: 2500 mm
+WESTFORD   AZEL   0.3161   NOAM   18.0
+WETTZ13N   AZEL   0.0      EURA   13.0  Guess
+WETTZ13S   AZEL   0.0      EURA   13.0  Guess
+WETTZELL   AZEL   0.00040  EURA   20.0  Ground survey   
+WHTHORSE   AZEL   0.0      NOAM    9.9
+WIDE85_3   EQUA   6.70336  NOAM    9.9
+WSTRB-07   EQUA   4.950    EURA   25.9
+YAKATAGA   AZEL   0.0      NOAM    9.9
+YAMAGUCH   AZEL   0.0      EURA   32.0
+YARRA12M   AZEL   0.0      AUST   12.0
+YEBES      AZEL  -0.0016   EURA   13.7
+YEBES40M   NASP   2.0044   EURA   40.0  
+YELLOWKN   AZEL   0.0      NOAM    9.9
+YLOW7296   AZEL   0.0071   NOAM    9.9
+YUMA       AZEL  -0.0142   NOAM    9.9
+ZELENCHK   AZEL  -0.0105   EURA   32.0
+ZELRT13V   AZEL   0.0      EURA   13.0  Guess
+APEX-P     AZEL   0.0      SOAM   12.0  
+APEX-D     AZEL   0.0      SOAM   12.0  
+SMT-R      AZEL   0.0      NOAM   12.0  Wild guess. Probably wrong
+SMT-Z      AZEL   0.0      NOAM   12.0  Wild guess. Probably wrong
+SMA        AZEL   0.0      NOAM    6.0  Wild guess. Probably wrong
+#
+RADIO-AS   AZEL   0.0      EAOR   10.0
+TEST-001   AZEL   0.0      HELL    9.9
+TEST_001   AZEL   0.0      HELL    9.9
+TEST-002   EQUA   6.69321  AFRC    9.9
+ZERO       AZEL   0.0      HELL    9.9
+DUMMY      AZEL   0.0      HELL    9.9
+#
+T1         AZEL   0.0      NOAM    0.1
+T2         AZEL   0.0      NOAM    0.1
+#
+DBR205     AZEL   0.0      NOAM    0.07
+DBR231     AZEL   0.0      NOAM    0.07

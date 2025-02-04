@@ -1,0 +1,241 @@
+	I. Installation of Calc/Solve under Linux.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+System requirement:
+
+  Processor, compatible with i386 or x86_64 architecture, 
+  3 GHz processor or faster;
+  4Gb   operative memory;
+  200Gb local disk with sustainable transfer speed 40Mb or faster;
+  Linux 2.6.x kernel. 
+
+  It is known Solve may run at 1 GHz processor with as low as 512 MHz 
+  memory and as small as 10 Gb disk space, bit its performance will 
+  be unsatisfactory.
+
+  You can run batch Solve at a remote machine, but if you are going to use 
+Solve interactively, you should run it at your local machine. Although 
+Solve will redirect output from X-application from a remote host, 
+performance will be poor.
+
+  It DOES NOT matter which Linux distribution you choose. However, the 
+operating system should be released 6 months ago or less.
+
+In order to install Solve under Linux you need
+ 
+ 1) Intel compiler for 32 bit applications for Linux version 8.1 or higher. 
+    It is highly recommended the latest version of Intel compiler should 
+    be taken. Solve can run on EMT64 and AMD64 processors, but it works
+    in 32 bit mode only. If you run 64 bit version of the operating system,
+    you should have 32 bit tools. Usually, 32 bit tools are provide by modern
+    Linux distributors.
+
+    If you are qualified for a non-commercial license you can download the 
+    free version of the Intel Fortran compiler for Linux for non-commercial 
+    use from
+
+    http://www.intel.com/software/products/compilers/flin/noncom.htm
+
+    If you are not qualified for a non-commercial license, or you would like
+    to purchase support from the Intel company, you can buy this compiler there:
+   
+    http://www.intel.com/software/products/compilers/flin/
+
+    You should specify the full path to the compiler in the environment
+    variable MK5_FC. Please check, whether this path points out to the 32 bit
+    version of the compiler.
+
+ 2) You need to install gcc compiler version 3.3.2 or newer. The compiler 
+    should be invoked as cc. If it does not, you need to make an alias, 
+    symbolic link or a wrapper script.
+
+ 3) You need to install gmake version 3.7  or newer.
+
+ 4) You need to install g77 compiler. It is a part of gcc package. NB: you
+    should install g77 **as a part of gcc**. The version of g77 should exactly
+    match the version of gcc.
+
+ 5) You need to install and tune Automatically Tuned Linear Algebra Software 
+    (ATLAS) http://math-atlas.sourceforge.net/
+    NB: If you have atlas installed at your system, you have to uninsulated it!!
+    It is recommended that the 3.7.23 or newer version of ATLAS should be 
+    installed. Keep in mind that installation of atlas involves not only
+    compiling source code, but tuning as well. This may take any time,
+    from 5 minutes to more than 12 hours.
+
+ 5.1) How to install Atlas:
+
+  NB: If you have atlas installed at your system, you have to uninsulated it!!
+  Download source code from http://math-atlas.sourceforge.net/ to /tmp/
+  Check the version: it should be 3.10.0 or newer.
+  Define the build directory and the installation directory. Destination
+  directory should be writable for you, for example as 
+  /opt or $HOME/opt
+ 
+  It is strongly advised to install atlas when no other process use the CPU
+  extensively. If other processes heavily use CPU, results of tuning may 
+  appear skewed, and ATLAS performance may be sub-optimal.
+
+  You should first to compile lapack. You can get it from
+  http://www.netlib.org/lapack/
+  Version 3.4 or newer should be used,
+
+  1) Untar lapac in a build directiry.
+  2a) Assign environoment variable LAPACK_TABALL to the tar-ball
+      with lapack soure code distribution (not rpm!).
+  2b) Assign environoment variable PETOOLS_BITS to 32 or 64 depending on
+            the mode in which you are going to compile PETOOLS: 32 bit or
+            64 bit. You should use 32 bit mode if and only if you need to 
+            use need to use petoolls with 32-bit applications.
+      NB: Solve is a 32 application, so in order to use atlas with
+      solve you should compile in a 32 bit mode
+  2c) Assign environoment variable MK5_FC with the full path to the Fortran
+      compiler.
+  2d) Assign environoment variable MK5_C with the full path to the C compiler.
+
+
+  3) Configuration and compilation of ATLAS.
+
+  It is strongly advised to install atlas when no other process use the CPU
+  extensively. If other processes heavily use CPU, results of tuning may 
+  appear skewed, and ATLAS performance may be sub-optimal.
+  You should also disable CPU throttling.
+  ( NB: You may need ask system administrator to do it. )
+  If you have a laptop, you can do it temporarily. But if have throttlinig 
+  enabled on a desktop or a server, you should disable it permanently.
+
+  Set environment variable MK5_FC that should point to the Fortran compiler 
+  executable.
+
+  if you use GNU gfortran compiler 
+      setenv FFLAGS "-m$PETOOLS_BITS -ffixed-form -fno-underscoring -fPIC -O3"
+    else if you use Intel compiler then
+      setenv FFLAGS "-fpp -nus -Zp16 -align all -ftrapuv -pad -nbs -nofor_main"
+  endif
+#
+# Execute these commands:
+#
+      setenv BUILD {your_build_directory}
+      setenv DEST  {your_atlas_destination_directory}
+      setenv ATLAS_VERSION {atlas_version} # For example, 3.9.11
+
+#
+      cd BUILD
+      tar -jxf /tmp/atlas{ATLAS_VERSION}.tar.bz2
+      mv ATLAS atlas-$ATLAS_VERSION
+      cd atlas-$ATLAS_VERSION
+      mkdir build
+      cd build
+      ../configure \
+         --prefix=$DIST \
+         --with-netlib-lapack=$LAPACK_TARBALL \
+         --shared \
+         -Si latune 1 \
+         -b $PETOOLS_BITS  \
+         -Fa alg -fPIC \
+         -F ic "-DNoChange" \
+         -F gc "-DNoChange" \
+         -C ic /usr/bin/gcc \
+         -C if "$MK5_FC" \
+         -F if "$FFLAGS" \
+         -v 2 \
+         >& configure.log
+
+#
+# ---- Run this and relax. It may take from 15 minutes to 36 hours(!)
+# ---- to complete. 
+#
+       date > make_log.txt; make            >>& make_log.txt;  date >> make_log.txt
+       date > check_log.txt; make check     >>& check_log.txt; date >> check_log.txt
+       date > ptcheck_log.txt; make ptcheck >>& check_log.txt; date >> ptcheck_log.txt
+       date > time_log.txt; make time       >>& time_log.txt;  date >> time_log.txt
+#
+       cd lib
+       make shared    >>& ../make_log.txt
+       make ptshared  >>& ../make_log.txt
+
+       cd ../
+       make install    >& install.log
+#
+       unsetend DEST    # 
+       unsetend BUILD   # 
+       unsetend ATLAS   # 
+       unsetend FFLAGS  # 
+
+# End of ATLAS installation
+#
+
+
+5.2) Solve expects that you installed atlas in a Unix standard directory:
+     either /usr/lib or /usr/local/lib, i.e. DIST = /usr or /usr/local .
+     You should have root privilege in order to write in these directories.
+     If you installed ATLAS in another directory, you should tell 
+     to Solve where to find it. All libraries 
+     file names are defined environment variables in 
+     $MK5_ROOT/support/solve_lib file. After sourcing file Solve 
+     automatically sources $MK5_ROOT/local/lib.lcl file if it exists.
+    
+     If, for instance you have installed atlas in /opt/lib , then you 
+     put the following definition in $MK5_ROOT/local/lib.lcl file:
+
+       setenv ATLAS_PREFIX = /opt
+       setenv SOLVE_LIB_BLAS "-L$ATLAS_PREFIX -lsatlas" 
+
+     In a similar way you can re-define paths to other libraries.
+
+     Alternatively you can use Intel Mathematical kernel library. This is 
+     proprietary software, and usually it runs SLOWER than atlas. If you 
+     qualified for a non-commercial license, you can download it from
+     http://www.intel.com/cd/software/products/asmo-na/eng/perflib/mkl/219859.htm
+
+     Then if, for example, you have installed mkl in directory 
+     /opt/intel/mkl , then your $MK5_ROOT/local/lib.lcl file should have
+     this definition:
+
+       setenv $MKL_PREFIX /opt/intel/mkl
+       setenv SOLVE_LIB_BLAS "-L$MKL_PREFIX -lmkl_lapack -lmkl_ia32 -lguide"
+
+     Please check carefully that files 
+            /opt/intel/mkl/lib/32/libmkl_lapack.a 
+            /opt/intel/mkl/lib/32/libmkl_ia32.a 
+            /opt/intel/mkl/lib/32/libguide.a 
+     exist and readable before you attempt to install Solve.
+
+ 6) You need to have tcsh 6.12.00 or newer, and it should be linked to 
+    /bin/csh
+
+ 7) Install zip and unzip if you do not have it.
+    http://www.info-zip.org/pub/infozip/
+
+ 8) Install gzip if you do not have it.
+    http://www.gzip.org/
+
+ 9) Install bzip2 if you do not have it
+    http://sources.redhat.com/bzip2/
+ 
+10) Install wget. You need wget-1.13 or newer. If you have the older version,
+    please upgrade from http://www.gnu.org/software/wget/wget.html
+
+11) Install a mail client: mailx or nail ( http://nail.sourceforge.net )
+
+12) After that you can install Mark5 VLBI Analysis Software Calc/Solve.
+    Refer to installation instruction in $MK5_ROOT/help/INSTALL
+
+  It does not matter which Linux distribution you have, but it should be
+no more than 24 months old. If you are going to install Linux anew, the latest 
+release of  Fedora Core is recommended. Although Calc/Solve may run at 2.4.x 
+series of kernels, it is strongly recommended that a kernel of 3.0.x series
+should be used.
+
+  Third party software may be distributed in the form both of rpm-packages and
+tar-balls with source code. It is recommended that rpm-packages should be 
+avoided. The preferable way to install the third party software is to compile 
+and  link it from source code. See Linux from Scratch 
+( http://www.linuxfromscratch.org/ ) and Beyond Linux from Scratch
+( http://www.linuxfromscratch.org/blfs/ ) for instructions of how to do it.
+If the old version of the third party software was installed at your computer, 
+it should be uninsulated before building the new version in order 
+to avoid possible conflicts.
+
+
+2013.05.23

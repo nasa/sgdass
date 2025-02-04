@@ -1,0 +1,192 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of configure. It creates the     *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ### 18-MAY-2004    configure   v1.5 (c)  L. Petrov 11-NOV-2015 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv SPD_VERSION          "20241125"
+setenv PETOOLS_VERSION_MIN  "20241115"
+setenv MALO_VERSION_MIN     "20231111"
+setenv FOURPACK_VERSION_MIN "20140404"
+setenv VTD_VERSION_MIN      "20240912"
+setenv NERS_VERSION_MIN     "20191020"
+#
+setenv SPD_PREFIX       $HOME
+setenv SPD_ROOT        `dirname $0`
+if ( $SPD_ROOT == '.' ) setenv SPD_ROOT `pwd`
+setenv SPD_PETOOLS      $HOME
+setenv SPD_MALO         $HOME
+setenv SPD_VTD          $HOME
+setenv SPD_CFITSIO      $HOME
+setenv SPD_NETCDF       $HOME
+setenv SPD_HDF4         $HOME
+setenv SPD_HDF5         $HOME
+setenv SPD_FOURPACK     $HOME
+setenv SPD_JPEG         -ljpeg
+setenv SPD_Z            -lz
+setenv SPD_BIN          ${SPD_ROOT}/bin
+setenv SPD_OS           `uname`
+setenv SPD_USE_DIAGI    YES
+setenv SPD_DEBUG        NO
+setenv SPD_NOOPT        NO
+setenv CONF_LOG         ${SPD_ROOT}/temp/conf.log
+#
+set numarg = $#argv 
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#  
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv SPD_PETOOLS "$str"
+          set find_option = 1
+     endif
+#
+     set match_fourpack=`echo $arg | awk '{print index ($1,"--with-fourpack")}'`
+     if ( "$match_fourpack" > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,17)}'`
+	  setenv SPD_FOURPACK "$str"
+          set find_option  = 1
+     endif
+#  
+     set match_malo = `echo $arg | awk '{print index($1,"--with-malo")}'`
+     if ( $match_malo > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,13)}'`
+	  setenv SPD_MALO "$str"
+          set find_option = 1
+     endif
+#  
+     set match_vtd = `echo $arg | awk '{print index($1,"--with-vtd")}'`
+     if ( $match_vtd > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,12)}'`
+	  setenv SPD_VTD "$str"
+          set find_option = 1
+     endif
+#  
+     set match_ners = `echo $arg | awk '{print index($1,"--with-ners")}'`
+     if ( $match_ners > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,13)}'`
+	  setenv SPD_NERS "$str"
+          set find_option = 1
+     endif
+#  
+     set match_cfitsio = `echo $arg | awk '{print index($1,"--with-cfitsio")}'`
+     if ( $match_cfitsio > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv SPD_CFITSIO "$str"
+          set find_option = 1
+     endif
+#  
+     set match_netcdf = `echo $arg | awk '{print index($1,"--with-netcdf")}'`
+     if ( $match_netcdf > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,15)}'`
+	  setenv SPD_NETCDF "$str"
+          set find_option = 1
+     endif
+#  
+     set match_hdf4 = `echo $arg | awk '{print index($1,"--with-hdf4")}'`
+     if ( $match_hdf4 > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,13)}'`
+	  setenv SPD_HDF4 "$str"
+          set find_option = 1
+     endif
+#  
+     set match_hdf5 = `echo $arg | awk '{print index($1,"--with-hdf5")}'`
+     if ( $match_hdf5 > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,13)}'`
+	  setenv SPD_HDF5 "$str"
+          set find_option = 1
+     endif
+#  
+     set match_jpeg = `echo $arg | awk '{print index($1,"--with-jpeg")}'`
+     if ( $match_jpeg > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,13)}'`
+	  setenv SPD_JPEG "$str"
+          set find_option = 1
+     endif
+#  
+     set match_z = `echo $arg | awk '{print index($1,"--with-z")}'`
+     if ( $match_z > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,10)}'`
+	  setenv SPD_Z "$str"
+          set find_option = 1
+     endif
+#  
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SPD_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv SPD_NOOPT "YES"
+          set find_option = 1
+     endif
+#
+     set match_diagi = `echo $arg | awk '{print index($1,"--without-diagi")}'`
+     if ( $match_diagi > 0 ) then
+	  setenv SPD_USE_DIAGI "NO"
+          set find_option = 1
+     endif
+#
+     set match_debug = `echo $arg | awk '{print index($1,"--debug")}'`
+     if ( $match_debug > 0 ) then
+	  setenv SPD_DEBUG YES
+          set find_option = 1
+     endif
+#  
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $SPD_ROOT/doc/spd_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#  
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "petools: "$SPD_VERSION
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set   date_stamp  = `date "+%Y.%m.%d-%H:%M:%S" | tr "[a-z]" "[A-Z]"`
+set   host_name   = `uname -n`
+echo "spd config  $date_stamp  on  $host_name" >! $CONF_LOG
+echo $0 $argv >> $CONF_LOG
+if ( $SPD_DEBUG == "NO" ) then
+     support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+  else
+     csh -x support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed."
+     echo "Now run make"
+     exit 0
+  else
+     echo "Error in configuration."
+     exit $config_status 
+endif

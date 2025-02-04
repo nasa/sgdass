@@ -1,0 +1,97 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2023.08.02  pet created. Slewing parametrs copied from NYALES13S.
+#                          Tsys and gain from ther aquire run on 2023.07.15
+# 
+SHORT_NAME:    NYALE13N  char       Nn
+LAST_UPDATE:   NYALE13N  char       2023.06.28
+COORD:         NYALE13N  meters         1200992.637     252098.663    6238038.699
+MOUNT:         NYALE13N  char       ALTAZ   
+SLEW_AZ:       NYALE13N  deg/sec      12.0
+SLEW_EL:       NYALE13N  deg/sec       6.0
+ACCL_AZ:       NYALE13N  deg/sec^2     2.0
+ACCL_EL:       NYALE13N  deg/sec^2     2.0
+TSETTLE_AZ:    NYALE13N  sec           2.0
+TSETTLE_EL:    NYALE13N  sec           2.0
+EL_MIN:        NYALE13N  deg          15.0
+EL_MAX:        NYALE13N  deg          89.7
+AZ_RANGE:      NYALE13N  deg         -89.0  90.0 270.0 449.0
+RECORDER:      NYALE13N  char       mark6
+BACKEND:       NYALE13N  char       dbbc3
+SETMODE:       NYALE13N  sec 	       4.0
+PREOB:         NYALE13N  sec           6.0
+POSTOB:        NYALE13N  sec           5.0
+HOR_AZIM:      NYALE13N  deg           0.00  360.00
+HOR_ELEV:      NYALE13N  deg          15.00   15.00
+STOW_AZIM:     NYALE13N  deg          90.0
+STOW_ELEV:     NYALE13N  deg          50.0
+#
+CLOCK_DATES:   NYALE13N  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  NYALE13N  sec        1.879E-6
+#
+TSYS_DATES:    NYALE13N  char       2023.07.15 2049.12.31
+TSYS_FREQS:    NYALE13N  GHz          3.016    3.496
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     L       36.8   39.7   42.3   43.4   43.9   44.0   43.0   45.0   50.1   59.1
+#
+TSYS_FREQS:    NYALE13N  GHz          3.016    3.496
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     R       53.2   53.1   52.8   52.6   52.4   52.2   51.9   53.1   54.7   57.0
+#
+TSYS_FREQS:    NYALE13N  GHz          5.288    5.768
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     L       32.5   32.3   31.8   31.4   30.9   30.5   29.6   31.4   33.9   37.9
+#
+TSYS_FREQS:    NYALE13N  GHz          5.288    5.768
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     R       39.8   39.1   38.1   37.5   36.8   36.3   35.3   37.5   40.4   44.7
+#
+TSYS_FREQS:    NYALE13N  GHz          6.408    6.888
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     L       33.5   32.9   32.0   31.5   31.1   30.7   30.1   31.7   33.4   35.9
+#
+TSYS_FREQS:    NYALE13N  GHz          6.408    6.888
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     R       35.4   34.3   32.9   32.2   31.5   31.1   30.5   32.2   33.9   36.0
+#
+TSYS_FREQS:    NYALE13N  GHz         10.248   10.728
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     L       38.0   38.1   37.9   37.6   37.2   36.7   35.6   37.2   40.1   44.8
+#
+TSYS_FREQS:    NYALE13N  GHz         10.248   10.728
+TSYS_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  NYALE13N  K     R       42.1   40.3   38.1   36.9   35.9   35.2   34.3   36.4   38.3   40.6
+#
+GAIN_DATES:    NYALE13N  char       2023.07.15 2049.12.31
+GAIN_FREQS:    NYALE13N  GHz          3.016    3.496
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  L      0.021  0.021  0.022  0.022  0.022  0.023  0.022  0.022  0.023  0.024
+# 
+GAIN_FREQS:    NYALE13N  GHz          3.016    3.496
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  R      0.027  0.027  0.027  0.027  0.027  0.027  0.027  0.027  0.026  0.024
+# 
+GAIN_FREQS:    NYALE13N  GHz          5.288    5.768
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  L      0.019  0.019  0.019  0.019  0.019  0.019  0.019  0.019  0.019  0.018
+# 
+GAIN_FREQS:    NYALE13N  GHz          5.288    5.768
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  R      0.022  0.021  0.021  0.021  0.021  0.021  0.022  0.021  0.020  0.017
+# 
+GAIN_FREQS:    NYALE13N  GHz          6.408    6.888
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  L      0.020  0.020  0.020  0.020  0.020  0.020  0.020  0.020  0.020  0.020
+# 
+GAIN_FREQS:    NYALE13N  GHz          6.408    6.888
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  R      0.019  0.019  0.019  0.019  0.019  0.019  0.020  0.019  0.018  0.016
+# 
+GAIN_FREQS:    NYALE13N  GHz         10.248   10.728
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  L      0.014  0.015  0.016  0.017  0.017  0.017  0.017  0.017  0.017  0.018
+# 
+GAIN_FREQS:    NYALE13N  GHz         10.248   10.728
+GAIN_ELEVS:    NYALE13N  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  NYALE13N  K/Jy  R      0.013  0.014  0.016  0.016  0.017  0.017  0.017  0.016  0.016  0.017
+# 

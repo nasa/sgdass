@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  HOBART26  Ho
+LAST_UPDATE: HOBART26  2018.01.20
+COORD:       HOBART26  meters    -3950236.737  2522347.560 -4311562.539   
+MOUNT:       HOBART26  char       XY_E
+SLEW_AZ:     HOBART26  deg/sec    0.66
+SLEW_EL:     HOBART26  deg/sec    0.66
+ACCL_AZ:     HOBART26  deg/sec^2  0.02
+ACCL_EL:     HOBART26  deg/sec^2  0.02
+TSETTLE_AZ:  HOBART26  sec        2.0
+TSETTLE_EL:  HOBART26  sec        2.0
+EL_MIN:      HOBART26  deg      -74.0   
+EL_MAX:      HOBART26  deg       74.0   
+AZ_RANGE:    HOBART26  deg      -82.0 -82.0 82.0 82.0
+RECORDER:    HOBART26  char      mark5
+PREOB:       HOBART26  sec       10.0
+POSTOB:      HOBART26  sec        2.0

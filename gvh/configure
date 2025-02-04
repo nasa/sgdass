@@ -1,0 +1,118 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program for configuration of gvh. It creates the           *
+# *   Makefile.                                                          *
+# *                                                                      *
+# *  ### 15-JAN-2011    configure   v1.5 (c)  L. Petrov 12-AUG-2012 ###  * 
+# *                                                                      *
+# ************************************************************************
+#
+# -- Initialization
+#
+setenv GVH_VERSION         "20231222"
+setenv PETOOLS_VERSION_MIN "20200501"
+setenv VTD_VERSION_MIN     "20200501"
+setenv NERS_VERSION_MIN    "20200501"
+setenv GVH_PREFIX       $HOME
+setenv GVH_ROOT        `dirname $0`
+if ( $GVH_ROOT == '.' ) setenv GVH_ROOT `pwd`
+setenv PETOOLS_DIR      $HOME
+setenv VTD_PREFIX       $HOME
+setenv NERS_PREFIX      $HOME
+setenv GVH_OS           `uname`
+setenv GVH_NOOPT        "NO"
+setenv GVH_DEBUG        "NO"
+setenv CONF_LOG         ${GVH_ROOT}/temp/conf.log
+setenv BUILD_LOG        ${GVH_ROOT}/temp/build.log
+#
+set numarg = $#argv
+if ( $numarg > 0 ) then
+     set ind = 0
+loop:
+     set ind = `expr $ind + 1`
+     set arg = "$argv[$ind]"
+     set find_option = 0
+#
+     set match_petools = `echo $arg | awk '{print index($1,"--with-petools")}'`
+     if ( $match_petools > 0 ) then
+	  set str = `echo $arg | awk '{printf substr($0,16)}'`
+	  setenv PETOOLS_DIR "$str"
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--prefix")}'`
+     if ( $match_prefix > 0 ) then
+          setenv GVH_PREFIX `echo $arg | awk '{printf substr($1,10)}'`
+          set find_option = 1
+     endif
+#
+     set match_vtd=`echo $arg | awk '{print index ($1,"--with-vtd")}'`
+     if ( $match_vtd > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,12)}'`
+	  setenv VTD_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     set match_ners=`echo $arg | awk '{print index ($1,"--with-ners")}'`
+     if ( $match_ners > 0 ) then
+          set str = `echo $arg | awk '{printf substr($1,13)}'`
+	  setenv NERS_PREFIX "$str"
+          set find_option  = 1
+     endif
+#
+     if ( "$arg" == "--help" || "$arg" == "-h" ) then
+          cat $GVH_ROOT/doc/gvh_configure.txt
+          set find_option = 1
+	  exit 0
+     endif
+#
+     if ( "$arg" == "--version" || "$arg" == "-v" || "$arg" == "-V" ) then
+          echo "gvh: "$GVH_VERSION
+          set find_option = 1
+	  exit 0
+     endif
+#
+     set match_debug = `echo $arg | awk '{print index($1,"--debug")}'`
+     if ( $match_debug > 0 ) then
+	  setenv GVH_DEBUG YES
+          set find_option = 1
+     endif
+#
+     set match_prefix=`echo $arg | awk '{print index ($1,"--noopt")}'`
+     if ( $match_prefix > 0 ) then
+          setenv GVH_NOOPT "YES"
+          set find_option = 1
+     endif
+#
+     if ( $find_option == 0 ) then
+          echo "Unknown option: $arg"
+          echo "Try ./configure --help for printing the full list of options"
+	  exit 1
+     endif
+#
+     if ( $ind < $numarg ) goto loop
+endif
+#
+if (    -f Makefile ) then
+     rm -f Makefile
+endif
+#
+set DATE_LONG = `date "+%d-%h-%Y %H:%M:%S" | tr "[a-z]" "[A-Z]"`
+echo  "Configuration of gvh $GVH_VERSION on $DATE_LONG " >! $CONF_LOG
+echo  $0 $argv >>! $CONF_LOG
+if ( $GVH_DEBUG == "NO" ) then
+     support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+  else
+     csh -x support/config.csh | tee -a $CONF_LOG   
+     set config_status = $status
+endif
+if ( $config_status == 0 ) then
+     echo "Configuration is completed." | tee -a $CONF_LOG   
+     echo "Now run gmake"               | tee -a $CONF_LOG   
+     exit 0
+  else
+     echo "Error in configuration."     | tee -a $CONF_LOG   
+     exit $config_status
+endif
