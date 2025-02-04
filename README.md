@@ -1,4 +1,4 @@
-# 0.0   Preface.
+# 0   Preface.
 
       This document provides a brief description of the Space geodesy data 
       analysis software suite maintained by NASA
@@ -7,7 +7,7 @@
 
       Last modification:       2025.01.18
 
-# 1.0   Introduction.
+# 1   Introduction.
 
 
       Space geodesy data analysis software suite (SGDASS) is a collection 
@@ -20,7 +20,7 @@
       community.
 
 
-## 1.1.  Structure of the software package
+## 1.1  Structure of the software package
 
 
       Scientific analysis layer  
@@ -94,7 +94,7 @@
                           |---- Interface to operating system support level
       
       
-## 1.2.  Dependencies on third party open source packages, including
+## 1.2  Dependencies on third party open source packages, including
       indirect dependencies:
       
       autoconf
@@ -138,10 +138,10 @@
       zstd
 
 
-# 2.0.  Scientific analysis layer  
+# 2  Scientific analysis layer  
 
       
-## 2.1.  Processing results of parameter estimation.
+## 2.1  Processing results of parameter estimation.
 
       Parameter estimation results are delivered in a form of a large
       so-called spool file that can have more than 10 million lines.
@@ -176,7 +176,7 @@
       orientation parameter series for both visual inspection and inclusion
       into scientific publications.
   
-## 2.2.  Parameter estimation of group delays
+## 2.2  Parameter estimation of group delays
 
       The primary goal of data analysis is to provide robust and accurate 
       estimates of parameters of the model of geodetic observations as well
@@ -290,7 +290,7 @@
       is designed primarily for the research and development use.
 
 
-## 2.3.  Simulation of space geodesy experiments
+## 2.3  Simulation of space geodesy experiments
 
 
       SGDASS provides a tool for simulation of geodetic VLBI observation. 
@@ -314,7 +314,7 @@
       way as databases with real data.
 
 
-## 2.4.  Computation of theoretical path delay, its derivatives 
+## 2.4  Computation of theoretical path delay, its derivatives 
       and Doppler shifts
 
  
@@ -350,7 +350,7 @@
       results of parameter estimation.
  
 
-## 2.5.  Offline computation of a priori model parameters used 
+## 2.5  Offline computation of a priori model parameters used 
       for data analysis
 
 
@@ -804,7 +804,7 @@
       with other relevant information that includes hardware setup.
 
 
-# 3.    Layer of numerical methods implementation
+# 3   Layer of numerical methods implementation
 
 
       The scientific layer of SGDASS relies on software that implements general
@@ -935,7 +935,7 @@
       reference ellipsoid. 
       
 
-# 4.    I/O support level
+# 4   I/O support level
 
 
 ## 4.1   Geo VLBI database handler
@@ -1009,10 +1009,10 @@
       user-defined records, reading and writing big files.
 
       
-# 5.    Graphics support level
+# 5   Graphics support level
 
 
-## 5.1   Library of the Dialogue graphic interface
+## 5.1  Library of the Dialogue graphic interface
 
 
       DiaGI (Dialogue Graphic Interface) is a library of subroutines which 
@@ -1043,7 +1043,7 @@
       DiaGI allows to re-define colors in order to adjust user preferences. 
 
 
-## 5.2   Tools for 2D visualization
+## 5.2  Tools for 2D visualization
 
 
       SGDASS provides tools for visualization of parameters defined on the 
@@ -1052,7 +1052,7 @@
       stored in FITS-IDI format.
 
 
-# 6.    Interface to operating system support level
+# 6   Interface to operating system support level
 
 
       SGDASS provides a set of routines that serve as a middleware between
@@ -1065,16 +1065,16 @@
       getting information about a file, matching regular expressions, 
       setting stack size, and getting system parameters.
 
-# 7.0   Notices and disclaimer
+# 7   Notices and disclaimer
 
 
-# 7.1   Notices
+## 7.1  Notices
 
       Copyright (c) 2010-2024 United States Government as represented by the 
       Administrator of the National Aeronautics and Space Administration.  
       All Rights Reserved.
 
-# 7.2   Disclaimer
+## 7.2  Disclaimer
 
       No Warranty: THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY 
       WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, 
@@ -1091,7 +1091,7 @@
       REGARDING THIRD-PARTY SOFTWARE, IF PRESENT IN THE ORIGINAL SOFTWARE, 
       AND DISTRIBUTES IT "AS IS."
 
-# 7.3   Waiver and Indemnity
+## 7.3  Waiver and Indemnity
 
       RECIPIENT AGREES TO WAIVE ANY AND ALL CLAIMS AGAINST THE UNITED STATES 
       GOVERNMENT, ITS CONTRACTORS AND SUBCONTRACTORS, AS WELL AS ANY PRIOR 
