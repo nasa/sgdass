@@ -1,0 +1,55 @@
+ Date: 2026.04.25-10:05:06
+ Dimension:         1000  Number of iterations:            1
+INVS Dimension:     1000 Wall time:        0.101326 s  CPU time:        0.099302
+ Date: 2026.04.25-10:05:17
+ Dimension:         1000  Number of iterations:           11
+INVS Dimension:     1000 Wall time:        0.101078 s  CPU time:        0.100981
+INVS Dimension:     1000 Wall time:        0.110951 s  CPU time:        0.110949
+INVS Dimension:     1000 Wall time:        0.108809 s  CPU time:        0.105777
+INVS Dimension:     1000 Wall time:        0.138479 s  CPU time:        0.127648
+INVS Dimension:     1000 Wall time:        0.127719 s  CPU time:        0.116717
+INVS Dimension:     1000 Wall time:        0.154807 s  CPU time:        0.140503
+INVS Dimension:     1000 Wall time:        0.226288 s  CPU time:        0.206250
+INVS Dimension:     1000 Wall time:        0.214376 s  CPU time:        0.202072
+INVS Dimension:     1000 Wall time:        0.180830 s  CPU time:        0.165404
+INVS Dimension:     1000 Wall time:        0.230977 s  CPU time:        0.227958
+INVS Dimension:     1000 Wall time:        0.260623 s  CPU time:        0.221514
+ Date: 2026.04.25-10:05:37
+ Dimension:        10000  Number of iterations:            1
+INVS Dimension:    10000 Wall time:        9.351441 s  CPU time:        9.170988
+ Date: 2026.04.26-18:25:42
+ Dimension:        10000  Number of iterations:            1
+INVS Dimension:    10000 Wall time:        6.712732 s  CPU time:        6.712656
+ Date: 2026.04.26-18:25:49
+ Dimension:        20000  Number of iterations:            1
+INVS Dimension:    20000 Wall time:       29.342727 s  CPU time:       29.278459
+ Date: 2026.04.26-18:26:20
+ Dimension:        30000  Number of iterations:            1
+INVS Dimension:    30000 Wall time:       66.467738 s  CPU time:       66.337035
+ Date: 2026.04.26-18:27:29
+ Dimension:        40000  Number of iterations:            1
+INVS Dimension:    40000 Wall time:      125.831102 s  CPU time:      123.959907
+ Date: 2026.04.26-18:29:41
+ Dimension:        50000  Number of iterations:            1
+INVS Dimension:    50000 Wall time:      197.028999 s  CPU time:      195.182168
+ Date: 2026.04.26-18:33:06
+ Dimension:        60000  Number of iterations:            1
+INVS Dimension:    60000 Wall time:      281.951960 s  CPU time:      278.358616
+ Date: 2026.04.26-18:37:59
+ Dimension:        70000  Number of iterations:            1
+INVS Dimension:    70000 Wall time:      424.046324 s  CPU time:      417.612931
+ Date: 2026.04.26-18:45:19
+ Dimension:        80000  Number of iterations:            1
+INVS Dimension:    80000 Wall time:      603.215235 s  CPU time:      594.908050
+ Date: 2026.04.26-18:55:42
+ Dimension:        90000  Number of iterations:            1
+INVS Dimension:    90000 Wall time:      783.660159 s  CPU time:      773.127630
+ Date: 2026.04.26-19:09:11
+ Dimension:       100000  Number of iterations:            1
+INVS Dimension:   100000 Wall time:      987.471191 s  CPU time:      972.180073
+ Date: 2026.04.26-19:26:10
+ Dimension:       200000  Number of iterations:            1
+INVS Dimension:   200000 Wall time:     5468.072715 s  CPU time:     5299.218011
+ Date: 2026.04.26-20:59:21
+ Dimension:       300000  Number of iterations:            1
+INVS Dimension:   300000 Wall time:    15928.355873 s  CPU time:    15398.056802

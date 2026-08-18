@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    BRVB      char       H1
+LAST_UPDATE:   BRVB      char       2025.09.30
+COORD:         BRVB      meters     -2112064.978   -3705356.520    4726813.798
+MOUNT:         BRVB      char       ALTAZ
+#
+SLEW_AZ:       BRVB      deg/sec    99.9
+SLEW_EL:       BRVB      deg/sec    99.9
+ACCL_AZ:       BRVB      deg/sec^2  99.9
+ACCL_EL:       BRVB      deg/sec^2  99.9
+TSETTLE_AZ:    BRVB      sec        0.0
+TSETTLE_EL:    BRVB      sec        0.0
+#
+EL_MIN:        BRVB      deg        2.0
+EL_MAX:        BRVB      deg       90.0
+AZ_RANGE:      BRVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      BRVB      char      hrtr
+BACKEND:       BRVB      char      hrtr
+SETMODE:       BRVB      sec        0.0
+PREOB:         BRVB      sec        0.0
+POSTOB:        BRVB      sec        0.0
+#
+HOR_AZIM:      BRVB      deg        0.0  360.0
+HOR_ELEV:      BRVB      deg        2.0   2.0
+STOW_AZIM:     BRVB      deg        0.0
+STOW_ELEV:     BRVB      deg       90.0
+#
+CLOCK_DATES:   BRVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  BRVB      sec        0.0

@@ -1,0 +1,17 @@
+set_deltran  version 1.0  of  2001.12.20
+
+   Program SET_DELTRAN  creates an intermediate file for importing    
+   delays from the database to the current Solve scratch area         
+   provided that this database and current Solve scratch area belong  
+   to the same experiment. This trick is used for investigation of    
+   subtle differences between two versions (revisions) of a database  
+   file obtained by different fringing.                               
+                                                                      
+   set_deltran reads a pair of X/S databases and puts in the          
+   intermediate file some information: group and phase delays, delay  
+   date, suppression status etc.                                      
+                                                                      
+   This intermediate file is later used by program USE_DELTRAN which  
+   is invoked by Solve in so-called user program mode.                
+                                                                      
+   Usage: set_deltran <database_name>'                                

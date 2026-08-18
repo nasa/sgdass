@@ -1,0 +1,17 @@
+SPD_3D_CONF   Format version of 2015.01.06
+#
+#  Last updated 2018.05.02_19:13:50
+#
+REFR_EXPR:   Radio_Aparicio_2011
+SPD_ALG:     y_nonloc
+FIL_STA:     /t0/7km/vlbi_7km.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      /t0/7km/heb/2006/g/g_height_above_geoid_20060101_0000.heb
+FIL_LEAPSEC: /apr/eop/leapsec.dat
+FIL_DESC:    /progs/spd_20161117/spd/share/spd_desc.txt
+FIL_FMT:     /opt64/spd/doc/spd_3d_format.txt
+TIM_INTRV:   1800.0D0
+N_EL:        16
+N_AZ:        12
+SOB_ALG:     none
+N_FRQ:       0

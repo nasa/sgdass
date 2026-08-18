@@ -1,0 +1,82 @@
+CRES and CNPLT options.                                     CRES  Ver. 05/05/98
+üüüüüüüüüüüüüüüüüüüüüüü
+
+
+   CRES options:
+   °°°°°°°°°°°°°
+
+C) CRES Compatibility mode with PRE98 SOLVE:  (yes/no) 
+   yes -- then special compatibility mode of CRES will be used. It tries 
+          to emulate PRE-MAY98 CRES behavior:
+    a) Number of total observation (including ones with no fringes) instead
+       of number of potentially recoverable observations is printed in baseline
+       and source statistics.
+
+    b) Statistics for deselected baselines will be printed.
+
+    c) PRE98 format of title will be set up.
+
+   no  -- usual mode of CRES will be in use.
+
+
+R) Residual computation: (conventional/X-phase minus S-phase/
+   X-phase minus X-group)
+
+   conventional -- 
+   X-phase minus S-phase -- 
+   X-phase minus X-group -- 
+
+T) Format of title of the listing
+
+   full
+   PRE98
+   anonymous
+
+   Example of title in "full" format:
+ ------------------------------------------------------
+  Center:         BON ( Bonn Geodetic VLBI group )
+  Analyst:        Leonid Petrov ( xxx )
+  Machine:        picasso  9000/712  HP-UX A.09.05
+  Executables:    ./
+  Solve initials: PE
+  Local time:     10-MAY-98 20:20:00
+ ------------------------------------------------------
+   "anonymous" format differs from "full" format only by omission of 
+    analyst name.
+
+   "PRE98" format emulates title in compatibility with SOLVE version before
+   APR98. Example of title in "PRE98 format:
+ ------------------------------------------------------
+ Run done on picasso with executables from ./
+ ------------------------------------------------------
+
+   CNPLT options:
+   °°°°°°°°°°°°°
+
+
+S) CNPLT sigmas
+   pre-fit  -- sigmas produced by correlator (with additive correction 
+               if applied) will be shown by CNPLT.
+   post-fit -- mathematical expectation of sigmas in according with algorithm
+               developed by J. Gipson will be shown by CNPLT.
+  
+\) Suppression action scheme
+   POST98  -- currently applied scheme for determination whether the 
+              observation should be suppressed/restored will be used.
+   PRE98   -- of pre-APR98 scheme of suppression/restoration will be emulated.
+              Care should be taken in using PRE98 suppression scheme. It is
+              designed rather for testing purposes than for every-day usage.
+              It may appear not compatible with future version of SOLVE.
+              
+U) To show unrecoverable observations
+   
+   If YES -- unrecoverable observations will be shown;
+   If NO  -- unrecoverable observations will not be shown and they will not 
+             participate in calculation of statistics.
+
+B) To show conditionally bad observations
+   If YES -- conditionally bad observations will be shown;
+   If NO  -- conditionally bad observations will not be shown and they will not 
+             participate in calculation of statistics. It will be impossible
+             to restore in solution conditionally bad observation is this
+             option is activated.

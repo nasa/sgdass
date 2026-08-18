@@ -1,0 +1,50 @@
+Library FOURPACK was developed for
+
+1) providing a convenient interface to fast Fourier transform (FFT).
+   Although the FFT algorithm can be implemented in less than 50 lines,
+   the highly optimized version of FFT may have more than 100 000 lines
+   of code and a rather complicated interface. The optimized routines
+   usually run one order of magnitude faster, so using them brings 
+   tangible benefits.
+
+2) implementing digital filter in frequency domain. A filter of this kind 
+   involves three operations: forward FFT, multiplication the spectrum by
+   a window function, backward FFT.
+
+3) implementing fast spherical transformation, direct and inverse, as well
+   as computation of a function with a given set of spherical harmonics
+   at a point with a given longitude and latitude. Fast computation of the
+   derivatives over longitudinal and latitudinal directions is supported.
+   For dimensions less than 2700 algorithm of Holmes and 
+   Featherstone (2002) is used. For dimensions higher than 2700 the 
+   the algebra of X-number introduced by Fukushima (2012) is used on order
+   to avoid numerical catastrophe at the polar regions related to the 
+   insufficient range of double precision numbers. Spherical harmonics 
+   transform of degree/order as high as 65536 is supported.
+   
+
+Package FOURPACK contains routines that
+
+A) implements an interface to really fast FFT libraries, FFTW and Intel MKL;
+B) perform linear filtration with the use of FFT;
+C) compute direct and inverse spherical function transform according to 
+   the sampling theorem presented in Driscoll and Healy (1994).
+D) compute tuning parameters for FFTW.
+
+Package FOURPACK honors variable OMP_NUM_THREADS and uses OMP_NUM_THREADS 
+threads to perform parallel operations and increase performance on a 
+mulitcore computers using OpenMP library.
+
+The following FFT routines are implemented:
+
+a) complex forward and backward FFT, 1D and 2D;
+b) real to complex forward 1D FFT;
+c) complex to real backward 1D FFT.
+
+
+Credit: 
+
+Mark A. Wieczorek
+Leonid Petrov
+
+A number of routines in FOURPACK are derived from SHTOOLS package.

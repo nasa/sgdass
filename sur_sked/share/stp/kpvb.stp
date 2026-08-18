@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    KPVB      char       H5
+LAST_UPDATE:   KPVB      char       2025.03.23
+COORD:         KPVB      meters     -1995628.630    -5037267.718     3357378.129
+MOUNT:         KPVB      char       ALTAZ
+#
+SLEW_AZ:       KPVB      deg/sec    9.9
+SLEW_EL:       KPVB      deg/sec    9.9
+ACCL_AZ:       KPVB      deg/sec^2  9.9
+ACCL_EL:       KPVB      deg/sec^2  9.9
+TSETTLE_AZ:    KPVB      sec        0.0
+TSETTLE_EL:    KPVB      sec        0.0
+#
+EL_MIN:        KPVB      deg        2.0
+EL_MAX:        KPVB      deg       90.0
+AZ_RANGE:      KPVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      KPVB      char      hrtr
+BACKEND:       KPVB      char      hrtr
+SETMODE:       KPVB      sec        0.0
+PREOB:         KPVB      sec        0.0
+POSTOB:        KPVB      sec        0.0
+#
+HOR_AZIM:      KPVB      deg        0.0  360.0
+HOR_ELEV:      KPVB      deg        2.0   2.0
+STOW_AZIM:     KPVB      deg        0.0
+STOW_ELEV:     KPVB      deg       90.0
+#
+CLOCK_DATES:   KPVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  KPVB      sec        0.0

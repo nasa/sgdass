@@ -1,0 +1,40 @@
+SITLIST Format  Version 2003.07.31
+#
+#  The list contains positions of 175 DORIS stations and 168 SLR stations
+#
+#  Format description:
+#  1) File consists of records fixed length.
+#     Records can be one of three types:
+#     a) File format identification: the first record;
+#     b) Comment: the record which starts from # character;
+#     c) Data records.
+#
+#  2) Format of the data record:
+#     Field  1:8  -- Station name.
+#     Field 10:21 -- X coordinate of the site in meter.
+#     Field 23:34 -- X coordinate of the site in meter.
+#     Field 36:47 -- Z coordinate of the site in meter.
+#     Field 49:58 -- Date when the site produced first observation worth
+#                    analyzing in format YYYY.MM.DD
+#     Field 60:69 -- Date when the site produced last observation worth
+#                    analyzing in format YYYY.MM.DD or end for sites which
+#                    are deemed as active.
+#     Field 71:71 -- Technique code: 
+#                    R for VLBI, 
+#                    S for SLR,
+#                    G for GPS,
+#                    D for DORIS,
+#                    Technique code means that the site coordinate 
+#                    are related to coordinates of the reference point 
+#                    of the station of that technique.
+#     Field 73:81 -- Alternative station name.
+#     Field 83:92 -- Comment
+#     Field 95:98 -- CDP number of the station which defines coordinates
+#                    of the site.
+#                                                                                                 
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP
+#                                                                                                 
+Apollo   -1464000.000 -5166632.000  3435014.000 2006.01.01 end        L                       9999
+Haleakal -5466006.510 -2404427.983  2242187.503 1983.09.01 end        S 40445M002             7120
+Grasse    4581692.356   556195.860  4389355.014 1984.04.12 end        S 10002S001             7835
+Wettzell  4075577.019   931785.297  4801583.457 1983.09.06 end        S 14201M200             7594

@@ -1,0 +1,57 @@
+--- src/pima_acta.f	2017-03-08 20:30:22.000000000 +0300
++++ src/pima_acta.f~  2018-08-31 17:47:27.530206625 +0300
+@@ -177,14 +177,14 @@
+       &                'memory for array AC' )
+                    RETURN
+              END IF
+-            CALL NOUT_R4 ( PIM%NCHN*LFRQ*LTIM, AC )
++            AC = 0.0
+  !
+  ! --------- Get autocorrelation data
+  !
+              CALL ERR_PASS ( IUER, IER )
+              CALL PIMA_GET_UV ( PIM, IND_OBS_STA, LFRQ, PIM%CONF%BEG_FRQ, &
+       &                         PIM%CONF%END_FRQ, PIM%CONF%FRQ_GRP, &
+-     &                         AC, WEI_1D, AP_LEN, IND_STA_BAS, IER  )
++     &                         AC(1,1,1,IND_STA_BAS), WEI_1D(1,IND_STA_BAS), AP_LEN, IND_STA_BAS, IER  )
+              IF ( IER .NE. 0 ) THEN
+                   CALL CLRCH ( STR )
+                   CALL INCH  ( IND_OBS, STR )
+@@ -221,7 +221,7 @@
+  !
+  ! ------------ check for the autocorrelation threshold
+  !
+-               IF ( WEI_1D(J6) < PIM%CONF%FRIB_WEIGHTS_THRESHOLD ) GOTO 460
++               IF ( WEI_1D(J6,IND_STA_BAS) < PIM%CONF%FRIB_WEIGHTS_THRESHOLD ) GOTO 460
+                 UV_IND  = PIM%OBS(IND_OBS_STA)%UV_IND(J6,FRG_IND)
+                 TIM_ARR(J6) = PIM%TIM_R8(PIM%UV_IND(UV_IND)%TIM_IND) - &
+       &                       PIM%OBS(IND_OBS_STA)%TIM_BEG
+@@ -230,22 +230,22 @@
+  ! ------------ accordinbgto SCAN_LEN_SKIP/SCAN_LEN_USED options
+  !
+                 IF ( TIM_ARR(J6) < PIM%CONF%SCAN_LEN_SKIP ) THEN
+-                    WEI_1D(J6) = 0.0D0
++                    WEI_1D(J6,IND_STA_BAS) = 0.0D0
+                 END IF 
+-               DURA_ACC = DURA_ACC + WEI_1D(J6)*AP_LEN
++               DURA_ACC = DURA_ACC + WEI_1D(J6,IND_STA_BAS)*AP_LEN
+                 IF ( DURA_ACC > PIM%CONF%SCAN_LEN_USED ) THEN
+-                    WEI_1D(J6) = 0.0D0
++                    WEI_1D(J6,IND_STA_BAS) = 0.0D0
+                 END IF
+-               IF ( WEI_1D(J6) .GE. PIM%CONF%FRIB_WEIGHTS_THRESHOLD ) THEN
++               IF ( WEI_1D(J6,IND_STA_BAS) .GE. PIM%CONF%FRIB_WEIGHTS_THRESHOLD ) THEN
+  !
+  ! ----------------- Update autocorrelation spectrum accumulators
+  !
+-                    WEI_SUM = WEI_SUM + WEI_1D(J6)*PIM%CONF%FRIB_1D_FRQ_MSEG
++                    WEI_SUM = WEI_SUM + WEI_1D(J6,IND_STA_BAS)*PIM%CONF%FRIB_1D_FRQ_MSEG
+                      DO 470 J7=1,LFRQ
+                         DO 480 J8=1,LCHN
+                            DO 490 J9=1,PIM%CONF%FRIB_1D_FRQ_MSEG
+                               IND_CHN = (J8-1)*PIM%CONF%FRIB_1D_FRQ_MSEG + J9
+-                             AC_OBS(J8,J7) = AC_OBS(J8,J7) + AC(IND_CHN,J7,J6)*WEI_1D(J6)
++                             AC_OBS(J8,J7) = AC_OBS(J8,J7) + AC(IND_CHN,J7,J6,IND_STA_BAS)*WEI_1D(J6,IND_STA_BAS)
+   490                      CONTINUE
+   480                   CONTINUE
+   470                CONTINUE 

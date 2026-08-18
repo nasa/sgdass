@@ -1,0 +1,50 @@
+      SUBROUTINE USE_COVF_COM(STRING)
+      IMPLICIT NONE
+!
+! 1.  USE_COVF_COM PROGRAM SPECIFICATION
+!
+! 1.1 Access a saved COVFIL's commons.
+!
+! 1.2 REFERENCES:
+!
+! 2.  USE_COVF_COM INTERFACE
+!
+! 2.1 Parameter File
+      INCLUDE 'solve.i'
+!
+! 2.2 INPUT Variables:
+!
+      CHARACTER*(*) STRING
+!
+! STRING - Requested access type ('R'=read; 'W'=write)
+!
+! 2.3 OUTPUT Variables: None
+!
+! 2.4 COMMON BLOCKS USED
+      INCLUDE 'precm.i'
+      INCLUDE 'socom.i'
+      INCLUDE 'prfil.i'
+      CHARACTER*(NAME_SIZE) FNAME
+      INTEGER*4 FILDES
+      INTEGER*2 IDIRECT(BLOCK_WORDS)
+      COMMON/SAVCOV/FILDES,IDIRECT
+      SAVE /SAVCOV/
+      COMMON/SAVCOVCH/FNAME
+      SAVE /SAVCOVCH/
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES:
+!       CALLED SUBROUTINES: cgm_com
+!
+! 3.  LOCAL VARIABLES
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!
+! 5.  USE_COVF_COM PROGRAM STRUCTURE
+!
+      CALL CGM_COM(IDIRECT,FNAME,FILDES,STRING)
+!
+      RETURN
+      END

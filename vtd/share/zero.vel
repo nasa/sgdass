@@ -1,0 +1,302 @@
+# GETPAR_VEL format version 1.0  of 2001.05.25
+# /box1/sol/2004b/2004b.spl
+STA_GVX:  AIRA      X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  AIRA      U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  ALGOPARK  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  ALGOPARK  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  AUSTINTX  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  AUSTINTX  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  AZORES    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  AZORES    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  BERMUDA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  BERMUDA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  BLKBUTTE  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  BLKBUTTE  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  BLOOMIND  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  BLOOMIND  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  BR-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  BR-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  BREST     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  BREST     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  CARNUSTY  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  CARNUSTY  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  CARROLGA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  CARROLGA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  CHICHI10  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  CHICHI10  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  CHLBOLTN  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  CHLBOLTN  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  CRIMEA    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  CRIMEA    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  CTVASBAY  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  CTVASBAY  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  CTVASTJ   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  CTVASTJ   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  DEADMANL  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  DEADMANL  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  DSS15     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  DSS15     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  DSS45     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  DSS45     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  DSS65     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  DSS65     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  EFLSBERG  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  EFLSBERG  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  ELY       X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  ELY       U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  FD-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  FD-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  FLAGSTAF  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  FLAGSTAF  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  FORT ORD  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  FORT ORD  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  FORTLEZA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  FORTLEZA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  FORTORDS  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  FORTORDS  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  FTD 7900  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  FTD 7900  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GBT-VLBA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GBT-VLBA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GGAO7108  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GGAO7108  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GIFU11    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GIFU11    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GIFU3     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GIFU3     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GILCREEK  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GILCREEK  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GOLDVENU  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GOLDVENU  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GORF7102  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GORF7102  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  GRASSE    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  GRASSE    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HALEAKAL  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HALEAKAL  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HARTRAO   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HARTRAO   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HATCREEK  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HATCREEK  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HAYSTACK  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HAYSTACK  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HN-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HN-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HOBART26  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HOBART26  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HOFN      X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HOFN      U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HOHENFRG  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HOHENFRG  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HOHNBERG  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HOHNBERG  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  HRAS 085  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  HRAS 085  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  JPL MV1   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  JPL MV1   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KAINAN    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KAINAN    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KANOZAN   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KANOZAN   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KARLBURG  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KARLBURG  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KASHIM11  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KASHIM11  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KASHIM34  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KASHIM34  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KASHIMA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KASHIMA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KAUAI     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KAUAI     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KIRSBERG  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KIRSBERG  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KODIAK    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KODIAK    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KOGANEI   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KOGANEI   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KOGANEI3  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KOGANEI3  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KOKEE     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KOKEE     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KP-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KP-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  KWAJAL26  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  KWAJAL26  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  LA-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  LA-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  LEONRDOK  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  LEONRDOK  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MAMMOTHL  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MAMMOTHL  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MARCUS    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MARCUS    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MARPOINT  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MARPOINT  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MATERA    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MATERA    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MCD 7850  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MCD 7850  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MEDICINA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MEDICINA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  METSHOVI  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  METSHOVI  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MIAMI20   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MIAMI20   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MILESMON  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MILESMON  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MIURA     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MIURA     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MIYAZAKI  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MIYAZAKI  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MIZNAO10  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MIZNAO10  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MIZUSGSI  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MIZUSGSI  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MK-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MK-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MOJ 7288  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MOJ 7288  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MOJAVE12  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MOJAVE12  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MON PEAK  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MON PEAK  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  MV2ONSLA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  MV2ONSLA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NL-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NL-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NOBEY 6M  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NOBEY 6M  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NOME      X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NOME      U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NOTO      X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NOTO      U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NRAO 140  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NRAO 140  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NRAO20    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NRAO20    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NRAO85 1  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NRAO85 1  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NRAO85 3  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NRAO85 3  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  NYALES20  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  NYALES20  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  OCOTILLO  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  OCOTILLO  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  OHIGGINS  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  OHIGGINS  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  ONSALA60  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  ONSALA60  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  ONSALA85  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  ONSALA85  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  OV-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  OV-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  OVR 7853  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  OVR 7853  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  OVRO 130  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  OVRO 130  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PARKES    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PARKES    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PBLOSSOM  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PBLOSSOM  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PENTICTN  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PENTICTN  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PIETOWN   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PIETOWN   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PINFLATS  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PINFLATS  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PLATTVIL  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PLATTVIL  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PRESIDIO  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PRESIDIO  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PT REYES  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PT REYES  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  PVERDES   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  PVERDES   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  QUINCY    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  QUINCY    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  RICHMOND  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  RICHMOND  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  ROBLED32  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  ROBLED32  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SAGARA    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SAGARA    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SANPAULA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SANPAULA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SANTIA12  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SANTIA12  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SC-VLBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SC-VLBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SEATTLE1  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SEATTLE1  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SESHAN25  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SESHAN25  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SEST      X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SEST      U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SINTOTU   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SINTOTU   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SINTOTU3  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SINTOTU3  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SNDPOINT  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SNDPOINT  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SOURDOGH  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SOURDOGH  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SUWON     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SUWON     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SVETLOE   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SVETLOE   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  SYOWA     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  SYOWA     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TATEYAMA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TATEYAMA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TIDBIN64  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TIDBIN64  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TIGOCONC  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TIGOCONC  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TIGOWTZL  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TIGOWTZL  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TITIJIMA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TITIJIMA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TOMAKO11  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TOMAKO11  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TOULOUSE  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TOULOUSE  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TROMSONO  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TROMSONO  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TRYSILNO  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TRYSILNO  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TSUKU3    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TSUKU3    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TSUKUB32  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TSUKUB32  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  TSUKUBA   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  TSUKUBA   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  URUMQI    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  URUMQI    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  USUDA64   X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  USUDA64   U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  VERAMZSW  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  VERAMZSW  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  VERNAL    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  VERNAL    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  VICTORIA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  VICTORIA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  VLA-N8    X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  VLA-N8    U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  VNDNBERG  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  VNDNBERG  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  WESTFORD  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  WESTFORD  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  WETTZELL  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  WETTZELL  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  WHTHORSE  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  WHTHORSE  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  YAKATAGA  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  YAKATAGA  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  YEBES     X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  YEBES     U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  YELLOWKN  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  YELLOWKN  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  YLOW7296  X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  YLOW7296  U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  
+STA_GVX:  YUMA      X:      0.0  -+    0.0    Y:      0.0  -+    0.0    Z:      0.0  -+    0.0  
+STA_GVU:  YUMA      U:      0.0  -+    0.0    E:      0.0  -+    0.0    N:      0.0  -+    0.0  

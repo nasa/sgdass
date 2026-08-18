@@ -1,0 +1,145 @@
+VTD a priori files management.
+
+   Computation of VLBI time delay depends on values of a priori 
+parameters. They are gathered in a priori files. A priori files 
+belong to three categories:
+
+1) Constants -- never changed
+
+2) Infrequently updated, 2-3 times a year
+
+3) Regularly updated on a daily basis. 
+
+This document contains suggestions how the files with a priori parameters
+should be managed.
+
+
+I. Constant files.
+==================
+
+
+1) DE_EPHEMERIDES.
+
+      The files supplied with VTD distribution is valid for the 
+      range of dates [1950, 2050]
+
+2) STATION_ECCENTRICITIES  
+
+   Should updated for new stations. You can edit this file yourself.
+
+3) AEM_FILE 
+
+4) ANTENNA_DEFORMATIONS_FILE
+
+   May be updated for new stations.
+
+5) HYDROSTATIC_MAPPING_FUNCTION/WET_MAPPING_FUNCTION: (MMF) 
+
+6) Ocean loading 
+
+   May be updated for new stations.
+
+7) Loading due to atmospheric stations.
+
+   May be updated for new stations.
+
+8) SLANTED_PATH_DELAY_BIAS_FILE 
+
+   May be updated for new stations.
+
+
+II. Infrequently updated files:
+===============================
+
+
+1) LEAP_SECOND
+
+   You check http://tycho.usno.navy.mil/leapsec.html
+   and when a new leap second epoch is announced, edit
+   the file accordingly.
+
+2) STATION_DESCRIPTION 
+
+   You can edit this file and add a new station.
+   You can ask for an apriori value of antenna axis
+   offset. Antenna axis offset length can be found from
+   VLBI solutions at http://astrogeo.org/gsol/ or
+   http://astrogeo.org/rfc
+
+3) SOURCE_COORDINATES 
+
+   The best source of source coordinates of known calibrators
+   is http://astrogeo.org/rfc, which is updated 2-3 times 
+   a year. You can download the apriori file from there and 
+   then to add your sources to the bottom. NB: if a source
+   is defined more than once in the file, the last definition
+   will take effect.
+
+4) STATION_COORDINATES  
+
+   You can download the latest solution, updated 2-3 times 
+   a year from http://astrogeo.org/rfc
+
+
+5) STATION_VELOCITIES 
+
+   You can download the latest solution, updated 2-3 times 
+   a year from http://astrogeo.org/rfc
+
+
+III. Regularly updated files: 
+=============================
+
+
+1) EOP_SERIES 
+
+   This file is updated daily. The Earth orientation parameters 
+   are derived from analysis of dedicated VLBI observations.
+   There may many ways to generate a priori EOP file. The file
+   provided with VTD distribution is generated at NASA GSFC by
+   processing USNO EOP data file and applying rotations that
+   make it consistent with a priori station and source catalogues.
+
+   The file can be downloaded from http://gemini.gsfc.nasa.gov/500/oper/solve_save_files/last.erp
+
+   Bash-program for updating EOP files is supplied in 
+   support/update_eop_series.sh
+
+2) Atmospheric pressure loading
+
+   These files is updated daily. 
+
+   Visit http://astrogeo.org/aplo for further information where
+   to find data files.
+   For example, here: http://lacerta.gsfc.nasa.gov/aplo/aplo_bds.tar.bz2
+   
+   Bash-program for updating atmospheric pressure loading files 
+   is supplied in support/update_aplo_bds.sh
+
+   Size of aplo_bds data is 320Mb
+
+
+4) IONOSPHERE_DATA_FILE
+
+   These files is updated daily.
+
+   There are several data centers that update ionosphere data in 
+   the ionex format. You need to download them and then transform
+   from ionex format to viono format. This is done by an auxiliary
+   program gti_update. 
+
+   
+   Bash-program for updating ionosphere data files
+   is supplied in support/update_viono.sh
+
+   Date size: data in ionex format: 720 Mb, data in viono format: 320 Mb
+
+5) EXTERNAL_DELAY_DIR
+
+   In 2010 this files were updated once a month.
+   These file may be updated daily in the future.
+
+   The data can be downloaded from http://astrogeo.org/spm
+
+   Size of data in SPD_3D format:     114 Gb
+   Size of data in SPD binary format:  14 Gb

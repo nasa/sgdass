@@ -1,0 +1,36 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+#  Frequency sequence used by Haystack in 2017-2021
+#
+#  Astronomical convention is used for band definition
+#  For instance notation 2004.1 32.0 means the band
+#  that covers range [2004.1, 2036.1] MHz
+#
+#  Last updated by L. Petrov on 2026.01.21_22:11:06
+#
+MOD_NAME  m03
+HDS_NAME  h1
+#
+STATION KOKEE12M  K2  udc_01
+STATION GGAO12M   Gs  udc_01
+STATION MACGO12M  Mg  udc_01
+#
+#  Bnd Low_frq bandwidh
+#
+BAND A  4112.4  32.0     Inv
+BAND A  4144.4  32.0     Inv
+BAND A  4176.4  32.0     Inv
+BAND A  4208.4  32.0     Inv
+BAND A  4368.4  32.0     Inv
+BAND A  4400.4  32.0     Inv
+BAND A  4432.4  32.0     Inv
+BAND A  4464.4  32.0     Inv
+#
+BAND B  7376.4  32.0     Inv
+BAND B  7408.4  32.0     Inv
+BAND B  7440.4  32.0     Inv
+BAND B  7472.4  32.0     Inv
+BAND B  7632.4  32.0     Inv
+BAND B  7664.4  32.0     Inv
+BAND B  7696.4  32.0     Inv
+BAND B  7728.4  32.0     Inv

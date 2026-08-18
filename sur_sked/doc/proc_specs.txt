@@ -1,0 +1,49 @@
+NASA style procedure file for the Field System
+
+The Fields System supports macros called procedures.
+Procedures are split into two classes: 
+
+I)  public procedures that have a defined user interface
+
+II) private procedures called by public procedures.
+    Private procedures should not redefine settings set
+    in the public procedures.
+
+
+There are 7 public procedures with standardized names.
+Of them, 6 procedures are specific for a given hardware mode
+and one procedure defines the observing mode.
+
+Procedures have a predefined prefix, delimiter underscore,
+and 3-letter long suffix. Procedures of only a given hardware
+setup can be used in a given experiment. A given experiment
+can observing in more than one mode.
+
+
+The procedure has suffix _HHH or _MMM. Suffix _HHH corresponds
+to the hardware setup.
+
+preses_HHH:   executes commands at the beginning of a session.
+              Usually preses_HHH is included in sched_initi
+
+setmode_MMM:  executes commands for mode setup. That includes LO setting,
+              IF setting, phase calibration setting, printing the new
+              mode setting, etc. This command is called each time when
+              the mode is changed. It is recommended to put setmode_MMM
+              for the first mode used in the experiment in sched_initi.
+
+setscan_HHH:  execute commands before the scan starts while antenna is slewing
+
+preob_HHH:    execute commands before the scan starts while antenna is onsource
+
+midob_HHH     execute commands that immediately precede recording and 
+              initiate recording.
+
+postob_HHH:   execute commands that stop recording and command 
+              that immediately follow recording, while antenna is on source.
+
+postses_HHH:  execute commands after recording the last scan
+
+All seven procedures should be defined, but some of them can be dummy,
+i.e. enddef immediately follow define. A valid procedure file can have more
+than one setmode_MMM procedure.

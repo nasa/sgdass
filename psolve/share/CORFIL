@@ -1,0 +1,276 @@
+00000 ***********************************************************************
+00000 *                                                                     *
+00000 *  This is a CORFIL file which is used by SOLVE to set up a status of *
+00000 *  calibrations computed by Calc 9.1 and other programs. Calibrations *
+00000 *  (or contributions) are corrections to a theoretical time delay and *
+00000 *  delay rate which are added to the total theoreticals in making     *
+00000 *  equations of conditions. Contributions/calibrations are saved in   *
+00000 *  the database and are added on the fly. Each calibration has an     *
+00000 *  associated lcode: acronym under which it is saved in the database  *
+00000 *  and it has a status: one of Applied, Not applied or Not Available. *
+00000 *  SOLVE supports 4 types of calibrations/contributions:              *
+00000 *                                                                     *
+00000 *  1) Station-dependent non-flyby calibrations. They are applied to   *
+00000 *     all observations of the station. Calibrations are computed      *
+00000 *     for delay and rate. Up to MAX_CAL station-dependent             *
+00000 *     calibrations can be specified.                                  *
+00000 *                                                                     *
+00000 *  2) Station-dependent zenith calibrations. They are multiplied by   *
+00000 *     a mapping function which is currently in use and are applied to *
+00000 *     all observation of the station. Calibrations are computed for   *
+00000 *     delay and rate. Up to MAX_CLZ station-dependent zenith          *
+00000 *     calibrations can be specified.                                  *
+00000 *                                                                     *
+00000 *  3) Observation-dependent calibrations. They are applied for all    *
+00000 *     observations of the session. Calibrations are computed          *
+00000 *     for delay and rate. Up to MAX_CONT observation-dependent        *
+00000 *     calibrations can be specified.                                  *
+00000 *                                                                     *
+00000 *  4) Mode calibrations. They are applied for all observations of the *
+00000 *     session. Calibrations are computed separately for               *
+00000 *       a) group delay at X-band;                                     *
+00000 *       b) phase delay at X-band;                                     *
+00000 *       c) delay rate  at X-band;                                     *
+00000 *       d) group delay at S-band;                                     *
+00000 *       e) phase delay at S-band;                                     *
+00000 *       f) delay rate  at S-band                                      *
+00000 *     and a linear combination of calibrations of the same type is    *
+00000 *     applied in according with the current solution type. Up to      *
+00000 *     MAX_CLM mode calibrations can be specified.                     *
+00000 *                                                                     *
+00000 *  This file is a template. It might be edit and then should be       *
+00000 *  copied to SAVE_DIR. The program solve_reset copies this file to    *
+00000 *  a user scratch directory under the name CORFxx, where xx are user  *
+00000 *  initials. The latter file is actually used by SOLVE: by programs   *
+00000 *  SDBH and ACCOR, unless an environment variable CORFIL is specified.*
+00000 *                                                                     *
+00000 *  CORFIL  specifies names of calibrations, names of the associated   *
+00000 *  lcodes, default status and some other informations.                *
+00000 *                                                                     *
+00000 *  It has the following sections:                                     *
+00000 *    1) Section 20 -- definition of station-dependent calibrations;   *
+00000 *    2) Section 21 -- default status of station-dependent cals;       *
+00000 *    3) Section 30 -- definition of zenith calibrations;              *
+00000 *    4) Section 40 -- definition of observation-dependent cals;       *
+00000 *    5) Section 41 -- default status of observation-dependent cals;   *
+00000 *    6) Section 42 -- the list of observation-dependent calibrations  *
+00000 *                     which have been applied by Calc.                *
+00000 *    7) Section 50 -- definition of mode calibrations.                *
+00000 *    8) Section 51 -- default status of mode calibrations.            *
+00000 *                                                                     *
+00000 *  Comment: MAX_CAL, MAX_CLZ, MAX_CONT and MAX_CLM are defined in     *
+00000 *           ../solve/include/gsfcb.templ                              *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 20                                                         *
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  Enter up to MAX_CAL non-flyby station dependent calibrations,      *
+00000 *  (calibrations at elevation), one per line, numbering them          *
+00000 *  (double digit numbers in columns 4 and 5, single digits in         *
+00000 *  column 5).  Number consecutively, starting with 1.  In columns 8   *
+00000 *  through 15, enter the name of the calibration (8 characters).      *
+00000 *  This name will be used for display (eg, on the ACCOR menu that     *
+00000 *  lets users see what calibrations are turned on).  So users can     *
+00000 *  enter whatever they want. (However, the CORFIL which will be used  *
+00000 *  the program which makes superfiles: liptn must enter specific,     *
+00000 *  standard names in this field, because these names will be written  *
+00000 *  to superfiles and BATCH must match them against names in BATCH     *
+00000 *  control files.)                                                    *
+00000 *  In columns 26-33, enter the data base lcode (8 characters)         *
+00000 *  containing the actual values which will be applied to the          *
+00000 *  theoreticals, if the calibration is turned on.  In columns 43-50,  *
+00000 *  enter the data base LCODE (8 characters) for the list of stations  *
+00000 *  for which the calibration is available. The remaining two fields   *
+00000 *  (columns 58 and 59, and columns 62 and 63), are factors for        *
+00000 *  getting the calibration values into SOLVE with the right signs.    *
+00000 *  The first field handles the values for the first station in an     *
+00000 *  observation, and the second field handles the values for the       *
+00000 *  second station.                                                    *
+00000 *  SDBH reads the calibrations for delay and rates for each station   *
+00000 *  from the data base, multiplies them by the station's factor, and   *
+00000 *  puts these values in the obsfil.  Get_calib then adds the obsfil   *
+00000 *  values to the theoreticals.                                        *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 21                                                         *
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  In each line, list the names of the station dependent calibrations *
+00000 *  or non-flyby) that you want SOLVE to turn on when it reads in a    *
+00000 *  data base that has never been analyzed.                            *
+00000 *  List up to 4 names, in free field format.                          *
+00000 *  Use as many lines (lists) as you want, with each line numbered     *
+00000 *  consecutively, with the line number right justified in column 5.   *
+00000 *                                                                     *
+00000 *  If the data base has been analyzed before,  it will list           *
+00000 *  calibrations that were turned on in the solution that made the     *
+00000 *  version you are reading in.  SDBH will turn on that list.          *
+00000 *  Otherwise, SDBH will use the first list in this section for every  *
+00000 *  station possible. If it won't work for every station, SDBH will    *
+00000 *  try to use the other lists, one by one, for the remaining          *
+00000 *  stations, until some set of calibrations is turned on at every     *
+00000 *  station.                                                           *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 30                                                         *
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  Enter up to MAX_CLZ station dependent zenith calibrations one per  *
+00000 *  line, numbering them in in column 5.  Each calibration should      *
+00000 *  correspond to one of the calibrations in section 20. In columns    *
+00000 *  8-23, enter the 16 character name of the calibration. This name    *
+00000 *  will be used for display (eg, in CNPLT), so users can enter        *
+00000 *  whatever they want.                                                *
+00000 *  In columns 26-33, enter the first data base LCODE of the           *
+00000 *  corresponding calibration in section 20 (the LCODE in columns      *
+00000 *  26-33).  In addition to the elevation calibration values, this     *
+00000 *  LCODE contains the zenith calibration values,                      *
+00000 *  which can be displayed, but not applied to the theoreticals.       *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 40                                                         *
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  Enter up to MAX_CONT observation dependent contributions, one per  *
+00000 *  line. Number them in column 5.  Number consecutively, starting     *
+00000 *  with 1. In columns 8-15, enter the name of the contribution        *
+00000 *  (8 characters). This name will be used for display (eg, on the     *
+00000 *  ACCOR menu that lets users see what contributions are turned on).  *
+00000 *  So users can enter whatever they want.  (However, the CORFIL for   *
+00000 *  the program which makes superfiles: liptn, must enter specific,    *
+00000 *  standard names in this column, so that BATCH can match the         *
+00000 *  superfile contributions with the BATCH control file ones).         *
+00000 *  In columns 26-33 enter the data base LCODE (8 characters) that     *
+00000 *  contains the actual values which will be applied to the            *
+00000 *  theoreticals, if the contribution is turned on.                    *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 41                                                         *
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  This section is analogous to section 21, except that it lists      *
+00000 *  observation dependent contributions, not calibrations, that should *
+00000 *  be turned on for a data base that has not been analyzed.  List     *
+00000 *  up to 4 names per line, in free field format. NOTE:  Any blanks    *
+00000 *  embedded within a name MUST BE replaced by underscores (_), in     *
+00000 *  order to allow proper parsing of the free field format. Use up to  *
+00000 *  15 lines. If the data base has been analyzed, SOLVE will turn on   *
+00000 *  contributions recorded in the data base.  Otherwise, SOLVE will    *
+00000 *  try to turn on the contributions in this section, one list (line)  *
+00000 *  at a time. If none work, then SOLVE will leave every contribution  *
+00000 *  turned off.                                                        *
+00000 *  Program ACCOR has a function "Initialize" for setting all          *
+00000 *  contributions in according with section 41: contributions which    *
+00000 *  are available and listed in the section 41 will be turn on while   *
+00000 *  all other contributions will be turned off.                        *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 42                                                         *
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  This section should contain a number of lines, which will identify *
+00000 *  which observation dependent contributions CALC applied to the      *
+00000 *  theoreticals.  Each line should be numbered consecutively in       *
+00000 *  column 5, and should contain one contribution name in columns      *
+00000 *  8 through 15.                                                      *
+00000 *  GOBCOR in SDBH will take all the contributions listed here out of  *
+00000 *  the theoreticals.                                                  *
+00000 *  IMPORTANT: no checks is done whether the contribution listed in    *
+00000 *  the section 42 has been actually applied by CALC. Please, never    *
+00000 *  change section 42 unless you are absolutely sure that this         *
+00000 *  contribution has been added to the total theoreticals by CALC.     *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 50                                                         *
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  Enter up to 5 mode calibrations, one per line. Number them in      *
+00000 *  column 5 consecutively, starting with 1. In columns 8-15, enter    *
+00000 *  the name of the contribution (8 characters). This name will be     *
+00000 *  used for display (eg, on the ACCOR menu that lets users see what   *
+00000 *  contributions are turned on). So users can enter whatever they     *
+00000 *  want.  (However, the CORFIL for the program which makes            *
+00000 *  superfiles: liptn, must enter specific, standard names in this     *
+00000 *  column, so that BATCH can match the superfile contributions with   *
+00000 *  the BATCH control file ones.) In columns 26-33, enter the data     *
+00000 *  base LCODE (8 characters) that contains the actual values which    *
+00000 *  will be applied to the theoreticals, if the contribution is        *
+00000 *  turned on.                                                         *
+00000 *                                                                     *
+00000 *                                                                     *
+00000 *  Section 51
+00000 *  ~~~~~~~~~~                                                         *
+00000 *                                                                     *
+00000 *  This section is analogous to section 21, except that it lists      *
+00000 *  mode calibrations, not calibrations, that should be turned on for  *
+00000 *  a data base that has not been analyzed.  List up to 4 names per    *
+00000 *  line, in free field format. NOTE:  Any blanks embedded within a    *
+00000 *  name MUST BE replaced by underscores (_), in order to allow proper *
+00000 *  parsing of the free field format. Use up to 5 lines. If the data   *
+00000 *  base has been analyzed, SOLVE will turn on contributions recorded  *
+00000 *  in the data base.  Otherwise, SOLVE will try to turn on the        *
+00000 *  contributions in this section, one list (line) at a time. If none  * 
+00000 *  work, then SOLVE will leave every contribution turned off.         *
+00000 *  Program ACCOR has a function "Initialize" for setting all          *
+00000 *  contributions in according with section 51: contributions which    *
+00000 *  are available and listed in the section 51 will be turn on while   *
+00000 *  all other contributions will be turned off.                        *
+00000 *                                                                     *
+00000 *  ###  ???           CORFIL  v2.2  (c)  L. Petrov  15-JUN-2000  ###  *
+00000 *                                                                     *
+00000 ***********************************************************************
+00000
+
+1000 Section 20
+    1  cable             CABL DEL         CBL STAT        1  -1
+    2  pcal rmv          UNPHASCL                        -1  -1
+    3  Nieltdry          NDRYCONT                         1   1
+    4  Nieltwet          NWETCONT                         1   1
+    5  user cal
+    6  WVR               WVRDELAY         WVR STAT       -1   1
+
+1000 Section 21
+    1  cable                                                                   
+
+1000 Section 30
+    1  WVR @ zenith      WVR DELY
+
+1000  Section 40
+    1  Pol Tide          PTD CONT
+    2  WobXCont          WOBXCONT
+    3  WobYCont          WOBYCONT
+    4  EarthTid          ETD CONT
+    5  Ocean             OCE CONT
+    6  PTideOld          PTOLDCON
+    7  Feed Rot          FEED.COR
+    8  Old EQE           OLDEQCON
+    9  GdsicNut          GDNUTCON
+   10  Wahr Nut          WAHRCONT
+   11  ElastCon          ELASTCON
+   12  C82ETide          C82ETCON
+   13  Axis 2            AXO2CONT
+   14  PermDef           PERMDEF 
+
+1000  Section 41
+    1  Pol_Tide
+    2  WobXCont
+    3  WobYCont
+    4  EarthTid
+    5  Ocean   
+    6  PTideOld          
+    7  Feed Rot
+
+1000  Section 42
+    1  Pol Tide
+    2  WobXCont
+    3  WobYCont
+    4  EarthTid
+
+1000  Section 50
+    1  SourStru          SOURSTRU
+    2  SpurPcal          SPURPCAL
+    3  UserMcal          USERMCAL
+
+1000  Section 51
+    1  UserMcal

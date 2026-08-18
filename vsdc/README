@@ -1,0 +1,16 @@
+  Submission to Data Center utility (VSDC) is a collection
+of programs written in Python3 that is a client part of
+software for submission data, products and miscellaneous
+files to IVS data centers.
+
+  The main program is vsdc.py
+
+  Package vsdc does not require a compilation: it is sufficient
+to untar it to the installation directory and run vsdc_install.py
+vsdc.py requires a configuration file that defines directory names 
+at the local computer and the URLs for submission to the IVS data 
+centers.
+
+  See user_guide.txt for further detail.
+
+

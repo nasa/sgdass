@@ -1,0 +1,935 @@
+Draft of specifications of ANTCAL (ANTenna CALibration) format
+Version 1.0 of 2025.08.14
+
+1. Preamble.
+============
+
+  VLBI system collects baseband data and data from numerous sensors. 
+They include meteo-sensors, the cable calibration unit, total 
+power integrated units, the formatter minus GPS, and others. These data 
+are essential for calibration. For instance, amplitude information is 
+lost in baseband data. Sensors that record total power integrated 
+provide information that is necessary for amplitude calibration.
+
+  Some data from sensors become available through the field system logs, 
+some data are collected by other means. Unfortunately, the format of the 
+sensor data is different in different version and even in different 
+implement of the field system procedures. Parsing raw log files is not 
+a trivial problem, especially from multi-channel sensors. There is 
+a necessity to standardize the output from sensors to facilitate their
+processing and utilization in data analysis and present this output
+in a human readable form.
+
+  The data in ANTCAL format contains the primary information about the
+experiment, history of processing and variables. The current document
+lists all the supported variables. Future version of the format 
+specifications is expected to expand the list of supported variables.
+
+  The data in ANTCAL files are supposed to be processed by software.
+Therefore, versioning is maintained similar to what is done with the 
+geoVLBI database files. The version one originates from a log file.
+Version 2  and later main contain input from other sources, for
+instance another file capturing sensors, results of processing of the
+output of numerical weather model, etc. Processing software may 
+create new variables, modify them, or remove.
+
+2. Introduction to ANTCAL format.
+=================================
+
+  Data in ATNCAL format consist of lines of variable length in the ASCII 
+format. The first line of a valid ANTCAL file has a magic that identifies
+the format name, revision, and the date of the last format definition
+revision. A line that starts with # character, except the first line, 
+is considered as a comment and is not processed by the parser. Each line,
+except the comment line, has two or more words separated by one or more 
+blanks. The first word is a keyword and is terminated by : (colon) 
+character. More than on line with the same keyword is allowed. The order 
+of keywords is either fixed or controlled by other keywords. Most of the 
+keywords define a variable or a variable element. A definition of variable 
+dimension in a form DIMENNSION keyword: xxx should precede definition of 
+its value.
+
+  Many keywords require dates. Date format:   YYYYdMMdDDdHHdmmSS.FF, 
+where YYYY is an integer year, MM is an integer month number with 
+DD is the integer day of the month, HH is an hour, mm is a minute,
+SS is a second, FF is a decimal 1/100 second fraction, and 
+d is a delimiter: any of . (dot) : (column) - (minus) _ (underscore) 
+and T (letter T).
+
+  Example of valid dates: 2020.08.23-22:39:09.97
+                          2020-08-23T22:39:09.97
+                          2020.08.23T22:39:09.97
+                          2020.08.23_22:39:09.97
+                          2020-08-23-22-39-09.97
+
+  Date presents the UTC time tag.
+
+  Some keyword define frequencies. If a frequency is related to a band,
+the central frequency is used.
+
+  The number of blanks between words and word alignment can be arbitrary.
+The generator inserts blanks and aligns words in the best efforts to make
+the file the most readable by a human. ANTCAL format is designed to be parsed
+in one pass and to be greppable. However, the program that generates a file
+ANTCAL should use the same number of blanks to all records of the same type.
+The change of blanks requires a change of the generator version counter.
+The parsing software expects that all records with a given keyword produced
+by a given generator program of a given version to have the same number of
+blanks. Therefore, the parser software can consider contents of a file 
+of a fixed format that depends on the generator and generator version.
+
+  It is assumed that once generated, the data file in ANTCAL format will be 
+processed with some fields added, altered or removed. Keyword PROVENANCE
+traces the history of data processing.
+
+3. Keyword description.
+=========================
+
+3.1  Mandatory keywords.
+------------------------
+
+     STATION: value1  
+         
+        This mandatory keyword defines the IVS station name. Must be in
+        the upper case.
+
+     EXP_CODE: value1  
+         
+        This mandatory keyword defines the experiment code. Must be in 
+        the lower case.
+
+     UTC_MTAI: value1
+
+        This mandatory keyword defines the value of UTC minus TAI function 
+        used by the formatted clock. This values is needed for conversion 
+        if UTC time tag to time. If the UTC jump occurred during the experiment, 
+        normally, it is not immediately applied to the formatter clock and 
+        therefore, it may be different than UTC minus TAI function defined 
+        by the IERS. Units: seconds.
+
+     FILLERS: value1 value2 value3
+
+        This mandatory keyword defines the value of fillers. A filler in the 
+        data record indicates that no valid data were collected.
+
+        value1 defines the filler value for real data
+        value1 defines the filler value for integer data 
+        value1 defines the filler value for character data
+
+     NUM_PROVENANCE: value1
+
+        This mandatory keyword defines the number of provenance blocks. At least 
+        one block is required.
+
+     PROVENANCE: version qualifier value1 [... valuen]
+
+        This mandatory keyword defines the provenance: the origin of the data 
+        and history of modifications. PROVENANCE may have one or more blocks.
+        Each blocks defines a file version. Blocks should follow in the 
+        direct version order: first version 1, then version 2, etc. 
+
+     Support qualifiers:
+
+        PROVENANCE version  GENERATOR: values
+
+          This mandatory qualifiers specifies the name and version of program 
+          that generated the file the specified version. Value should have
+          at least two words. The first value is the program name, the second
+          value is the version name in format YYYYMMDD, where YYYY is year,
+          MM is month and DD is day padded with heading zeros. Secondary
+          version word following these two words are allowed. The value may  
+          have more ten words. 
+
+        PROVENANCE version  COMMAND_LINE: values
+
+          This mandatory qualifiers specifies the command line of a program
+          that generated the file the specified version. The value may have 
+          more ten words.
+
+        PROVENANCE version  REMOVED_VARS:  values
+
+          This optional qualifier specifies the names of the variables
+          that are removed when generating the file the specified version.
+          If no variables is removed, this qualifier can be omitted.
+          All removed variables must be specified.
+
+        PROVENANCE version  MODIFIED_VARS: values
+
+          This optional qualifier specifies the names of the variables
+          that are removed when generating the file the specified version.
+          If no variables is removed, this qualifier can be omitted.
+          All modified variables must be specified.
+
+
+        PROVENANCE version  CREATED_VARS:  values
+
+          This optional qualifier specifies the names of the variables
+          that are created when generating the file the specified version.
+          If no variables is created, this qualifier can be omitted.
+          All created variables must be specified.
+
+        PROVENANCE version  NUM_FILES:       value
+
+          This mandatory qualifier specifies the number of input files used 
+          for processing this version. Following sub-block with three 
+          qualifiers must follow NUM_FILES.
+
+        PROVENANCE version  DATA_TYPE:       file_index value
+
+          This mandatory qualifier specifies the data type of the input 
+          file. The first word specifies the file index in the block,
+          the second word specifies the file format and the format 
+          version.
+
+        PROVENANCE version  DATA_FILE:       file_index value
+
+          This mandatory qualifier specifies the name of the input 
+          file. The first word specifies the file index in the block,
+          the second word specifies the date.
+
+        PROVENANCE version  DATA_CREATED:    file_index value
+
+          This mandatory qualifier specifies the creation date of the input 
+          file. The first word specifies the file index in the block,
+          the second file specifies the date.
+
+        PROVENANCE version  NUM_COMMENTS:    value
+
+          This mandatory qualifier specifies the number of lines with 
+          comments. Value 0 us supported.
+
+        PROVENANCE version  COMMENT:         values
+
+          This optional qualifier specifies the number of lines with 
+          comments. The qualifier can be omitted if NUM_COMMENTS is 
+          equal to zero. More than one value is supported. Parser
+          does not interpret the values and passes to the calling 
+          routine verbatim. The COMMENT qualifier is designed to provide
+          details of the data processing.
+
+
+3.2  Keywords with variable definition.
+---------------------------------------
+
+   A variable may have one or more values. Variables can be 
+scalar, one-dimensional and two-dimensional. A scalar variable
+has only one value. A one-dimensional variable has an array of 
+N values, where N is the dimension. A two-dimensional variable
+is a table of N rows and M columns.
+
+Scalar parameter:          CABLE_SIGN
+One-dimensional variables: CABLE, DATA_ON, FMT2GPS_TIMER, 
+                           FMTGPS, METEO, PC_SENSOR, SEFD, TCAL, 
+                           TP_SENSOR
+Two-dimensional valuables: PCAL, SEFD, TSYS, TPI, TATM, OPACITY. 
+
+   The first dimension of two-dimensional variables runs over epochs.
+The second dimension of two-dimensional variables runs over sensors.
+
+Dimensions of variable is defined in the keyword NUM_var:, 
+where var is the variable name. Format of DIMENSION: keyword:
+
+   DIMENSION: var value1 [value2]
+
+   where value1 defines the 1st dimension of variable and value2
+defines the second dimension. The second dimension can be omitted
+for scalar and one-dimensional variables
+
+All variables should be defined in the preceding PROVENANCE CREATE_VAR
+section and be absent in PROVENANCE REMOVE_VAR section. 
+One-dimensional variables are sorted. Two-dimensional arrays are sorted
+first over sensors and then over epochs. Some elements of two-dimensinonal
+may be underfined.
+
+The number of records of a given variabe is defined by keyword NUM_RECORDS
+
+   NUM_RECORDS: var value
+
+This keyword is optional for scalars and one-dimensional variables, but
+is mandatory for two-dimensional variables. The number of records can
+be less than the product of dimension. That means that some elements of a 
+two-dimensional array are not defined.
+
+   TP_SENSOR:  value1 value2 value3 value4 value5 value6 value7 value8 value9 
+
+      Keyword TP_SENSOR defines total power sensors.
+
+      value1 defines the sensor name. It has a form TP_xxx where xxx is the 
+             1-based index. Heading blanks in xxx are replaced with zeroes. 
+     
+      value2 defines the sensor intermediate frequency. The placement of the 
+             intermediate frequency, low, central, or high frequency is 
+             implementation dependent. Units: MHz.
+
+      value3 defines the sensor local oscillator frequency. Units: MHz.
+
+      value4 defines the sensor central sky frequency. Must be positive. Units: MHz.
+
+      value5 defines the sensor bandwidth. Must be positive. Units: MHz.
+
+      value6 defines polarization. Supported polarization  codes: R, L, H, V, X, Y
+             (in the upper case).
+
+      value7 defines the sensor ID.
+
+      value8 defines the original 1-based index of the sensor. It is 
+             implementation-dependent.
+
+      value9 defines the subband. Supported values: USB and LSB (in the upper case).
+
+
+   PC_SENSOR:  value1 value2 value3 value4 value5 value6
+
+      Keyword PC_SENSOR defines phase calibrator sensors.
+
+      value1 defines the sensor name. It has a form PS_xxx where xxx is the 
+             1-based index. Heading blanks in xxx are replaced with zeroes. 
+
+      value2 defines the sensor central sky frequency. Must be positive. Units: MHz.
+
+      value3 defines polarization. Supported polarization  codes: R, L, H, V, X, Y
+             (in the upper case).
+
+      value4 defines the sensor ID.
+
+      value5 defines the original 1-based index of the sensor. It is 
+             implementation-dependent.
+
+      value6 defines the subband. Supported values: USB and LSB (in the upper case).
+
+
+   FMT2GPS_TIMER: value1 value2
+
+      Keyword FMT2GPS_TIMER defines formatter to GPS timer.
+
+      value1 defines the timer tag. It has a form TMR_xxx where xxx is the
+             1-based index. Heading blanks in xxx are replaced with zeroes.
+
+      value2 defines a board that measured time propagation.
+
+
+   DATA_ON:    value1  value2  value3  value4  value5
+
+      Keyword DATA_ON defines the interval of time the station is on source.
+
+      value1 defines the 1-based epoch index.
+
+      value2 defines the ON  UTC time tag
+
+      value3 defines the OFF UTC time tag
+
+      value4 defines the name of the observed source
+
+      value5 defines the epoch name 
+
+
+   CABLE_SIGN: value1  
+
+      Keyword CABLE_SIGN defines the sign of the cable calibration.
+
+      value1 can be -1 or +1 or 0. In a latter case it means cable calibration
+      is bad and should not be used in data analysis.
+
+   CABLE:     value1 value2 value3 value4 value5 
+
+      Keyword CABLE defines the cable delay: the path delay between
+      the cable calibration unit and the phase calibration unit
+
+      value1 defines the 1-based epoch index.
+
+      value2 defines the UTC time tag
+
+      value3 defines the cable calibration. Units: seconds.
+
+      value4 defines the name of the observed source
+
+      value5 defines the epoch name 
+
+   METEO:     value1 value2 value3 value4 value5 value6 value7 
+
+      Keyword CABLE defines meteorological parameters. 
+
+      value1 defines the 1-based epoch index.
+
+      value2 defines the UTC time tag
+
+      value3 defines the absolute air temperature. Units: K.
+
+      value4 defines the atmospheric pressure. Units: Pa.
+
+      value4 defines the name relative humidity. Units: pro cents.
+
+      value5 defines the name of the observed source.
+
+      value6 defines the epoch name.
+
+   TSYS:    value1 value2 value3 value4 value5 value6 value7 value7
+
+      Keyword TSYS defines measured system temperature.
+
+      value1 defines the 1-based epoch index.
+
+      value2 defines the UTC time tag.
+
+      value3 defines the power sensor index.
+
+      value4 defines the measured system temperature. Units: K.
+
+      value5 defines the antenna azimuth. Units: degrees counted from North to east
+             in a range from 0 to 360 deg.
+
+      value6 defines the antenna elevation above the horizon. Units: degrees.
+
+      value7 defines the name of the observed source.
+
+      value8 defines the epoch name.
+
+
+   TPI:     value1 value2 value3 value4 value5 value6 value7 value8 value9 value10
+
+      Keyword TPI defines the reading of the total power integrated.
+
+      value1  defines the 1-based epoch index.
+
+      value2  defines the UTC time tag.
+
+      value3  defines the power sensor index.
+
+      value4  defines the total the power when the calibrator diode is on. 
+              Units: integer count.
+
+      value5  defines the total the power when the calibrator diode is off. 
+              Units: integer count.
+
+      value6  defines the total the power when the there is no signal.
+              Units: integer count.
+
+      value7  defines the antenna azimuth. Units: degrees counted from North to east
+              in a range from 0 to 360 deg.
+
+      value8  defines the antenna elevation above the horizon. Units: degrees.
+
+      value9  defines the name of the observed source.
+
+      value10 defines the epoch name.
+
+
+   PCAL value1 value2 value3 value4 value5 value6 value7 value8
+
+      Keyword PCAL defines the reading of the phase calibrator signal.
+
+      value1  defines the 1-based epoch index.
+
+      value2  defines the UTC time tag.
+
+      value3  defines the power sensor index.
+
+      value4  defines the amplitude of the phase calibrator signal. 
+              Units: dimensionless in a range of 0 to 1.
+
+      value5  defines the phase of the phase calibrator signal. Units: rad.
+
+      value6  defines the name of the observed source.
+
+      value7  defines the epoch name.
+
+   FMTGPS   value1 value2 value3 value4 value5 value6 value7 value8
+
+      Keyword  FMTGPS defines the difference between formatter time and GPS times.
+
+      value1  defines the 1-based epoch index.
+
+      value2  defines the UTC time tag.
+
+      value3  defines a tag of the timer.
+
+      value4  the difference between formatter time and GPS times. Units: seconds.
+
+      value5  defines the name of the observed source.
+
+      value6  defines the epoch name.
+
+   SEFD     value1 value2 value3 value4 value5 value6 value7 value8 value9 value10
+
+      Keyword  defines the system equivalent flux measurement (SEFD).
+
+      value1  defines the observation index
+
+      value2  defines the UTC time tag.
+
+      value3  defines the power sensor id. 
+
+      value4  defines the SEFD value. Unit: Jy.
+
+      value5  defines the system temperature during the measurement. Unit K.
+
+      value6  defines the calibrator temperature. Units K.
+
+      value7  defines ??.
+
+      value8  defines the antenna azimuth. Units: degrees counted from North to east
+              in a range from 0 to 360 deg.
+
+      value9  defines the antenna elevation above the horizon. Units: degrees.
+
+      value10 defines the name of the observed source.
+
+   TCAL     value1 value2 
+
+      Keyword  defines the antenna calibrator temperature.
+
+      value1  defines the power sensor index.
+
+      value2  defines the value of the calibrator diode temperature. Unit: K.
+
+   TATM     value1 value2 value3 value4 value5 value6 value7 value8
+
+      Keyword TATM defines brightness temperature of the atmosphere.
+
+      value1 defines the 1-based epoch index.
+
+      value2 defines the UTC time tag.
+
+      value3 defines the power sensor index.
+
+      value4 defines the brightness temperature of the atmosphere. Units: K.
+
+      value5 defines the antenna azimuth. Units: degrees counted from North to east
+             in a range from 0 to 360 deg.
+
+      value6 defines the antenna elevation above the horizon. Units: degrees.
+
+      value7 defines the name of the observed source.
+
+      value8 defines the epoch name.
+
+
+   OPACITY  value1 value2 value3 value4 value5 value6 value7 value8
+
+      Keyword OPACITY defines atmospheric opacity.
+
+      value1 defines the 1-based epoch index.
+
+      value2 defines the UTC time tag.
+
+      value3 defines the power sensor index.
+
+      value4 defines the atmospheric opacity. Units: dimensionless.
+
+      value5 defines the antenna azimuth. Units: degrees counted from North to east
+             in a range from 0 to 360 deg.
+
+      value6 defines the antenna elevation above the horizon. Units: degrees.
+
+      value7 defines the name of the observed source.
+
+      value8 defines the epoch name.
+
+
+   TMOD:    value1 value2 value3 value4 value5 value6 value7 value7
+
+      Keyword TMOD defines the modeled system temperature that is generated 
+              from measured system temperature as a result of data analysis.
+
+      value1 defines the 1-based epoch index.
+
+      value2 defines the UTC time tag.
+
+      value3 defines the power sensor index.
+
+      value4 defines the modeled system temperature. Units: K.
+
+      value5 defines the antenna azimuth. Units: degrees counted from North to east
+             in a range from 0 to 360 deg.
+
+      value6 defines the antenna elevation above the horizon. Units: degrees.
+
+      value7 defines the name of the observed source.
+
+      value8 defines the epoch name.
+
+
+4. Keyword order.
+-----------------
+
+     The order mandatory keywords is fixed:
+
+     STATION:
+     EXP_CODE:
+     UTC_MTAI:
+     FILLERS:
+     NUM_PROVENANCE:
+     PROVENANCE:
+     {
+       DIM_keyword:
+       keyword:
+     } in the order of CREATED_VARS from all version
+
+     The order of data within the PROVENANCE block:
+
+       GENERATOR:
+       COMMAND_LINE:
+       CREATED_VARS:
+       CREATION_DATE:
+       NUM_FILES:
+           data sub-block
+       NUM_COMMENTS:
+       COMMENT:
+
+     The order of data in the sub-block of the PROVENANCE block:
+         
+          DATA_TYPE:
+          DATA_FILE:
+          DATA_CREATED:
+
+     The order of variables is in the same order as they determined
+     in the PROVENANCE block. The variables determined in the next
+     PROVENANCE block are placed after the variables defined in the 
+     previous block. If the variable is defined in more than once
+     PROVENANCE blocks, then the placement defined in the first block
+     is preserved.
+
+
+================================ Example: =======================
+
+# ANTCAL Format  Version  1.0  of 2025.08.14
+#
+STATION:  RAEGYEB 
+#
+EXP_CODE: yyt002
+#
+#         sec
+#
+UTC_MTAI: -37.0
+#
+# Filler values
+#           Real  Integer  Character        
+#
+FILLERS:   -99.9  -999     n/a
+#
+NUM_PROVENANCE: 3
+#
+PROVENANCE: 1 GENERATOR:      log2ant 20250820 SgLib-0.7.1 (Linganore Creek)
+PROVENANCE: 1 COMMAND_LINE:   log2ant -t dat -t met -t tsys -t tpi -t sefd -t phc -t fmt -t cbl -a -u -o /anc/temp/vlbi/vo5204gs_orig.anc_00049807 /q0/fs_logs/2025/vo5204/vo5204gs_full.log
+PROVENANCE: 1 CREATED_VARS:   DATA_ON CABLE_SIGN CABLE METEO TP_SENSOR TSYS TPI PC_SENSOR PCAL FMTGPS
+PROVENANCE: 1 CREATION_DATE:  2020.07.13-15:30:00
+PROVENANCE: 1 NUM_FILES:      1
+PROVENANCE: 1 DATA_TYPE:      1 FS_LOG Version 9.12.11
+PROVENANCE: 1 DATA_FILE:      1 /tmp/yyt002yj_full.log
+PROVENANCE: 1 DATA_CREATED:   1 2020.07.13-15:00:00
+PROVENANCE: 1 NUM_COMMENTS:   1
+PROVENANCE: 1 COMMENT:        Original field system log
+#
+PROVENANCE: 2 GENERATOR:      tcal_import Version 0.23
+PROVENANCE: 2 COMMAND_LINE:   tcal_import /tmp/yyt002yj_v001.anc /tmp/yj_tcal.txt
+PROVENANCE: 2 CREATED_VARS:   TCAL
+PROVENANCE: 2 REMOVED_VARS:   TANT
+PROVENANCE: 2 MODIFIED_VARS:  TSYS
+PROVENANCE: 2 CREATION_DATE:  2020.07.15-15:31:00
+PROVENANCE: 2 NUM_FILES:      2
+PROVENANCE: 2 DATA_TYPE:      1 ANTCAL Version of 0.93 of 2020.08.23
+PROVENANCE: 2 DATA_FILE:      1 /tmp/yyt002yj_v001.anc
+PROVENANCE: 2 DATA_CREATED:   1 2020.07.15-15:30:00
+PROVENANCE: 2 DATA_TYPE:      2 Version of 1.00 of 2020.08.01
+PROVENANCE: 2 DATA_FILE:      2 /tmp/yj_tcal.txt
+PROVENANCE: 2 DATA_CREATED:   2 2020.01.20-12:00:00
+PROVENANCE: 2 NUM_COMMENTS:   1
+PROVENANCE: 2 COMMENT:        Tcal was imported
+#
+PROVENANCE: 3 GENERATOR:      atp_import_opa 4.0  version of 2016.08.24
+PROVENANCE: 2 COMMAND_LINE:   atp_import_opa /tmp/yyt002yj_v001.anc /tmp/yyt002yj_v002.anc 
+PROVENANCE: 3 CREATED_VARS:   OPACITY TATM
+PROVENANCE: 3 CREATION_DATE:  2020.08.15-15:32:00
+PROVENANCE: 3 NUM_FILES:      9
+PROVENANCE: 3 DATA_TYPE:      1 ANTCAL Version of 0.93 of 2020.08.23
+PROVENANCE: 3 DATA_FILE:      1 /tmp/yyt002yj_v002.anc
+PROVENANCE: 3 DATA_CREATED:   1 2020.07.15-15:24:50
+PROVENANCE: 3 DATA_TYPE:      2 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      2 /imsl/heb/geosfpit/2020/d/d_20200713_0000.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   2 2020.07.13-12:05:35
+PROVENANCE: 3 DATA_TYPE:      3 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      3 /imsl/heb/geosfpit/2020/d/d_20200713_0300.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   3 2020.07.13-12:05:35
+PROVENANCE: 3 DATA_TYPE:      4 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      4 /imsl/heb/geosfpit/2020/d/d_20200713_0600.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   4 2020.07.13-12:05:35
+PROVENANCE: 3 DATA_TYPE:      5 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      5 /imsl/heb/geosfpit/2020/d/d_20200713_0900.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   5 2020.07.13-12:05:35
+PROVENANCE: 3 DATA_TYPE:      6 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      6 /imsl/heb/geosfpit/2020/d/d_20200713_1200.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   6 2020.07.13-12:05:35
+PROVENANCE: 3 DATA_TYPE:      7 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      7 /imsl/heb/geosfpit/2020/d/d_20200713_1500.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   7 2020.07.13-12:05:35
+PROVENANCE: 3 DATA_TYPE:      8 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      8 /imsl/heb/geosfpit/2020/d/d_20200713_1800.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   8 2020.07.13-12:05:35
+PROVENANCE: 3 DATA_TYPE:      9 HEB Format version of 2013.01.30
+PROVENANCE: 3 DATA_FILE:      9 /imsl/heb/geosfpit/2020/d/d_20200713_2100.heb.bz2
+PROVENANCE: 3 DATA_CREATED:   9 2020.07.13-12:05:35
+PROVENANCE: 3 NUM_COMMENTS:   2
+PROVENANCE: 3 COMMENT:        Here detail of data processing follows.
+PROVENANCE: 3 COMMENT:        More then one comment line is allowed. 
+#
+DIMENSION: DATA_ON 4
+#
+#     EpochInd  Data_on UTC start       Data_on UTC end         Source    EpochName
+#               YYYY.DD.MM-hh:mm:ss.ff  YYYY.DD.MM-hh:mm:ss.ff  
+#               
+DATA_ON:     1  2020.07.13-11:30:00.00  2020.07.13-11:31:00.00  0300+470  no00001 
+DATA_ON:     2  2020.07.13-11:33:43.00  2020.07.13-11:34:33.00  0149+218  no00002 
+DATA_ON:     3  2020.07.13-11:35:19.00  2020.07.13-11:36:09.00  0400+258  no00003 
+DATA_ON:     4  2020.07.13-11:36:59.00  2020.07.13-11:37:59.00  0134+329  no00004 
+#
+DIMENSION: CABLE_SIGN 1
+#
+#        EpochInd    Data_on UTC start       Cable_sign
+#                    YYYY.DD.MM-hh:mm:ss.ff  
+#
+CABLE_SIGN:     1    2020.07.13-11:30:00.00  +1
+#
+#
+DIMENSION: CABLE 5
+#
+#    EpochInd  UTC Date                 Cable delay   Source    EpochName
+#              YYYY.DD.MM-hh:mm:ss.ff   s
+#              
+CABLE:      1  2020.07.13-11:30:08.23  -1.33790E-10   0300+470  no00001 
+CABLE:      2  2020.07.13-11:33:51.41  -1.39957E-10   0149+218  no00002 
+CABLE:      3  2020.07.13-11:35:26.58  -1.37330E-10   0400+258  no00003 
+CABLE:      4  2020.07.13-11:37:08.33  -1.42391E-10   0134+329  no00004 
+CABLE:      5  2020.07.13-11:38:50.07  -1.59800E-10   2351+456  no00005 
+#
+DIMENSION: METEO 8
+#
+#    EpochInd  UTC Date                Temp      Pres   Humid  Source    EpochName
+#              YYYY.DD.MM-hh:mm:ss.ff    K        Pa     %
+#              
+METEO:      1  2020.07.13-11:30:08.23  301.55  91620.0  32.0   0300+470  no00001 
+METEO:      2  2020.07.13-11:33:51.41  301.75  91620.0  32.0   0149+218  no00002    
+METEO:      3  2020.07.13-11:35:26.58  301.85  91620.0  32.0   0400+258  no00003 
+METEO:      4  2020.07.13-11:37:08.33  302.15  91620.0  31.0   0134+329  no00004 
+METEO:      5  2020.07.13-11:38:50.07  302.65  91610.0  30.0   2351+456  no00005 
+METEO:      6  2020.07.13-11:40:35.10  301.35  91620.0  32.0   0212+735  no00006 
+METEO:      7  2020.07.13-11:42:10.28  300.55  91610.0  34.0   2007+777  no00007 
+METEO:      8  2020.07.13-11:43:55.18  300.75  91610.0  32.0   1637+574  no00008 
+#
+DIMENSION: TP_SENSOR 32
+#
+#           SensInd IF_Freq   LO_Freq    Sky_frq_Cen Bdw    Pol  SensorId    IF# SideBand
+#                     MHz       MHz         MHz      MHz
+#
+TP_SENSOR:  TP_001   -1.00     7652.00     3032.40   32.00   H     00a0        1   USB
+TP_SENSOR:  TP_002   -1.00     7652.00     3064.40   32.00   H     01a0        2   USB
+TP_SENSOR:  TP_003   -1.00     7652.00     3096.40   32.00   H     02a0        3   USB
+TP_SENSOR:  TP_004   -1.00     7652.00     3224.40   32.00   H     03a0        4   USB
+TP_SENSOR:  TP_005   -1.00     7652.00     3320.40   32.00   H     04a0        5   USB
+TP_SENSOR:  TP_006   -1.00     7652.00     3384.40   32.00   H     05a0        6   USB
+TP_SENSOR:  TP_007   -1.00     7652.00     3448.40   32.00   H     06a0        7   USB
+TP_SENSOR:  TP_008   -1.00     7652.00     3480.40   32.00   H     07a0        8   USB
+TP_SENSOR:  TP_009   -1.00     7652.00     3032.40   32.00   H     08a0        9   USB
+TP_SENSOR:  TP_010   -1.00     7652.00     3064.40   32.00   H     09a0       10   USB
+TP_SENSOR:  TP_011   -1.00     7652.00     3096.40   32.00   H     10a0       11   USB
+TP_SENSOR:  TP_012   -1.00     7652.00     3224.40   32.00   H     11a0       12   USB
+TP_SENSOR:  TP_013   -1.00     7652.00     3320.40   32.00   H     12a0       13   USB
+TP_SENSOR:  TP_014   -1.00     7652.00     3384.40   32.00   H     13a0       14   USB
+TP_SENSOR:  TP_015   -1.00     7652.00     3448.40   32.00   H     14a0       15   USB
+TP_SENSOR:  TP_016   -1.00     7652.00     3480.40   32.00   H     15a0       16   USB
+TP_SENSOR:  TP_017   -1.00     7652.00     3032.40   32.00   V     00a1        1   USB
+TP_SENSOR:  TP_018   -1.00     7652.00     3064.40   32.00   V     01a1        2   USB
+TP_SENSOR:  TP_019   -1.00     7652.00     3096.40   32.00   V     02a1        3   USB
+TP_SENSOR:  TP_020   -1.00     7652.00     3224.40   32.00   V     03a1        4   USB
+TP_SENSOR:  TP_021   -1.00     7652.00     3320.40   32.00   V     04a1        5   USB
+TP_SENSOR:  TP_022   -1.00     7652.00     3384.40   32.00   V     05a1        6   USB
+TP_SENSOR:  TP_023   -1.00     7652.00     3448.40   32.00   V     06a1        7   USB
+TP_SENSOR:  TP_024   -1.00     7652.00     3480.40   32.00   V     07a1        8   USB
+TP_SENSOR:  TP_025   -1.00     7652.00     3032.40   32.00   V     08a1        9   USB
+TP_SENSOR:  TP_026   -1.00     7652.00     3064.40   32.00   V     09a1       10   USB
+TP_SENSOR:  TP_027   -1.00     7652.00     3096.40   32.00   V     10a1       11   USB
+TP_SENSOR:  TP_028   -1.00     7652.00     3224.40   32.00   V     11a1       12   USB
+TP_SENSOR:  TP_029   -1.00     7652.00     3320.40   32.00   V     12a1       13   USB
+TP_SENSOR:  TP_030   -1.00     7652.00     3384.40   32.00   V     13a1       14   USB
+TP_SENSOR:  TP_031   -1.00     7652.00     3448.40   32.00   V     14a1       15   USB
+TP_SENSOR:  TP_032   -1.00     7652.00     3480.40   32.00   V     15a1       16   USB
+#
+DIMENSION: TS_SENSOR 32
+#
+#           SensInd IF_Freq   LO_Freq    Sky_frq_Cen Bdw    Pol  SensorId    IF# SideBand
+#                     MHz       MHz         MHz      MHz
+#
+TS_SENSOR:  TS_001   -1.00     7652.00     3032.40   32.00   H     00a0        1   USB
+TS_SENSOR:  TS_002   -1.00     7652.00     3064.40   32.00   H     01a0        2   USB
+TS_SENSOR:  TS_003   -1.00     7652.00     3096.40   32.00   H     02a0        3   USB
+TS_SENSOR:  TS_004   -1.00     7652.00     3224.40   32.00   H     03a0        4   USB
+TS_SENSOR:  TS_005   -1.00     7652.00     3320.40   32.00   H     04a0        5   USB
+TS_SENSOR:  TS_006   -1.00     7652.00     3384.40   32.00   H     05a0        6   USB
+TS_SENSOR:  TS_007   -1.00     7652.00     3448.40   32.00   H     06a0        7   USB
+TS_SENSOR:  TS_008   -1.00     7652.00     3480.40   32.00   H     07a0        8   USB
+#
+DIMENSION:   TSYS  2  32
+NUM_RECORDS: TSYS     64
+#
+#  EpochInd   UTC_Time_tag            SenInd   Tsys  Azimuth   Elevat    Sou_name   Epoch_name 
+#             YYYY.DD.MM-hh:mm:ss.ff            K    deg       deg                            
+#                                                                                             
+TSYS:     1   2020.07.13-11:30:00.17  TS_001   41.6  123.5678  82.2345   0300+470   no00001   
+TSYS:     1   2020.07.13-11:30:00.17  TS_002   42.6  123.5678  82.2345   0300+470   no00001   
+TSYS:     1   2020.07.13-11:30:00.17  TS_003   42.3  123.5678  82.2345   0300+470   no00001   
+TSYS:     1   2020.07.13-11:30:00.17  TS_004   42.3  123.5678  82.2345   0300+470   no00001   
+TSYS:     2   2020.07.13-11:31:00.17  TS_001   41.7  123.5671  82.2349   0300+470   no00002   
+TSYS:     2   2020.07.13-11:31:00.17  TS_002   42.3  123.5671  82.2349   0300+470   no00002   
+TSYS:     2   2020.07.13-11:31:00.17  TS_003   42.1  123.5671  82.2349   0300+470   no00002   
+TSYS:     2   2020.07.13-11:31:00.17  TS_004   42.4  123.5671  82.2349   0300+470   no00002   
+#
+DIMENSION: TPI 2   32
+#
+#  EpochInd   UTC_Time_tag            SenInd   TpiOn  TpiOff TpiZero Azimuth   Elevat   Sou_name  Epoch_name   
+#             YYYY.DD.MM-hh:mm:ss.ff                                  deg      deg                              
+#                                                                                                                
+TPI:      1   2020.07.13-11:30:00.17  TP_001   16082  15877     0    123.5678  82.4567  0300+470  no00001
+TPI:      1   2020.07.13-11:30:00.17  TP_002   22175  21973     0    123.5678  82.4567  0300+470  no00001
+TPI:      1   2020.07.13-11:30:00.17  TP_003  329887 330013     0    123.5678  82.4567  0300+470  no00001     
+TPI:      1   2020.07.13-11:30:00.17  TP_004    -999   -999     0    123.5678  82.4567  0300+470  no00001     
+TPI:      2   2020.07.13-11:31:00.17  TP_001   16082  15877     0    123.5678  82.4567  0300+470  no00001
+TPI:      2   2020.07.13-11:31:00.17  TP_002   22175  21973     0    123.5678  82.4567  0300+470  no00001
+TPI:      2   2020.07.13-11:31:00.17  TP_003  329887 330013     0    123.5678  82.4567  0300+470  no00001     
+TPI:      2   2020.07.13-11:31:00.17  TP_004    -999   -999     0    123.5678  82.4567  0300+470  no00001     
+#
+#
+DIMENSION: PC_SENSOR 2
+#
+#           SensInd   Sky_frq_Cen   Pol  SensorId    IF# SideBand
+#                      MHz
+#
+PC_SENSOR:  PC_001    3030.00        H   0a0000       1  USB
+PC_SENSOR:  PC_002    3035.00        H   0a0005       2  USB
+#
+DIMENSION: PCAL 10422  32
+#
+#     EpochInd  UTC_Time_tag            SensInd    Ampl     Phase      Sou_name    Epoch_name   
+#              YYYY.DD.MM-hh:mm:ss.ff                      rad [0,2pi)                         
+#                                                                                          
+PCAL:     1    2020.07.13-11:30:00.17  PC_001   0.0007982  6.223       0300+470    no00001     
+PCAL:     1    2020.07.13-11:30:00.17  PC_002   0.0117662  0.243       0300+470    no00001     
+PCAL:     1    2020.07.13-11:30:00.17  PC_003   0.0117662  0.243       0300+470    no00001     
+PCAL:     2    2020.07.13-11:31:00.17  PC_001   0.0007982  6.223       0300+470    no00001     
+PCAL:     2    2020.07.13-11:31:00.17  PC_002   0.0117662  0.243       0300+470    no00001     
+PCAL:     2    2020.07.13-11:31:00.17  PC_003   0.0117662  0.243       0300+470    no00001     
+#
+#
+DIMENSION: FMT2GPS_TIMER 4
+#                 Timer Board
+#                   tag  ID
+#
+FMT2GPS_TIMER:  TMR_001   a
+FMT2GPS_TIMER:  TMR_002   b
+FMT2GPS_TIMER:  TMR_003   c
+FMT2GPS_TIMER:  TMR_004   d
+#
+#
+DIMENSION: FMTGPS 8
+#
+#    EpochInd   UTC_Time_tag            Timer    Formatter minus    Src_name   Epoch_name
+#                                                GPS time tag
+#               YYYY.DD.MM-hh:mm:ss.ff                 s
+#
+FMTGPS:     269 2020.01.22-01:34:22.14  TMR_001  -1.073164094e-04   1128+385   022-0134
+FMTGPS:     269 2020.01.22-01:34:22.14  TMR_002  -1.073203093e-04   1128+385   022-0134
+FMTGPS:     269 2020.01.22-01:34:22.14  TMR_003  -1.073164094e-04   1128+385   022-0134
+FMTGPS:     269 2020.01.22-01:34:22.14  TMR_004  -1.073203093e-04   1128+385   022-0134
+FMTGPS:     269 2020.01.22-01:34:23.19  TMR_001  -1.072773448e-04   1128+385   022-0134
+FMTGPS:     269 2020.01.22-01:34:23.19  TMR_002  -1.072773448e-04   1128+385   022-0134
+FMTGPS:     269 2020.01.22-01:34:23.19  TMR_003  -1.072773448e-04   1128+385   022-0134
+FMTGPS:     269 2020.01.22-01:34:23.19  TMR_004  -1.072773448e-04   1128+385   022-0134
+#
+DIMENSION:   SEFD  2  32
+NUM_RECORDS: SEFD     64
+#
+#  EpochInd   UTC_Time_tag            SensID SEFD    Tsys    Tcal    Trat   Az     El       Source
+#             YYYY.DD.MM-hh:mm:ss.ff         Jy      K       K              deg    deg
+#
+SEFD:     1   2020.07.13-11:30:00.17  1l    1864.1   82.28   74.647  1.09   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  8l    1718.1   76.83   67.249  1.07   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  1u    1871.2   78.46   75.900  1.14   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  2u    1845.1   81.30   67.315  1.09   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  3u    1676.9   74.09   72.087  1.08   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  4u    1600.4   70.88   65.289  1.08   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  5u    1594.0   71.55   63.021  1.07   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  6u    1691.5   67.85   76.442  1.19   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  7u    1698.0   72.87   71.764  1.12   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  8u    1689.0   75.56   65.599  1.07   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  9u    4359.4  207.9   143.831  1.05   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  au    3612.0  188.0   131.822  0.96   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  bu    3146.6  168.4   127.030  0.93   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  cu    3118.7  165.4   149.082  0.94   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  du    2795.4  142.9   144.963  0.98   1.2000 26.3000  casa
+SEFD:     1   2020.07.13-11:30:00.17  eu    2745.9  178.9   108.150  0.77   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  1l    1864.1   82.28   74.647  1.09   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  8l    1718.1   76.83   67.249  1.07   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  1u    1871.2   78.46   75.900  1.14   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  2u    1845.1   81.30   67.315  1.09   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  3u    1676.9   74.09   72.087  1.08   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  4u    1600.4   70.88   65.289  1.08   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  5u    1594.0   71.55   63.021  1.07   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  6u    1691.5   67.85   76.442  1.19   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  7u    1698.0   72.87   71.764  1.12   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  8u    1689.0   75.56   65.599  1.07   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  9u    4359.4  207.9   143.831  1.05   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  au    3612.0  188.0   131.822  0.96   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  bu    3146.6  168.4   127.030  0.93   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  cu    3118.7  165.4   149.082  0.94   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  du    2795.4  142.9   144.963  0.98   1.2000 26.3000  casa
+SEFD:     2   2020.07.14-11:30:00.17  eu    2745.9  178.9   108.150  0.77   1.2000 26.3000  casa
+#
+#  DATA BELOW DO NOT COME FROM LOGS, but from the antcal analysis programs:
+#  ================================
+#
+DIMENSION:   TCAL 3
+NUM_RECORDS: TCAL 3
+#
+#       SensInd  Tcal
+#                K
+#
+TCAL:   TP_001   1.000  
+TCAL:   TP_002   1.050  
+TCAL:   TP_003   1.010  
+#
+DIMENSION:   OPACITY 2 32
+NUM_RECORDS: OPACITY   64
+#
+#     EpochInd  UTC_Time_tag           SensInd  Opacity Azimuth   Elevat   Sou_name  Epoch_name    
+#               YYYY.DD.MM-hh:mm:ss.f                    deg      deg      
+#
+OPACITY:     1  2020.07.13-11:30:00.17  TP_001  0.0009  -123.5678 82.4567  0300+470  no00001
+OPACITY:     1  2020.07.13-11:30:00.17  TP_002  0.0019  -123.5678 82.4567  0300+470  no00001
+OPACITY:     1  2020.07.13-11:31:00.17  TP_001  0.0008  -123.4321 82.8901  0300+470  no00002
+OPACITY:     1  2020.07.13-11:31:00.17  TP_002  0.0018  -123.4321 82.8901  0300+470  no00002
+#
+DIMENSION:   TATM 3   32
+NUM_RECORDS: TATM     96
+#
+#  EpochInd   UTC_Time_tag            SensInd   Tatm   Azimuth  Elevat   Sou_name  Epoch_name    
+#             YYYY.DD.MM-hh:mm:ss.ff             K      deg     deg                              
+#                                                                                                 
+TATM:     1   2020.07.13-11:30:00.17   TP_001   1.6   -123.5678 82.4567  0300+470  no00001
+TATM:     1   2020.07.13-11:30:00.17   TP_002   1.8   -123.5678 82.4567  0300+470  no00001
+TATM:     1   2020.07.13-11:30:00.17   TP_003   1.9   -123.5678 82.4567  0300+470  no00001
+TATM:     2   2020.07.13-11:31:00.17   TP_001   2.6   -123.5678 82.1234  0300+470  no00002
+TATM:     2   2020.07.13-11:31:00.17   TP_002   2.8   -123.5678 82.1234  0300+470  no00002
+TATM:     2   2020.07.13-11:31:00.17   TP_003   2.9   -123.5678 82.1234  0300+470  no00002
+#
+#
+DIMENSION:   TMOD 3   32
+NUM_RECORDS: TMOD      6
+#
+#  EpochInd   UTC_Time_tag            SensInd   TMOD   Azimuth  Elevat   Epoch_name  Sou_name    
+#             YYYY.DD.MM-hh:mm:ss.ff             K      deg     deg                              
+#                                                                                                 
+TMOD:     1   2020.07.13-11:30:00.17  TP_001   44.1  123.5678  82.2345   no00001     0300+470   
+TMOD:     1   2020.07.13-11:30:00.17  TP_002   44.2  123.5678  82.2345   no00001     0300+470   
+TMOD:     1   2020.07.13-11:30:00.17  TP_003   44.0  123.5678  82.2345   no00001     0300+470   
+TMOD:     1   2020.07.13-11:31:00.17  TP_001   44.1  321.5678  82.6789   no00001     0300+470   
+TMOD:     1   2020.07.13-11:31:00.17  TP_002   44.2  321.5678  82.6789   no00001     0300+470   
+TMOD:     1   2020.07.13-11:31:00.17  TP_003   44.0  321.5678  82.6789   no00001     0300+470   
+#

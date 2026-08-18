@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+#  2018.04.12  pet Changed AZ_RANGE
+#
+SHORT_NAME:  YARRA12M  Yg
+LAST_UPDATE: YARRA12M  2018.04.12
+COORD:       YARRA12M  meters    -2388895.618  5043349.923 -3078591.425
+MOUNT:       YARRA12M  char       ALTAZ
+SLEW_AZ:     YARRA12M  deg/sec    5.0
+SLEW_EL:     YARRA12M  deg/sec    1.0
+ACCL_AZ:     YARRA12M  deg/sec^2  1.3
+ACCL_EL:     YARRA12M  deg/sec^2  1.3
+TSETTLE_AZ:  YARRA12M  sec        2.0
+TSETTLE_EL:  YARRA12M  sec        2.0
+EL_MIN:      YARRA12M  deg        5.0
+EL_MAX:      YARRA12M  deg       88.0
+AZ_RANGE:    YARRA12M  deg      -270.0 -90.0  90.0 270.0
+RECORDER:    YARRA12M  char      mark5
+PREOB:       YARRA12M  sec       10.0
+POSTOB:      YARRA12M  sec        2.0

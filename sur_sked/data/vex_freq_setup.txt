@@ -1,0 +1,40 @@
+*
+*------------------------------------------------------------------------------
+$FREQ;
+*
+def GEO1K;
+*
+* (2bits/sample)
+*
+     sample_rate = 512.000 Ms/sec;  
+     chan_def = &R1: 21971.000000 MHz: U: 16.00 MHz: &S01 : &BBCa : &NoCal;
+     chan_def = &R1: 22003.000000 MHz: U: 16.00 MHz: &S02 : &BBCa : &NoCal;
+     chan_def = &R1: 22035.000000 MHz: U: 16.00 MHz: &S03 : &BBCa : &NoCal;
+     chan_def = &R1: 22067.000000 MHz: U: 16.00 MHz: &S04 : &BBCa : &NoCal;
+     chan_def = &R1: 22099.000000 MHz: U: 16.00 MHz: &S05 : &BBCa : &NoCal;
+     chan_def = &R1: 22131.000000 MHz: U: 16.00 MHz: &S06 : &BBCa : &NoCal;
+     chan_def = &R1: 22163.000000 MHz: U: 16.00 MHz: &S07 : &BBCa : &NoCal;
+     chan_def = &R1: 22195.000000 MHz: U: 16.00 MHz: &S08 : &BBCa : &NoCal;
+     chan_def = &R1: 22227.000000 MHz: U: 16.00 MHz: &S09 : &BBCa : &NoCal;
+     chan_def = &R1: 22259.000000 MHz: U: 16.00 MHz: &S10 : &BBCa : &NoCal;
+     chan_def = &R1: 22291.000000 MHz: U: 16.00 MHz: &S11 : &BBCa : &NoCal;
+     chan_def = &R1: 22323.000000 MHz: U: 16.00 MHz: &S12 : &BBCa : &NoCal;
+     chan_def = &R1: 22355.000000 MHz: U: 16.00 MHz: &S13 : &BBCa : &NoCal;
+     chan_def = &R1: 22387.000000 MHz: U: 16.00 MHz: &S14 : &BBCa : &NoCal;
+     chan_def = &R1: 22419.000000 MHz: U: 16.00 MHz: &S15 : &BBCa : &NoCal;
+     chan_def = &R1: 22451.000000 MHz: U: 16.00 MHz: &S16 : &BBCa : &NoCal;
+enddef;
+*
+*------------------------------------------------------------------------------
+$IF;
+*
+def IF_K;
+    if_def = &IF_R1: B1: L: 16800.0 MHz: U ;
+enddef;
+*
+*------------------------------------------------------------------------------
+$BBC;
+*
+def BBC1;
+    BBC_assign = &BBCa:  1: &IF_R1;
+enddef;

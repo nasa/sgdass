@@ -1,0 +1,63 @@
+UPWEI                                                      UPWEI Ver. 2000.03.30
+
+       Procedure for weights update.
+
+       Description of menu items.
+       같같같같같같같같같같같같�
+
+(H) -- Put on-line help on the screen, which you are reading just now.
+
+(I) -- Start doing iterative calculation of reweight constants. Up to
+       UPWEI_MAXIT iterations will be made unless convergence 
+       criterion will be reached: ratio of chi_square to its 
+       mathematical expectation will differ from unity by less than 
+       UPWEI_CHITOL parameters for all baselines not including 
+       a) baselines which has less than NEQU_MIN used observations; 
+       b) baselines which has applied reweight constant equal to 
+       floor.
+
+(M) -- Set maximum number of iterations in the range [1, 32767].
+
+(U) -- Update weights only once. Only one iteration of the calculation
+       reweight correction will be made.
+
+(T) -- Set tolerance factor in the range [0.0001, 1.0]. This quantity 
+       is used during iterative weights update. Iterations will be 
+       stopped when the ratio of chi_square to its mathematical 
+       expectation will differ from unity by less than tolerance 
+       factor for all baselines.
+
+(N) -- Re-read reweight constants from NAMFIL. It will substitute the 
+       constants currently applied to the weights.
+
+(E) -- Enter initial weights. Initial corrections (the same for all 
+       baselines) to weights may be entered. It will substitute the 
+       correction currently applied to the weights. Initial weights
+       should be in the range [0, 10**6] psec.
+
+(L) -- Set floor of reweight constants in the range [0, 300] psec.
+       UPWEI never sets reweight constant less than the specified 
+       floor. If correction which provides the ratio of chi-square 
+       to its mathematical expectation for the baseline under 
+       consideration should have value less than floor, then UPWEI 
+       sacrifices the criterion of chi-square and sets reweight 
+       quantity to the floor value forcible. 
+
+(V) -- Switch of verbose mode. If verbose mode is switched on then
+       more verbose information is printed at the screen and in 
+       the spool file during work of UPWEI.
+
+(B) -- Baseline-dependent mode is switched on. The set 
+       baseline-dependent constants will be determined for.
+
+(G) -- Global mode is switched on. One baseline-independent constants 
+       will be determined for.
+
+(D) -- File statistics in working directory UPWEIxx will be created and
+       its content will rewritten to the spool file and then displayed 
+       at the screen. It contains number of used observations, w.r.m.s, 
+       applied weights corrections and the ratio of chi-square to
+       its mathematical expectation for all baselines, sources 
+       separately and for all observations together.
+    
+(O) -- Return back to the calling program.

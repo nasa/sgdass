@@ -1,0 +1,33 @@
+# VLBI station parameters Format 2022.04.03
+#
+# 2026.04.09   Created. Email of Masafumi-san of 2026.04.09 
+# 2026.06.25   Updated station position at 2000.0 epoch from rfc_2026b solution
+# 2026.07.16   Updated  TSETTLE_EL based on email from sugawara.ami@jaxa.jp
+# 2026.07.20   Confirmed slewing acceleration
+#
+SHORT_NAME:    MISASA54  M5
+LAST_UPDATE:   MISASA54  2026.05.04
+COORD:         MISASA54  meters    -3854372.377     3427836.853     3741813.438
+MOUNT:         MISASA54  char       ALTAZ
+#
+SLEW_AZ:       MISASA54  deg/sec    1.0
+SLEW_EL:       MISASA54  deg/sec    1.0
+ACCL_AZ:       MISASA54  deg/sec^2  1.0
+ACCL_EL:       MISASA54  deg/sec^2  1.0
+TSETTLE_AZ:    MISASA54  sec       10.0
+TSETTLE_EL:    MISASA54  sec       10.0
+#
+EL_MIN:        MISASA54  deg        7.5
+EL_MAX:        MISASA54  deg       85.0
+AZ_RANGE:      MISASA54  deg      -45.0  45.0  315.0  405.0
+RECORDER:      MISASA54  char      mark5
+PREOB:         MISASA54  sec       10.0
+POSTOB:        MISASA54  sec        2.0
+#
+HOR_AZIM:      MISASA54  deg        0.0   5.0  10.0  15.0  20.0  25.0  30.0  35.0  40.0  45.0  50.0  55.0  60.0  65.0  70.0  75.0  80.0  85.0  90.0  95.0 100.0 105.0 110.0 115.0 120.0 125.0 130.0 135.0 140.0 145.0 150.0 155.0 160.0 165.0 170.0 175.0 180.0 185.0 190.0 195.0 200.0 205.0 210.0 215.0 220.0 225.0 230.0 235.0 240.0 245.0 250.0 255.0 260.0 265.0 270.0 275.0 280.0 285.0 290.0 295.0 300.0 305.0 310.0 315.0 320.0 325.0 330.0 335.0 340.0 345.0 350.0 355.0 359.0 360.0
+HOR_ELEV:      MISASA54  deg       10.06 10.26 10.48 10.71 10.95 11.21 11.49 11.77 12.03 12.26  5.55  5.44  5.06  4.26  4.26  4.26  4.26  4.26  4.26  4.26  4.72  4.72  6.73  7.00  7.00  7.00  7.00  7.00  7.00  7.00  7.35  7.83  7.83  6.73  5.80  5.22  5.17  5.83  6.06  6.39  7.18  7.58  8.12  8.12  7.59  7.73  8.26  8.26  6.94  5.49  4.39  3.84  3.49  3.06  2.32  1.28  0.44  0.08  7.0  7.46  8.07  8.38  8.66  8.98  9.16  9.24  9.29  9.33  9.43  9.56  9.71  9.87 10.02 10.06 
+STOW_AZIM      MISASA54  deg       80.0
+STOW_ELEV      MISASA54  deg       80.0
+#
+CLOCK_DATES:   MISASA54  sec        0.0    2049.12.31
+CLOCK_OFFSET:  MISASA54  sec        0.0

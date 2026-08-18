@@ -1,0 +1,18 @@
+REPA Configuration file. Format version of 2006.06.01 
+#
+#  Template REPA Configuration 
+#
+#  Last update: 25-MAY-2006 10:41:59
+#
+Good_Color:          1        ! "green"
+Bad_Color:           3        ! "red"
+Unrc_Color:         13        ! "black"
+Marked_Color:       13        ! "black"
+Box_plot:           Good   
+Default_Baseline:   All    
+Default_Argument:   Time   
+Default_Value:      Delay  
+Default_Mode:       DiaGi  
+Box_Symmetric:      No 
+Inquiry_Data:       OBS_TYPE, OBS_INDEX, BAS_NAME, SOUR_NAME, TIME_LONG, OBSERVABLE, QUAL_CODE, SNR
+Marked_Source:      No

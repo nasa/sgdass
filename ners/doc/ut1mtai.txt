@@ -1,0 +1,8 @@
+Program ut1mtai retrieves antle UT1 minus TAI for the currnet
+epoch from the Network Earth Rotation Service (NERS) server and 
+prints it in stdout. Units: s
+
+Usage:
+
+   utcmtai [-h]
+

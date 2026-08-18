@@ -1,0 +1,1 @@
+0 * * * * /data11/mk4/utils/db_import/geo_import_cron.sh

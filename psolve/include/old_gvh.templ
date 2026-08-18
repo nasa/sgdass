@@ -1,0 +1,268 @@
+!
+! >>>>> INCLUDE-BLOCK with description of data structures used by
+!       GVH ( Geo VLBI Handler )
+!
+!       gvh.i  2001.11.20 v 1.0  Leonid Petrov  12-OCT-2007 14:14:23
+!
+        CHARACTER  GVH__LABEL*25, GVH__AGV_LABEL*64, GVH__PGV_LABEL*64, & 
+     &             GVH__BGV_LABEL_BIG_ENDIAN*128,    & 
+     &             GVH__BGV_LABEL_LITTLE_ENDIAN*128
+!
+! ----- DEfine different format labels
+!
+        PARAMETER  ( GVH__LABEL = 'GVH release of 2005.11.22' )
+        PARAMETER  ( GVH__AGV_LABEL = &
+     &  'AGV format of 2005.01.14                                        ' )
+        PARAMETER  ( GVH__PGV_LABEL = &
+     &  'PGV format of 2005.01.14                                        ' )
+        PARAMETER  ( GVH__BGV_LABEL_BIG_ENDIAN = &
+     &  'BGV format of 2005.01.14 Address: 64_bit_IEEE-754 Align: 64_bits'// &
+     &  ' Endian: Big                                                    ' )
+        PARAMETER  ( GVH__BGV_LABEL_LITTLE_ENDIAN = &
+     &  'BGV format of 2005.01.14 Address: 64_bit_IEEE-754 Align: 64_bits'// &
+     &  ' Endian: Little                                                 ' )
+!
+        INTEGER*4  GVH__MSEG, GVH__MKWD, GVH__MTIT, GVH__MTOC, GVH__MSLOTS, &
+     &             GVH__UNDEFINED, GVH__INITIALIZED, GVH__MANDATORY, &
+     &             GVH__POPULATED, GVH__MOBS, GVH__MSTA, GVH__MTYPE, &
+     &             GVH__C1, GVH__I2, GVH__I4, GVH__R4, GVH__R8, GVH__I8, &
+     &             GVH__C1_LEN, GVH__I2_LEN, GVH__I4_LEN, GVH__R4_LEN, &
+     &             GVH__R8_LEN, GVH__I8_LEN, GVH__AD_LEN, &
+     &             GVH__MCLASS, GVH__SES, GVH__SCA, GVH__STA, GVH__BAS, &
+     &             GVH__A_MPREA, GVH__A_MTEXT, GVH__L_TEXT, GVH__MDIM
+!
+        PARAMETER  ( GVH__MSEG = 16 )
+        PARAMETER  ( GVH__MKWD = 64 )
+        PARAMETER  ( GVH__MTIT = 256 )
+        PARAMETER  ( GVH__MTOC = 512 )
+        PARAMETER  ( GVH__MSLOTS = 16384 )
+        PARAMETER  ( GVH__MOBS   = 256*1024 )
+        PARAMETER  ( GVH__UNDEFINED   = 0          )
+        PARAMETER  ( GVH__INITIALIZED = 1032414892 )
+        PARAMETER  ( GVH__POPULATED   = 1032414894 )
+        PARAMETER  ( GVH__MANDATORY   = 1032414896 )
+        PARAMETER  ( GVH__MSTA    =   32 )
+	PARAMETER  ( GVH__A_MPREA =  128 )
+	PARAMETER  ( GVH__A_MTEXT = 8192 )
+	PARAMETER  ( GVH__L_TEXT  =  256 )
+	PARAMETER  ( GVH__MDIM    = 1048576 ) ! maximum dimension
+!
+        PARAMETER  ( GVH__MTYPE = 6 )
+        PARAMETER  ( GVH__C1 = 1   )
+        PARAMETER  ( GVH__I2 = 2   )
+        PARAMETER  ( GVH__I4 = 3   )
+        PARAMETER  ( GVH__R4 = 4   )
+        PARAMETER  ( GVH__R8 = 5   )
+        PARAMETER  ( GVH__I8 = 6   )
+!
+        PARAMETER  ( GVH__C1_LEN = 1 )
+        PARAMETER  ( GVH__I2_LEN = 2 )
+        PARAMETER  ( GVH__I4_LEN = 4 )
+        PARAMETER  ( GVH__R4_LEN = 4 )
+        PARAMETER  ( GVH__R8_LEN = 8 )
+        PARAMETER  ( GVH__I8_LEN = 8 )
+        PARAMETER  ( GVH__AD_LEN = 4 )
+!
+	CHARACTER  GVH__KEYWORD_DEL*1, GVH__VALUE_DEL*1,  &
+      &            GVH__RECORD_DEL*1,  GVH__CHAPTER_DEL*1  
+        PARAMETER  ( GVH__KEYWORD_DEL = CHAR(10) )
+        PARAMETER  ( GVH__VALUE_DEL   = CHAR(26) )
+        PARAMETER  ( GVH__RECORD_DEL  = CHAR(10) )
+        PARAMETER  ( GVH__CHAPTER_DEL = CHAR(26) )
+!
+        INTEGER*4  GVH__TEMP1$$
+        INTEGER*4  GVH__TYPE_INT(GVH__MTYPE)   ! Array of integer codes
+        CHARACTER  GVH__TYPE_CHR(GVH__MTYPE)*2 ! Array of character codes
+        INTEGER*4  GVH__TYPE_LEN(GVH__MTYPE)   ! Array of size of one element
+        DATA       ( GVH__TYPE_INT(GVH__TEMP1$$), GVH__TYPE_CHR(GVH__TEMP1$$), &
+     &               GVH__TYPE_LEN(GVH__TEMP1$$), GVH__TEMP1$$=1,GVH__MTYPE ) &
+     &             / &
+     &                GVH__C1,  'C1',  GVH__C1_LEN, &
+     &                GVH__I2,  'I2',  GVH__I2_LEN, &
+     &                GVH__I4,  'I4',  GVH__I4_LEN, &
+     &                GVH__R4,  'R4',  GVH__R4_LEN, &
+     &                GVH__R8,  'R8',  GVH__R8_LEN, &
+     &                GVH__I8,  'I8',  GVH__I8_LEN  &
+     &             /
+!
+        PARAMETER  ( GVH__SES = 81 )
+        PARAMETER  ( GVH__SCA = 82 )
+        PARAMETER  ( GVH__STA = 83 )
+        PARAMETER  ( GVH__BAS = 84 )
+!
+        PARAMETER  ( GVH__MCLASS = 4 )
+        INTEGER*4  GVH__CLASS_INT(GVH__MCLASS)  ! Array of integer codes
+        CHARACTER  GVH__CLASS_CHR(GVH__MTYPE)*3 ! Array of size of one element
+        DATA       ( GVH__CLASS_INT(GVH__TEMP1$$), GVH__CLASS_CHR(GVH__TEMP1$$), &
+     &               GVH__TEMP1$$=1,GVH__MCLASS ) &
+     &             / &
+     &                GVH__SES,  'SES', &
+     &                GVH__SCA,  'SCA', &
+     &                GVH__STA,  'STA', &
+     &                GVH__BAS,  'BAS' &
+     &             /
+        INTEGER*4    GVH__NMLCODE
+        PARAMETER  ( GVH__NMLCODE = 6 ) ! Amount of mandatory lcodes
+!
+! ----- List of mandatory lcodes
+!
+        CHARACTER    GVH__MLCODE(GVH__NMLCODE)*8, GVH__RESERVED*8
+        DATA       ( GVH__MLCODE(GVH__TEMP1$$), GVH__TEMP1$$=1,GVH__NMLCODE ) &
+     &             / &
+     &               'NOBS_STA', &
+     &               'NUMB_OBS', &
+     &               'NUMB_SCA', &
+     &               'NUMB_STA', &
+     &               'OBS_TAB ', &
+     &               'SITNAMES'  &
+     &             /
+        PARAMETER  ( GVH__RESERVED = 'REserved' )
+        INTEGER*4  GVH__GET, GVH__PUT
+        PARAMETER  ( GVH__GET = 956398217 ) ! Operation code: GET
+        PARAMETER  ( GVH__PUT = 956398219 ) ! Operation code: PUT
+!
+        TYPE      GVH_PREA__STRU
+            ADDRESS__TYPE  ADR
+            INTEGER*4      LEN
+            INTEGER*4      NKWD
+            INTEGER*4      KWD_LEN(GVH__MKWD)
+            ADDRESS__TYPE  KWD_ADR(GVH__MKWD)
+            INTEGER*4      VAL_LEN(GVH__MKWD)
+            ADDRESS__TYPE  VAL_ADR(GVH__MKWD)
+        END TYPE  GVH_PREA__STRU  
+!
+        TYPE      GVH_TEXT__STRU
+            ADDRESS__TYPE  ADR
+            INTEGER*4      LEN
+            INTEGER*4      NTIT
+            INTEGER*4      TITLE_LEN(GVH__MTIT)
+            ADDRESS__TYPE  TITLE_ADR(GVH__MTIT)
+            INTEGER*4      BODY_LEN(GVH__MTIT)
+            ADDRESS__TYPE  BODY_ADR(GVH__MTIT)
+        END TYPE  GVH_TEXT__STRU  
+!
+        TYPE      GVH_TOCS__STRU
+            ADDRESS__TYPE  ADR
+            INTEGER*4      LEN
+            INTEGER*4      STATUS
+            INTEGER*4      NTOC
+        END TYPE  GVH_TOCS__STRU  
+!
+        TYPE      GVH_DATA__STRU
+            ADDRESS__TYPE  ADR
+            INTEGER*4      LEN
+        END TYPE  GVH_DATA__STRU  
+!
+        TYPE      GVH_HEAP__STRU
+            ADDRESS__TYPE  ADR
+            INTEGER*4      LEN
+        END TYPE  GVH_HEAP__STRU  
+!
+        TYPE      GVH_CACHE__STRU
+            INTEGER*4      NUM_OBS
+            INTEGER*4      NUM_SCA
+            INTEGER*4      NUM_STA
+            INTEGER*4      NOBS_STA(GVH__MSTA)
+            CHARACTER      C_STA(GVH__MSTA)*8
+            INTEGER*4      NUM_LCODE
+            INTEGER*4      OBS_STATUS
+            INTEGER*4      OBS_LEN
+            ADDRESS__TYPE  OBS_ADR
+            INTEGER*4      LCODE_STATUS
+            INTEGER*4      LCODE_LEN
+            ADDRESS__TYPE  LCODE_ADR
+        END TYPE  GVH_CACHE__STRU  
+!
+        TYPE      GVH_OBS__STRU
+            INTEGER*4  IND_SCA
+            INTEGER*4  IND_STA1
+            INTEGER*4  IND_STA2
+            INTEGER*4  POS_STA1
+            INTEGER*4  POS_STA2
+        END TYPE  GVH_OBS__STRU  
+!
+        INTEGER*4    GVH__LCODE1_LEN, GVH__LCODE2_LEN
+        PARAMETER  ( GVH__LCODE1_LEN = 112 ) ! hard coded
+        TYPE      GVH_LCODE1__STRU
+            CHARACTER      LCODE*8
+            CHARACTER      DESCR*80
+            INTEGER*4      CLASS
+            INTEGER*4      TYP
+            INTEGER*4      DIMS(2)
+            ADDRESS__TYPE  ADR_DATA
+            INTEGER*4      LEN_DATA
+        END TYPE  GVH_LCODE1__STRU  !  GVH_LCODE1__STRU  !
+!
+        PARAMETER  ( GVH__LCODE2_LEN = 128 ) ! hard coded
+        TYPE      GVH_LCODE2__STRU
+            CHARACTER      LCODE*8
+            CHARACTER      DESCR*80
+            INTEGER*4      CLASS
+            INTEGER*4      TYP
+            INTEGER*4      DIMS(2)
+            INTEGER*4      LEN_REC
+            INTEGER*4      LEN_DATA
+	    INTEGER*4      SEG_IND
+            INTEGER*4      NUM_FIELDS
+            ADDRESS__TYPE  ADR_DATA
+            ADDRESS__TYPE  ADR_CONV
+        END TYPE  GVH_LCODE2__STRU  !  GVH_LCODE2__STRU  !
+!
+        TYPE      GVH__STRU
+            INTEGER*4     TEMP_FLAG
+            INTEGER*4     NSEG
+            INTEGER*4     SEG
+            CHARACTER     FILENAME(GVH__MSEG)*256
+            CHARACTER     OLD_FILENAME(GVH__MSEG)*256
+            TYPE ( GVH_PREA__STRU  ) ::  PREA(GVH__MSEG)
+            TYPE ( GVH_TEXT__STRU  ) ::  TEXT(GVH__MSEG)
+            TYPE ( GVH_TOCS__STRU  ) ::  TOCS(GVH__MSEG)
+            TYPE ( GVH_DATA__STRU  ) ::  DATA(GVH__MSEG)
+            TYPE ( GVH_HEAP__STRU  ) ::  HEAP(GVH__MSEG)
+            TYPE ( GVH_CACHE__STRU ) ::  CACHE
+	    INTEGER*8      LCODE_CACHE_I8(GVH__MTOC)
+	    INTEGER*4      IND_LCODE_CACHE(GVH__MTOC)
+            ADDRESS__TYPE  MEMADR_ORIG(GVH__MSLOTS)
+            ADDRESS__TYPE  MEMADR(GVH__MSLOTS)
+            INTEGER*4      MEMLEN(GVH__MSLOTS)
+            INTEGER*4      DMA
+            INTEGER*4      DMS
+	    LOGICAL*4      ENDIAN_SWAP
+	    INTEGER*4      STATUS 
+        END TYPE  GVH__STRU  !  GVH__STRU  !
+!
+        CHARACTER    GVH__PREA*4, GVH__TEXT*4, GVH__TOCS*4, GVH__DATA*4, &
+     &               GVH__HEAP*4
+        PARAMETER  ( GVH__PREA = 'PREA' )
+        PARAMETER  ( GVH__TEXT = 'TEXT' )
+        PARAMETER  ( GVH__TOCS = 'TOCS' )
+        PARAMETER  ( GVH__DATA = 'DATA' )
+        PARAMETER  ( GVH__HEAP = 'HEAP' )
+!
+        TYPE      GVH_PREF__STRU
+            CHARACTER  NAME*4
+            INTEGER*4  LEN
+        END TYPE  GVH_PREF__STRU  
+!
+        TYPE      GVH_DESC__STRU
+            INTEGER*4  ADR
+            INTEGER*4  DIMS(2)
+        END TYPE  GVH_DESC__STRU  
+!
+        TYPE      GVH_LCD__STRU
+	    INTEGER*4  IND_TOC
+	    INTEGER*4  IND_SEG
+	    CHARACTER  LCODE*8
+        END TYPE  GVH_LCD__STRU
+!
+        TYPE      GVH_LCT__STRU
+	    INTEGER*8 LCODE_I8
+	    INTEGER*4 IND_LCODE
+        END TYPE  GVH_LCT__STRU
+!
+	INTEGER*4  GVH__CRT, GVH__APP
+	PARAMETER  ( GVH__CRT = 2001 )
+	PARAMETER  ( GVH__APP = 2002 )
+!
+! <<<<< end of INCLUDE-BLOCK  gvh.i
+!

@@ -1,0 +1,29 @@
+                        DiaGI. Command usage.
+                        같같같같같같같같같같�
+The following keys and mouse buttons are bound to DiaGi commands:
+
+<Left/Mouse>    Inquire of the coordinate of the point where cursor is pointed;
+<Middle/Mouse>  Changes of the boundary of the plotting box nearest to cursor;
+<Right/Mouse><Right/Mouse>  Terminate execution DiaGI;
+            B   Change error bar style for the current function (colour);
+            C   Change the current function (colour);
+            E   Terminate execution DiaGI and come back to the calling program;
+            I   Set up initial plotting parameters;
+            L   Change line style for the current function (colour);
+            M   Set minimal plotting box to include all points;
+            O   Change overplot mode;
+            P   Change point style for the current function (colour);
+            Q   Terminate execution DiaGI and come back to the calling program;
+            R   Redraw the plot;
+            S   Save current plot in file;
+            T   Change the title of the plot;
+            U   Change label of arguments units;
+            V   View plotting values for the current function (colour);
+            W   Change line width for the current function (colour);
+            X   Terminate execution DiaGI and come back to the calling program;
+     <CNTRL/P>  Printing the plot;
+            ?   Display help information.
+Enter          
+               1 -- to read DiaGI User guide; 
+               2 -- to read verbose descriptions of DiaGI command;
+any other symbol -- to return to the plot.

@@ -1,0 +1,188 @@
+#!/bin/csh -f
+#
+# %%
+#
+#      PLEASE DON'T EDIT THIS FILE!
+#      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# ************************************************************************
+# *                                                                      *
+# *   C-shell program solve launches either interactive or Post-Solve.   *
+# *                                                                      *
+# *   Usage: psolve <Solve_initials> [<control_file>] [verbosity_level]  *
+# *                                                                      *
+# *   If only one argument is supplied then interactive Post-Solve under *
+# *   solve user initials specified by the first argument is launched.   *
+# *                                                                      *
+# *   If two or three arguments are supplied then batch Post-Solve under *
+# *   solve user initials supplied by the first argument is launched.    *
+# *   The second argument specifies the name of the control file.        *
+# *                                                                      *
+# *   The third argument can take values:                                *
+# *     "verbose" -- (Default) Post-Solve prints some information        *
+# *                  messages.                                           *
+# *     "silent"  -- Post-Solve doesn't prints information messages.     *
+# *     "verbose-autorestart" -- The same as "verbose". If restart is    *
+# *                              possible, it will be done automatically *
+# *                              without dialogue with                   *
+# *     "silent-autorestart"  -- The same as "silent". If restart is     *
+# *                              possible, it will be done automatically *
+# *                              without dialogue with                   *
+# *     "verbose-norestart"   -- The same as "verbose". Solution         *
+# *                              will start a new regardless, whether    *
+# *                              restart is possible or not.             *
+# *     "silent-norestart"    -- The same as "solent". Solution          *
+# *                              will start a new regardless, whether    *
+# *                              restart is possible or not.             *
+# *                                                                      *
+# *   C-shell program returns                                            *
+# *   0 if solve terminated successfully. "successfully" means that no   *
+# *     error status was set. It does not mean whether Post-Solve        *
+# *     actually produced good solution. Moreover, in many cases         *
+# *     Post-Solve doesn't set error code. It means that Post-Solve      *
+# *     successfully started. Check $WORK_DIR/STATxx file if you need    *
+# *     more information about Post-Solve success or failure.            *
+# *   1 if no parameters were supplied.                                  *
+# *   2 is not enough parameters were supplied.                          *
+# *   3 wring third parameter.                                           *
+# *  64 unrecognized error.                                              *
+# *                                                                      *
+# *  ### 26-JUL-2000     psolve    v3.2 (c)  L. Petrov  12-JUN-2021 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+if ( ${?SOLVE_BIN} == 0 ) then
+     set SOLVE_BIN = "%SOLVE_PROG_DIR_VAL%"
+endif
+set solve_status = 64
+set noenter      = no
+#
+switch ( $#argv )
+  case 0:
+#
+# -- No arguments
+#
+     echo "Usage: psolve <Solve_initials> [<control_file>] [noenter]"
+     set solve_status = 1
+     breaksw
+  case 1:
+#
+# -- Only one argument: user initialis -- it means interactive run
+#
+     if ( $1 == "-v" || $1 == "--version" ) then
+          echo "%SOLVE_VERSION%"
+          exit 0
+     endif
+     ${SOLVE_BIN}/enter $1 0 0 f 0 1 1
+     set solve_status = $status
+     breaksw
+  case 2:
+#
+# -- Two arguments: user initials and control file -- it means batch run
+#
+     if (-f $2) then
+         echo "batch SOLVE started on " \
+             `uname -n` " at " `date '+%H:%M:%S %d-%h-%Y' | tr "[a-z]" "[A-Z]"`
+         echo "Control file $2 "
+	 if ( $noenter == "yes" ) then
+              ${SOLVE_BIN}/BATCH 0 1 0 0 $1 $2
+              set solve_status = $status
+	    else
+              ${SOLVE_BIN}/enter $1 $2 0 b 0 1 1
+              set solve_status = $status
+         endif
+      else
+        echo "Control file $2 was not found"
+        set solve_status = 2
+     endif
+     breaksw
+  case 3:
+#
+# -- Three arguments: user initials, control file and a flag (silent mode)
+#
+     if ( "$3" != "verbose"             && \
+          "$3" != "silent"              && \
+          "$3" != "verbose-autorestart" && \
+          "$3" != "silent-autorestart"  && \
+          "$3" != "verbose-norestart"   && \
+          "$3" != "silent-norestart"       ) then
+#
+          echo "solve: yours 3d artument is $3"
+          echo "solve: only values verbose, silent, verbose-autorestart, silent-autorestart, verbose-norestart, silent-norestart are allowed in the third argument"
+          set solve_status = 3
+          breaksw
+     endif
+#
+     if (-f $2) then
+         switch ( $3 )
+           case "verbose":
+              setenv BATCH_SILENT NO
+	      if ( $noenter == "yes" ) then
+                   ${SOLVE_BIN}/BATCH 0 1 0 0 $1 $2
+                   set solve_status = $status
+		 else
+                   ${SOLVE_BIN}/enter $1 $2 0 b 0 1 1
+                   set solve_status = $status
+              endif
+              breaksw
+           case "silent":
+              setenv BATCH_SILENT YES
+	      if ( $noenter == "yes" ) then
+                   ${SOLVE_BIN}/enter 0 0 0 0 $1 $2 
+		 else
+                   ${SOLVE_BIN}/enter $1 $2 0 b 0 1 1
+              endif
+              set solve_status = $status
+              breaksw
+           case "verbose-autorestart":
+              setenv BATCH_SILENT NO
+	      if ( $noenter == "yes" ) then
+                   ${SOLVE_BIN}/BATCH 0 1 0 0 $1 $2
+                   set solve_status = $status
+                 else
+                   ${SOLVE_BIN}/enter $1 $2 0 a 0 1 1
+                   set solve_status = $status
+              endif
+              breaksw
+           case "silent-autorestart":
+              setenv BATCH_SILENT YES
+	      if ( $noenter == "yes" ) then
+                   ${SOLVE_BIN}/BATCH 0 0 0 0 $1 $2
+                   set solve_status = $status
+                 else
+                   ${SOLVE_BIN}/enter $1 $2 0 a 0 1 1
+                   set solve_status = $status
+              endif
+              breaksw
+           case "verbose-norestart":
+              setenv BATCH_SILENT NO
+	      if ( $noenter == "yes" ) then
+                   ${SOLVE_BIN}/BATCH 1 0 0 0 $1 $2
+                   set solve_status = $status
+                 else
+                   ${SOLVE_BIN}/enter $1 $2 0 n 0 1 1
+                   set solve_status = $status
+              endif
+              breaksw
+           case "silent-norestart":
+              setenv BATCH_SILENT YES
+	      if ( $noenter == "yes" ) then
+                   ${SOLVE_BIN}/BATCH 1 0 0 0 $1 $2
+                   set solve_status = $status
+                 else
+                   ${SOLVE_BIN}/enter $1 $2 0 n 0 1 1
+                   set solve_status = $status
+              endif
+              breaksw
+         endsw
+      else
+        echo "Control file $2 was not found"
+        set solve_status = 2
+     endif
+     breaksw
+  default:
+     echo "Usage: psolve <Solve_initials> [<control_file>] [verbosity_level]"
+     set solve_status = 1
+     breaksw
+endsw
+exit $solve_status

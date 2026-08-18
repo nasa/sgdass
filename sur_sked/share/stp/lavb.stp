@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    LAVB      char       H6
+LAST_UPDATE:   LAVB      char       2025.03.23
+COORD:         LAVB      meters     -1449702.361    -4975248.593     3709173.926
+MOUNT:         LAVB      char       ALTAZ
+#
+SLEW_AZ:       LAVB      deg/sec    9.9
+SLEW_EL:       LAVB      deg/sec    9.9
+ACCL_AZ:       LAVB      deg/sec^2  9.9
+ACCL_EL:       LAVB      deg/sec^2  9.9
+TSETTLE_AZ:    LAVB      sec        0.0
+TSETTLE_EL:    LAVB      sec        0.0
+#
+EL_MIN:        LAVB      deg        2.0
+EL_MAX:        LAVB      deg       90.0
+AZ_RANGE:      LAVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      LAVB      char      hrtr
+BACKEND:       LAVB      char      hrtr
+SETMODE:       LAVB      sec        0.0
+PREOB:         LAVB      sec        0.0
+POSTOB:        LAVB      sec        0.0
+#
+HOR_AZIM:      LAVB      deg        0.0  360.0
+HOR_ELEV:      LAVB      deg        2.0   2.0
+STOW_AZIM:     LAVB      deg        0.0
+STOW_ELEV:     LAVB      deg       90.0
+#
+CLOCK_DATES:   LAVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  LAVB      sec        0.0

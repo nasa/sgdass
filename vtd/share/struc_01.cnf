@@ -1,0 +1,27 @@
+STRUC_CONTROL  Format version of 2004.03.01 
+#
+#  Control file for computation of source structure contribution to
+#  phase and group delay
+#
+#  Format:
+#
+#   1:8   A8    Source name
+#  11:11  A1    Band
+#  14:21  A8    Usage. Supported keywords: 
+#               MAP_FITS -- delay is used computed by Fourtre transfrom of the mape
+#               CLC_FITS -- delay is computed from Clean components
+#  24:42  A19   Begin date of the map validity
+#  44:62  A19   End date of the map validity
+#  65:71  F7.1  X pixel coordinate of the phase center
+#  73:79  F7.1  Y pixel coordinate of the phase center
+#  82:    A     File with the source map in fits format
+#
+#  L. Petrov  27-FEB-2004 14:59:58
+#
+# Source  B  Usage     Date_Begin          Date_End               Pixel_Center   File_name
+#
+0836+182  X  MAP_FITS  2001.01.01_00:00:00 2005.01.01_00:00:00    128.0   129.0  /lyra3/vtd_files/0836+182_X.fit
+0839+187  X  MAP_FITS  2001.01.01_00:00:00 2005.01.01_00:00:00    128.0   129.0  /lyra3/vtd_files/0839+187_X.fit
+OJ287     X  MAP_FITS  2001.01.01_00:00:00 2005.01.01_00:00:00    128.0   129.0  /lyra3/vtd_files/OJ287_X.fit
+#
+STRUC_CONTROL  Format version of 2004.03.01 

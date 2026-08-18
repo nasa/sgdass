@@ -1,0 +1,119 @@
+UPWEI                                                      UPWEI Ver. 2000.03.30
+                     |같같같같같같같같같같같같�|
+                     |      RELEASE NOTE       |
+                     |_________________________|
+ 
+       Procedure for weights update.
+
+      I. Release  UPWEI 1.4  of 30-MAR-2000
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Program  UPWEI  is the part of SOLVE software for geodetic VLBI
+  data analysis. UPWEI calculates corrections to weights which being 
+  quadratically added to the uncertainties of the observables 
+  obtained from correlator modify a priori weights by such a way 
+  that the ratio of weighted sum of post-fit residuals (chi-square) 
+  to its mathematical expectation becomes to be near to unity. 
+  Weights to be applied in solving equations of conditions may be 
+  presented in such a form: 
+
+              wgt = 1/sqrt ( sigma_apr**2 + rewgt**2 )
+
+  where sigma_apr is uncertainty of the observable (or ionosphere 
+  free linear combination of observables) and rewgt is the quantity
+  to be sought. Two modes of calculation of those quantities is 
+  supported: global mode and baseline mode. Rewgt is the same for 
+  all used observations in global mode. Reweight constant rewgt(ibl)
+  under condition that the ratio of weighted sum of post-fit 
+  residuals to its mathematical expectation over observations of the
+  baseline is found separately for each baseline in 'baseline mode' 
+  of calculation. 
+
+    Reweight correctios are calculated iteratively.
+    The way of calulation at each iuteration is the following:
+      0) If no solution (with current weights) is available solution 
+         is prodiced, residuals are calculated and their statistcs.
+      1) Corrections to weights are calculated using the following
+         expression:
+
+               chisq_i -  [ n_i - summa ( a_i(T)*V*a_i * w_i**2 ) ]
+         q_i = ---------------------------------------------------
+               summa ( w_i**2 ) - summa ( a_i(T)*V*a_i * w_i**4 ) 
+         
+         IF ( q >= 0 ) THEN
+              rwt_i =   sqrt (  q_i )
+	   ELSE
+              rwt_i = - sqrt ( -q_i )
+         END IF
+
+         Where 
+           a) chisq_i -- chi-square over observations of the 
+                         i-th baseline;
+           b) n_i     -- the number of obvservatoins at the i-th 
+                         baseline;
+           c) a_i     -- i-th equation of conditions;
+           d) V       -- covariance matrix;
+           e) w_i     -- weight of the i-th observation;
+
+	 Summimg is done over all used observations of the i-th 
+         baseline in baseline mode and over all uysed observation in
+         global mode.
+
+      2) New baseline-dependent corrected weights are strored, weights
+         for each observation are updated in according with new
+         corrections, OBSHLD, OBSBAS objects are updated to keep new
+         weights.
+
+      3) New solution with new weights is produced. Residuals and their
+         statistics are calculated anew. Chi/ndg is calculated for each
+         baseline.
+
+      4) Test: wether new iteration should be done is carried out unless
+         the counter of the current iteration reached UPWEI_MAXIT.
+         All baselines which
+             a) has number of used observations more or equal to the
+                specified limit ( constant NEQU_MIN );
+             b) has reweight constant applied exceeding the floor;
+         tested: does chi/ndg among used observation for this baseline
+         differs from unity less than UPWEI_CHITOL constant. If it
+         differs from unity more for at least one baseline then new
+         iteration is made.
+
+    It is assumed that UPWEI is called from ELIM/MILE what in turn 
+  is called from OPTIN in interactive mode. 
+
+    All information printed at the screen is automatically printed 
+  in spool file.
+
+
+      II. Restrictions:
+          ~~~~~~~~~~~~
+
+
+  1) UPWEI works only in B3D mode.
+  2) Not all observation types are supported.
+
+
+     Further information about ELIM may be found in
+
+  1) SOLVE_HELP_DIR directory file upwei_01.hlp 
+     "Description of menu items".
+
+  2) SOLVE_HELP_DIR directory file upwei_02_hlp.ps  
+     Petrov, L. "Memo about reweighting" 
+
+  History:
+
+  22-JAN-98   pet  v 0.0  Beginning of developing
+  30-JAN-98   pet  v 1.0  Release of the first version.
+  28-FEB-98   pet  v 1.1  Added support of phase delay solution types.
+                                                                     
+  07-APR-99   pet  v 1.2  Forced to save ELIM_VRB variable in the case
+                          of failure.                                  
+                                                                     
+  28-MAR-2000 pet  v 1.3  Added support of EQUMEM_FLAG                 
+                                                                     
+  29-MAR-2000 pet  v 1.4  Added support of batch mode.                    
+
+   Bug reports and your comments please send to Leonid Petrov 
+  ( sgdass@lists.nasa.gov )

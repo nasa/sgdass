@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  ATCA-104  At
+LAST_UPDATE: ATCA-104  2018.01.20
+COORD:       ATCA-104  meters   -4751639.810   2791700.346 -3200491.150   
+MOUNT:       ATCA-104  char       ALTAZ
+SLEW_AZ:     ATCA-104  deg/sec    0.66
+SLEW_EL:     ATCA-104  deg/sec    0.33
+ACCL_AZ:     ATCA-104  deg/sec^2  0.22
+ACCL_EL:     ATCA-104  deg/sec^2  0.22
+TSETTLE_AZ:  ATCA-104  sec        5.0
+TSETTLE_EL:  ATCA-104  sec        5.0
+EL_MIN:      ATCA-104  deg       12.0
+EL_MAX:      ATCA-104  deg       89.0
+AZ_RANGE:    ATCA-104  deg      -150.0 -30.0 210.0 330.0
+RECORDER:    ATCA-104  char      lbdar
+PREOB:       ATCA-104  sec       10.0
+POSTOB:      ATCA-104  sec        2.0

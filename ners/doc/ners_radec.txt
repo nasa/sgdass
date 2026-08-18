@@ -1,0 +1,31 @@
+Program NERS_RADEC  computes right ascension and declination,
+as well as their time derivatives, in the barycentric celestial
+coordinate system corrected for annual and  diurnal aberration at
+the moment of time TIM_TAI for a station with coordinates in the
+terrestrial crust-fixed coordinate system COO_TRS that observes
+a source with given azimuth and elevation in the topocentirc
+coordinate system AZ, EL. Elevation is considered with respect to
+the normal to the reference ellipsoid. Vertical deflection is
+not accounted. Optionally the elevation can be be corrected for
+refraction.
+
+This program can be used only for computation of right ascensions
+and declinations of objects beyond the Solar system, such as stars
+or a galaxies.
+
+Usage: ners_radec date coo_trs az el [none|optic|radio]
+
+where date is the date in YYYY.MM.DD_hh:mm:ss.sss format or now,
+      coo_trs is the vector of station coordinates in the rotating
+              crust-fixed coordinate system in meters,
+      az      is the azimuth of the observed body in rad;
+      el      is the elevation of the observed body in rad;
+      [none|optic|radio] is optional computation of refraction:
+                         none  -- not to account refraction,
+                         optic -- to account refraction in optic
+                                  range;
+                         radio -- to account for refraction in
+                                  radio range.
+ 
+Units: radians for azimuth, elevation angle, right ascension, and
+       declination; rad/s for their time derivatives.

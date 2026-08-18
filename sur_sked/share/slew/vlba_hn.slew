@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  VLBA_HN   HN
+LAST_UPDATE: VLBA_HN   2018.01.27
+COORD:       VLBA_HN   meters     1446375.114    -4447939.660     4322306.122   
+MOUNT:       VLBA_HN   char       ALTAZ
+SLEW_AZ:     VLBA_HN   deg/sec    1.35500
+SLEW_EL:     VLBA_HN   deg/sec    0.44500
+ACCL_AZ:     VLBA_HN   deg/sec^2  0.75
+ACCL_EL:     VLBA_HN   deg/sec^2  0.25
+TSETTLE_AZ:  VLBA_HN   sec        6.0
+TSETTLE_EL:  VLBA_HN   sec        6.0
+EL_MIN:      VLBA_HN   deg        2.0
+EL_MAX:      VLBA_HN   deg       90.0
+AZ_RANGE:    VLBA_HN   deg      -90.0 90.0 270.0 450.0
+RECORDER:    VLBA_HN   char      mark5c
+PREOB:       VLBA_HN   sec        0.0
+POSTOB:      VLBA_HN   sec        2.0

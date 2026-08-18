@@ -1,0 +1,126 @@
+Introduction to PIMA
+Leonid Petrov
+2015.09.19
+
+
+PIMA is software for processing the visibilities data
+from VLBI experiments. It performs data inspection,
+data calibration, and fringe fitting. PIMA is designed
+to process multi-source experiments that are common for
+astronomical surveys and geodesy observations. PIMA has output
+interface with AIPS, DIFMAP, and VTD/Post-Solve software.
+
+Principles of PIMA
+------------------
+
+  PIMA processes visibility data in FITS-IDI format. PIMA
+does not transform and does not copy original data. At the 
+first step PIMA "loads" the data, i.e. examines the specified
+set of visibility data in FITS-IDI format and creates numerous
+internal indexing tables that are written in disk. For performing 
+all other operations PIMA uses these tables for getting access to
+specific fields of input FITS-IDI files.
+
+  PIMA has a flexible command-line interface and it is designed 
+for a non-interactive use. PIMA is ideal for being incorporated 
+into scripts for shell, python or similar interpreters.
+
+  All control parameters that are needed for processing a given
+experiment are gathered in a control file. PIMA does not support
+any defaults: all parameters, even those that are not used for 
+a specific operation, are to be explicitly defined in that file.
+
+  PIMA supports the following general syntax:
+
+pima control_file operation [qualifier value...] [keyword: value...]
+
+  where  control_file is the name of the control file. The control
+         file is a list of pairs keyword: value. Keywords are case
+         insensitive, values are case sensitive. The order of keywords
+         is irrelevant. If a keyword is defined more than once, the
+         last definition overrides all previous definitions.
+
+         operation is the name of the operation performed from 
+
+         the following list:
+
+           acpl -- autocorrelation plotting
+           acta -- compute average autocorrelation spectrum
+           bmge -- generate bandpass mask for visibility data
+           bpas -- compute complex bandpass
+           bplt -- plot bandpass
+           frib -- baseline fringe fitting
+           frip -- fringe-fitting with phase referencing
+           gean -- load antenna calibration tables
+           load -- load the FITS-IDI files and compute indexing tables
+           mkdb -- make output database
+           moim -- import interferometric model
+           mppl -- plots of multiple tones of phase-cal phases and amplitudes
+           onof -- determine on/off time range automatically by investing 
+                   visibility data
+           opag -- compute slant path delay, atmospheric opacity and 
+                   atmosphere brightness temperature on an az/el grid
+           opal -- load slant path delay, atmospheric opacity and atmosphere
+                   brightness temperature
+           pcpl -- make a plot of phase calibration signal
+           pdpl -- make a plot of the phase calibration signal at the LL pol
+                   with respect to the phase calibration signal at the RR pol
+           pmge -- generate bandpass mask for phase-cal data
+           pplt -- generate polarization bandpass plot
+           prga -- print gain information
+           splt -- split the data into sources and write output FITS-files
+           tspl -- plotting the system temperature
+           tst1 -- reserved for tests
+           upgr -- upgrade control file
+
+
+  Some operations require additional parameters that are defined
+for that specific operation. They are specified as a pair qualifier
+and value. Some operations require more than one qualifier. The order
+of qualifiers is irrelevant.
+
+  A control line may have one or more lines with pairs keyword: value.
+These pairs override definitions from the control file. These pairs
+can be viewed as an extension of the control file. The latest pair
+keyword: value overrides previous definitions
+
+  PIMA supports a number of optional kludge parameters that alter normal
+processing in a form of keyword: value. The have a prefix PIMAVAR_.
+They can be either defined in the control file or put in the command line.
+
+Minimalistic workflow
+---------------------
+
+  The workflow of the minimalistic, simplified analysis:
+
+load         -- parse and load the data. This is always the first operation.
+                A user is supposed to prepare a control file that defines
+                the name of visibility file(s) in FITS-IDI, station
+                catalogue, source catalogue, control file for VTD, 
+                experiment description file, and parameters that control
+                further analysis. Results of parsing the visibility data
+                are written in file. For all tasks, except load, pima 
+                reads that file.
+
+frib         -- coarse fringe search without bandpass calibration and masking
+                bad data. Some results of this fringe search will be used for
+                computation of bandpass calibration and automatic flagging.
+                Usually, no oversampling is performed.
+
+bpas         -- computation of the complex bandpass calibration and complex
+                polarization band-pass (for dual-band data) using results of
+                the coarse fringe search.
+
+frib         -- fine fringe search with bandpass calibration applied
+                Usually, the data are oversampled with a factor of 4.
+
+mkdb or splt -- results of fringe fitting are used to generate the final 
+                product of PIMA: 
+                a) the database with total group delays, phase delay rates 
+                   and related parameters for consecutive astrometry/geodesy
+                   data analysis;
+                b) visibilities coherently averaged over frequency and 
+                   and over specified time intervals, split into files
+                   in FITS formatt, one file per source in a form suitable
+                   for imaging analysis with DIFMAP.
+

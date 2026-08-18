@@ -1,0 +1,16 @@
+  DiaGI (Dialogue Graphic Interface) is a library of subroutines which allows
+to draw the plot of one or several one-dimension functions BY USING ONLY ONE
+CALL OPERATOR, then interactively change if necessary boundaries of the 
+plotting area, point style, line style, line width, error bar style, to make 
+hardcopy in PostScript or GIF format with or without sending it at the printing
+device and eventually to return to execution of the calling program. DiaGI 
+makes work with graphic as easy as possible and frees user from cumbersome 
+graphic programming. 
+
+ DiaGI uses popular graphic package PGPLOT 
+( http://astro.caltech.edu/~tjp/pgplot/ ).
+
+ More documentaion about DiaGI may found in files:
+ diagi_1.hlp   "DiaGI user guide."
+ diagi_2.hlp   "Description of DiaGI commands"
+

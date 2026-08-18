@@ -1,0 +1,69 @@
+Dependencies:
+=============
+
+fourpack depends on 
+a) petools ( http://astrogeo.org )
+b) fftw    ( http://www.fftw.org )
+c) optionally Intel MKL library
+
+Important: fftw should be compiled with OpenMP support. FFTW may
+support either thread interface or OpenMP. Tests showed that if 
+FFTW-3.3.3 was compiled with threads, it hangs or crashes in 
+an attempt to process arrays larger than 2Gb due to apparent 
+conflicts with applications that rely on OpenMP, like fourpack.
+
+Example of configuration of fftw:
+
+  ./configure --prefix=/opt64 \
+              --enable-sse2  \
+              --enable-avx \
+              --enable-openmp \
+              --enable-shared \
+              CC="gcc" \
+              CFLAGS="-m64 -O3 -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -fno-stack-protector -march=native" \
+              F77="/usr/bin/gfortran" \
+              FFLAGS="-m64 -fno-underscoring -O3 -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -fno-stack-protector -march=native"
+#
+  make 
+  make install
+  # for double precision
+
+  make distclean 
+  ./configure --prefix=/opt64 \
+              --enable-single  \
+              --enable-sse \
+              --enable-avx \
+              --enable-openmp \
+              --enable-shared \
+              CC="gcc" \
+              CFLAGS="-m64 -O3 -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -fno-stack-protector -march=native" \
+              F77="gfortran" \
+              FFLAGS="-m64 -fno-underscoring -O3 -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -fno-stack-protector -march=native"
+  # for single precision
+  make 
+  make install
+
+Keep in mind
+a)  you may install fftw in a different directory specified by
+    --prefix parameter;
+b)  you may need to drop "--enable-avx" if your processor does not 
+    support AVX set of instructions 
+    ( Command "cat /proc/cpuinfo | grep avx | sort -u" returns nothing)
+c)  you need to compile FFTW two times: the first time libraries with
+    double precision are created. The second time libraries with single
+    precision are created.
+    
+
+
+Installation:
+=============
+
+./configure [options]
+make
+make install
+
+
+Use ./configure --help in order to get the list of options.
+You need to check that fourpack is configured with correct
+version of FFTW compiled with OpenMP support.
+

@@ -1,0 +1,14 @@
+# SPD SHOW   Format v 1.0  of 2014.07.11
+#
+# Definitions
+#
+BSPD_DIR:     /d1/bspd/jason/
+DATE_TAI_BEG: 2008.09.17_12:00:00
+DATE_TAI_END: 2008.09.20_12:00:00
+#
+#    Station   TAI Date                  Azimuth   Elevation Unit Az/rat  Elev/rate   Units
+#
+OBS: GRF17100  2008.09.18_18:00:00.0       0.0       90.0    deg     0.0     0.0       deg/s
+OBS: GRF17100  2008.09.18_18:00:00.0       0.0        5.0    deg     0.0     0.0       deg/s
+OBS: GRF17100  2008.09.18_19:41:23.459   127.28345   62.234  deg   2.05D-3  -2.231D-2  deg/s
+OBS: YARA4910  2008.09.18_20:28:19.822   2.293812  0.292834  rad 4.0314D-5  8.2394D-5  rad/s

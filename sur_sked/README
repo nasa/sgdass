@@ -1,0 +1,8 @@
+sur_sked is the package for scheduling VLBI experiments for fringe finding,
+geodetic, absolute astrometry, imaging applications.
+
+Documents:
+
+1) INSTALL            -- installation instruction
+
+2) doc/user_guide.txt -- users manual

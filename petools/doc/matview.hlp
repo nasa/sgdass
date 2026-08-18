@@ -1,0 +1,18 @@
+/같같같같같같같같같같같같같같같같같같같같같같같같같같같�\
+|               MATview:  list of commands              |
+|-------------------------------------------------------|
+| <LEFT>        -- shift the window at ... columns left |
+| <RIGHT>       -- shift the window at ... columns left |
+| <UP>          -- shift the window at ... rows up      |
+| <DOWN>        -- shift the window at ... rows down    |
+| <SHIT/LEFT>   -- set up the left  window's boundary   |
+| <SHIT/RIGHT>  -- set up the right window's boundary   |
+| <SHIT/UP>     -- set up the up    window's boundary   |
+| <SHIT/DOWN>   -- set up the down  window's boundary   |
+|  F            -- change output format specification   |
+|  H            -- show this message                    |
+| <ARROW_HOME>  -- return to initial picture            |
+|  E            -- exit from subprogram                 |
+| <DELETE_LINE> -- exit from subprogram                 |
+| <RETURN>      -- redraw the picture                   |
+\_______________________________________________________/

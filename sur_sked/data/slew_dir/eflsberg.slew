@@ -1,0 +1,19 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  EFLSBERG  Ef
+LAST_UPDATE: EFLSBERG  2018.01.20
+COORD:       EFLSBERG  meters     4033947.481   486990.515  4900430.816
+MOUNT:       EFLSBERG  char       ALTAZ
+SLEW_AZ:     EFLSBERG  deg/sec    0.41
+SLEW_EL:     EFLSBERG  deg/sec    0.25
+ACCL_AZ:     EFLSBERG  deg/sec^2  0.02
+ACCL_EL:     EFLSBERG  deg/sec^2  0.02
+TSETTLE_AZ:  EFLSBERG  sec        9.0
+TSETTLE_EL:  EFLSBERG  sec        9.0
+EL_MIN:      EFLSBERG  deg       17.0
+##EL_MAX:      EFLSBERG  deg       89.0
+EL_MAX:      EFLSBERG  deg       72.0
+AZ_RANGE:    EFLSBERG  deg       34.0 120.0 394.0 480.0
+RECORDER:    EFLSBERG  char      flexbuf
+PREOB:       EFLSBERG  sec       0.0
+POSTOB:      EFLSBERG  sec       0.0

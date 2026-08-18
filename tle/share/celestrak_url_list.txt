@@ -1,0 +1,6 @@
+gnss          https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=tle
+# starlink    https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle
+# oneweb      https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=tle
+# intelsat    https://celestrak.org/NORAD/elements/gp.php?GROUP=intelsat&FORMAT=tle
+# iridium     https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-NEXT&FORMAT=tle
+# geosync     https://celestrak.org/NORAD/elements/gp.php?GROUP=geo&FORMAT=tle

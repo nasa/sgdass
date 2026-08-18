@@ -1,0 +1,18 @@
+      integer function idamax(n,dx,incx)
+      implicit none
+c
+c     finds the index of element having max. absolute value.
+c     jack dongarra, linpack, 3/11/78.
+c     mwh, 730 vis, 1/27/92
+c     note: incx must be non-negative
+c
+      double precision dx(1),ddum,vec_$damax_i
+      integer incx,n
+c
+      idamax = 0
+      if( n .lt. 1 ) return
+      idamax = 1
+      if(n.eq.1)return
+      idamax = vec_$damax_i(dx,incx,n,ddum)
+      return
+      end

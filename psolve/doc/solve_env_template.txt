@@ -1,0 +1,1069 @@
+#!/bin/csh
+# ************************************************************************
+# *                                                                      *
+# *                    SOLVE environment variables.                      *
+# *                                                                      *
+# *   This is template file for assigning SOLVE environment variables.   *
+# *   ALL environment variables used in SOLVE are described here.        *
+# *                                                                      *
+# *   To customize SOLVE                                                 *
+# *   1) Copy this file in your home directory;                          *
+# *   2) Edit this file in according with your preference;               *
+# *   3) Add call of this file in you startup file (.login or .cshrc     *
+# *      or .tcshrc or something like this as "source <file_name>"       *
+# *                                                                      *
+# *                                                                      *
+# *  History:                                                            *
+# *                                                                      *
+# *  pet  25-AUG-97  first release.                                      *
+# *  pet  17-SEP-97  8 variables for ELIM were added: ELIM_MOD,          *
+# *                  ELIM_CNF, ELIM_THR, ELIM_CUT, ELIM_TYP, ELIM_VRB,   *
+# *                  ELIM_MST, ELIM_MSO.                                 *
+# *  pet  03-OCT-97  SOLVE_COMPAT variable added.                        *
+# *  pet  07-OCT-97  SEG_OUTPUT, COND_WARNING variables added.           *
+# *  pet  31-OCT-97  ELIM_UPD variable added.                            *
+# *  pet  06-NOV-97  ATM_CNST, CLO_CNST, POL_CNST, UT1_CNST, GRR_CNST,   *
+# *                  GRO_CNST variables added.                           *
+# *  pet  12-DEC-97  ESTIMATE_NUTATION_FIRST, ESTIMATE_UT1_RATE_FIRST,   *
+# *                  ESTIMATE_STATION_FIRST, ESTIMATE_EOP_FIRST          *
+# *                  variables added.                                    *
+# *  pet  21-JAN-98  REWAY_FLODEL, REWAY_FLORATE, REWAY_CEIDEL,          *
+# *                  REWAY_CEIRATE, REWAY_CHITOL, REWAY_MAXIT,           *
+# *                  REWAY_NEWUPD,  REWAY_FALLBACK  variables added.     *
+# *                                                                      *
+# *  pet  05-MAY-98  CRES_PRE98, TITLE_ANON, TITLE_PRE98, SIGMA_TYPE,    *
+# *                  CNPLT_SUPR_PRE98, CNPLT_UNRC, CNPLT_CBAD variables  *
+# *                  added.                                              *
+# *                                                                      *
+# *  pet  15-JUN-98  Changed meaning of the variables                    *
+# *                  ESTIMATE_NUTATION_FIRST, ESTIMATE_UT1_RATE_FIRST,   *
+# *                  ESTIMATE_STATION_FIRST, ESTIMATE_EOP_FIRST.         *
+# *                                                                      *
+# *  pet  10-JUL-98  SNGCHK_ACTION, SNGCHK_SOUMIN, SNGCHK_STAMIN,        *
+# *                  SNGCHK_BASMIN  were added.                          *
+# *                                                                      *
+# *  pet  13-JUL-98  ELIM_MSO, ELIM_MST were removed.                    *
+# *                                                                      *
+# *  pet  30-NOV-98  ELIM_MSR was added.                                 *
+# *                                                                      *
+# *  pet  22-DEC-98  Added a set of environment variables related with   *
+# *                  PAMB.                                               *
+# *                                                                      *
+# *  pet  23-DEC-98  DEF_CLOSPAN, DEF_ATMSPAN, DIAGI_PRICOM were added.  *
+# *                                                                      *
+# *  pet  13-MAY-99  MEMORY_DEBUG (kludge) was added.                    *
+# *                                                                      *
+# *  pet  28-SEP-99  DIAGI_SCREEN was added.                             *
+# *                                                                      *
+# *  pet  29-SEP-99  kludge variable LOCK_IGNORE was added.              *
+# *                                                                      *
+# *  pet  14-OCT-99  variables ECCDAT_TYPE, ECC_DATA_FILE was added.     *
+# *                                                                      *
+# *  pet  1999.11.08 Added a kludge environment variable CORFIL.         *
+# *                                                                      *
+# *  pet  2000.01.25 Added an environment variable NORATE_FLAG.          *
+# *                                                                      *
+# *  pet  2000.03.31 Added environment variables EQUMEM_FLAG and         *
+# *                  TERM_COLOR                                          *
+# *  pet  2000.06.07 Added environment variable CONTRIB_RESET            *
+# *                                                                      *
+# *  pet  2000.07.06 Added environment variables MK4_ROOT and            *
+# *                  SUPCAT_FILE                                         *
+# *  pet  2000.09.07 Added environment variables BATCH_SILENT            *
+# *                                                                      *
+# *  pet  2001.02.26 Added environment variables SUP_DIR_LIST            *
+# *                                                                      *
+# *  pet  2001.05.01 Added kludge environment variables EQUAL_CHANNELS   *
+# *                                                                      *
+# *  pet  2001.10.12 Added environment variables MIN_FREE_SPL_MB         *
+# *                  MIN_FREE_SPL_MB                                     *
+# *                                                                      *
+# *  pet  2003.07.25 Replaced MK4_ROOT with MK5_ROOT                     *
+# *  pet  2003.07.25 Added kludge environment variable SOLVE_ALTGRAPHIC  *
+# *  pet  2003.08.12 Discontinued use of variable CRES_PRE98,            *
+# *                  TITLE_ANON, TITLE_PRE98. CRES_STYLE is intorduced   *
+# *                  instead of that.                                    *
+# *  pet  2004.05.24 Added variable MASTER_DIR                           *
+# *  pet  2007.10.19 Added kludge variable COND_MAX.                     *
+# *                                                                      *
+# *  Critical environment variables, which have to be defined mandatory: *
+# *                                                                      *
+# *    PGPLOT_DIR, PGPLOT_FONT, DIAGI_PRICOM                             *
+# *                                                                      *
+# *    DISPLAY (refer to X11 documentation, f.e. HP User visual          *
+# *             environement user guide od CDE user guide for details)   *
+# *                                                                      *
+# *  other variables only changes system-wide preferences defined in     *
+# *  $MK5_ROOT/progs/solve/include/gsfcb.i and glbc4.i                   *
+# *                                                                      *
+# *  Last update: 2003.08.12                                             *
+# *                                                                      *
+# ************************************************************************
+setenv HOST `uname -n`
+#
+#      I. Section
+#                  === SOLVE directories environment names =======
+#                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# --- To run the programs SOLVE searches them in the following order:
+# --- First it examines SOLMOD. If it doesn't find there the program name
+# --- it looks directory specified in SOLVE_DIR. If SOLVE_DIR variable is not
+# --- specified executables will be taken from the directory specified in
+# --- ../include/gsfcb.i in the variable SOLVE_PROG_DIR
+#
+if ( $HOST == "hp138" ) then
+     setenv SOLVE_DIR "/geo/vlbi/mk4/bin"
+     setenv MK5_ROOT  "geo/vlbi/mk4"
+   else
+     setenv SOLVE_DIR ""
+     setenv MK5_ROOT  ""
+endif
+#
+# --- Optional arc-file directory environment variable.
+# --- This must be a string analogous to and formatted like the
+# --- arc_files keyword.
+#
+setenv ARC_STR   ""
+#
+# --- To find help file SOLVE searches them firstly in directory defined by
+# --- SOLVE_HELP_DIR global constant (gsfcb.i). In the case of failure it
+# --- looks directory specified in HELP_DIR. If HELP_DIR variable is not
+# --- specified it looks the current directory.
+#
+if ( $HOST == "picasso" || $HOST == "kuestner" || $HOST == "miro" || \
+     $HOST == "chagall" || $HOST == "renoir"                          ) then
+     setenv HELP_DIR        "/diskB5/mk4/help"
+  else
+  if ( $HOST == "hp138" ) then
+       setenv HELP_DIR      "/geo/vlbi/mk4/help"
+     else
+       setenv HELP_DIR      "/data1/help"
+  endif
+endif
+setenv SOLVE_HELP_DIR  $HELP_DIR
+#
+# --- SAVE_DIR keeps alternative name of the directory where SOLVE save files
+# --- are located (flyby files, EOP files and a lot of other information).
+# --- SOLVE firstly looks environment variable SAVE_DIR to find them. If
+# --- SAVE_DIR is not set up then SOLVE looks global internal variable
+# --- SAVE_DIR from gsfcb.i
+#
+if ( $HOST == "picasso" || $HOST == "kuestner" || $HOST == "miro" || \
+     $HOST == "chagall" || $HOST == "renoir"                         ) then
+     setenv SAVE_DIR  "/diskB5/mk4/save_files"
+  else
+     if ( $HOST == "hp138" ) then
+          setenv SAVE_DIR "/geo/vlbi/save_files"
+       else
+          setenv SAVE_DIR  ""
+     endif
+endif
+#
+# --- WORK_DIR keeps alternative name of the directory where work files
+# --- are located.  SOLVE firstly looks environment variable WORK_DIR to
+# --- find them. If WORK_DIR is not set up then SOLVE looks global internal
+# --- variable SOLVE_WORK_DIR from gsfcb.i
+# --- IT IS ESSENTIAL THAT WORK FILES SHOULD BE LOCATED AT THE LOCAL MACHINE,
+# --- since SOLVE reads and writes them extremely intensively.
+#
+setenv WORK_DIR  ""
+#
+# --- SPOOL_DIR keeps alternative name of the directory where spool file
+# --- will be created. SOLVE firstly looks environment variable SPOOL_DIR to
+# --- find it. If SPOOL_DIR is not set up then SOLVE looks global internal
+# --- variable SOLVE_SPOOL_DIR from gsfcb.i
+# --- IT IS ESSENTIAL THAT SPOOL FILE SHOULD BE LOCATED AT THE LOCAL MACHINE,
+# --- since SOLVE writes a lot of information there.
+#
+setenv SPOOL_DIR ""
+#
+# --- One of the possible solution is below (Of course, you should be sure that
+# --- environment variable HOST has been defined already)
+#
+if ( $HOST == leo ) then
+     setenv WORK_DIR  /data18/solve/work_files/
+     setenv SPOOL_DIR /data18/solve/spool_files/
+endif
+#
+if ( $HOST == aquila ) then
+     setenv WORK_DIR  /data10/solve/work_files/
+     setenv SPOOL_DIR /data10/solve/spool_files/
+endif
+if ( $HOST == "picasso" || $HOST == "kuestner" || $HOST == "miro" || \
+     $HOST == "chagall" || $HOST == "renoir"                         ) then
+     setenv WORK_DIR  "/diskA1/solve/work_files/"
+     setenv SPOOL_DIR "/diskA1/solve/spool_files/"
+endif
+if ( $HOST == "hp138" ) then
+     setenv WORK_DIR   "/geo/vlbi/work_files/"
+     setenv SPOOL_DIR  "/geo/vlbi/spool_files/"
+endif
+#
+# --- Alternative directory name for CGM (unless solution is not catalogized).
+# --- SOLVE firstly looks environment variable CGM_DIR to define directory
+# --- where CGM (combined global matrix which are created in global
+# --- multi-session mode) should be located. If CGM_DIR is not set up then
+# --- SOLVE looks global internal variable CGM_DIR from gsfcb.i
+# --- IT IS ESSENTIAL THAT SPOOL FILE SHOULD BE LOCATED AT THE LOCAL MACHINE,
+# --- since the old (25-AUG-97) version of SOLVE reads and writes CGM
+# --- EXTREMELY INTENSIVELY!
+#
+if ( $HOST == "picasso" || $HOST == "kuestner" || $HOST == "miro" || \
+     $HOST == "chagall" || $HOST == "renoir"                         ) then
+     setenv CGM_DIR  "/diskA1/solve/cgm/"
+  else
+     if ( $HOST == "hp138" ) then
+          setenv CGM_DIR "/geo/vlbi/spool_files"
+       else
+          setenv CGM_DIR `echo "~/"`
+     endif
+endif
+#  NB: "~/" is not the valid directory for SOLVE. It was neceesary to force
+#           shell to expand ~/ to full name of user's home directory.
+#
+# 
+# --- Environment variable SUPCAT_FILE defines the full path name of the file 
+# --- of the superfiles catalogue. It overrides system-wide default 
+# --- $SAVE_DIR/SUPCAT
+#
+setenv SUPCAT_FILE ""
+# 
+# --- Environment variable SUP_DIR_LIST defines the full path name of the file 
+# --- which keeps the list of superfiles directories. It overrides system-wide 
+# --- default SUP_DIR_LIST defined in gsfcb.i
+#
+setenv SUP_DIR_LIST ""
+#
+#      II. Section
+# ===               Common SOLVE environment variables.  ===
+#
+#
+# --- Environment variable PGPLOT_DIR defines the directory where shareable
+# --- libraries and some PGPLOT executables are located. (NB: it should
+# --- correspond exectly the directory which was used during linking SOLVE).
+#
+setenv PGPLOT_DIR  ""
+setenv PGPLOT_FONT "${PGPLOT_DIR}/grfont.dat"
+setenv PGPLOT_DEV  "/XW"
+#
+# --- Environment variable DIAGI_PRICOM defines a command for printing
+# --- postscript files at the preferred printer from DiaGI interface.
+#
+setenv DIAGI_PRICOM    "lp -onb -dlaser2"
+#
+# --- Environment variable DIAGI_SCREEN overrides a system-wide default
+# --- screen size. Two screen sizes are supported: big -- 340x280mm and
+# --- small -- 300x230mm. Therefore two values are supported:: BIG ans SMALL
+#
+setenv DIAGI_SCREEN ""
+#
+# --- Environment variable SOLVE_EDITOR defines the editor which will be called
+# --- from SOLVE (f.e. to write history information).
+# --- It is assumed that the path to this editor is defined in environment
+# --- variable PATH. Matching variable is SOLVE_EDITOR__DEF
+# --- Editor should be called by the command <SOLVE_EDITOR> <file_name>
+# --- Acceptable value is string no longer than 16 symbols.
+# --- for example, setenv SOLVE_EDITOR    "EmacS"
+#
+setenv SOLVE_EDITOR    "vi"
+#
+# --- Environment variable SOLVE_PS_VIEWER  defines the postscript viewer
+# --- program which can be used by from SOLVE (f.e. to display help file).
+# --- It is assumed that the path to this viewer is defined in environment
+# --- variable PATH. Matching variable is SOLVE_PS_VIEWER__DEF
+# --- Viewer should be called by the command <SOLVE_PS_VIEWER> <file_name>
+# --- Acceptable value is string no longer than 16 symbols.
+#
+setenv SOLVE_PS_VIEWER "GhosT"
+#
+# --- Environment variable SEG_OUTPUT sets mode of printing values of segmented
+# --- parameters in listing of the solution. If SEG_OUPUT = "YES" then segmented
+# --- parameters are included in listing. If "NO" then they are not included.
+#
+setenv SEG_OUTPUT "NO"
+#
+# --- Environment variable COND_WARNING specifies the upper acceptable limit
+# --- of condition number. If condition number of the matrices to be inverted
+# --- (f.e. normal matrix) exceeds this limit then warning message will be
+# --- printed in the beginning of the listing.
+#
+setenv COND_WARNING "1.D11"
+#
+# --- Envirnoment variable ESTIMATE_NUTATION_FIRST specifies the status of
+# --- estiamtion nutation offsets in interactive SOLVE just after reading
+# --- superfile or database. "YES" means to estimate, "NO" means don't change
+# --- status written in the database or superfile.
+#
+setenv ESTIMATE_NUTATION_FIRST "NO"
+#
+# --- Envirnoment variable ESTIMATE_STATION_FIRST specifies the status of
+# --- estimation station positions for all seleceted station except master one
+# --- in interactive SOLVE just after reading superfile or database.
+# --- "YES" means to estimate, "NO" means don't change status written in the
+# --- database or superfile.
+#
+setenv ESTIMATE_STATION_FIRST  "YES"
+#
+# --- Envirnoment variable ESTIMATE_EOP_FIRST specifies the status of
+# --- estimation 4 parameters: UT1, UT1-rate, X pole coordinate and Y pole
+# --- coordinate in interactive SOLVE just after reading superfile or database.
+# --- "YES" means to estimate them and don't estimate station positions
+# --- regardless the value ESTIMATE_STATION_FIRST, "NO" means don't change
+# --- status written in the database or superfile.
+#
+setenv ESTIMATE_EOP_FIRST      "NO"
+#
+# --- Envirnoment variable ESTIMATE_UT1_RATE_FIRST specifies the status of
+# --- estimation UT1-rate in interactive SOLVE just after reading superfile or
+# --- database. "YES" means to estimate, "NO" means don't change
+# --- status written in the database or superfile and perhaps changed by
+# --- the value of ESTIMATE_EOP_FIRST
+#
+setenv ESTIMATE_UT1_RATE_FIRST "YES"
+#
+# --- Envirnoment variable NORATE_FLAG  sets the flag which suppresses 
+# --- computation of partial derivatives and statistics of delay rate.
+# --- This flag speeds up computation. Of course, it should be used only 
+# --- if delay rate statistics is not desirable. NORATE_FLAG "NO"
+# --- enables computation of delay rate stastics.
+#
+setenv NORATE_FLAG             "NO"
+#
+# --- Envirnoment variable TERM_COLOR allows or not allows to use escape
+# --- sequenceis which changes color of symbols of background in the text
+# --- window of hpterm. As default SOLVE is allowed to change colors.
+# --- Unfortunatley, hpterm has a bug and sometimes it destroys the current
+# --- window in attempt to change colors when a color-table is full. 
+# --- If TERM_COLOR is "NO" then SOLVE never changes solore and there is no
+# --- risk to loos a window, but the output is not so beautiful.
+#
+setenv NORATE_FLAG             "YES"
+#
+# --- If environment variable BATCH_SILENT is YES then batch doesn't print
+# --- informational messages about progress of reading control file.
+#
+setenv BATCH_SILENT            ""
+#
+# --- Control of free space at arc-file directories environment variables.
+# --- Before creating arc-file, batch solve checks how much space the 
+# --- directory, where it is going to locate the arcfile, has. It should has 
+# --- at least MIN_FREE_NSP_MB  megabytes free in the case if theis is the 
+# --- same disk as for spool file and at least MIN_FREE_SPL_MB megabutes free 
+# --- if the arc-file directory is at another disk than spool file. If there 
+# --- is no MIN_FREE_NSP_MB (or MIN_FREE_SPL_MB) megabytes free then Solve 
+# --- tries the next arc file directory. If all arc-fiels directories are full, 
+# --- solve will not create arc-file at all. In this case it will give correct 
+# --- results but will compute longer. 
+# --- MIN_FREE_NSP_MB and MIN_FREE_SPL_MB should keep the integer number or
+# --- be empty. If these varables are not specified, system-wide default is
+# --- used.
+#
+setenv MIN_FREE_NSP_MB  "16"
+setenv MIN_FREE_SPL_MB  "64"
+#
+# --- Sets the full path tehre master schedule files are located
+#
+setenv MASTER_DIR /vlbi_oper/master
+#
+#
+#      III. Section
+#                   === Default setup of SOLVE menu item.  ===
+#                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# --- Initial values of menu items of various SOLVE program are set up in
+# --- according with values of local variables defined in routines making
+# --- menu and global variables defined in glbcm4.i. Their initial values are
+# --- set up when the new database is read. Their values are defined firstly
+# --- by the constants with suffix __DEF defined in glbc4.i and then
+# --- environment variables are examined. If the certain environment variables
+# --- are setup the initial values of these global variables will be changed.
+#
+# === Environment variables for FAST mode
+#
+# --- Environment variable FAST_MODE defines default fast mode.
+# --- Matching constant is FAST_MODE__DEF. Acceptable values are:
+# --- "B3D" -- for fast work;
+# --- "NON" -- for slow (obsolete) mode.
+#
+setenv FAST_MODE   "B3D"
+#
+# --- Environment variable FAST_DBG defines debugging mode for GAST SOLVE.
+# --- Matching constant is FAST_FBG__DEF. Acceptable values are
+# --- "NON" -- no debugging;
+# --- "APP" -- tracing calls of fast procedures;
+# --- "PRI" -- printout debugging information and creating debugging files;
+# --- "TIM" -- printout timing information;
+#
+setenv FAST_DBG    "NON"
+#
+#
+# === Environment variables for SDBH program (reading database). They are
+#     used only when new experiment is read from database (not superfile) and
+#     only in the case when no information have been stored in database.
+#     Ususally it happens for the first analysis of the new experinemt.
+#
+# --- Environment variable ATM_CNST sets default value of the constraints on
+# --- rate of atmosphere path delay for segmented parameterization in the
+# --- case when no constraint information was in database (if is true for
+# --- early versions). Units: psec/hour
+#
+setenv ATM_CNST "40"
+#
+# --- Environment variable CLO_CNST sets default value of the constraints on
+# --- clock rate for segmented parameterization in the case when no constraint
+# --- information was in database (if is true for early versions).
+# --- Units: 1.D-14
+#
+setenv CLO_CNST "2"
+#
+# --- Environment variable POL_CNST sets default value of the constraints on
+# --- rate of pole coordinates for segmented parameterization in the case when
+# --- no constraint information was in database. Units: mas/day
+#
+setenv POL_CNST "10"
+#
+# --- Environment variable UT1_CNST sets default value of the constraints on
+# --- rate of UT1 argument for segmented parameterization in the case when
+# --- no constraint information was in database. Units: msec/day
+#
+setenv UT1_CNST "0.67"
+#
+# --- Environment variable GRR_CNST sets default value of the constraints on
+# --- atmosphere gradiant rate in the case when no constraint information was
+# --- in database. Units: mm/day
+#
+setenv GRR_CNST "0.0"
+#
+# --- Environment variable GRR_CNST sets default value of the constraints on
+# --- the value atmosphere gradiant in the case when no constraint information
+# --- was in database. Units: mm
+#
+setenv GRO_CNST "0.0"
+#
+# --- If environment variable ECCDAT_TYPE is "PRE_OCT99" then the old,
+# --- pre OCT99 format of eccentricity file will be used in reading a new
+# --- database by SDBH. Another supported value: "POST_OCT99" -- new POST_OCT99
+# --- format will be in use (default)
+#
+setenv ECCDAT_TYPE "" 
+#
+# --- Environment variable ECC_DATA_FILE specifies the name of the eccentricity
+# --- file to be read by SDBH when a new database is loaded. This environment
+# --- variable overrides deafult specified in ../include/gsfcb.i (variable
+# --- ECC_DATA_FILE)
+#
+setenv ECC_DATA_FILE "" 
+#
+# --- Environment variable CONTRIB_RESET defines whetehr contribution status
+# --- should be reset when the database (not superfile!) is read by SDBH.
+# --- If the variable is set and has a value "YES" then the current 
+# --- contribution/calibration status will be ignored and 
+# --- contributions/calibrations will be set in accordance with 
+# --- the file CORFIL.
+#
+setenv CONTRIB_RESET "NO"
+#
+#
+# === Environment variables for GAMB program (automatic group delay ambiguity
+# === resolution)
+#
+#
+# --- Environment variable QUALCODE_GOOD_LIM defines quality code limit for
+# --- using observations for GAMB. Observations with quality code limit less
+# --- than specified will be discarded before solution.
+# --- Matching constant is QUALCODE_GOOD_LIM__DEF. Acceptable values are in
+# --- range [1, 9]
+#
+setenv QUALCODE_GOOD_LIM "5"
+#
+# --- Environment variable GAMB_F_ION defines whether to calculate ionosphere
+# --- correction in GAMB in two-band mode.
+# --- Matching constant is GAMB_F_ION__DEF. Acceptable values are
+# --- "TRUE"   -- make
+# --- "FALSE"  -- not to make
+#
+setenv GAMB_F_ION         "TRUE"
+#
+# --- Environment variable GAMB_F_PREUSE defines whether GAMB should use all
+# --- available observations with appropriate quality flag or only marked as
+# --- good in previous SOLVE runs.
+# --- Matching constant is GAMB_F_PREUSE__DEF. Acceptable values are
+# --- "ALL"
+# --- "GOOD"
+#
+setenv GAMB_F_PREUSE      "ALL"
+#
+# --- Environment variable GAMB_F_SAVE defines whether GAMB should update
+# --- scratch files after finishing its work (and to save results of work)
+# --- Matching constant is GAMB_F_SAVE__DEF. Acceptable values are
+# --- "TRUE"
+# --- "FALSE" -- not to save results
+#
+setenv GAMB_F_SAVE        "TRUE"
+#
+# --- Environment variable GAMB_CUTOFF defines cutoff limit (in sec) for
+# --- GAMB for rejecting outliers during group delay ambiguity resolution.
+# --- Matching constant is GAMB_CUTOFF__DEF. Acceptable values are
+# --- in the range [1.D-10, 1.D-6]
+#
+setenv GAMB_CUTOFF        "8.0D-9"
+#
+# --- Environment variable GAMB_SPACING_CONST defines constant for group delay
+# --- ambiguity spacings.
+# --- Matching constant is GAMB_SPACING_CONST__DEF. Acceptable values are
+# --- 0 (that means that values saved in database with lcode GPDLAMBG will be
+# --- used) or constant (in sec) in the range [1.D-9, 1.D-6]
+#
+setenv GAMB_SPACING_CONST "0"
+#
+# --- Environment variable GAMB_MINOBS defines minimal acceptable number of
+# --- observations for a baseline for GAMB.
+# --- Matching constant is GAMB_MONBS__DEF. Acceptable values are in the range
+# --- [4, 1000]
+#
+setenv GAMB_MINOBS        "8"
+#
+# --- Environment variable GAMB_IT defines verbosity level for GAMB.
+# --- Matching constant is GAMB_IT__DEF. Acceptable values are
+# --- 0 -- silent mode;
+# --- 1 -- r.m.s. of whole solution will be printed;
+# --- 2 -- r.m.s. per baselines will be printed;
+# --- 3 -- results of constant ambiguities redistribution will be printed;
+# --- 4 -- results of pre-pre-estimation will be printed;
+# --- 5 -- debugging mode: internal lists will be printed;
+# --- 6 -- debugging mode: values of jumps due to ambiguities and postfit O-C
+# ---      will be printed.
+#
+setenv GAMB_IT            "2"
+#
+# === Environment variables for IONO program (ionosphere calibration)
+#
+# --- Environment variable IONO_VERBOSE defines verbosity mode for IONO.
+# --- Matching constant is IONO_VERBOSE__DEF. Acceptable values are
+# --- "on"  -- verbose mode. A lot of information will be printed at the screen;
+# --- "off" -- silent mode. Only progress information will be put at the screen.
+#
+setenv IONO_VERBOSE "off"
+#
+# --- Environment variable IONO_SEEK defines search window for IONO.
+# --- Matching constant is IONO_SEEK__DEF. Acceptable values are all positive
+# --- integers.
+#
+setenv IONO_SEEK    "32"
+#
+# === Environment variables for REWAY program (reweighting)
+#
+#
+# --- Environment variable REWAY_CHITOL defines tolerance factor for REWAY
+# --- to take decision when to stop iterations. Iterations will be stopped when
+# --- the ratio chi/ndg will differ from unity less than REWAY_CHITOL
+# --- Matching constant is REWAY_CHITOL__DEF. Acceptable values are all positive
+# --- real numbers in the range [0.0001, 1.0]
+#
+setenv REWAY_CHITOL "0.05"
+#
+# --- Environment variable REWAY_TYPE defines which reweighting type will be
+# --- set up as default. NB: it affects on REWAY works only in interactive mode!
+# --- Matching constant is REWAY_TYPE__DEF. Acceptable values are
+#
+# --- "NO" -- reweighting type from NAMFIL will be set up as default
+# --- "GL" -- global
+# --- "ST" -- site-dependent
+# --- "BA" -- baseline dependent
+#
+setenv REWAY_TYPE    "BA"
+#
+# --- Environment variable REWAY_VERBOSE defines verbosity mode for REWAY.
+# --- Matching constant is REWAY_VERBOSE__DEF. Acceptable values are
+# --- "on"  -- verbose mode. A lot of information will be printed at the screen
+# --- "off" -- silent mode. Only progress information will be put at the screen
+#
+setenv REWAY_VERBOSE "off"
+#
+# --- Environment variable REWAY_FLODEL defines the floor value for the
+# --- reweighting constant for delays in REWAY (in psec)
+# --- Matching constant is REWAY_FLODEL__DEF. Acceptable values are in the
+# --- range [0, 1000] psec
+#
+setenv REWAY_FLODEL "0.0"
+#
+# --- Environment variable REWAY_FLORATE defines the floor value for the
+# --- reweighting constant for delay rates in REWAY (in fs/sec)
+# --- Matching constant is REWAY_FLORATE__DEF. Acceptable values are in the
+# --- range [0, 10000] fs/sec
+#
+setenv REWAY_FLORATE "0.0"
+#
+# --- Environment variable REWAY_CEIDEL defines the ceiling value for the
+# --- reweighting constant for delays in REWAY (in psec)
+# --- Matching constant is REWAY_CEIDEL__DEF. Acceptable values are in the
+# --- range [0, 1000] psec
+#
+setenv REWAY_CEIDEL "300.0"
+#
+# --- Environment variable REWAY_CEIRATE defines the floor value for the
+# --- reweighting constant for delay rates in REWAY (in fs/sec)
+# --- Matching constant is REWAY_CEIRATE__DEF. Acceptable values are in the
+# --- range [0, 10000] fs/sec
+#
+setenv REWAY_CEIRATE "1000.0"
+#
+# --- Environment variable REWAY_MAXIT defines the maximal number of
+# --- iterations for reweighting in REWAY (in fs/sec)
+# --- Matching constant is REWAY_MAXIT__DEF. Acceptable values are in the
+# --- range [1, 20]
+#
+setenv REWAY_MAXIT "10"
+#
+# --- Environment variable REWAY_FALLBACK defines FALLBACK mode for REWAY.
+# --- Matching constant is REWAY_VERBOSE__DEF. Acceptable values are
+# --- "on" or "off". If "on" then in the case of failure of the iterations
+# --- convergence reweighting mode will be changed from baseline to station
+# --- to global.
+#
+setenv REWAY_FALLBACK "off"
+#
+# --- Environment variable REWAY_NEWUPD defines NEWUPD mode for REWAY.
+# --- Matching constant is REWAY_NEWUPD__DEF. Acceptable values are
+# --- "on" or "off". If "on" then new (for 21-JAN-98), experimental mode
+# --- of updating weights will be used. IF "off" then non-exeprimental mode
+# --- will be in use.
+#
+setenv REWAY_NEWUPD "off"
+#
+# === Environment variables for SETFL program (setting flags)
+#
+#
+# --- Environment variable SETFL_MDEG defines maximum degree of polynomial used
+# --- for global clocks if clocks are setup in batch mode (in setfl sense of
+# --- this word: i.e. clocks are modeled by a sum of global polynomial and piece
+# --- wise linear function). Matching constant is SETFL_MDEG__DEF.
+# --- Acceptable values are
+# --- "1" -- global polynomial will the first degree polynomial.
+# --- "2" -- global polynomial will the second degree polynomial.
+#
+setenv SETFL_MDEG    "2"
+#
+# --- Environment variable DEF_CLOSPAN defines defaults value of duration of
+# --- one segment for linear spline (in sec) modelling clock function.
+# --- SETFL bids user this value in dialogue when the duration of one segment
+# --- for clocks is requested.
+#
+setenv DEF_CLOSPAN    "3600.D0"
+#
+# --- Environment variable DEF_ATMSPAN defines defaults value of duration of
+# --- one segment for linear spline (in sec) modelling atmosphere zenith path
+# --- delay. SETFL bids user this value in dialogue when the duration of one
+# --- segment for atmopshere is requested.
+#
+setenv DEF_ATMSPAN    "3600.D0"
+#
+# === Environment variables for ELIM program (outliers elimination/restoration)
+#
+#
+# --- Environment variable ELIM_MOD defines default mode of work ELIM/MILE.
+# --- .TRUE.  means outliers elimination, .FALSE. means outliers restoration.
+#
+setenv ELIM_MOD "TRUE"
+#
+# --- Environment variable ELIM_CNF defines initial values of confirmation
+# --- switcher .TRUE. means that all operations in ELIM/MILE will require user
+# --- confirmation
+#
+setenv ELIM_CNF ".FALSE."
+#
+# --- Environment variable ELIM_THR defines default value for the threshold
+# --- of outliers detection (in seconds) in ELIM. Observations with residuals
+# --- larger than ELIM_THR will be considered as outliers. 0.0 value means that
+# --- threshold criterion will not be applied for outliers detection.
+#
+setenv ELIM_THR "0.0"
+#
+# --- Environment variable ELIM_CUT defines default value for the cutoff limit
+# --- for outliers detection  (in sigmas). Observations with weighted residuals
+# --- larger than ELIM_CUT*<w.r.m.s._of_postfit_residuals> will be considered
+# --- as outliers. 0.0 value means that cutoff limit criterion will not be
+# --- applied for outliers detection.
+#
+setenv ELIM_CUT "3.0"
+#
+# --- Environment variable ELIM_TYP defines default value for the type of
+# --- appliance cutoff criterion. Two values are acceptable: "BA" means that
+# --- w.r.m.s_of_postfit residuals will be calculated for each baseline
+# --- separately; "GL" means that global w.r.m.s for this session will be
+# --- applied.
+#
+setenv ELIM_TYP "BA"
+#
+# --- Environment variable ELIM_VRB defines default value for verbosity mode.
+# --- 0 -- silent mode, 1 -- normal (verbose) mode
+#
+setenv ELIM_VRB "1"
+#
+# --- Environment variable ELIM_UPD defines default value for the acceleration
+# --- factor. Residuals are updated after N operations of
+# --- elimination/restoration, where N is the acceleration factor. Best choice
+# --- is N=1, but it may lead to too slow work for session with tens of
+# --- thousands observations. Increasing acceleration factors decreases
+# --- computation time approximately by N times, but it may lead not the
+# --- optimal choice of the outlier/candidate_in_restoration. It is not
+# --- recommended to use acceleration factor more than 1 unless computational
+# --- expenses appear really intolerable.
+#
+setenv ELIM_UPD "1"
+#
+# --- Environment variable ELIM_MSR defines the maximal value of formal
+# --- uncertainty of the observation. If the observation has formal uncertainty
+# --- (taking into account reweight) larger than ELIM_MSR than it is marked as
+# --- outlier and is not eligible for restoration. 0.0 value means that
+# --- maximal sigma criterion will not be applied for outliers detection.
+#
+setenv ELIM_MSR "0.0"
+#
+# --- Environment variable EQUMEM_FLAG sets default values of a global variable
+# --- EQUMEM_FLAG. If YES then it is .TRUE.. EQUMEM_FLAG .TRUE. forces 
+# --- ELIM/MILE/UPWEI to save equations of conditions in memory what 
+# --- speads up computations considerably, but it may appears that there is
+# --- no enough memory. It is recommended to use EQUMEM_FLAG "YES" unless
+# --- you came across a rary case when there is no enough memory.
+#
+setenv EQUMEM_FLAG "YES"
+#
+# === Environment variables for CRES program (Computation of RESiduals)
+#
+#
+# --- If environment variable CRES_STYLE is defined as "PRE98" then CRES will
+# --- work in special mode of compatibility with PRE-MAY98 version.
+# --- If environment variable CRES_STYLE is defined as "PRE03" then CRES will
+# --- work in special mode of compatibility with PRE-AUG03 version.
+# --- Acceptable values are "no", "current", PRE98, PRE03
+#
+setenv CRES_STYLE "no"
+#
+# === Environment variables for CNPLT program (plots of residuals)
+#
+#
+# --- If environment variable SIGMA_TYPE is defined as "PS" then post-fit
+# --- sigmas will be used for plotting error bar.
+# --- If environment variable SIGMA_TYPE is defined as "PR" then pre-fit
+# --- sigmas will be used for plotting error bar (sigmas obtained from
+# --- correlator output plus perhaps reweight constant)
+# --- Acceptable values are "PR" or "PS"
+#
+setenv SIGMA_TYPE "PR"
+#
+# --- If environment variable CNPLT_SUPR_PRE98 is defined as "yes" then
+# --- CNPLT will emulate strategy for suppression in compatibility mode
+# --- with PRE-MAY98 version.
+# --- Acceptable values are "yes" or "no"
+#
+setenv CNPLT_SUPR_PRE98 "no"
+#
+# --- If environment variable CNPLT_SHOW_UNRC is defined as "yes" then
+# --- CNPLT will show unrecoverable observations.
+# --- Acceptable values are "yes" or "no"
+#
+setenv CNPLT_SHOW_UNRC "no"
+#
+# --- If environment variable CNPLT_SHOW_CBAD is defined as "yes" then
+# --- CNPLT will show conditionally bad observations.
+# --- Acceptable values are "yes" or "no"
+#
+setenv CNPLT_SHOW_CBAD "yes"
+#
+# === Environment variables for PROC program (making normal system)
+#
+#
+# --- Environment variable SNGCHK_ACTION specifies default action for
+# --- singularity check in interactive mode. Acceptable values:
+# --- NONE, WARNING, REPARAMETERIZE, STOP
+#
+setenv SNGCHK_ACTION "REPARAMETERIZE"
+#
+# --- Environment variable SNGCHK_SOUMIN specifies limit for the number of
+# --- observations of the source which position is estimated. This limit is
+# --- used as a criteria in singularity check. Acceptable values:
+# --- non-negative integer or NO
+#
+setenv SNGCHK_SOUMIN "0"
+#
+# --- Environment variable SNGCHK_STAMIN specifies limit for the number of
+# --- observations at the station. This limit is used as a criteria in
+# --- singularity check. Acceptable values: non-negative integer or NO
+#
+setenv SNGCHK_STAMIN "5"
+#
+# --- Environment variable SNGCHK_BASMIN specifies limit for the number of
+# --- observations at the baseline. This limit is used as a criteria
+# --- in singularity check. Acceptable values: non-negative integer or NO
+#
+setenv SNGCHK_BASMIN "4"
+#
+# === Environment variables for PAMB program (phase delay ambiguity resolution)
+#     They are not documented yet (22-DEC-98 10:40:44) and will be documented
+#     in future when PAMB will be officially released.
+#
+setenv PAMB_VRB       "1"
+setenv PAMB_PLOT_TYPE "2"
+setenv PAMB_PLOT_BAND "1"
+setenv PAMB_PARU_FILE " "
+#
+setenv PAMB_ARFTYPE   "3"
+setenv PAMB_XGRLIM    "150.0D-12"
+setenv PAMB_SGRLIM    "600.0D-12"
+setenv PAMB_XPHLIM    "25.0D-12"
+setenv PAMB_SPHLIM    "100.0D-12"
+setenv PAMB_RLIM1     "0.3"
+setenv PAMB_RLIM2     "0.3"
+setenv PAMB_RLIM3     "0.0"
+setenv PAMB_RTIM1     "10800.0"
+setenv PAMB_SPLSPAN   "7200.0"
+setenv PAMB_SPL_CNST  "0.00000556"
+setenv PAMB_MSC       "TRUE"
+setenv PAMB_PLOTINI   "FALSE"
+setenv PAMB_PLOTFIN   "TRUE"
+setenv PAMB_INIWEI    "8.0D-12"
+setenv PAMB_ARFFLO    "0.05"
+#
+#      IV. Section
+# ===              Kludge Environment variables.
+#
+# #########################################################################
+# #  NB! These environment variables change normal work of SOLVE and are  #
+# #    potentially dangerous. Don't use them unless you really need!      #
+# #########################################################################
+#
+# --- Environment variable SOLVE_COMPAT sets mode of compatibility with
+# --- earlier version of SOLVE. Value 0 means "proper" mode -- not emulation
+# --- of earlier version of SOLVE. value 9612 force to work SOLVE in
+# --- emulation mode with version of December 1996.
+#
+setenv SOLVE_COMPAT "0"
+#
+# --- Environment variable UNF_DISABLE disables some functions of socom_ext.
+#
+setenv UNF_DISABLE     ""
+#
+# --- If environment variable HFINT_DISABLE is setup as "YES" interpolation of
+# --- high frequency EOP will be disabled in PROC and CRES and values of EOP
+# --- will be calculated for each observation anew what will slow down the speed
+# --- of work approximately twice.
+#
+setenv HFINT_DISABLE   ""
+#
+# --- Environment variable HFINT defines the number of nodes for interpolation
+# --- high frequency EOP in PROC and CRES. Matching variable is L_HFE in
+# --- cutil/hfint_init.f -- if HFINT is not setup L_HFE will be used
+# --- Acceptable values are in range [6, 64].
+#
+setenv HFINT           ""
+#
+# --- If the session marked as ineligible to fast algorithm then by default
+# --- parameter FAST_MODE will be changed (only for this session!).
+# --- If environment variable FAST_MODE__STRICTLY is setup as "YES" then
+# --- such substitution will be suppressed and the value of variable FAST_MODE
+# --- will be conserved. As a result user will see error message at the next
+# --- stage of the processing of this session.
+#
+setenv FAST_MODE__STRICTLY ""
+#
+# --- If environment variable GAMB_BATCH is setup as "YES" then SOLVE in
+# --- batch mode will not make parameters estimation but will do group delay
+# --- ambiguity resolution.
+#
+setenv GAMB_BATCH          ""
+#
+# --- If environment variable MEMORY_DEBUG is setup as "YES" then SOLVE will
+# --- print information messages about usage of dynamic memory. Part of
+# --- mesasges are printed in file /tmp/mem.mem, part of messages goes
+# --- in screen.
+#
+setenv MEMORY_DEBUG        ""
+#
+# --- If environment variable LOCK_IGNORE is setup as "YES" then a check of
+# --- whether the catalogue file is locked is bypassed. Sometimes lock of
+# --- catalogue cannot be removed by simple means. NB: it is dangerous to 
+# --- write something in the catalogue (f.e. database update) if more than one 
+# --- user set LOCK_IGNORE. Catalogue file may be damaged!
+#
+setenv LOCK_IGNORE ""
+#
+# --- Environment variable CORFIL defines the name of the calibration 
+# --- definition file. If CORFIL is not set up then the calibration file is
+# --- in the working directory with name CORFxx.
+#
+setenv CORFIL ""
+#
+# --- Environment variable EQUAL_CHANNEL defines weighting scheme for 
+# --- computation of ionosphere frequencies. If EQUAL_CHANNELS is "YES", then
+# --- equal weights are ascribed for all channels. If "NO", then the channel
+# --- weight is a product of the number of accumulation periods (both USB and
+# --- LSB) and the channel fringe amplitude (default)/
+#
+setenv EQUAL_CHANNELS ""
+#
+# --- Environment variable SOLVE_ALTGRAPHIC defined the name of the alternative
+# --- graphic program which would be launched by Solve upon hitting "-" key.
+# --- NB: the name of the program should have 5 characters. No paths. If it 
+# --- does not reside in MK5_ROOT/bin then its real path should be defined in
+# --- SOLMODE file.
+#
+setenv SOLVE_ALTGRAPHIC "my_alternative_program"
+#
+# ==== Obsolete environment variables. Will be removed in the next SOLVE release
+#
+setenv TRANS_TIM        ""
+setenv FAST_DBG__BYPASS ""
+setenv GAMB_F_X_BAND    ""
+setenv GAMB_F_S_BAND    ""
+#
+# --- Environment variable SPOOL_STAT_FMT changes the format of spool file
+# --- session source statstics. Supported values "SHORT" -- suitable for
+# --- manual inspection and "LONG" --  suitable for grep
+#
+setenv LISTING_SRC_STAT "SHORT"
+#
+# --- Environment variable LISTING_SEG_STYLE changes the format of spool file
+# --- session source statstics. Supported values "PRE2005" -- (for backward
+# --- compatibility and POST2005
+#
+setenv LISTING_SEG_STYLE "SEG_POST2005"
+#
+# --- Whether to consider the differences in apriori source positio
+ns
+# --- bigger than a predefined limit as a fatal error or not. If "YES",
+# --- Solve writes a warning and proceeds. Results may be wrong! 
+# --- If "NO" or not defined, Sovle considers this situation as a fatal error
+#
+setenv DSOUC_IGNORE "NO"
+#
+# --- Short or long format for residuals file
+#
+setenv RESIDUALS_SHORT "YES"
+#
+# --- Kludge variable for overriding maximim allowed matrix condition number.
+# --- may be useful for tests, but god forbid you to use it for production
+# --- runs! YOU MAY GET WRONG RESULTS!! You are warned!!!
+#
+setenv COND_MAX ""
+#
+# --- Environment vairable for specifing an alternative file which
+# --- assigns a tectonic plate to each station.
+#
+setenv SOLVE_SITPL ""
+# #########################################################################
+# #  NB! These environment variables change normal work of SOLVE and are  #
+# #    potentially dangerous. Don't use them unless you really need!      #
+# #########################################################################
+#
+# --- Environment variable SOLVE_COMPAT sets mode of compatibility with
+# --- earlier version of SOLVE. Value 0 means "proper" mode -- not emulation
+# --- of earlier version of SOLVE. value 9612 force to work SOLVE in
+# --- emulation mode with version of December 1996.
+#
+setenv SOLVE_COMPAT "0"
+#
+# --- Environment variable UNF_DISABLE disables some functions of socom_ext.
+#
+setenv UNF_DISABLE     ""
+#
+# --- If environment variable HFINT_DISABLE is setup as "YES" interpolation of
+# --- high frequency EOP will be disabled in PROC and CRES and values of EOP
+# --- will be calculated for each observation anew what will slow down the speed
+# --- of work approximately twice.
+#
+setenv HFINT_DISABLE   ""
+#
+# --- Environment variable HFINT defines the number of nodes for interpolation
+# --- high frequency EOP in PROC and CRES. Matching variable is L_HFE in
+# --- cutil/hfint_init.f -- if HFINT is not setup L_HFE will be used
+# --- Acceptable values are in range [6, 64].
+#
+setenv HFINT           ""
+#
+# --- If the session marked as ineligible to fast algorithm then by default
+# --- parameter FAST_MODE will be changed (only for this session!).
+# --- If environment variable FAST_MODE__STRICTLY is setup as "YES" then
+# --- such substitution will be suppressed and the value of variable FAST_MODE
+# --- will be conserved. As a result user will see error message at the next
+# --- stage of the processing of this session.
+#
+setenv FAST_MODE__STRICTLY ""
+#
+# --- If environment variable GAMB_BATCH is setup as "YES" then SOLVE in
+# --- batch mode will not make parameters estimation but will do group delay
+# --- ambiguity resolution.
+#
+setenv GAMB_BATCH          ""
+#
+# --- If environment variable MEMORY_DEBUG is setup as "YES" then SOLVE will
+# --- print information messages about usage of dynamic memory. Part of
+# --- mesasges are printed in file /tmp/mem.mem, part of messages goes
+# --- in screen.
+#
+setenv MEMORY_DEBUG        ""
+#
+# --- If environment variable LOCK_IGNORE is setup as "YES" then a check of
+# --- whether the catalogue file is locked is bypassed. Sometimes lock of
+# --- catalogue cannot be removed by simple means. NB: it is dangerous to
+# --- write something in the catalogue (f.e. database update) if more than one
+# --- user set LOCK_IGNORE. Catalogue file may be damaged!
+#
+setenv LOCK_IGNORE ""
+#
+# --- Environment variable CORFIL defines the name of the calibration
+# --- definition file. If CORFIL is not set up then the calibration file is
+# --- in the working directory with name CORFxx.
+#
+setenv CORFIL ""
+#
+# --- Environment variable EQUAL_CHANNEL defines weighting scheme for
+# --- computation of ionosphere frequencies. If EQUAL_CHANNELS is "YES", then
+# --- equal weights are ascribed for all channels. If "NO", then the channel
+# --- weight is a product of the number of accumulation periods (both USB and
+# --- LSB) and the channel fringe amplitude (default)/
+#
+setenv EQUAL_CHANNELS ""
+#
+# --- Environment variable SOLVE_ALTGRAPHIC defined the name of the alternative
+# --- graphic program which would be launched by Solve upon hitting "-" key.
+# --- NB: the name of the program should have 5 characters. No paths. If it
+# --- does not reside in MK5_ROOT/bin then its real path should be defined in
+# --- SOLMODE file.
+#
+#
+# --- Kludge environment variable SOLVE_ZERO_AMBIG. If "YES", then
+# --- SDBH during reading the database sets phase and group ambiguities
+# --- counter to zero. By another words, previous work for resolving 
+# --- group and phase delay ambiguities will be lost.
+#
+setenv SOLVE_ZERO_AMBIG "no"
+#
+# --- Kludge environment variable SOLVE_NO_SUPR. If "YES", then
+# --- SDBH during reading the database resets suppression flags. It
+# --- sets "used" for all observations with quality code 8 and 9, 
+# --- and not used for all others.
+#
+setenv SOLVE_NO_SUPR    "no"
+#
+# --- Environment variable SPOOL_STAT_FMT changes the format of spool file
+# --- session source statstics. Supported values "SHORT" -- suitable for
+# --- manual inspection and "LONG" --  suitable for grep
+#
+setenv LISTING_SRC_STAT "SHORT"
+#
+# --- Environment variable LISTING_SEG_STYLE changes the format of spool file
+# --- session source statstics. Supported values "PRE2005" -- (for backward
+# --- compatibility and POST2005
+#
+setenv LISTING_SEG_STYLE "SEG_POST2005"
+#
+setenv DSOUC_IGNORE "YES"
+#
+setenv RESIDUALS_SHORT "YES"
+#
+setenv VTD_IMAGES        /vlbi/images
+setenv SOLVE_NO_STRUC    YES
+#
+# ==== User-defined SOLVE-related environment variables:
+#

@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    MKVB      char       H7
+LAST_UPDATE:   MKVB      char       2025.03.23
+COORD:         MKVB      meters     -5464024.965    -2495199.118     2148346.845
+MOUNT:         MKVB      char       ALTAZ
+#
+SLEW_AZ:       MKVB      deg/sec    9.9
+SLEW_EL:       MKVB      deg/sec    9.9
+ACCL_AZ:       MKVB      deg/sec^2  9.9
+ACCL_EL:       MKVB      deg/sec^2  9.9
+TSETTLE_AZ:    MKVB      sec        0.0
+TSETTLE_EL:    MKVB      sec        0.0
+#
+EL_MIN:        MKVB      deg        2.0
+EL_MAX:        MKVB      deg       90.0
+AZ_RANGE:      MKVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      MKVB      char      hrtr
+BACKEND:       MKVB      char      hrtr
+SETMODE:       MKVB      sec        0.0
+PREOB:         MKVB      sec        0.0
+POSTOB:        MKVB      sec        0.0
+#
+HOR_AZIM:      MKVB      deg        0.0  360.0
+HOR_ELEV:      MKVB      deg        2.0   2.0
+STOW_AZIM:     MKVB      deg        0.0
+STOW_ELEV:     MKVB      deg       90.0
+#
+CLOCK_DATES:   MKVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  MKVB      sec        0.0

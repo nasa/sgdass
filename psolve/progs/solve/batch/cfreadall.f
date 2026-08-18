@@ -1,0 +1,53 @@
+      INTEGER*2 FUNCTION CFREADALL(STRING)
+      IMPLICIT   NONE ! Updated by Jim Ryan for I*4 compliance, Sept 2002
+!
+! 1.  CFREADALL PROGRAM SPECIFICATION
+!
+! 1.1 LOW-LEVEL I/O UTILITY TO READ THE CONTROL FILE.
+!     THE EFFECT OF CFUNRD IS ACCOUNTED FOR. Comment lines are
+!     not skipped.
+!
+! 1.2 REFERENCES:
+!
+! 2.  CFREADALL INTERFACE
+!
+! 2.1 Parameter File
+!
+! 2.2 INPUT Variables: None
+!
+! 2.3 OUTPUT Variables:
+!
+      CHARACTER*(*) STRING
+!
+!  STRING - String read from control file
+!
+! 2.4 COMMON BLOCKS USED
+      INCLUDE 'batcm.i'
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES: apnd_2_spool
+!       CALLED SUBROUTINES: Utility routines
+!
+! 3.  LOCAL VARIABLES
+!
+      INTEGER*2  TRIMLEN
+      INTEGER*4  IOS
+!
+! 4.  HISTORY
+!  WHO  WHEN    WHAT
+!  MWH  900720  Created
+!
+! 5.  CFREADALL PROGRAM STRUCTURE
+!
+!
+      READ ( 92, '(A)', IOSTAT=IOS, END=99 ) STRING
+      CALL FERR ( INT2(IOS), 'READING CONTROL FILE', INT2(0), INT2(0) )
+      CFREADALL=TRIMLEN(STRING)
+      RETURN
+!
+99    CONTINUE
+      KEOF=.TRUE.
+      CFREADALL=-1
+      RETURN
+      END

@@ -1,0 +1,29 @@
+# VLBI station parameters Format 2022.04.03
+#
+# NOT REAL NUMBERS: Can be used for simulations only!!!
+#
+SHORT_NAME:   APEX      char      Ap
+LAST_UPDATE:  APEX      char      2026.07.16_20:32:26
+COORD:        APEX      meters    2225039.530    -5441197.629    -2479303.360
+MOUNT:        APEX      char       ALTAZ
+SLEW_AZ:      APEX      deg/sec    1.0
+SLEW_EL:      APEX      deg/sec    1.0
+ACCL_AZ:      APEX      deg/sec^2  0.25
+ACCL_EL:      APEX      deg/sec^2  0.25
+TSETTLE_AZ:   APEX      sec        2.0
+TSETTLE_EL:   APEX      sec        2.0
+EL_MIN:       APEX      deg        5.0
+EL_MAX:       APEX      deg       90.0
+AZ_RANGE:     APEX      deg      -55.0   55.0  305.0  415.0
+RECORDER:     APEX      char      mark6
+BACKEND:      APEX      char      dbbc3
+SETMODE:      APEX      sec         4.0
+PREOB:        APEX      sec       10.0
+POSTOB:       APEX      sec        2.0
+HOR_AZIM:     APEX      deg       0   360 
+HOR_ELEV:     APEX      deg       9     9
+STOW_AZIM:    APEX      deg       80.0
+STOW_ELEV:    APEX      deg       80.0
+#
+CLOCK_DATES:  APEX      sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: APEX      sec        0.0E06

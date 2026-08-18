@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  VLBA_OV   OV
+LAST_UPDATE: VLBA_OV   2018.01.27
+COORD:       VLBA_OV   meters     -2409150.114    -4478573.232     3838617.397   
+MOUNT:       VLBA_OV   char       ALTAZ
+SLEW_AZ:     VLBA_OV   deg/sec    1.40833
+SLEW_EL:     VLBA_OV   deg/sec    0.47833
+ACCL_AZ:     VLBA_OV   deg/sec^2  0.75
+ACCL_EL:     VLBA_OV   deg/sec^2  0.25
+TSETTLE_AZ:  VLBA_OV   sec        6.0
+TSETTLE_EL:  VLBA_OV   sec        6.0
+EL_MIN:      VLBA_OV   deg        2.0
+EL_MAX:      VLBA_OV   deg       90.0
+AZ_RANGE:    VLBA_OV   deg      -90.0 90.0 270.0 450.0
+RECORDER:    VLBA_OV   char      mark5c
+PREOB:       VLBA_OV   sec        0.0
+POSTOB:      VLBA_OV   sec        2.0

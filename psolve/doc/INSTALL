@@ -1,0 +1,348 @@
+This instruction explains how to install Mark-5 VLBI Analysis Software 
+Calc/Solve.
+
+
+Before installation
+~~~~~~~~~~~~~~~~~~~
+
+1) Check whether your system has software for compilation of Calc/Solve.
+   Refer to 
+
+   $MK5_ROOT/help/INSTALL.hpux    if you have HP-UX
+   $MK5_ROOT/help/INSTALL.linux   if you have Linux
+
+   ( 
+     They are accessible also as 
+     http://gemini.gsfc.nasa.gov/solve_root/help/INSTALL.hpux
+     http://gemini.gsfc.nasa.gov/solve_root/help/INSTALL.linux
+   )
+  
+2) Launch csh (C shell) if you use another shell. All compilation procedure 
+   runs under C shell. Check:
+
+   a) environment variable PATH. It should contain paths for system 
+      procedures, X11 binaries, C compiler and Fortran compiler.
+
+   b) Check whether C-shell programs can run at your system.
+
+   c) Check customization of /bin/sh . Variable path for this shell should be
+      set properly. /bin/sh should find all system programs. Check whether
+      /bin/sh programms can run at your system.
+
+3) Choose a 3-letter abbreviation for your analysis center. It will be used 
+   as an identifier of analysis center in output in spool-file and SINEX 
+   output. Maybe you need ask your boss which name he/her prefers. 
+
+4) Set root names of subdirectories:
+  
+   ${mk5_root}          --  directory with source code and executables 200-250Mb
+   ${mk5_root}/archive  --  directory with CALC/SOLVE archive. Place for 
+                            distribution kit (no less than 25 Mb).
+   ${mk5_root}/save_files    -- SOLVE save files -- 10Mb
+   ${mk5_data}/work_files    -- directory with scratch files: 50-150Mb per user
+   ${mk5_data}/spool_files   -- directory with Solve listing 2-300Mb per user.
+   ${mk5_data}/cgm_files     -- directory for combined global matrices: 100Mb per user
+   ${mk5_data}/cat_files     -- directory with catalogue of databases: 10-15Mb
+   ${mk5_data}/apriori_files -- directory with a priori data: 10-15Mb
+   ${mk5_data}/log           -- directory with log files
+   ${mk5_data}/delog         -- directory with de-log files (results of parsing
+                                 log files)
+   ${mk5_data}/phase         -- directory for Phase_doctor.
+   ${mk5_data}/sked          -- directory with schedule files.
+   ${mk5_data}/master        -- directory for master schedule files.
+   ${mk5_data}/control       -- directory for control files.
+   ${mk5_data}/mark3_dbh     -- directory for databases  (10Mb -- 80Gb)
+   ${mk5_data}/mark3_sup     -- directory for superfiles (10Mb -- 20Gb)
+
+   Notation ${root_dir}/dir means that directory "dir" is a subdirectory
+   of "root_dir". You are free to chose arbitrary place where mk5-directory
+   will be located. Example (MPIFR, Bonn):
+ 
+   /geo/vlbi/mk5
+   /geo/vlbi/mk5/archive
+   /geo/vlbi/save_files
+   /geo/vlbi/work_files
+   /geo/vlbi/spool_files
+   /geo/vlbi/cat_files
+   /geo/vlbi/apriori_files
+   /geo/vlbi/log
+   /geo/vlbi/delog
+   /geo/vlbi/sked
+   /geo/vlbi/phase
+   /geo/vlbi/mark3_dbh
+   /geo/vlbi/mark3_sup
+
+   NB: path name to root_dir should not be longer than 12 characters, 
+       otherwise compilation at HP-UX may fail since the list of expanded 
+       filenames may exceed internal shell line length.
+
+5) Create these directories. You should be aware that mk5_root directory has 
+   at least 250Mb free space.
+
+
+Installation.
+~~~~~~~~~~~~~
+
+0) Start C shell or tcsh.
+
+1) Copy a distribution kit to some local directory. It is recommended to
+   put the distribution kit in <archieve_dir>/zip_xxxxxx where xxxxxx is
+   the date of the distribution kit. You need 
+
+   a) SOLVE_xxxxxx.tar  -- source code;
+   b) fitst_save.zip    -- some files with data for SOLVE;
+
+2) Untar it by command tar -xvf <distribution_kit_file>
+
+3) Set environment variable SAVE_DIR. It should point the directory with SOLVE 
+   save files (denoted as {save_files} above). $SAVE_DIR notation will be used
+   thereafter. 
+
+   Set environment variable HELP_DIR. It should point the directory with SOLVE 
+   help files (denoted as {help_files} above). 
+
+   Make a tree by command make_tree from archive directory.
+   That program will ask you to set a value of environbment variable 
+   MK5_ROOT. Do it! Add the definitions of MK5_ROOT and SAVE_DIR 
+   to your shellcustomization file ( ~.tcshrc if you use tcsh shell as I do). 
+   Apply these definitions (by the command source ~/.tcshrc if you use tcsh 
+   shell ). 
+
+   Check once more whether they actually were set up properly.
+
+
+4) Unzip the sources code by the command "solve_install init"
+
+5) Create local files. These files keeps site-specific preferences.
+   Local files are located in the director $MK5_ROOT/local/
+
+   You have to make at least one mandatory file solve.lcl
+   and several additional local customization files: 
+         dbs.lcl
+         dbi.lcl
+         eops.lcl
+         eopi.lcl
+         sim.lcl
+         opa.lcl
+         gex.lcl
+         gae.lcl
+
+   5a) Copy file from $SAVE_DIR/template_solve.lcl to 
+       $MK5_ROOT/local/solve.lcl
+       Edit it.
+
+   5b) If you are going to retrieve database from the IVS Data Center 
+       automatically you should create control file for geo_import.
+       Refer to geo_import user manual $HELP_DIR/geo_import_01.txt
+
+   5c) If you are going to submit databases to the IVS Data Center
+       then copy file from $SAVE_DIR/template_dbs.lcl to 
+       $MK5_ROOT/local/dvi.llc
+       Edit it.
+
+   5d) If you are going to submit EOP series to the IVS Data Center
+       then copy file from $SAVE_DIR/template_eops.lcl to 
+       $MK5_ROOT/local/eops.lcl
+       Edit it. Then copy  $SAVE_DIR/template_eops.lcl to  
+       $MK5_ROOT/local/eopi.lcl (for Intensive NEOS experiments)
+       end edit it.
+
+   5e) If you are going to use program opa (OPerational Analysis utiltity)
+       you should create configuration OPA file. Refer to OPA user manual
+       $HELP_DIR/opa_02.txt
+
+   5f) If you are going to make simulation Solve solutions and use program
+       sima you should create sima configuration file. Refer to sima user 
+       manual $HELP_DIR/sima_01.txt
+       
+   5g) If you are going to use progem geo_export for submitting results of
+       correlation to the IVS Data Center (a pair of databases version 1) you
+       should copy mk5_gex.templ to $MK5_ROOT/local/gex.lcl and
+       customize it. You may need to customize template file for dbedit
+       ( $SAVE_DIR/dbedit_templ.cnf ) which is used by geo_export.
+
+   Check attentively your $MK5_ROOT/local/solve.lcl file.
+   You save a lot of time if you succeed in finding an error in this file
+   just now.
+
+ 6) Compile CALC/SOLVE;
+
+    $MK5_ROOT/support/make_all_mk5 
+
+    It takes 0.5-2 hours.
+
+ 7) Look at the files 
+      make_libs_errs, 
+      make_progs_errs, 
+      make_solve_errs, 
+      make_testware_errs,
+      make_utils_errs
+
+    in $MK5_ROOT/temp directory. Draw special care at the lines starting with
+    **, lines with words "Don't" adn lines with "Make:". 
+
+     grep "\*\*"   $MK5_ROOT/temp/*_err*
+     grep "Don\'t" $MK5_ROOT/temp/*_err*
+
+    If there is no any fatal error messages -- congratulation -- CALC/SOLVE 
+    is installed!
+
+
+ 8) Get first_install.zip file from Solve Web page.
+    cd $SAVE_DIR
+    unzip -j {ditribution_kit_dir}/save_files.zip 
+
+    where {ditribution_kit_dir} is directory where you keep the
+    distribution kit.
+
+ 9) Rename $SAVE_DIR/letok.template to $SAVE_DIR/letok
+    You need to add solve user initials: an identifier for each SOLVE 
+    user. An identifier consist of two letters of upper register. File
+    letok defines SOLVE user intiials. Each line defines one initial in the
+    position 1:2. Symbols in other positions are ignored and may be used as
+    comments.
+
+10) Rename $SAVE_DIR/CORFIL.template to $SAVE_DIR/CORFIL . You might wish 
+    to edit it.
+
+11) Rename $SAVE_DIR/flyby_calibrations.template to 
+    $SAVE_DIR/flyby_calibrations . You might wish to edit it.
+
+12) Rename $SAVE_DIR/flyby_modfiles_default.template to 
+    $SAVE_DIR/flyby_modfiles_default . You might wish to edit it.
+
+13) Rename $SAVE_DIR/partials_calibrations.template to 
+    $SAVE_DIR/partials_calibrations . You might wish to edit it.
+
+14) Rename $SAVE_DIR/SOLMOD.template to $SAVE_DIR/SOLMOD. You might wish    
+    to edit it.
+
+15) Create database catalogue. To do it you have to run crcat4 program
+    (NB: you should use this program only once when you install Solve the
+     first time. crcat4 creates catalogue file. It terminates if catalogue
+     files exist). 
+    Before launching crcat4 you have to create directory 
+    user_tracks_db  in  ${mk5_data}/cat_files/ 
+    ( F.e. /geo/vlbi/cat_files/user_tracks_db )
+
+    Usage: crcat4 -d <directory_with_mark3_dbh_files>
+
+17) Reset scratch files. It is done for each Solve users:
+    solve_reset <SOLVE_initials> <max_obs> <max_parms>
+    You can set max_obs=40000 and max_param=2000 for the start.
+
+18) Check interactive solve:
+    enter <SOLVE_initials>
+    load the database. Try to make a trial solution. Check graphic: 
+    REPA and MDLPL_PLUS
+
+19) Create file <SUP_DIR_LIST> (where <SUP_DIR_LIST> is the value of 
+    customization variable SUP_DIR_LIST).  Insert full names of the directories
+    where you are going to keep superfiles. Each line of <SUP_DIR_LIST> 
+    contains one and only one directory. NB: superfile directories should
+    be on local disk, otherwise Solve will work extremely slow.
+
+20) Create empty <SUPCAT_FILE> file (where <SUPCAT_FILE> is the value of 
+    customization variable SUPCAT_FILE).  
+
+21) Create a superfile of the test database by running liptn:
+    liptn <Solve_initials> 1 1 <Database_name> 0
+    where <Solve_initials>  -- Solve user initials
+          <Database_name>   -- database name WITHOUT precedding dollar
+    Run SOLVE and load the experiment from superfile.
+
+22) If you have post-correlator output, log-files, sked-files you can
+    check dbedit, xlog, pwxcb, dbcal.
+     
+23) You should create configuration files programs opa, db_submit, eops_submit,
+    sima, gsnoop is you are going to use them. Refer to documentation to these  
+    programs. Normally configuration files are kept in the directory
+    $MK5_ROOT/local. NB: This directory is not updated by solve_install.
+
+
+Post-installation.
+~~~~~~~~~~~~~~~~~~
+
+
+ 1) Make local copy of solve_env.template from $SAVE_DIR directory and
+    customize it. It is wise to include it in your shell customization file.
+    CALC/SOLVE expects to see a lot of environment variables installed. 
+    In general SOLVE is able to work without any environment variables but you 
+    may wish to tune SOLVE in according your own preferences. Some environment 
+    variable change the first appearance of menu windows, other affects SOLVE 
+    more seriously. Below is the list of important environment variables used 
+    by CALC/SOLVE:
+
+    SOLVE_DIR, ARC_STR, HELP_DIR, SAVE_DIR, WORK_DIR, SPOOL_DIR, CGM_DIR,
+    PGPLOT_DIR, SOLVE_EDITOR, SOLVE_PS_VIEWER, DIAGI_PRIVOM (see below)
+
+ 2) Add environment variable DIAGI_PRICOM. It declares a command for printing
+    postscript file at your printer. It may vary form system to system.
+    The following definition is used in Bonn for printing PostScript files at
+    printer LaserJet5m: setenv DIAGI_PRICOM "lp -onb -dlaser2". Consult with
+    your system administrator.
+
+ 3) Add the following lines lines to your C shell or tcsh customization file.
+
+setenv MK5_ROOT    <path_to_the_root_directory>
+source MK5_ROOT/support/solve_var
+
+    otherwise you will not be able to compile and link separate CALC/SOLVE 
+    programs. Script solve_var sets values of some environment variables which 
+    controls compilation and linking in according with preferences of your
+    analysis center. 
+
+ 4) Add the following lines to ~/.Xdefault file:
+
+pgxwin.Win.geometry:	1260x800+0+90
+pgxwin.server.visible:	True
+pgxwin.Win.maxColors:   70
+pgxwin.Win.iconize:     True
+
+    Each user who are going to use CALC/SOLVE should add these line to his 
+    private version of ~/.Xdefault to be sure that pgplot will be working 
+    properly.
+
+ 5) In order to look PostScript documentation file you should create an 
+    executable file for launching PostScript viewer (for example ghostview). 
+    Put this file in the directory $MK5_ROOT/bin/ and set its name to the 
+    environment variable SOLVE_PS_VIEWER. CALC/SOLVE expects that PostScript 
+    files are displayed at the screen by the command 
+    $SOLVE_PS_VIEWER <file_name>.
+
+    This viewer should print to the screen both PostScript file and 
+    PostScript + gzipped file.
+
+ 6) You should use some editor for adding history records for updated database
+    file. If you prefer other editor than system-wide default (vi) you should 
+    write a script for launching your favorite editor (for example emacs), put 
+    it in the directory $MK5_ROOT/bin/ and set its name to the 
+    environment variable SOLVE_EDITOR. CALC/SOLVE expects that the editor is 
+    called by the command $SOLVE_EDITOR <file_name>.
+
+ 7) Add directory with CALC/SOLVE executabels to your PATH environment 
+    variable.
+
+ 8) Tune perormance of matvec library. Refer to
+    $MK5_ROOT/matvec_tune.txt
+
+    If you found that changes of matvec parameters in $MK5_ROOT/local/solve.lcl
+    file improves performance of matvec library at your machine you need
+    to recompile Calc/Solve in order to enjoy improvement in performance.
+    In order to recompile Calc/Solve you need
+    a) stop all Calc/Solve processes whcih may run at your system.
+    b) execute command $MK5_ROOT/support/make_all_mk5
+
+ 9) Launch CALC/SOLVE and enjoy SOLVEing! 
+
+    Be sure that CALC/SOLVE programs are called properly. SOLVE programs are 
+    searched in the following order: 
+    a) first SOLMOD is examined. 
+    b) If SOLVE doesn't find there the program name it looks directory 
+       specified in SOLVE_DIR. 
+    c) If SOLVE_DIR variable is not specified executables will be taken from 
+       the directory specified in ../include/gsfcb.i in the variable 
+       SOLVE_PROG_DIR. 
+
+Leonid Petrov  ( http://vlbi.gsfc.nasa.gov/pet )
+14-DEC-2006 17:29:57

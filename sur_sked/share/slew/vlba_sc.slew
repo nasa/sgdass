@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  VLBA_SC   SC
+LAST_UPDATE: VLBA_SC   2018.01.27
+COORD:       VLBA_SC   meters     2607848.521    -5488069.690     1932739.537   
+MOUNT:       VLBA_SC   char       ALTAZ
+SLEW_AZ:     VLBA_SC   deg/sec    1.40833
+SLEW_EL:     VLBA_SC   deg/sec    0.47500
+ACCL_AZ:     VLBA_SC   deg/sec^2  0.75
+ACCL_EL:     VLBA_SC   deg/sec^2  0.25
+TSETTLE_AZ:  VLBA_SC   sec        6.0
+TSETTLE_EL:  VLBA_SC   sec        6.0
+EL_MIN:      VLBA_SC   deg        2.0
+EL_MAX:      VLBA_SC   deg       90.0
+AZ_RANGE:    VLBA_SC   deg      -90.0 90.0 270.0 450.0
+RECORDER:    VLBA_SC   char      mark5c
+PREOB:       VLBA_SC   sec        0.0
+POSTOB:      VLBA_SC   sec        2.0

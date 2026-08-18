@@ -1,0 +1,331 @@
+---------------------------------------
+
+   A variable may have one or more values. Variables can be 
+scalar, one-dimensional and two-dimensional. A scalar variable
+has only one value. A one-dimensional variable has an array of 
+N values, where N is the dimension. A two-dimensional variable
+is a table of N rows and M columns.
+
+Scalar parameter:          CABLE_SIGN
+One-dimensional variables: CABLE, DATA_ON, FMT2GPS_TIMER, 
+                           FMTGPS, METEO, PC_SENSOR, SEFD, TCAL, 
+                           TP_SENSOR
+Two-dimensional valuables: PCAL, SEFD, TSYS, TPI, TATM, OPACITY. 
+
+   The first dimension of two-dimensional variables runs over epochs.
+The second dimension of two-dimensional variables runs over sensors.
+
+Dimensions of variable is defined in the keyword NUM_var:, 
+where var is the variable name. Format of DIMENSION: keyword:
+
+   DIMENSION: var value1 [value2]
+
+   where value1 defines the 1st dimension of variable and value2
+defines the second dimension. The second dimension can be omitted
+for scalar and one-dimensional variables
+
+All variables should be defined in the preceding PROVENANCE CREATE_VAR
+section and be absent in PROVENANCE REMOVE_VAR section. 
+One-dimensional variables are sorted. Two-dimensional arrays are sorted
+first over sensors and then over epochs. Some elements of two-dimensinonal
+may be underfined.
+
+The number of records of a given variabe is defined by keyword NUM_RECORDS
+
+   NUM_RECORDS: var value
+
+This keyword is optional for scalars and one-dimensional variables, but
+is mandatory for two-dimensional variables. The number of records can
+be less than the product of dimension. That means that some elements of a 
+two-dimensional array are not defined.
+
+In the following specs, note that 'X' denotes number of blank spaces
+
+   DATA_ON: X value1 X value2 2X value3 2X value4 2X value5
+
+      Keyword DATA_ON defines the interval of time the station is on source.
+
+      value1   10:15  I6      defines the 1-based scan index.
+
+      value2   17:38  A22     defines the ON UTC time tag
+
+      value3   41:62  A22     defines the OFF UTC time tag
+
+      value4   65:72  A8      defines the name of the observed source
+
+      value5   75:90  A16     defines the epoch name 
+example:
+DATA_ON:      1 2025.07.22-17:30:00.01  2025.07.22-17:30:20.01  1803+784  203-1730a
+
+
+   CABLE: X value1 X value2 2X value3 3X value4 2X value5 
+
+      Keyword CABLE defines the cable delay: the path delay between
+      the cable calibration unit and the phase calibration unit
+
+      value1    8:14  I7      defines the 1-based epoch index.
+
+      value2   16:37  A22     defines the UTC time tag
+
+      value3   40:51  1PE12.5 defines the cable calibration. Units: seconds.
+
+      value4   55:63  A8      defines the name of the observed source
+
+      value5   65:80  A16     defines the epoch name
+example:
+CABLE:      1  2025.08.14-17:30:01.12   1.56683E-08   1030+415  226-1730
+
+
+
+   METEO: X value1 X value2 X value3 X value4 X value5 X value6 X value7 2X  value8 
+
+      Keyword METEO defines meteorological parameters. 
+
+      value1    8:14  I7      defines the 1-based meteo index.
+
+      value2   16:38  A22     defines the UTC time tag
+
+      value3   40:46  F7.2    defines the absolute air temperature. Units: K.
+
+      value4   48:55  F8.1    defines the atmospheric pressure. Units: Pa.
+
+      value5   57:62  F5.1    defines the relative humidity. Units: pro cents.
+
+      value6   64:71  I8      defines the name of the observed source.
+
+      value7   73:80  A8      defines the 1-based scan index.
+
+      value8   83:98  A16     defines the epoch name.
+example:
+METEO:       1  2025.08.14-17:30:01.11  300.56  94900.0   57.2       1  1030+415  226-1730
+
+
+
+   TP_SENSOR: 2X value1 2X value2 2X value3 2X value4 2X value5 2X value6 2X value7 2X value8 X value9 X value10
+
+      Keyword TP_SENSOR defines total power sensors.
+
+      value1   13:18  A6      defines the sensor name. It has a form TP_xxx where
+                              xxx is the 1-based index. Heading blanks in xxx are
+			      replaced with zeroes. 
+     
+      value2   21:27  F7.2    defines the sensor intermediate frequency. The
+                              placement of the intermediate frequency, low,
+			      central, or high frequency is implementation
+			      dependent. Units: MHz.
+
+      value3   30:38  F9.2    defines the sensor local oscillator frequency.
+			      Units: MHz.
+
+      value4   41:50  F10.2   defines the sensor central sky frequency. Must be
+			      positive. Units: MHz.
+
+      value5   53:58  F6.2    defines the sensor bandwidth. Must be positive.
+			      Units: MHz.
+
+      value6   61:63  A1      defines polarization. Supported polarization codes:
+			      R, L, H, V, X, Y (in the upper case).
+
+      value7   66:72  A5      defines the sensor ID.
+
+      value8   75:76  I2      defines the original 1-based index of the sensor. It
+			      is implementation-dependent.
+
+      value9   78:85  A8      defines the sensor subband. Supported values: USB and
+			      LSB (in the upper case) or character FILLER (if not
+			      defined)
+
+      value10  87:94  A8      defines the net subband. Supported values: USB and
+			      LSB (in the upper case) or character FILLER (if not
+			      defined)
+example:
+TP_SENSOR:  TS_001   205.99    2020.00     2229.99    8.00    R       9u   9      USB     USB   002230.0-RCP-c-USB-USB-____9u-002020.0-000206.0:008.0
+
+
+   TSYS: X value1 X value2 2X value3 2X value4 X value5 2X value6 X value7 2X value8 2X value9
+
+      Keyword TSYS defines measured system temperature.
+
+      value1    7:13  I7      defines the 1-based epoch index.
+
+      value2   15:36  A22     defines the UTC time tag.
+
+      value3   39:44  A6      defines the power sensor tag.
+
+      value4   47:52  F6.1    defines the measured system temperature. Units: K.
+
+      value5   54:63  F10.4   defines the antenna azimuth. Units: degrees counted
+			      from North to east in a range from 0 to 360 deg.
+
+      value6   66:72  F7.4    defines the antenna elevation above the horizon.
+			      Units: degrees.
+
+      value7   74:82  A8      defines the name of the observed source.
+
+      value8   85:100 A16     defines the epoch name.
+
+      value9  103:118 A16     defines the data scope
+example:
+TSYS:       1 2025.08.15-09:00:01.15  TS_006    47.4   134.9966  54.9317  AZEL      r1_f01_0001       DATA:ON_SOURCE
+
+
+   TPI: X value1 X value2 X value3 X value4 X value5 X value6 X value7 X value8 2X value9 2X value10 2X value11
+
+      Keyword TPI defines the reading of the total power integrated.
+
+      value1    6:12  I7      defines the 1-based epoch index.
+
+      value2   14:36  A22     defines the UTC time tag.
+
+      value3   38:44  A6      defines the power sensor tag.
+
+      value4   46:53  I8      defines the total the power when the calibrator
+			      diode is on. Units: integer count.
+
+      value5   55:62  I8      defines the total the power when the calibrator
+			      diode is off. Units: integer count.
+
+      value6   64:73  I8      defines the total the power when the there is no
+			      signal. Units: integer count.
+
+      value7   75:83  F9.4    defines the antenna azimuth. Units: degrees counted
+			      from North to east in a range from 0 to 360 deg.
+
+      value8   85:92  F8.4    defines the antenna elevation above the horizon.
+			      Units: degrees.
+
+      value9   95:102 A8      defines the name of the observed source.
+
+      value10 105:120 A16     defines the epoch name.
+      
+      value11 123:138 A16     defines the data scope
+example:
+TPI:    6605 2025.08.15-10:54:34.15  TP_127     18944    18767      -99   180.0116  59.9188   AZEL      r1_f28_0055       DATA:VALID_ON
+
+
+
+   PC_SENSOR: 2X value1 2X value2 2X value3 2X value4 2X value5 X value6 X value7
+
+      Keyword PC_SENSOR defines phase calibrator sensors.
+
+      value1   13:18  A6      defines the sensor name. It has a form PS_xxx where
+			      xxx is the 1-based index. Heading blanks in xxx are
+			      replaced with zeroes. 
+
+      value2   21:33  F13.2   defines the sensor central sky frequency. Must be
+			      positive. Units: MHz.
+
+      value3   36:38  A1      defines polarization. Supported polarization codes:
+			      R, L, H, V, X, Y (in the upper case).
+
+      value4   41:49  A9      defines the sensor ID.
+
+      value5   52:56  I5      defines the original 1-based index of the sensor. It 
+			      is implementation-dependent.
+
+      value6   58:65  A8      defines the sensor subband. Supported values: USB and
+			      LSB (in the upper case) or character FILLER (if not
+			      defined)
+
+      value7   67:74  A8      defines the net subband. Supported values: USB and
+			      LSB (in the upper case) or character FILLER (if not
+			      defined)
+example:
+PC_SENSOR:  PS_232        5610.00    H    0b0125    -999   DUMMY      USB
+
+
+
+   PCAL: X value1 X value2 X value3 2X value4 2X value5 2X value6 X value7 X value8
+
+      Keyword PCAL defines the reading of the phase calibrator signal.
+
+      value1    7:13  I7      defines the 1-based epoch index.
+
+      value2   15:37  A22     defines the UTC time tag.
+
+      value3   39:45  A6      defines the power sensor index.
+
+      value4   48:57  F8.3    defines the amplitude of the phase calibrator signal. 
+			      Units: dimensionless in a range of 0 to 1.
+
+      value5   60:67  F8.5    defines the phase of the phase calibrator signal.
+			      Units: rad.
+
+      value6   70:79  A8      defines the name of the observed source.
+
+      value7   81:96  A16     defines the epoch name.
+
+      value8   
+example:
+PCAL:      18 2025.07.22-17:30:17.15  PS_115    60.664     2.80824    1803+784  203-1730a  DATA:VALID_ON
+
+
+
+   FMT2GPS_TIMER: 2X value1 3X value2
+
+      Keyword FMT2GPS_TIMER defines formatter to GPS timer.
+
+      value1   17:23  A7      defines the timer tag. It has a form TMR_xxx where 
+			      xxx is the 1-based index. Heading blanks in xxx are
+			      replaced with zeroes.
+
+      value2   27:27  A1      defines a board that measured time propagation.
+example:
+FMT2GPS_TIMER:  TMR_002   b
+
+
+
+   FMTGPS: X value1 X value2 2X value3 2X value4 3X value5 3X value6 2X value7 value8
+
+      Keyword  FMTGPS defines the difference between formatter time and GPS times.
+
+      value1    9:15  I7      defines the 1-based epoch index.
+
+      value2   17:38  A22     defines the UTC time tag.
+
+      value3   41:47  A7      defines a tag of the timer.
+
+      value4   50:65  1PE16.9 the difference between formatter time and GPS times.
+			      Units: seconds.
+
+      value5   69:85  1PE17.9 the difference between formatter time and PPS times.
+			      Units: seconds.
+
+      value6   89:97  A8      defines the name of the observed source.
+
+      value7  100:115 A16     defines the epoch name.
+example:
+FMTGPS:       1 2025.08.15-09:00:01.15  TMR_004  -6.952343392e-05    -1.953124951e-08    AZEL      r1_f01_0001
+
+
+
+   SEFD: X value1 2X value2 2X value3 2X value4 2X value5 2X value6 2X value7 2X value8 2X value9 2X value10 2X value11
+
+      Keyword  defines the system equivalent flux measurement (SEFD).
+
+      value1    7:13  I7      defines the observation index
+
+      value2   16:37  A22     defines the UTC time tag.
+
+      value3   40:45  A6      defines the power sensor tag. 
+
+      value4   48:57  F10.3   defines the SEFD value. Unit: Jy.
+
+      value5   60:68  F9.3    defines the system temperature during the measurement.
+			      Unit K.
+
+      value6   71:79  F9.3    defines the calibrator temperature. Units K.
+
+      value7   82:90  F9.3    defines ??.
+
+      value8   93:101 F9.3    defines the antenna gain.
+
+      value9  104:112 F9.4    defines the antenna azimuth. Units: degrees counted from
+			      North to east in a range from 0 to 360 deg.
+
+      value10 115:122 F8.4    defines the antenna elevation above the horizon.
+			      Units: degrees.
+
+      value11 125:132 A8      defines the name of the observed source.
+example:
+SEFD:       4  2025.07.22-18:36:22.18  TP_097    2761.100     78.030    106.156      0.880      1.015    85.7000   67.7000  taurusa

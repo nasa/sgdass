@@ -1,0 +1,10 @@
+# SGDASS color control file. Version of 2024.01.27
+#
+# CIVIDIS palette
+#
+# Ind Name     Main color      Shadow color
+#
+   1  Good      22  62 120      95 108 125
+   2  Neutral  128 126 121     204 202 195
+   3  Bad      233 211  87     238 231 190
+   6  Box      180 151  38     220 213 185

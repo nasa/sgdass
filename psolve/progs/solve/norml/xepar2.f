@@ -1,0 +1,37 @@
+      SUBROUTINE XEPAR2 (IPARM2,IX2T3,NPARM2,IPARM3,NPARM3,IWDS)
+      IMPLICIT   NONE ! Updated by Jim Ryan for I*4 compliance, Sept 2002
+!
+      INTEGER*4 NPARM2, NPARM3
+      INTEGER*2  IWDS, I, J
+      INTEGER*2 IPARM2(IWDS,NPARM2), IPARM3(IWDS,NPARM3), IX2T3(NPARM2)
+      LOGICAL*2 EQUAL
+!
+!   THIS SUBROUTINE WILL GENERATE A CROSS REFERENCE LIST
+!   FROM IPARM2 TO IPARM3, TAKING ADVANTAGE OF IPARM2 BEING A SUPERSET
+!   AND IN THE SAME ORDER AS IPARM3
+!
+      J=1
+      DO I=1,NPARM3
+        DO WHILE(.NOT.EQUAL( IPARM2(1,J), INT2(1), IPARM3(1,I), INT2(1), &
+     &  INT2(IWDS*2) ))
+!         IF(J.GT.NPARM2) PAUSE 10111
+          IF(J.GT.NPARM2) call ferr( INT2(108), &
+     &      'More Parameters in IPARM3Than in IPARM2', INT2(0), INT2(0) )
+          IX2T3(J)=0
+          J=J+1
+        ENDDO
+!       IF(J.GT.NPARM2) PAUSE 10112
+        IF(J.GT.NPARM2) call ferr( INT2(109), &
+     &    'More Parameters in IPARM3Than in IPARM2', INT2(0), INT2(0) )
+        IX2T3(J)=I
+        J=J+1
+      ENDDO
+!
+! CLEAN UP
+!
+      DO I=J,NPARM2
+        IX2T3(I)=0
+      ENDDO
+!
+      RETURN
+      END

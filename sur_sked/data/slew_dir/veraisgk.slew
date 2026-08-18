@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  VERAISGK  Vs
+MOUNT:       VERAISGK  char       ALTAZ
+LAST_UPDATE: VERAISGK  2018.01.20
+COORD:       VERAISGK  meters    -3263994.773  4808056.363  2619949.248
+SLEW_AZ:     VERAISGK  deg/sec    2.0
+SLEW_EL:     VERAISGK  deg/sec    2.0
+EL_MIN:      VERAISGK  deg       10.0
+EL_MAX:      VERAISGK  deg       84.5
+TSETTLE_AZ:  VERAISGK  sec        2.00
+TSETTLE_EL:  VERAISGK  sec        2.00
+ACCL_AZ:     VERAISGK  deg/sec^2  2.00
+ACCL_EL:     VERAISGK  deg/sec^2  2.00
+AZ_RANGE:    VERAISGK  deg       -90.0  90.0 270.0 450.0
+RECORDER:    VERAISGK  char       vera2000
+PREOB:       VERAISGK  sec        10.0
+POSTOB:      VERAISGK  sec         2.0

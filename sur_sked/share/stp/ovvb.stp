@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    OVVB      char       H9
+LAST_UPDATE:   OVVB      char       2025.03.23
+COORD:         OVVB      meters     -2409100.114    -4478523.232     3838667.397
+MOUNT:         OVVB      char       ALTAZ
+#
+SLEW_AZ:       OVVB      deg/sec    9.9
+SLEW_EL:       OVVB      deg/sec    9.9
+ACCL_AZ:       OVVB      deg/sec^2  9.9
+ACCL_EL:       OVVB      deg/sec^2  9.9
+TSETTLE_AZ:    OVVB      sec        0.0
+TSETTLE_EL:    OVVB      sec        0.0
+#
+EL_MIN:        OVVB      deg        2.0
+EL_MAX:        OVVB      deg       90.0
+AZ_RANGE:      OVVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      OVVB      char      hrtr
+BACKEND:       OVVB      char      hrtr
+SETMODE:       OVVB      sec        0.0
+PREOB:         OVVB      sec        0.0
+POSTOB:        OVVB      sec        0.0
+#
+HOR_AZIM:      OVVB      deg        0.0  360.0
+HOR_ELEV:      OVVB      deg        2.0   2.0
+STOW_AZIM:     OVVB      deg        0.0
+STOW_ELEV:     OVVB      deg       90.0
+#
+CLOCK_DATES:   OVVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  OVVB      sec        0.0

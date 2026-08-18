@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  MK-VLBA   MK
+LAST_UPDATE: MK-VLBA   2018.01.27
+COORD:       MK-VLBA   meters     -5464074.965    -2495249.118     2148296.845   
+MOUNT:       MK-VLBA   char       ALTAZ
+SLEW_AZ:     MK-VLBA   deg/sec    1.44666
+SLEW_EL:     MK-VLBA   deg/sec    0.47166 
+ACCL_AZ:     MK-VLBA   deg/sec^2  0.75
+ACCL_EL:     MK-VLBA   deg/sec^2  0.25
+TSETTLE_AZ:  MK-VLBA   sec        6.0
+TSETTLE_EL:  MK-VLBA   sec        6.0
+EL_MIN:      MK-VLBA   deg        2.0
+EL_MAX:      MK-VLBA   deg       90.0
+AZ_RANGE:    MK-VLBA   deg      -90.0 90.0 270.0 450.0
+RECORDER:    MK-VLBA   char      mark5c
+PREOB:       MK-VLBA   sec        0.0
+POSTOB:      MK-VLBA   sec        2.0

@@ -1,0 +1,129 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2025.07.04  2021.06.09  L. Petrov Created
+#
+SHORT_NAME:    ISHIOKA   char       IS
+LAST_UPDATE:   ISHIOKA   char       2025.07.04
+COORD:         ISHIOKA   meters     -3959636.017     3296825.538     3747042.562
+MOUNT:         ISHIOKA   char       ALTAZ   
+#
+SLEW_AZ:       ISHIOKA   deg/sec      12.0
+SLEW_EL:       ISHIOKA   deg/sec       6.0
+ACCL_AZ:       ISHIOKA   deg/sec^2     3.0
+ACCL_EL:       ISHIOKA   deg/sec^2     3.0
+TSETTLE_AZ:    ISHIOKA   sec           5.0
+TSETTLE_EL:    ISHIOKA   sec           5.0
+#
+EL_MIN:        ISHIOKA   deg           5.0
+EL_MAX:        ISHIOKA   deg          89.0
+AZ_RANGE:      ISHIOKA   deg        -70.0   70.0  290.0  430.0
+RECORDER:      ISHIOKA   char       flexbuf
+BACKEND:       ISHIOKA   char       dbbc3
+SETMODE:       ISHIOKA   sec           4.0
+PREOB:         ISHIOKA   sec           3.0
+POSTOB:        ISHIOKA   sec           2.0
+HOR_AZIM:      ISHIOKA   deg           0.0  360.0
+HOR_ELEV:      ISHIOKA   deg           5.0    5.0
+STOW_AZIM:     ISHIOKA   deg         230.0
+STOW_ELEV:     ISHIOKA   deg          60.0
+#
+CLOCK_DATES:   ISHIOKA   sec        2025.07.04 2049.12.31
+CLOCK_OFFSET:  ISHIOKA   sec        0.0
+#
+GAIN_DATES:    ISHIOKA   char       2025.02.28 2099.12.31
+#
+GAIN_FREQS:    ISHIOKA   GHz          2.225   2.366
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  H      0.036   0.036
+#
+GAIN_FREQS:    ISHIOKA   GHz          3.016    3.496
+GAIN_ELEVS:    ISHIOKA   deg            8.0   90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  H      0.033   0.033  
+#
+GAIN_FREQS:    ISHIOKA   GHz          5.2564  5.7364 
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  H      0.035   0.035
+#
+GAIN_FREQS:    ISHIOKA   GHz          6.3764 6.8564
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  H      0.035   0.035
+#
+GAIN_FREQS:    ISHIOKA   GHz          8.212    8.932
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  H      0.046   0.046
+#
+GAIN_FREQS:    ISHIOKA   GHz          10.2164 10.6964
+GAIN_ELEVS:    ISHIOKA   deg           8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  H      0.031   0.031
+##
+GAIN_FREQS:    ISHIOKA   GHz          2.225  2.365
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  V      0.050   0.050
+#
+GAIN_FREQS:    ISHIOKA   GHz          3.016    3.496
+GAIN_ELEVS:    ISHIOKA   deg            8.0   90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  V      0.034   0.034  
+#
+GAIN_FREQS:    ISHIOKA   GHz          5.2564  5.7364 
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  V      0.028   0.028
+#
+GAIN_FREQS:    ISHIOKA   GHz          6.3764 6.8564
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  V      0.030   0.030
+#
+GAIN_FREQS:    ISHIOKA   GHz          8.212  8.932
+GAIN_ELEVS:    ISHIOKA   deg            8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  V      0.036   0.036
+#
+GAIN_FREQS:    ISHIOKA   GHz          10.2164 10.6964
+GAIN_ELEVS:    ISHIOKA   deg           8.0    90.0
+GAIN_POLVALS:  ISHIOKA   K/Jy  V      0.030   0.030
+##
+TSYS_FREQS:    ISHIOKA   GHz          2.225   2.365
+TSYS_ELEVS:    ISHIOKA   deg          8.0     90.0
+TSYS_POLVALS:  ISHIOKA   K     H      74.0    74.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           3.016   3.496
+TSYS_ELEVS:    ISHIOKA   deg           8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     H      80.0    80.0 
+#
+TSYS_FREQS:    ISHIOKA   GHz           5.2564  5.7364 
+TSYS_ELEVS:    ISHIOKA   deg           8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     H      93.0    93.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           6.3764 6.8564
+TSYS_ELEVS:    ISHIOKA   deg           8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     H      99.0    99.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           8.212  8.932
+TSYS_ELEVS:    ISHIOKA   deg            8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     H      120.    120.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           10.2164  10.6964
+TSYS_ELEVS:    ISHIOKA   deg            8.0     90.0
+TSYS_POLVALS:  ISHIOKA   K     H      115.0    115.0
+##
+TSYS_FREQS:    ISHIOKA   GHz           2.225  2.365
+TSYS_ELEVS:    ISHIOKA   deg           8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     V      86.0    86.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           3.016   3.496
+TSYS_ELEVS:    ISHIOKA   deg           8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     V      80.0    80.0 
+#
+TSYS_FREQS:    ISHIOKA   GHz           5.2564  5.7364 
+TSYS_ELEVS:    ISHIOKA   deg           8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     V      75.0    75.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           6.3764 6.8564
+TSYS_ELEVS:    ISHIOKA   deg           8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     V      84.0    84.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           8.212  8.932 
+TSYS_ELEVS:    ISHIOKA   deg            8.0    90.0
+TSYS_POLVALS:  ISHIOKA   K     V       97.0    97.0
+#
+TSYS_FREQS:    ISHIOKA   GHz           10.2164  10.6964
+TSYS_ELEVS:    ISHIOKA   deg            8.0     90.0
+TSYS_POLVALS:  ISHIOKA   K     V      115.0    115.0

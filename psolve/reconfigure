@@ -1,0 +1,90 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   Rerun configuration with using parameters of ./configure           *
+# *                                                                      *
+# *   Supported options:                                                 *
+# *                                                                      *
+# *   no options -- rerun ./configure with parameters that are stored    *
+# *                 during past runs.                                    *
+# *   --noopt    -- rerun ./configure with parameters that are stored    *
+# *                 during past runs and add option --noopt.             *
+# *   --opt      -- rerun ./configure with parameters that are stored    *
+# *                 during past runs except optiom --noopt. If it was    *
+# *                 set, --noopt will be removed.                        *
+# *   --dry-run or -d --  will just show the configuration line used     *
+# *                       last time and stop.                            *
+# *                                                                      *
+# * ### 03-MAY-2019   reconfigure  v2.1 (c)  L. Petrov  12-MAY-2020 ###  *
+# *                                                                      *
+# ************************************************************************
+if ( -f temp/conf.log == 0 ) then
+     echo "Unfortunately, the old configuration was lost. Reconfiguration is not possible"
+     echo "Just run configure with all options"
+     exit 1 
+endif
+if ( "$1" == "" ) then
+     set mode = "redo"
+  else if ( `echo $1 | grep noopt` != "" ) then
+      set mode = "noopt"
+  else if ( `echo $1 | grep opt` != "" ) then
+      set mode = "opt"
+  else if ( "$1" == '-d' || "$1" == '--dry-run' ) then
+      set mode = "dry"
+  else
+      echo "unsupported option $1"
+      exit 1
+endif
+set found_mode = "%%"
+set qt = '"'
+set configure_str = `head -2 temp/conf.log | tail -1`
+set configure_1st_word = `echo "$configure_str" | awk '{print $1}' | sed "s@./@@g"`
+if ( $configure_1st_word  == "configure" ) then 
+#
+# -- Special logic for enclosing in quotes the values that has blanks inside
+#
+     set out_str = ./$configure_1st_word  
+     set ind_last = 1
+     set last_word = ""
+     foreach i (`seq 2 $#configure_str`)
+        set word = "$configure_str[$i]"
+	if ( "$word" == "--noopt" ) then
+             set found_mode = "noopt"
+             if ( $mode == "opt" ) set word = ""
+        endif
+        if ( `echo $configure_str[$i] | awk '{print substr($0,1,2)}'` == "--" || `echo $configure_str[$i]| grep "="` != "" ) then
+	      if ( "$last_word" != "" ) then
+	           if ( `echo $last_word | grep " "` != "" ) then
+	                 set last_word = `echo "${last_word}${qt}" | sed "s@=@=${qt}@"`
+                   endif
+	           set out_str = "$out_str $last_word"
+              endif
+              set last_word = $word
+          else 
+              set last_word = "$last_word $word"
+        endif
+     end
+     if ( "$last_word" != "" ) then
+	  if ( `echo $last_word | grep " "` != "" ) then
+	        set last_word = `echo "${last_word}${qt}" | sed "s@=@=${qt}@"`
+          endif
+	  set out_str = "$out_str $last_word "
+     endif
+     if ( "$mode" == "noopt" && "$found_mode" != "noopt" ) then
+          set out_str = "$out_str --noopt"
+     endif
+     if ( $mode == "dry" ) then
+          echo "$out_str"
+          exit 0
+     endif
+     set tmp_file = /tmp/reconfigure__$$
+     onintr cleanup
+     echo $out_str > $tmp_file
+     csh $tmp_file
+     cleanup:
+     rm  $tmp_file
+  else
+     echo "Unfortunately, the old configuration was not properly stored. Reconfiguration is not possible"
+     echo "Just run configure with all options"
+     exit 1 
+endif

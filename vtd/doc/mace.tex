@@ -1,0 +1,153 @@
+% ************************************************************************
+% *                                                                      *
+% *   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _    *
+% *  |            A D D I T I O N A L     C O M M A N D S.           |   *
+% *   ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~    *
+% *                                                 (English version)    *
+% *                                                                      *
+% *  ###  30-NOV-93    MAC.TEX   V2.13  (c) Petrov L.Y.  01-NOV-96  ###  *
+% *                                                                      *
+% ************************************************************************
+\newcommand{\getlength}[1]{\ifx#1\end \let\next=\relax
+            \else\advance\count255 by1 \let\next=\getlength\fi \next}
+%
+% ----- \length  --  LEARN THE LENGTH OF THE ARGUMENT
+%
+\newcommand{\length}[1]{ \count255=0 \getlength#1\end }
+%
+% ----- \ifnularg}{} -- VERIFY: IS THE ARGIMENT EMPTY
+%
+\newcommand{\ifnularg}[1]{ \count255=0 \getlength#1\end \ifnum\count255=0 }
+%
+%
+% ----- \ifm  --  VERIFY: IS IT MATH-MODE NOW?
+%
+\newcommand{\ifm}{\makebox{}\ifmmode}
+\newcount\switch
+%
+% ----- \Begmat, \Endmat  --  BEGIN OF MATHEMATIC -- END OF MATHEMATIC.
+%       IF MATH-MODE IS NOW THEN NOTHING TO DO. iF TEXT-MODE IS NOW THEN
+%       SIGN $ WILL BE ADDED.
+%
+\newcommand{\Begmat}{\ifm\switch=1\else\switch=0$\fi}
+\newcommand{\Endmat}{\ifnum\switch=0$\fi}
+%
+% ----- \flo  --  MAKING THE NUMBER IN EXPONENTAL FORM
+%
+\newcommand{\Flo}[2]{{\Begmat
+                         \ifnularg{#1} 10^{#2}  \else #1\!\cdot\!10^{#2} \fi
+                      \Endmat}}
+\newcommand{\flo} [2] { {\Begmat
+            \ifnularg{#1} 10^{#2}  \else \mbox{#1} \cdot 10^{#2} \fi
+                      \Endmat} }
+%
+\newcommand{\mb}{\makebox}
+\newcommand{\mint}{\makebox{--}}
+\newcommand{\drt}[1]{\Begmat \dot{#1} \Endmat}
+%
+% ----- \beq  --  BEGINNING OF FORMULA ARRAY
+%
+\newcommand{\beq}   { \begin{eqnarray} }
+%
+% ----- \eeq  --  END OF FORMULA ARRAY. THERE IS OBLIGATORY ARGUMENT: LABEL
+%
+\newcommand{\eeq}[1]{ \ifnularg{#1} end{eanarray} \else
+                      \label{#1}\end{eqnarray}    \fi }
+\newcommand{\eeql}   { \end{eqnarray} }
+\newcommand{\eeqn}   { \nonumber \end{eqnarray} }
+\newcommand{\nn} {\nonumber\\ }
+\newcommand{\eref}[1]{(\ref{#1})}
+%%
+\newcommand{\dss}{\displaystyle}
+\newcommand{\tss}{\textstyle}
+\newcommand{\tsc}{\scriptstyle}
+\newcommand{\ssc}{\scriptscriptstyle}
+\newcommand{\st}{\strut}
+\newcommand{\Frac}[2]{\frac{\displaystyle\strut #1}{\displaystyle\strut #2} }
+%%
+\newcommand{\mst}{\mathstrut}
+\newcommand{\mat}[1]{\Begmat {\hat {\mathstrut \cal #1}} \Endmat }
+\newcommand{\matt}[1]{\Begmat {\widehat {\mathstrut \widetilde{\cal #1}}}
+                      \Endmat }
+\newcommand{\der}[2] {\Begmat \frac{ \partial #1 }{ \partial #2 } \Endmat }
+\newcommand{\Der }[2]{\Begmat \Frac{ \partial #1 }{ \partial #2 } \Endmat }
+\newcommand{\ddt}{\der{}{t} }
+\newcommand{\Ddt}{\Der{}{t} }
+\newcommand{\dmat}[1]{\ddt \mat{#1} }
+\newcommand{\vc }[1]{{\Begmat \bf \vec{ #1 } \Endmat }}
+\newcommand{\vce }[1]{{\Begmat \bf \vec{ \underline{#1} } \Endmat }}
+\newcommand{\Vc}[1]{\Begmat\overrightarrow{\mathstrut{\bf#1}}\Endmat}
+\newcommand{\vm }[1]{ {\bf #1}}
+\newcommand{\dvc }[1] {\Begmat {\bf \dot  {\vec { #1}}} \Endmat }
+\newcommand{\ddvc }[1]{\Begmat {\bf \ddot {\vec { #1}}} \Endmat }
+\renewcommand{\Re} { {\rm Re}\hspace{0.2em} }
+\renewcommand{\Im} { {\rm Im}\hspace{0.2em} }
+%%
+\newcommand{\Half}{\Frac{1}{2} }
+\newcommand{\half}{\frac{1}{2} }
+\newcommand{\ArroW}
+    {\Begmat \stackrel{\textstyle\longrightarrow}{\longleftarrow} \Endmat }
+\newcommand{\upp}[1]{ {}^#1{\scriptstyle\kern-0.3em . \kern0.15em } }
+\newcommand{\ups}{''\!\!.\,}
+\renewcommand{\sec}{ \upp{s} }
+\newcommand{\Day}{ \upp{d} }
+\newcommand{\grad}[2]{\Begmat{ #1^\circ#2' }\Endmat }          % grad, min, sec
+\newcommand{\ang}[4]{\Begmat{ #1^\circ#2'#3\ups#4   }\Endmat }
+\newcommand{\Ang}[3]{\Begmat{ #1^\circ#2'#3''       }\Endmat }
+\newcommand{\tim}[4]{\Begmat{ #1^h#2^m#3\sec#4      }\Endmat }
+\newcommand{\Tim}[3]{\Begmat{ #1^h#2^m#3^s          }\Endmat }
+\newcommand{\lp}{ \left(  }
+\newcommand{\rp}{ \right) }
+\renewcommand{\deg}[1]{\Begmat #1^\circ \Endmat }
+\newcommand{\iint}{ \int\limits_{\:-\infty}^{\:+\infty}\!\!\!\!\!\int }
+%%
+\newcommand{\spd}{\,}
+\newcommand{\vpd}{\times}
+\newcommand{\sun}  {\Begmat _\odot \Endmat }
+\newcommand{\earth}{\Begmat _{\oplus} \Endmat }
+\newcommand{\VEA}{\vc{V}\earth}
+\newcommand{\AEA}{\vc{A}\earth}
+\newcommand{\VEAS}{ { \bf \Begmat V^2\earth \Endmat } }
+%%
+\newcommand{\CCF}[1]{\Begmat \vc{#1}_{\mbox{\sc\tiny CCF  } } \Endmat }
+\newcommand{\CEP}[1]{\Begmat \vc{#1}_{\mbox{\sc\tiny CEP  } } \Endmat }
+\newcommand{\MED}[1]{\Begmat \vc{#1}_{\mbox{\sc\tiny MED  } } \Endmat }
+\newcommand{\CFS}[1]{\Begmat \vc{#1}_{\mbox{\sc\tiny CFS  } } \Endmat }
+\newcommand{\VEN}[1]{\Begmat \vc{#1}_{\mbox{\sc\tiny VEN  } } \Endmat }
+%%
+\newcommand{\tg}{ \mathop{ \rm tg }\nolimits }
+\newcommand{\arctg}{ \mathop{ \rm arctg }\nolimits }
+\newcommand{\Cov}{ \mathop{ \rm Cov }\nolimits }
+\newcommand{\Sp}{ \mathop{ \rm Sp }\nolimits }
+\newcommand{\rank}{ \mathop{ \rm rank }\nolimits }
+\newcommand{\const}{ \mathop{ \rm const }\nolimits }
+%%
+\newcommand{\un}[1]{\underline{#1}}
+\newcommand{\tr}{ {\bf ^{^{ \top}}}\! }
+\newcommand{\tra}[1]{ {#1}^{^{\bf \top}}\! }
+\newcommand{\ttra}[1]{ {#1}^{\bf \top}\! }
+\newcommand{\as}[1]{ #1^{\bf \ast} }
+\newcommand{\Exp}[1]{ {\cal{E}}(#1) }
+\newcommand{\tabstrut}{ \rule[-1ex]{0ex}{3.5ex} }
+%%
+%
+% ----- CONVENIENT MACROSES FOR ENVIRONMENT supertabular
+%
+\newcommand{\superheader}{}
+\newcommand{\supertabularbegin}[1]
+{
+      \tablefirsthead{\hline \superheader \hline}
+      \tablehead{\multicolumn{#1} {r} {\small\it Continuation \dots}\\
+                 \hline \superheader \hline }
+      \tabletail{\hline \multicolumn{#1}{r}
+                {\small \it Continuation on the next page \dots} \\ }
+      \tablelasttail{\hline}
+}
+\newcommand{\tableheader}[1]
+{ \renewcommand{\superheader}{#1 \\} }
+%%%
+\newcommand{\ntab}[2]{ \multicolumn{1}{#1}{#2} }
+\newcommand{\prog }[1]{{\mbox{\sc\small\bf#1}}}
+\newcommand{\arr}{\ifm   \longleftrightarrow    \else
+                       $ \longleftrightarrow $  \fi   }
+\newcommand{\twosl}{\Begmat \lefteqn{/}\,\, / \,\, \Endmat}

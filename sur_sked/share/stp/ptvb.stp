@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    PTVB      char       HA
+LAST_UPDATE:   PTVB      char       2025.03.23
+COORD:         PTVB      meters     -1640953.760    -5014816.026     3575411.851
+MOUNT:         PTVB      char       ALTAZ
+#
+SLEW_AZ:       PTVB      deg/sec    9.9
+SLEW_EL:       PTVB      deg/sec    9.9
+ACCL_AZ:       PTVB      deg/sec^2  9.9
+ACCL_EL:       PTVB      deg/sec^2  9.9
+TSETTLE_AZ:    PTVB      sec        0.0
+TSETTLE_EL:    PTVB      sec        0.0
+#
+EL_MIN:        PTVB      deg        2.0
+EL_MAX:        PTVB      deg       90.0
+AZ_RANGE:      PTVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      PTVB      char      hrtr
+BACKEND:       PTVB      char      hrtr
+SETMODE:       PTVB      sec        0.0
+PREOB:         PTVB      sec        0.0
+POSTOB:        PTVB      sec        0.0
+#
+HOR_AZIM:      PTVB      deg        0.0  360.0
+HOR_ELEV:      PTVB      deg        2.0   2.0
+STOW_AZIM:     PTVB      deg        0.0
+STOW_ELEV:     PTVB      deg       90.0
+#
+CLOCK_DATES:   PTVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  PTVB      sec        0.0

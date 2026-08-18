@@ -1,0 +1,508 @@
+User guide for VLBI Submission to Data Center utility  (VSDC)
+=============================================================
+
+  The VLBI Submission to Data Center utility  (VSDC) is client
+software for submission of IVS data, products, and miscellaneous 
+files to the specified IVS data center.
+
+I. Installation.
+
+   a) untar the distribution
+   b) run   vsdc_install.py  --prefix DIRECTORY --config_dir DIRECTORY
+            --datacenter DATACENTER
+
+      where --prefix     is the directory where vsdc will be installed
+            --config_dir is the directory where control files used
+                         by vsdc are installed.
+            --datacenter is the name of the data center to submit the data.
+                         One of cddis, bkg, or opar.
+
+   c) examine control files. There is one file per data center.
+      vsdc provides control files cddis.cnf and bkg.cnf that vsdc_install
+      puts in the directory specified by --config_dir option.
+      You will need find key NETRC_FILE: and edit the specified file.
+
+      Its contents for CDDIS:
+
+      machine urs.earthdata.nasa.gov      login UUUUUUUU password PPPPPPPPP
+      machine depot.cddis.eosdis.nasa.gov login UUUUUUUU password PPPPPPPPP
+
+      Its contents for BKG:
+
+      machine ivs.bkg.bund.de login UUUUUUUU password PPPPPPPPP
+
+      You need replace UUUUUUUU with the user name and PPPPPPPP with the user
+      password for the hosts specified in the second word.
+
+
+II. Dependencies:
+
+   python3 (3.2 or newer)
+   curl
+   wget
+   lbzip2
+   Gnu tar (bsd tar is not suitable)
+
+
+III. Usage.
+=========
+
+3.0) Installation process does not move python code. It remains in the directory
+     where you unpacked it. For convenience five wrappers are provided:
+     vsdc.csh, vsdc.bash, swin_up.csh, swin_up.csh, and vget. These wrappers
+     at C-shell or bash call vsdc.py with parameters. These wrappers are installed
+     in ${prefix}/bin direcory, where prefix is specified duering installtion.
+
+3.1) If you submit to CDDIS, you need 
+
+
+     a) Create an Earthdata login account if you do not already have one. Go to 
+        https://urs.earthdata.nasa.gov/ and follow the instructions to create an account.
+ 
+     b) Notify CDDIS (support-cddis@earthdata.nasa.gov) with the following information:
+        -- Earthdata login name
+        -- IP address from which you will be uploading
+        -- Wait for confirmation from CDDIS that your credentials have been accepted.
+ 
+     If you are going to upload VLBI Level 1A data (DiFX output), also known as 
+     SWIN data type, you need mention this in your request to CDDIS.
+  
+     After you received the confirmation to the email address specified during
+     registration of the Earthdata login account, you can upload your data.
+
+3.2) How to call vsdc.py
+
+     Usage: vsdc.py [-h] [--version] [-v value] [-u] [-c value] [-t value]
+                    [-f value] [-m value]
+     
+     optional arguments:
+       -h, --help                     show help message and exit.
+     
+       --version                      show program's version number and exit.
+     
+       -v value, --verbosity          Verbosity level: 0 -- normal, 1 -- debugging mode.
+     
+       -u, --update                   Update master files, data definitions files,
+                                      and networking station files by downloading
+                                      them from the remote host.
+     
+       -i, --inquire                  Print the table of supported file types, their
+                                      short description and file naming scheme and exit.
+     
+       -c value, --control value      Name of the control file. The control file 
+                                      specifies the URL of the remote Data Center and 
+                                      related URLs, data files, and directories at 
+                                      the local computes related to data submission.
+     
+       -t value, --type value         Type of the submitted file.
+     
+       -f value, --file value         Name of the submitted file at the local computer.
+     
+       -m value, --compression value  Name of the compression utility. Supported 
+                                      compressions: lbzip2, bzip2, pigz, gz. 
+                                      If omitted, no compression is used.
+                            
+     The VSDC utility checks  for the name of the file to be submitted, its
+     contents, and if the checks have passed, it sends the file to 
+     the Data Center. If the submission to the Data Center went through
+     successfully, a record is made in the log file. The name of the 
+     log file is specified in the control file. However, successful submission
+     in this context means only that the file has arrived to the data center
+     to a temporary directory. The server software performs its own checks.
+     If server checks fails, the server sends an email to the submitter, but
+     does not move the file inside the server to the permanent location.
+     
+     VSDC requires recent master files and network stations to operate.
+     When called with -u option, it retrieves master files and network 
+     station files from the data center.
+
+     Keep in mind that the datafile you submit does not immediately appear at 
+     the Data Center. It make take up to two hours for the file propagation
+     to CDDIS.
+
+3.3) Configuration.
+
+     Before the use, a control file needs be created or modified
+     with respect to the example provided in the example directory.
+     See section II for format specification. 
+
+     When vsdc is used for the first time, it should be called with 
+     option -u to get recent data definition files, master files, and 
+     the VLBI network description file.
+
+     Data definition files, master files, and the VLBI network description file
+     may change with time. Running vsdc.py with option -u downloads the 
+     latest copy of these files from the remote server.
+
+3.4) How to submit a log file.
+
+     vsdc.csh -c SOME_PATH/cddis.cnf -t session_aux_fullog  -f SOME_PATH/expst_full.log -m lbzip2
+
+     It is important that the file name should confirm IVS 
+     specification. If it does not, vsdc will reject such 
+     a submission, because the data center will reject it anyway.
+
+3.5) How to submit a VLBI Level 1A datafile, i.e. raw DiFX output, also
+     known as swin.
+     
+     Submission of VLBI Level 1A data is different than other datatypes. 
+     The DiFX output is a directory that may contain thousand files with
+     a size in a range 0.2 -- 500 Gb. The directory contents:
+     
+     a) vex file that may or may not be modified for correlation.
+        If it was modified, the modified version must be present 
+        in the directory.
+
+     b) Difx control file with extension .v2d . Must be present 
+        in the directory.
+
+     c) DiFX creates the following files:
+
+        scan_name.input        [mandatory file]
+        scan_name.flag         [mandatory file]
+        scan_name.calc         [mandatory file]
+        scan_name.threads
+        scan_name.machines
+        scan_name.im           [mandatory file]
+        scan_name.difx         [mandatory directory]
+        scan_name.difxlog
+
+     Individual files should not be compressed.
+
+     Program vsdc_swin_gentar.py performs file submission
+
+     usage: vsdc_swin_gentar.py [-h] [--version] [--compressor value]
+                                [--corr_vers value] [--v2d value] [--vex value]
+                                [-c value] [-d] [-i value] [-o value] [-s]
+                                [-t value] [-v value]
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+       --version             show program's version number and exit
+       --compressor value    Compressor utility. Supported utilities: none, lbipz2,
+                             bzip2, gzip
+       --corr_vers value     Correlator output version
+       --v2d value           DiFX control file in v2d format
+       --vex value           VLBI schedule file in vex format
+       -c value, --control value
+                             Name of the control file
+       -d, --delete          Delete after submission to the Data Center
+       -i value, --dir_in value
+                             Directory or a tar file with the input VLBI Level 1A
+                             data in swin format
+       -o value, --dir_out value
+                             Directory name whether the output file will be put.
+                             That directory should have another space to hold
+                             a copy of the difx output.
+       -s, --submit          Submit to the Data Center
+       -t value, --tmp_dir value
+                             Directory name for temporary files
+       -v value, --verbosity value
+                             Verbosity level
+
+     That program generates tar file, compresses it, and optionally submits it.
+     It also creates a file with metadata on the fly and puts it as the first
+     file in the achieve. vsdc_swin_gentar.py puts file in the archive in 
+     the specific order and this feature is used later by the server. 
+     If you already have a tarred archive with VLBI Level 1A data and you want
+     to submit, you have to untar it first. Since no standardized names for 
+     v2d and modified vex file were introduced, you have to specify explicitly
+     the names of these files. Names of these file propagate to metadata file
+     and the user process will find these names by parsing the metadata file.
+
+     It is assumed that all scans are correlated, i.e for each scan there 
+     are corresponding *.flag, *.calc, *.im files and *.difx directory.
+     If one of these mandatory file is missing, vsdc_swin_gentar.py will
+     generate an error message, put the list of missed scans, and stop.
+     You have several choices:
+ 
+     a) to correlate missing scans;
+     b) to rename SCAN_NAME.input to SCAN_NAME.missing_input
+     c) to remove SCAN_NAME.input
+
+     Although vsdc_swin_gentar.py and vsdc.py allow to submit an uncompressed
+     file, datacenter policy may require compression. For instance, submission
+     to CDDIS requires compression with bzip2. A hint: lbzip2 uses threads
+     and uses all cores and runs much faster, while original bzip2 uses only one 
+     core.
+
+     vsdc_swin_gentar.py support versioning. If you find you need re-correlate
+     data, please use option --corr_vers to increase the version counter when
+     submitting a re-correlated dataset.
+
+     Example:
+
+     /progs/vsdc_20210420/vsdc_swin_gentar.py -i /l1a/rd2005 \
+                                              --v2d /l1a/rd2005/h.v2d \
+                                              --vex /l1a/rd2005/rd2005.vex.obs \
+                                              --corr_vers 1 \
+                                              -o /l1a/tar \
+                                              -t /tmp/ \
+					      -s \
+                                              -d \
+                                              -c /cont/vsdc/cddis.cnf  \
+                                              --compressor lbzip2 \
+                                              -v 1 
+
+     Here the DiFX output is located in directory /l1a/rd2005. Version 1 archive
+     will be created. Keys --v2d and --vex and vex files. Vex file 
+     /l1a/rd2005/rd2005.vex.obs was modified by analyst and differs from the 
+     vex file used for observation (original vex file is archived to the Data 
+     Center at a different location). The tar file is placed i directory 
+     /l1a/tar and compressed with parallel lbipz2 program. Upon successful 
+     submission that tar file is removed from /l1a/tar directory. If submission
+     has failed, tar file will remained in /l1a/tar.
+
+3.6. Since vsdc_swin_gentar.py is rather lengthy, a short-cut swin_up.csh or swin_up.bash
+     is provided. swin_up.csh and swin_up.bash have two lines that require customization.
+
+     Usage: swin_up.csh difx_dir vex v2d 
+
+     Example: swin_up.csh  /Exps/vo1007/v4 /Exps/vo1007/v4/vo1007.vex.obs /Exps/vo1007/v4/vo1007.v2d
+              swin_up.bash /Exps/vo1007/v4 /Exps/vo1007/v4/vo1007.vex.obs /Exps/vo1007/v4/vo1007.v2d
+
+3.7. Other useful program:
+  
+     1) vget -- analogue of wget for downloading data from CDDIS. It will not ask 
+                you for a password.
+
+        Example:
+
+        vget  https://cddis.nasa.gov/archive/vlbi/ivsdata/aux/2021/vo1021/vo1021k2_full.log.gz
+
+     2) vsdc_get_swin_dir.py -- gets the list of files that are
+        either present at the data center for the specified year
+        ( option -l ) or specified in the IVS master file, but still
+        missing ( option -m ).
+
+        Options:
+        -c CONTROL_FILE -- the control file name.
+        -y YEAR         -- the year in question.
+        -l              -- if present, then print the list of swin files
+                           that are in the data center.
+        -m              -- if present, then print the list of swin files
+                           that are specified in the master file, but
+                           are not found in the data center.
+        -s SESSION_LIST -- if present, then it specified the session list.
+                           Session list can have two forms:
+                           a) each line has one word: experiment name;
+                           b) each line has more than one word, and the
+                              experiment name is in the word that follows
+                              ! character.
+                           In both cases lines that start with # are
+                           ignored.
+
+         Examples:
+
+         vsdc_get_swin_dir.py -c /cont/cddis.cnf -y 2023 -l
+   
+         vsdc_get_swin_dir.py -c /cont/cddis.cnf -y 2023 -m
+
+IV. Format of the VSDC control file.
+====================================
+
+
+   A VSDC control file consists of records of variable length
+in plain ascii coding. The first line, so-called magic, identifies
+the format and its revision. Currently supported magic line is 
+
+# VSDC_CONFIG file. Version 1.04 of 2021.05.10
+
+Lines that starts with # characters are considered as comments and 
+are ignored by the parser. The VSDC control file is required
+to have 15 definitions in the format Keyword: value separated by
+one or more blanks. The values are case sensitive.
+
+  DATA_CENTER:      -- the data center where to submit the data.
+                       Value that starts with "server" means that VSDC 
+                       is a part of the server software. Any other value 
+                       identifies where the data are submitted and used
+                       for logging.
+
+  DDF_DIR:          -- Name of the directory at the local computer that 
+                       stores data definitions files (DDFs).
+
+  URL_LOGIN:        -- The URL for login to the data center. 
+                       Value "n/a" is supported and it means the Data Center
+                       does not require authentication. NB: Swin upload may
+                       require a different login URL.
+
+  URL_SUBMIT:       -- The URL for data submission to the Data Center.
+                       NB: SWIN upload requires different URL.
+
+  URL_SWIN_LOGIN:   -- The URL for login to the data center for submission
+                       of SWIN data (i.e. VLBI Level 1A, raw DiFX output).
+
+  URL_SWIN_SUBMIT:  -- The URL for SWIN data submission to the Data Center.
+
+  URL_DDF_FILES:    -- The URL for the remote directory where DDFs are hosted.
+
+  TAR_SWIN_EXCLUDE: -- Pattern to exclude files or directories when generating
+                       swin tar file. See tar for format of this option.
+                       This option can be set to "" or omitted.
+                       More than one option TAR_SWIN_EXCLUDE is allowed.
+
+  CURL_EXTRA_OPTS:  -- Extra parameters passed to curl. An extra option may be 
+                       needed for handling secure socket layer (ssl).
+                       For instance, some users need supply option
+                       --ciphers DEFAULT@SECLEVEL=1 , while submission will fail
+                       if users from another analysis center will use this option.
+                       CURL_EXTRA_OPTS can be set to "" or omitted.
+
+  WGET_EXTRA_OPTS:  -- Extra parameters passed to wget.
+                       WGET_EXTRA_OPTS can be set to "" or omitted.
+
+  CDDIS_COOKIES:    -- name of the file at local computer that stores cookies
+                       associated with login to the Data Center.
+
+  NETRC_FILE:       -- Name of the file at local computer that stores host 
+                       name for accessing to the data center, user name, 
+                       and password. This file should have permission that
+                       disallow read/write access by the group or others.
+                       Format of the netrc file:
+
+                       machine MMMMMMM login UUUUUUU password PPPPPPP
+
+                       where 
+                             MMMMMMM is the fully qualified domain name
+                                     of the host used for authentication
+                                     for submission to the Data Center;
+
+                             UUUUUUU user name used for authentication
+                                     for submission to the data center;
+
+                             PPPPPPP user password for authentication for
+                                     submission to the Data Center.
+                                    
+  SUBMIT_LOG:       -- Name of the log file at the local computer where
+                       history of successful submission is written.
+
+  MASTER_URL:       -- The URL that keeps the master files.
+
+  NS_CODES_URL:     -- The URL that keeps the list of IVS station names.
+
+  MASTER_DIR:       -- Directory at the local computer where master files 
+                       are stored. Unless the value of the DATA_CENTER 
+                       keyword starts with "server", VSDC downloads master
+                       files to that directory.
+
+  NS_CODES_FILE:    -- Name of the file at the local computer that keeps
+                       the list of IVS networking stations. Unless the value 
+                       of the DATA_CENTER keyword starts with "server", 
+                       VSDC downloads master files to that directory.
+
+  LARGE_TMP_DIR:    -- Name of the directory for large temporary files.
+
+
+V. Format of Data  definition file. 
+==================================
+
+   A data definition file consists of records of variable length
+in plain ascii coding. The first line, so-called magic, identifies
+the format and its revision. Currently supported magic line is 
+
+# CDDIS file definition  Version 1.0  of 2019.10.22
+
+Lines that starts with # characters are considered as comments and 
+are ignored by the parser. The data definition file is required
+to have 15 definitions in the format Keyword: value separated by
+one or more blanks. The values are case sensitive.
+
+  Short_description: -- specifies a short description of the file of 
+                        the given data type limited to 64 characters.
+
+  Long_description:  -- Specifies an extended definition of the file.
+                        More than one line with Long_description in
+                        the data definition file is allowed. The line
+                        length is limited to 128 characters.
+
+  Format_file_name:  -- Specifies the name of the file in the Data Center
+                        that provides definition of data format of that type.
+                     
+  Reference:         -- A reference to a publication(s) related to this 
+                        data type. The line with references is limited
+                        to 128 characters. More than one line with
+                        Reference keyword is allowed.
+                        If not available, then n/a.
+
+  DOI:               -- Digital object identifier if available. If not
+                        available, then n/a.
+
+  Filenaming_scheme: -- Defines the file name as it suppose to appear at 
+                        the Data Center. It may or may not contains 
+                        a directory name. The Filenaming_scheme can contain 
+                        @-expressions. @-expressions are expended. It can be 
+                        either a date, or a session name, or a station name, 
+                        or an integer version counter. Dates should conform 
+                        the date specified in the @-expression. Session name 
+                        should be specified in the IVS master file, station 
+                        name should be specified in the IVS ns-codes.txt file, 
+                        a version counter should be a positive integer number. 
+                        Base filenames (i.e. stripped of directory name) that 
+                        do not conform Filenaming_scheme filed are rejected.
+
+
+    @-expressions in specifications of the Filenaming_scheme
+  
+    @{date{%Y}}      date in YYYY,                   f.e. 2019
+    @{date{%Y%m}}    date in YYYYMM,                 f.e. 201909
+    @{date{%y%b}}    date in YYMMM, upper case       f.e. 19JUL
+    @{date{%Y%m%d}}  date in YYYYMMDD,               f.e. 20190723
+    @{sess}          session code, lower case,       f.e. r1812
+    @{vers{%1d}}     one   digit long numerical version counter %1d,  f.e. 1
+    @{vers{%01d}}    one   digit long numerical version counter %01d, f.e. 1
+    @{vers{%02d}}    two   digit long numerical version counter %02d, f.e. 02
+    @{vers{%03d}}    three digit long numerical version counter %03d, f.e. 003
+    @{sta}           2-letter station code,          f.e. wf
+    @{suff}          1- or 2- letter long experiment suffix
+  
+    Parser is supposed to check whether a given @-expression in the name of 
+    the file to be processed conforms specifications, i.e. whether the date 
+    is valid, whether the session code is in the master file, whether the 
+    station code is in ns-codes.txt file, and whether the version counter is 
+    an integer value in a range of 1-999.
+
+  File_location:        -- Directory name where the files of this type
+                           resides at the data center
+                        
+  Product_ID:           -- Product ID code
+
+  Data_type:            -- Data type, one or VLBI, SLR, GNSS, or MISC.
+                           MISC defines a data type that is none of 
+                           VLBI, SLR, or GNSS.
+
+  Data_content_type:    -- Data content type, one of Data, or Product, or Misc.
+                           In fact both Data and Product content type involves 
+                           data analysis. The data fall in category category 
+                           "Product", it the agency decided that processing 
+                           added a substantial added value and it remains in 
+                           category "Data", if the added value is considered 
+                           not substantial.
+
+  Data_format:          -- name of the data format
+
+
+  Validate_proc:        -- Name of the executable program that validates
+                           contents of the file. It returns completion code
+                           0 if the file contents is OK and completion code
+                           1 otherwise. In the latter case it prints 
+                           descriptive error message.
+
+  Magic:                -- So-called UNIX magic: a string of characters
+                           at the beginning of the file that is specific
+                           for a file of a given type. The magic can be
+                           either in ascii coding or in hexadecimal. In the
+                           latter case it is encoded with \xAB style,
+                           where AB is a hexadecimal code in ascii 
+                           representation.
+
+                           Special magics @tar and @tgz are allowed.
+                           @tar means that the file is unix tar archive.
+                           @tgz means that the file is unix tar archive 
+                                compressed with difx.
+
+  Compression_type:     -- Compression type. Supported compression types are:
+                           bzip2 -- compression with bsip2;
+                           tgz   -- compression with tar and gzip2;
+                           Z     -- compression with Z (old unix compress);
+                           none  -- no compression.

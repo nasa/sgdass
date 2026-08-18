@@ -1,0 +1,58 @@
+# VLBI station parameters Format 2022.04.03
+#
+#  2024.02.14  pet Updated. NB: Faked hor-mask!
+#
+#
+SHORT_NAME:   HOBART12  char       Hb
+LAST_UPDATE:  HOBART12  char       2024.02.19_22:09:51
+COORD:        HOBART12  meters    -3949990.106  2522421.118 -4311708.734
+MOUNT:        HOBART12  char       ALTAZ
+SLEW_AZ:      HOBART12  deg/sec    5.0
+SLEW_EL:      HOBART12  deg/sec    1.0
+ACCL_AZ:      HOBART12  deg/sec^2  1.3
+ACCL_EL:      HOBART12  deg/sec^2  1.3
+TSETTLE_AZ:   HOBART12  sec        2.0
+TSETTLE_EL:   HOBART12  sec        2.0
+EL_MIN:       HOBART12  deg        5.0
+EL_MAX:       HOBART12  deg       88.0
+AZ_RANGE:     HOBART12  deg      -270.0 -90.0  90.0 270.0
+RECORDER:     HOBART12  char      flexbuff_reforder
+BACKEND:      HOBART12  char      dbbc3
+SETMODE:      HOBART12  sec        4.0
+PREOB:        HOBART12  sec       10.0
+POSTOB:       HOBART12  sec        2.0
+HOR_AZIM:     HOBART12  deg        0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:     HOBART12  deg        8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0   8.0
+STOW_AZIM:    HOBART12  deg       80.0
+STOW_ELEV:    HOBART12  deg       80.0
+#
+CLOCK_DATES:  HOBART12  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: HOBART12  sec        2.278E-6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

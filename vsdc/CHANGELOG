@@ -1,0 +1,111 @@
+2024.02.04  1.22  a) Added program vsdc_get_swin_dir.py. It gets the list 
+                     of files that are either present at the data center 
+                     for the specified year ( option -l ) or specified in 
+                     the IVS master file, but still missing ( option -m ).
+                  b) Added support of the second argument to vget that
+                     specifies the output file name.
+
+2023.05.31  1.21  a) Added printing the server response to stdout
+                     in the verbose log when verbosity level > 2
+                     is used. 
+                  b) Fixed a typo in the name of the verbose 
+                     log file: vsds_debug_log.txt --> vsdc_debug_log.txt
+
+2023.05.09  1.20  Added support of debugging output. 
+                  When swin_up.csh or swin_up.bash is 
+                  invoked with --verb 3, verbose log
+                  is appended to file vsds_debug_log.txt
+                  in directory specified in the keyword
+                  LARGE_TMP_DIR of the vsdc control file.
+
+2023.04.03  1.19  a) Support of submitting data files to
+                     a data center that use sftp was added.
+
+2023.01.03  1.18  a) Support of master file format 2.0 was added.
+                  b) wget option --password was replaced with 
+                     --http-password because some version of wget 
+                     did not process correctly option --password.
+                  c) Format of log submission file was changed
+
+2021.12.18  1.17  a) Changed installation. Now python code remains
+                     in the directory where it was uncompressed.
+                     Five wrappers, vget, swin_up.csh, swin_up.bash, 
+                     vsdc.csh, vsdc.bash are copied to ${prefix/bin
+                     directory.
+                  b) Updated vsdc_find_ffdir.py to support a case when
+                     no alist file is in the Fourfit generated directory.
+                 
+                  c) Added support of uploading session_vex, session_txt,
+                     session_snp and session_prc data types.
+
+2021.07.09  1.16  a) Rewrote swin_up.bash and swin_up.csh to support
+                     arguments in an arbitrary order.
+                  b) Fixed a bug that generated incorrect tar archive
+                     when relative path to Level 1A was used or 
+                     the Level 1A path was a symbolic link
+                  c) Added support of a case when vex and/or v2d
+                     reside in a subdirectory.
+                  d) Added two more comments in the meta file to 
+                     help debugging.
+
+2021.06.25  1.15  a) Added support of a case when Fourfit files may
+                     be in more than one subdirectory.
+                  b) Fixed swin_up.csh and swin_up.bash for a case
+                     when no Fourfit files were found.
+                  c) Added more verbosity when -v 4 is specified.
+
+2021.06.22  1.14
+                  a) Changed the logic of bypassing Fourfit directory.
+                     VSDC_SWIN_EXCLUDE is applied by python to the input 
+                     file instead of tar. VSDC_SWIN_EXCLUDE doe not 
+                     support regular expression.
+                  b) Added options -nosubmit and -verb in swin_up.bash and 
+                     swin_up.csh
+                  c) Made swin_up.csh and swin_up.bash to print vsdc
+                     version and whether Fourfit files were found.
+                  d) Added support of -v 3 and -v 4 for more verbosity
+                     for debugging.
+
+2021.06.02  1.13 
+                  a) Added support of environment variable VSDC_SWIN_EXCLUDE
+                  b) Added a search of Fourfit directory, and if the 
+                     Fourfit directory is found, it is excluded from
+                     archiving.
+
+2021.05.10  1.04  
+                  a) Changed the first line of the configuration file to
+                     # VSDC_CONFIG file. Version 1.04 of 2021.05.10
+
+                  b) Added a new option TAR_SWIN_EXCLUDE: in the control file:
+                     a pattern to exclude files or directories when generating
+                     swin tar file. See tar for format of this option.
+                     This option can be set to "" or omitted.
+                     More than one option TAR_SWIN_EXCLUDE is allowed.      
+
+                  c) Added a new option CURL_EXTRA_OPTS: in the control file:
+                     extra parameters passed to curl. An extra option may be 
+                     needed for handling secure socket layer (ssl).
+                     For instance, some users need supply option
+                     --ciphers DEFAULT@SECLEVEL=1 , while submission will fail
+                     if users from another analysis center will use this option.
+                     CURL_EXTRA_OPTS can be set to "" or omitted.
+
+                  d) Added a new option WGET_EXTRA_OPTS: in the control file:
+                     extra parameters passed to wget.
+                     WGET_EXTRA_OPTS can be set to "" or omitted.
+
+                  e) Added auxiliary program vsdc_conf_update.py for an update
+                     of the vsdc control file from old versions.
+
+                  f) Added swin_up.bash -- a sister of swin_up.csh
+
+                  g) Made swin_up.bash and swin_up.csh to read vsdc control 
+                     file and extract LARGE_TMP_DIR option to specify the 
+                     directory where temporarily put tar file.
+
+                  h) Fixed a bug: comments in vex files could be treated as valid 
+                     definitions.
+
+                  i) Fixed a bug: vsdc check name of the config file, but not 
+                     the field DATA_CENTER.
+

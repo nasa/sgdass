@@ -1,0 +1,59 @@
+#    1-6     I6     Observation index in the database
+#   10-15    I6     Observation index in PIMA
+#   24-38    A15    Long scan name in the form doy_HHMMSS_iiii where doy is the day of the year, HHMMSS is the scan reference time and iiii is the scan index assigned by PIMA
+#   42-51    A10    Short scan name
+#   58-65    A8     Source name, B1950 notation
+#   72-79    A8     Name of the reference (first)  station
+#   83-90    A8     Name of the remote    (second) station
+#   97-103   F7.2   SNR at the higher band
+#  106-112   F7.2   SNR at the lower  band
+#  119-142   A24    Scan reference time in format YYYY.MM.DD-hh:mm:ss.ffff in TAI
+#  154-163   F10.4  Scan reference time in TAI with respect to the nominal start of the first observation of the experiment (sec)
+#  175-190   F16.9  Offset of the scan   reference time with respect to the nominal observation start time (sec)
+#  204-219   F16.9  Offset of the fringe reference time with respect to the nominal observation start time at the higher band (sec)
+#  233-248   F16.9  Offset of the fringe reference time with respect to the nominal observation start time at the lower  band (sec)
+#  259-277   D19.12 Theoretical group delay on scan reference time computed by VTD during fringe fitting analysis  (sec)
+#  289-307   D19.12 Theoretical phase delay rate on scan reference time computed by VTD during fringe fitting analysis on scan reference time (dimensionless)
+#  320-338   D19.12 A priori geocentric group delay on scan reference time for the higher band computed for the correlator (sec)
+#  351-369   D19.12 A priori geocentric group delay on scan reference time for the lower  band computed for the correlator (sec)
+#  383-401   D19.12 A priori geocentric phase delay on scan reference time for the higher band computed for the correlator (dimensionless)
+#  415-433   D19.12 A priori geocentric phase delay on scan reference time for the lower  band computed for the correlator (dimensionless)
+#  446-464   D19.12 Total group delay on scan reference time at the higher band (sec)
+#  477-495   D19.12 Total group delay on scan reference time at the lower  band (sec)
+#  508-526   D19.12 Total single-band delay on scan reference time at the higher band (sec)
+#  536-557   D19.12 Total single-band delay on scan reference time at the lower  band (sec)
+#  571-589   D19.12 Total phase delay rate  on scan reference time at the higher band (sec)
+#  603-621   D19.12 Total phase delay rate  on scan reference time at the lower  band (sec)
+#  636-653   D18.12 Reference frequency of the higher band (Hz)
+#  668-685   D18.12 Reference frequency of the lower  band (Hz)
+#  698-706   F9.6   Total fringe phase on scan reference time at the higher  band (rad)
+#  719-727   F9.6   Total fringe phase on scan reference time at the lower   band (rad)
+#  743-751   F9.6   Total geocentric phase on scan reference time at the higher band (rad)
+#  767-775   F9.6   Total geocentric phase on scan reference time at the lower  band (rad)
+#  791-799   F9.6   Residual geocentric phase at the higher band on fringe reference time (rad)
+#  815-823   F9.6   Residual geocentric phase at the lower  band on fringe reference time (rad)
+#  840-858   D19.12 Residual geocentric group delay at the higher band on fringe reference time time (sec)
+#  875-893   D19.12 Residual geocentric group delay at the lower  band on fringe reference time time (sec)
+#  906-924   D19.12 Residual geocentric phase delay rate at the higher band on fringe reference time (dimensionless)
+#  936-954   D19.12 Residual geocentric phase delay rate at the lower  band on fringe reference time (dimensionless)
+#  968-986   D19.12 Residual geocentric group delay rate at the higher band on fringe reference time (sec)
+#  999-1017  D19.12 Residual geocentric group delay rate at the lower  band on fringe reference time (sec)
+# 1034-1041  F8.6   Ratio of the offset of the scan reference time with respect to nominal observation start to the nominal observation duration
+# 1057-1057  I1     Station order in the baseline: 1 -- direct order; -1 reversed order
+# 1068-1075  F8.4   Effective scan duration at the higher band (sec)
+# 1086-1093  F8.4   Effective scan duration at the lower  band (sec)
+# 1103-1107  F5.2   Elevation angle at the first  station on the scan reference time (degrees)
+# 1117-1121  F5.2   Elevation angle at the second station on the scan reference time (degrees)
+# 1132-1137  F6.2   Azimuth angle at the first  station on the scan reference time (degrees)
+# 1148-1153  F6.2   Azimuth angle at the second station on the scan reference time (degrees)
+# 1166-1175  D10.4  Uncertainty of the group delay estimate on scan reference time at the higher band (sec)
+# 1188-1197  D10.4  Uncertainty of the group delay estimate on scan reference time at the lower  band (sec)
+# 1210-1219  D10.4  Uncertainty of the phase delay rate estimate on scan reference time at the higher band (dimensionless)
+# 1232-1241  D10.4  Uncertainty of the phase delay rate estimate on scan reference time at the lower  band (dimensionless)
+# 1259-1270  D12.6  Effective ionosphere frequency for group delay for the higher band (Hz)
+# 1288-1299  D12.6  Effective ionosphere frequency for phase delay for the higher band (Hz) 
+# 1317-1328  D12.6  Effective ionosphere frequency for group delay for the lower  band (Hz)
+# 1346-1357  D12.6  Effective ionosphere frequency for phase delay for the lower  band (Hz)
+# 1370-1385  B16    Bit field of fringing status in the higher band. The bit field is determined in pima.i header the constants have suffix __PIM. The lowest bit has the rightmost position in the output. The bits are numbered from 0 to 15.
+# 1309-1413  B16    Bit field of fringing status in the lower band.  The bit field is determined in pima.i header the constants have suffix __PIM. The lowest bit has the rightmost position in the output. The bits are numbered from 0 to 15.
+#

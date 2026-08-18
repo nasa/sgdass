@@ -1,0 +1,88 @@
+REPA Control file.  Format version of 2003.08.06
+#                                                                              
+#   REPA parameter file
+#
+#   Last modified: 2003.07.24
+#
+# colour attributes from DiaGi colour set
+# range: [1,MCLR] (s. diagi.i, currently MCLR=32)
+# Call diagi_dec to display colours!
+# The colour names are displayed in some cases (i.e. for met. data).,
+# the user can create them including in "".
+# In case of wrong or missing parameters defaults are used.
+#
+#
+# colours of "good", "recoverable" and "bad" observations
+#
+COLOUR_GOOD:  1 "green"                                                         
+COLOUR_RECV:  3 "red"                                                           
+COLOUR__BAD: 13 "black"                                                         
+#
+# colours of "zeroline" and "sigmalines"
+#
+COLOUR_ZERO: 14 "grey"                                                          
+COLOUR_SIG1: 29 "grey"                                                          
+COLOUR_SIG2: 29 "grey"                                                          
+#
+# colour of connecting lines if displayed observations with the same
+# source will be connected
+#
+COLOUR_CONN: 21 "purple"                                                        
+#
+# colours for display of meteorological data (two stations)
+#
+COLOUR_MET1: 22 "yellow"                                                        
+COLOUR_MET2: 20 "green"                                                         
+#
+#
+# point styles from DiaGi point style set
+# range: [1,5]
+# More information in DiaGi users guide.
+#
+#
+# point styles of "good", "recoverable" and "bad" observations
+#
+PTNSTY_GOOD:  5                                                                 
+PTNSTY_RECV:  5                                                                 
+PTNSTY__BAD:  5                                                                 
+#
+# point styles of "zeroline" and "sigmalines"
+#
+PTNSTY_ZERO:  1                                                                 
+PTNSTY_SIG1:  1                                                                 
+PTNSTY_SIG2:  1                                                                 
+#
+# point style of connecting lines if displayed observations with the same
+# source will be connected
+#
+PTNSTY_CONN:  3                                                                 
+#
+# point styles for display of meteorological data (two stations)
+#
+PTNSTY_MET1:  5                                                                 
+PTNSTY_MET2:  5                                                                 
+#
+#
+# flag for displaying "bad" obsevations
+# values: yes/no##
+#
+DISPLAY_BAD: no
+#
+#
+# max. # of plots per MultiDiaGi page (prefere square numbers!)               
+# values: not greater than 36                                                 
+# For greater value increase PPPL_MAX in repa.i and recompile/link REPA.      
+#
+#
+NUMBER_PLOT:  25                                                                
+#
+#
+# decimal codes for PgUp (next baseline) and PgDn (prev. bl.) key on keybord
+# Call diagi_key to find the codes!
+#
+#
+PREV_____BL: 221                                                                
+NEXT_____BL: 220                                                                
+#
+# end of file
+#

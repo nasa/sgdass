@@ -1,0 +1,15 @@
+#######################################################################
+#								      #
+#	Make file for building aplo                                   #
+#						     		      #
+#  %%%  18-MAY-2004  makefile   v1.0  (c) L. Petrov  18-MAY-2004 %%%  #
+#								      #
+#######################################################################
+.SUFFIXES:
+.SUFFIXES:	.f	.c	.o	.opt_o	.a	.d
+#
+SHELL = /bin/csh -f -c 'umask 0002; eval "$2"'
+#SHELL = /bin/bash --noprofile -c 'umask 002; eval "$$2"'
+
+DATE = `date '+%Y%m%d'`
+

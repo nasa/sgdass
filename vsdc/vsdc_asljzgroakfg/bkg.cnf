@@ -1,0 +1,22 @@
+# VSDC_CONFIG file. Version 1.04 of 2021.05.10
+#
+# Last update on 2023.04.03_09:09:22
+#
+DATA_CENTER:      BKG
+DDF_DIR:          /cont/vsdc/ddf
+URL_LOGIN:        n/a
+URL_SUBMIT:       ftp://ivs.bkg.bund.de
+URL_SWIN_LOGIN:   ""
+URL_SWIN_SUBMIT:  ftp://ivs.bkg.bund.de
+TAR_SWIN_EXCLUDE: ""
+CURL_EXTRA_OPTS:  ""
+WGET_EXTRA_OPTS:  ""
+URL_DDF_FILES:    https://ivscc.gsfc.nasa.gov/products-data/ddfs/
+CDDIS_COOKIES:    ""
+NETRC_FILE:       /cont/vsdc/bkg.netrc
+SUBMIT_LOG:       /cont/vsdc/bkg.log
+MASTER_DIR:       /cont/master_files
+MASTER_URL:       https://ivs.bkg.bund.de/data_dir/vlbi/ivscontrol
+NS_CODES_URL:     https://ivs.bkg.bund.de/data_dir/vlbi/ivscontrol/ns-codes.txt
+NS_CODES_FILE:    /cont/ns-codes.txt
+LARGE_TMP_DIR:    /s0/temp

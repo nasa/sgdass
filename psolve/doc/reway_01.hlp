@@ -1,0 +1,180 @@
+               Description of Reway Options.
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+              John M. Gipson
+              January 21, 1999
+
+
+           I. Overview.
+
+
+If you do a VLBI solution using the raw correlator sigma as
+the noise in the measurements you will find that Chi-square is
+too small, which is indicative of unmodeled sources of error. For
+many years there were two different programs which were used to
+add noise to the observations.  Reway added the same amount of
+noise to all observations.  Weigh added the same amount of
+noise to all observations of a given baseline.  Both of these had
+the goal of adjusting the noise so that Chi-square=1.
+
+The program REWAY combines reway and weigh into one program,
+and adds another option. You now have the option of adding
+station dependent noise to the observations.  Hence you have
+three possible ways of adding noise:
+ 1.) Global--The same noise is added to all observations.
+ 2.) Station--The same noise is added to all observations
+ involving a given station.
+ 3.) Baseline--The same noise is added to all observations
+ involving a given baseline.
+The goal of all three is the to have chi-sqaure=1.
+Actually options 2 and 3 have a somewhat more stringent
+requirement, namely that chi-square for each subset of the
+data, for example all observations to a given station or with a
+given baseline be equal to 1. When I say chi-square I mean the
+correctly normalized post-fit chi-square, the "chi-square per
+degree of freedom."
+
+For reway to run correctly you need to first run a solution. Then
+noise is added to the observations to make chi-square of this
+solution (and the various subsets of the data) equal to 1.
+Since adding noise changes the solution, there is no guarantee
+that a new solution run with the new noise will have chi-square
+equal to 1, although you can show that the chi-square should
+be closer to 1 than the original solution.  Hence adding noise is
+an iterative process.
+
+
+       II. Options available in REWAY.
+
+
+On-line (H)elp -- print on the screen this file.
+
+(I)terate to Unity.
+
+This option will go through the following steps until
+Chi-square is close to unity:
+1.) Modify weights until we are close to Chi-square=1 for each
+subset of the data.
+2.) Run a solve solution.
+3.) Recalculate chi-square.  If neccessary, goto 1.
+
+
+(U)pdate weights once.
+
+This modifies the weights based on the current solution until
+we are close to chi-square=1 for each subset of the data. In
+global mode, there is only one subset. In station mode we want
+chi-square=1 for all observations involving a given station. In
+baseline mode we want chi-square=1 for all observations involving
+a given baseline.
+
+
+(R)e-initialize weights to zero.
+
+This sets all of the additive noise to 0. This means we just use
+the correlator sigmas for the noise.
+
+
+re-read the (N)amfil weights.
+
+This reads in the weights from the namfil.
+
+
+Good (C)hoice values 10 ps, 100 fs/s.
+
+This makes the additive noise 10 ps for all delay observations
+and 100 fs/s for all rate observations.
+
+
+(E)nter specific weights.
+
+This allows the user to enter in specific values for the weights.
+The user is prompted to enter the weights one at a time.
+
+Change to (G)lobal weights.
+Change to (S)tation weights.
+Change to (B)aseline weights.
+
+Choose what kind of weights you want to use.
+
+
+(D)isplay current weights.
+
+Display the current delay and rate weights.
+
+
+(M)aximum iterations.
+
+This sets the maximum number of iterations for option (I)
+above. Generally speaking, the iterative process converges
+after a few (3-5) iterations.  In the case that it doesn't
+converge this stops the process.
+
+(T)olerance.
+
+This allows you to set the tolerance for convergence. If
+  |chi_square-1.| < tol
+then we stop the iteration.  The default value is 0.005,
+although this is certainly too stringent.
+
+(P)ause in iteration.
+
+This can be either YES or NO. If YES the program will pause
+between computing weights and doing a solve solution.  This
+allows the user to see how quickly things are converging.
+
+(F)all back mode.
+
+This can either On or OFF.  Occaisonaly it happens that it is
+impossible to have chi-square=1 for all baselines, but it may
+be possible to have this for all stations.  Or it may be
+impossible to have this for all stations, although you can have
+it for the dataset as a whole.  If fall back mode is on, and
+REWAY can't find acceptable values for the baseline weights, it
+will change to station weights.  If it can't find acceptable
+values for station weights it will change to global weights.
+
+e(X)perimental new-weights: Off
+
+This is a relic.  I tried experimenting with alternate ways of
+updating the weights to see if I could come up with something
+that converged faster, but never succeeded in doing so. If this
+is turned on, you use the alternate technique. You should get the
+same answers.
+
+f(L)oor
+
+This changes the minimum allowable value for the weights.
+
+Ceiling (%)
+
+This changes the maximum allowable value for the weights.
+
+Find Baseline co(V)ariance.
+
+This is a research option.  This calculates the covariance of
+observations by baseline, and writes it out to a file called
+bl_cov.tmp.  Explicitly, for each pair of baselines ij, kl,
+it computes:
+
+    SUM (res_ij/sig_ij)*(res_kl/sig_kl)/(num obs)
+
+where the sum is over all observations.  If the observations were
+really independent, you would find that that this quantity
+should equal 1 when ij=kl, and 0 otherwise. Actually what you
+find is that if the baselines have a common station there is
+usually significant correlation, indicating that there is some
+unmodeled systematic station dependent error. I believe this is
+due to the atmosphere, but I haven't had a chance to follow up on
+this. In any case, if we have significant correlation between
+baselines the estimation process in solve is probably not
+correct.
+
+(A)bort without storing weights.
+
+Return to optin without disturbing the namfil.
+
+
+Return to (O)tion storing weights.
+
+Store the weights we have found in the namfil, and return to optin.

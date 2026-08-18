@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML lang="en">
+<HEAD>
+     <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+     <META NAME="GENERATOR" CONTENT="redoc" >
+    <TITLE> User manual to eop_alignment </TITLE>
+</HEAD>
+<BODY>
+    <CENTER><B><BIG> User manual to eop_alignment </BIG></B></CENTER>
+<HR SIZE="6">
+    <CENTER><I>   </I></CENTER>
+    <CENTER><I> Leonid Petrov </I></CENTER>
+    <CENTER><I>   </I></CENTER>
+<P>
+<CENTER><I><BIG> Abstract: </CENTER></I></BIG>
+ 
+<P><I><UL><FONT SIZE=2>
+ 
+ 
+   This document is a brief user manual for program eop_alignment
+ 
+ 
+</FONT></I></UL><P>
+ 
+<CENTER><BIG><I> Table of contents: </CENTER></BIG></I>
+ 
+<DL>
+<P><DD> 1 &nbsp; <A HREF="#section1"> Overview </A> </DD><P>
+<P><DD> 2 &nbsp; <A HREF="#section2"> Usage </A> </DD><P>
+<P><DD> 3 &nbsp; <A HREF="#section3"> Output </A> </DD><P>
+<P><DD> 4 &nbsp; <A HREF="#section4"> Algorithm </A> </DD><P>
+</DL>
+ 
+<HR SIZE="2">
+ 
+<LISTING>
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section1"> </A> 1 &nbsp; Overview
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+   Program  EOP_ALIGNMENT is for computing right hand side of
+   NO_NET_rotation/translation constraint equations of global VLBI
+   solutions in order to eliminate relative shift and drift of polar
+   motion and UT1 time series with respect to IERS C04 series.
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section2"> </A> 2 &nbsp; Usage
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+   Usage: eop_alignment &lt;sol-file&gt; &lt;nn-cons-list&gt; &lt;IERS-C04-file&gt;
+ 
+   &lt;sol-file&gt; -- generic name of the output files obtained from
+                 parsing spool file with using program getpar.
+   &lt;nn-cons-list&gt; -- List of NNT-POS constraints used in solution.
+                     This list can be found in Spool file just before
+                     the section of global parameters. Cut this list,
+                     put it into the file and feed if eop_alignment.
+   &lt;IERS-C04-file&gt; -- external EOP file in IERS C04 format as it
+                      was 2002.05.20
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section3"> </A> 3 &nbsp; Output
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+     eop_alignment writes right hand side of constraint equations in
+   the screen. Just copy these lines and insert them to your Batch
+   control file. If your previous solution had zero net-rotation,
+   net-translation constraints, the new solution will have zero
+   shift and drift with respect to IERS C04. Station position and
+   velocity will be reciprocally changed with respect to the previous
+   solution, of course.
+ 
+</FONT></LISTING><CENTER><BIG><B>
+<P>
+<A NAME="section4"> </A> 4 &nbsp; Algorithm
+</B></BIG></CENTER><LISTING> <FONT SIZE=4>
+ 
+   1) Compute the difference between EOP from the Solve solution
+      with zero right part and IERS C04. Compute weighted secular
+      drift and the shift with respect to IERS C04 at the reference
+      epoch for which station positions in this solution were
+      obtained.
+ 
+   2) Compute the right hand side of constraint equations.
+ 
+      Shift and drift of EOP series with respect to a reference is
+      equivalent to a net-translation/rotation of station positions
+      and velocity field. It can be written as:
+ 
+      M * T = D
+ 
+      where M -- matrix of dimension 3*6
+      (N_pos -- total number of station position, N_vel -- total
+       number of station velocity. If a station had an episodic
+       motion, than its position is counted twice) in the form
+ 
+       1  0  0   0    r3  -r2
+       0  1  0  -r3   0    r1
+       0  0  1   r2  -r1   0
+ 
+    ... station 2, station 3 ... station N_pos
+ 
+    0  0  0   0    0    0    1  0  0   0    r3  -r2    \
+    0  0  0   0    0    0    1  0  0  -r3   0    r1     | Station 1
+    0  0  0   0    0    0    1  0  0   r2  -r1   0     /
+ 
+    ... station 2, station 3 ... station N_vel
+ 
+     T -- 6-dimensional vector of transformation: translation and
+          rotation;
+     D -- 3-dimensional vector of station displacements due to
+          a transformation.
+ 
+     Summing over all station (if a station had an episodic motion,
+   than its position is counted twice) we get the system of linear
+   algebraic equations:
+ 
+     Sum_i ( M_i * T = D_i )
+ 
+   LSQ solution of this problem will be in the form
+ 
+   T' = ( Sum_i Sum_j M_i * M_j )^-1 * Sum_i (M_i * D_i) (j&lt;=i)
+ 
+   We can re-write this equation as
+ 
+   Sum_i (M_i * D_i) =  ( Sum_i Sum_j M_i * M_j ) * T' (j&lt;=i)
+ 
+   This is just the equation of net-rotation,net-translation
+   constraint used in Solve. Setting the vector T' to the shift
+   between the EOP series
+ 
+           /  X_shift  \
+     T' = |  -Y_shift   |
+           \  UT1_shit /
+ 
+     we compute the right hand-side of constraint equation for
+   net-translation/net-rotation.
+ 
+   Analogously we compute right hand-side of constraint equation for
+   net-translation/net-rotation for velocities. But in summing the
+   stations with episodic motion are counted only once.
+ 
+ 
+   Caveat: the present version assumes that all stations which
+           participated in no-net-translation constraitns for
+           positions participated in no-net-translation for velicity
+           and no-net-rotation for both position and velocity.
+</FONT></LISTING>
+<P>
+<HR SIZE="6">
+  <BR>
+Questions and comments about this guide should be sent to: <BR>
+  <BR>
+Leonid Petrov ( sgdass@lists.nasa.gov ) <BR>
+  <BR>
+<EM>
+     Last update: 2002.05.20
+</EM>
+ 
+</BODY>
+</HTML>

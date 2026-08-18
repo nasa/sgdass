@@ -1,0 +1,52 @@
+  Ners package provides a client to the Network Earth Rotation Service (NERS).
+It consists of the library, python3 module and five four executable. The ners 
+library communicates with the NERS server, downloads the file with the Earth 
+rotation parameters from 1976.01.01 through 48 hours in the future and 
+computes the EOP value or the array of values at the specified epoch or the 
+time series at the specified interval with the given step.
+
+  The executables print the Earth orientation parameters at the standard output:
+
+     ners_eop    -- retrieves the requested EOP on the specified epoch from 
+                    NERS and prints it into stdout.
+     
+     ners_eopser -- generates the series of the requested EOP on the specified 
+                    time range and the specified step from NERS and prints the 
+                    series into stdout.
+     
+     ners_azelha -- program that computes azimuth, elevation and hour angle 
+                    at a requested epoch for a station with given positions 
+                    observing a source with given coordinates.
+
+     ut1mtai     -- prints the current UT1 minus TAI angle into stdout.
+     
+     utcmtai     -- prints the current value of UTC minus TAI angle into stdout.
+
+
+Refer doc folder for documentation.
+
+  The rms error of the Earth orientation forecast at the current epoch
+is 1.1 nrad for the components 1 and 2 (pole coordinates) and 2.8 nrad 
+for the component 3 (UT1).
+
+Documentation: 
+
+doc/ners_user_guide.html       -- User guide of NERS library   
+doc/eop_explained.html         -- Explanation of Earth Orientation parameters
+doc/ners_how.html              -- Explanation how NERS server/client work
+doc/ners_config_file.txt       -- format of NERS client configuration file
+doc/ners_configure.txt         -- description of options of configure program for NERS installation
+doc/ners_foreacst_message.txt  -- introduction to NERS forecast message
+doc/ners_api.txt               -- detailed description of NERS forecast message
+
+doc/ners_eop.txt               -- description of ners_eop executable
+doc/ners_eopser.txt            -- description of ners_eopser executable
+doc/ut1mtai.txt                -- description of ut1mtai executable
+doc/utcmtai.txt                -- description of utcmtai executable
+doc/ners_azelha.txt            -- description of ners_azelha executable
+doc/ners_examples.txt          -- description of NERS examples
+
+
+Author:  Leonid Petrov
+
+License: GNU Public License

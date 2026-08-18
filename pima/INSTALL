@@ -1,0 +1,691 @@
+Installation of PIMA under 64-bit Linux or MACOS
+=================================================
+
+Last time updated on 2020.05.09_16:34:38
+
+  Building and installation of pima is easy. But installation
+of its dependencies may take some time.
+
+I. pima requires
+
+  1) tcsh       6.10      or newer     Should be symlinked to csh
+  2) gcc        4.7       or newer     https://gcc.gnu.org/
+  3) gfortran   4.7       or newer     https://gcc.gnu.org/
+  4) zlib       1.2       or newer     http://www.zlib.net/
+  5) ncurses    5.7       or newer     https://ftp.gnu.org/gnu/ncurses
+  6) curl       7.1       or newer     https://curl.haxx.se
+  7) readline   6.0       or newer     https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+  8) fftw       3.3.3     or newer  *c http://www.fftw.org
+  9) cfitsio    3.26      or newer  *c http://heasarc.gsfc.nasa.gov/fitsio/fitsio.html
+10a) openblas-0.3.3       or newer  *c https://sourceforge.net/projects/openblas/files/
+     or
+10b) atlas      3.10.0    or newer  *c http://math-atlas.sourceforge.net
+ 11) petools    20200501  or newer     http://astrogeo.org/petools
+ 12) spd_client 20200501  or newer     http://astrogeo.org/spd
+ 13) ners       20200501  or newer     http://earthrotation.net/ners
+ 14) vtd        20200501  or newer     http://astrogeo.org/vtd
+ 15) fourpack   20200501  or newer     http://astrogeo.org/fourpack
+ 16) gvh        20200617  or newer     http://astrogeo.org/gvh
+ 17) vex_parser 20200617  or newer *s  http://astrogeo.org/vex_parser
+
+Dependency tree:
+
+ pima ---.
+         |--- python3 (d)
+         |--- fftw (c)
+         |--- petools (c) --------.
+         |                        |--- tcsh (r)
+         |                        |
+         |                        |--- zlib (d)
+         |                        |
+         |                        |--- readline (d) -------------.
+         |                        |                              \--- ncurses (d)
+         |                        |
+         |                        |--- atlas or openblas (c) ----.
+         |                        |                              |--- C compiler
+         |                        |                              |
+         |                        |                              \--- Fortran compiler
+         |                        |
+         |                        |--- libXp   (d)
+         |                        |
+         |                        |--- libX11  (d)
+         |                        |
+         |                        |--- libXt   (d)
+         |                        |
+         |                        \--- libXext (d)
+         |
+         |--- cfitsio (c)  -------.
+         |                        \--- curl (d)
+         |
+         |--- ners (c,p)   -------.
+         |                        |--- openblas or atlas (c)
+         |                        |--- python3
+         |                        \--- petools
+         |
+         |--- spd_client (c,p) ---.
+         |                        |--- openblas or atlas (c)
+         |                        |--- ners
+         |                        \--- petools
+         |
+         |--- vtd (c) ------------.
+         |                        |--- openblas or atlas (c)
+         |                        |
+         |                        |--- cfitsio (c) -----------.
+         |                        |                           \ --- curl (d)
+         |                        |--- ners
+         |                        |--- spd_client
+         |                        \--- petools
+         |
+         |--- fourpack (c) -------.
+         |                        |--- fftw (c)
+         |                        |--- openblas or atlas (c)
+         |                        \--- petools
+         |
+         |--- gvh (c) ------------|
+         |                        |--- vtd
+         |                        \--- petools
+         |
+         |--- difmap (c,o) -------.
+         |                        \--- cfitsio (c) ---------.
+         |                        |                         \ --- curl (d)
+         |
+         \--- psolve (c,o) -------.
+                                  |--- cfitsio (c) ---------.
+                                  |                         \ --- curl (d)
+                                  |
+                                  |--- openblas or atlas (c)
+                                  |
+                                  |--- spd_client
+                                  |
+                                  |--- ners
+                                  |
+                                  |--- vtd
+                                  |
+                                  |--- gvh
+                                  |
+                                  |--- vex_parser (s)
+                                  |
+                                  \--- petools
+
+
+d -- a package can be compiled/linked or taken from a Linux package 
+     repository as a development version;
+c -- custom compilation/building is required;
+r -- desirable to have root access to install, through not required
+o -- may be omitted;
+p -- installation provide an option: standalone or with-petools;
+     The option with-petools should be selected.
+s -- required for psolve, not needed for pima.
+
+atlas may require root access to disable CPU throttling.
+
+NB: You need to build, fftw, atlas and cfitsio even if you have
+    them in your system! Unfortunately, this program are often
+    built with underscore appended to the the external names,
+    which prevents interoperability Fortran and C. PIMA requires
+    them to be built without appending underscores.
+
+Optional packages:
+
+ 1) Python      3.2       or newer
+ 2) Dimap       2.4l      or newer
+ 3) psolve      20200617  or newer
+
+  PIMA can be configured without these optional packages, but its
+functionality will be reduced.
+
+  PIMA also creates patched version of library pgplot. 
+If you have or may programs that depend on fftw, cfitsio, 
+openblas or atlas, and pgplpot, you should not overwrite them, 
+otherwise old applications may stop working. It is strongly 
+recommended to built fftw, cfitsio, atlas, and pgplpot in 
+the so-call Unix non-standard place, i.e. outside /usr tree.
+
+  When you built a shared library in a non-standard directory,
+under Linux you need to instruct loader where to find it. 
+
+1) To setup the environment library LD_LIBRARY_PATH (Linux) or
+   list there full paths of library directories where the loader 
+   should search. NB: the order of directories matters.
+
+2) if you have root access, you can add a non-standard
+   full paths of library directories into /etc/ld.so.conf
+   NB: the order of directories matters.
+   You need execute as a root user command ldconfig after
+   installation of each library.
+
+You do not need do it under MACOS since rthe search path is set during
+installation. From the other hand, if want to move executables to
+another directory, it is not sufficient to copy them, you need first
+uninstall it by running "make uninstall", then reconfigurem, then re-build.
+
+If you already have shared libraries fftw, cfitsio, opebblas or atlas, 
+and pgplpot in your system, the compilation process below will create the 
+second copy of these libraries. In that case you should carefully check 
+the order of directories with shared libraries in LD_LIBRARY_PATH and/or
+/etc/ld.so.conf . The directory with new libraries built for PIMA 
+should go first.
+
+
+II. Root permission.
+--------------------
+
+  In general, you do not need to have root permissions for installing
+pima and its dependencies, except
+
+1) You need to root permission for installing tcsh if you do not
+   have it at your system.
+
+2) If you build atlas, your should check whether your system enabled CPU 
+   thermal throttling. If yes will prevent installation and tuning package 
+   atlas, since it relies on measurement of performance of zillions of code 
+   snippets and requires to have the CPU speed constant. You need to have 
+   root permission to disable it. You do not need tweak with CPU throttling 
+   if you selected to build openblas.
+
+   CPU thermal throttling is a feature of some processors that 
+   automatically changes CPU frequency and deliberately degrades CPU
+   performance.  This feature allows to extend the battery life of 
+   a laptop by expense of low performance. Unfortunately, some distributions 
+   enable it by default for any system, even for a server.
+
+   How to determine, whether your system has CPU thermal throttling 
+   enabled?
+
+   1) Check directory  /sys/devices/system/cpu/cpu0/cpufreq/
+      If it does not exist, then the throttling is disabled.
+  
+   2) If /sys/devices/system/cpu/cpu0/cpufreq/ exists, 
+      check /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+      If it has value "performance", then the throttling is disabled.
+      If it has different value, then check
+         /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+         /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+         /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+
+        If scaling_min_freq < scaling_max_freq, throttling is enabled
+        If scaling_cur_freq < scaling_max_freq, throttling is enabled
+
+   There is more than one way to disable CPU throttling.
+
+   You can run this script under bash as a root user:
+
+   if [ `uname` == "Linux" ]; then
+         num_thr=`lscpu | grep '^CPU(s):' | awk '{print $2}'`
+         num_thr_1 = `expr $num_thr - 1`
+         for proc_num in `seq 0 $num_thr_1`;
+         do
+           echo performance > /sys/devices/system/cpu/cpu${proc_num}/cpufreq/scaling_governor
+         done
+   else # Darwin (MAC OS)
+      pmset -a dps 0
+   fi
+
+   If you built PIMA on a laptop, you execute this command only once for
+   building ATLAS library and then disable it by rebooting. If you 
+   built PIMA on a desktop or a server, disabling throttling permanently
+   will boost a performance. In that case, just add the script above
+   to /etc/rc.local and check that /etc/rc.local is executed on boot time.
+   (The name of the custom start-up file executed at boot time varies
+    in different distributions).
+
+  It is recommended to build pima and its dependencies as a normal user.
+
+  You need to determine in which directory you are installing pima 
+and its dependencies. It is recommended to install PIMA and all its
+dependencies in the directory tree with the same prefix. Let us 
+environment set variable PREFIX that points to that directory.
+
+Include $PREFIX/lib in LD_LIBRARY_PATH variable, f.e.
+setenv LD_LIBRARY_PATH  "${LD_LIBRARY_PATH}:${PREFIX}/lib"
+
+Alternatively, at Linux machine if you have root account you can include 
+that directory in /etc/ld.so.conf  and run command ldconfig after 
+installation of each library.
+
+Include $PREFIX/bin in PATH variable, f.e.
+setenv PATH "${PATH}:${PREFIX}/lib"
+
+III. Building dependencies.
+---------------------------
+
+ 1) tcsh
+    If you do not have tcsh at your system, download it.
+    Download the source-code from http://www.tcsh.org/Home
+ 
+    ./configure --prefix=/usr --bindir=/bin
+    make 
+    (as root) make install
+    (as root) add these two lines in /etc/shells if you do not have them:
+              /bin/tcsh
+              /bin/csh
+
+    Your system administrator may select installing tcsh using 
+    some package manager. This is fine.
+
+
+ 2) zlib 1.2 or newer
+    download and untar http://www.zlib.net/zlib-1.2.11.tar.gz
+    ./configure --prefix=$PREFIX --shared
+    make
+    make install
+
+
+ 3) ncurses 5.7 or newer
+    Download and untar http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.9.tar.gz
+    cd ncurses-5.9
+    ./configure --prefix=$PREFIX \
+                --with-shared \
+                --without-debug \
+                --without-ada \
+                --enable-overwrite
+    make
+    make install
+
+
+ 4) readline 6.0 or newer
+    Download and untar ftp://ftp.cwru.edu/pub/bash/readline-6.3.tar.gz
+    cd readline-6.3
+
+    ./configure --prefix=$PREFIX \
+                --libdir=$PREFIX/lib
+    make
+    make install
+ 
+    Comments: readline-6.0 may fail compilation under gcc 4 or 5.
+              If you see a see an error message, upgrade either
+              gcc/gfortran or readline, or both
+
+ 
+ 5) python 3.2 or newer. You still can configure PIMA without python3,
+    using option --without-python, but all wrapping scripts will not
+    be installed.
+
+
+ 6) fftw 3.3.8 or newer
+    NB: you need build fftw two times: fiorst time for double precission
+        and the second time for single precision.
+    Download and untar  http://www.fftw.org/fftw-3.3.8.tar.gz
+
+    ########################################
+    # NB! Step "make check" is mandatory!! #
+    ########################################
+
+    It make happen that make check will stop and report failed test.
+    Failed test means exactly what it said: fftw produces wrong 
+    answer. Under no cirumstance you can skip the failed test. In that 
+    case you need change flags and recompile. You can proceed 
+    further if, and only if, the test has passed both for double and
+    single precision.
+    
+       
+   ./configure --prefix=$PREFIX \
+               --enable-openmp \
+               --enable-shared \
+               --enable-sse2  \
+               --enable-fma \
+               --disable-static \
+               CC="gcc" \
+               CFLAGS="-m64 -Ofast -fomit-frame-pointer -malign-double -fstrict-aliasing -fno-stack-protector -march=native" \
+               F77="/usr/bin/gfortran" \
+               FFLAGS="-m64 -fno-underscoring -O3 -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -fno-stack-protector -march=native"
+    make 
+    make install
+    make check
+    tests/bench -owisdom -onthreads=1 cif1024x1024
+    # option --disable-static is needed for MACOS, but not needed for Linux
+    # for double precision
+
+    ########################################
+    # NB! Step "make check" is mandatory!! #
+    ########################################
+
+    make distclean 
+    ./configure --prefix=$PREFIX \
+                --enable-single  \
+                --enable-openmp \
+                --enable-shared \
+                --enable-sse \
+                --enable-avx-128-fma \
+                --disable-static \
+                CC="gcc" \
+                CFLAGS="-m64 -O3 -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -fno-stack-protector -march=native" \
+                F77="gfortran" \
+                FFLAGS="-m64 -fno-underscoring -O3 -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -fno-stack-protector -march=native"
+    # option --disable-static is needed for MACOS, but not needed for Linux
+    # for single precision
+    make 
+    make install
+    make check
+    tests/bench -owisdom -onthreads=1 cif1024x1024
+
+
+ 7) cfitsio  3.26 or newer
+    Download and untar 
+        http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.47.tar.gz
+        http://astrogeo.org/patches/cfitsio-3.26.patch
+    patch -Np0 -i /inlcude/cfitsio-3.26.patch
+    setenv CC "gcc"
+    setenv FC "gfortran"
+    setenv CFORTRANFLAGS "-nus"
+    setenv CFLAGS "-DNoUnderscoreAppend"
+    ./configure --prefix=$PREFIX \
+                --enable-reentrant \
+                CFLAGS="-m64 -DNoUnderscoreAppend -DINTEL_COMPILER"
+    If you build under MACOS, then execute: sed -i -e "s|@rpath|$PREFIX/lib|g" Makefile
+    make
+    make shared
+    make install
+
+ 8) Install *either* openblas or atlas. You may install both, but you can use either
+    openblas or atlas. 
+
+8a) openblas 0.3.6 or newer
+
+    Define openblas version
+
+    a) Determine the newest openblas version at 
+       https://sourceforge.net/projects/openblas/files
+       for example, 0.3.10
+       set environment variable openblas_vers to that version
+       set environment variable Openblas_vers to that version with removed dots
+
+       Example:
+
+           setenv openblas_vers 0.3.10
+           setenv Openblas_vers 0310
+
+
+        cd $INC
+        wget https://github.com/xianyi/OpenBLAS/archive/v${openblas_vers}.tar.gz
+
+    b) get a patch that enables fortran/c interoperability. Required!
+
+       wget http://astrogeo.org/patches/openblas_nous_${Openblas_vers}.patch
+
+    c) Build openblas
+       cd $DIST
+       tar -zxvf $INC/v${openblas_vers}.tar.gz
+       cd OpenBLAS-${openblas_vers}
+       patch -Np0 -i $INC/openblas_nous_${Openblas_vers}.patch
+       make NOUNDERSCORE=1 COMMON_OPT="-D NOCHANGE -U NEEDBUNDERSCORE -D NOCHANGE" FCOMMON_OPT="-fno-underscoring -fPIC" USE_OPENMP=1 CEXTRALIB=-lgomp
+
+    d) Install openblas
+       make PREFIX=$PREFIX install 
+
+
+8b) atlas 3.10.0 or newer
+    Download petools and follow instructions for installation of atlas
+    as a part of installation process of petools library.
+    NB: installation process of ATLAS is different from other normal
+    process. During building the libraries ATLAS performs tuning by executing
+    many test programs. Tuning results are specific for the given computer
+    configuration (CPU, memory, motherboard). If you made an upgrade of CPU 
+    or memory, you need to re-install/re-tune atlas.
+
+ 9) petools 20200501 or newer
+    Download and untar tarball from http://astrogeo.org/petools
+    Refer file INSTALL inside the tar-ball for installation instructions.
+
+10) ners_   20200501 or newer
+    Download and untar tarball from http://earthrotation.net/ners
+    ./configure --prefix=$PREFIX            \
+                --with-petools=$PREFIX      \
+                --python-dir=$PREFIX/script 
+    make
+    make install
+    NB: You should configure ners with petool. Otherwise, pima will not build.
+
+11) spd_client 20200501 or newer
+    Download and untar from http://astrogeo.org/spd/
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --with-petools=$PREFIX \
+                --with-lapack="$SOLVE_LIB_BLAS"
+    make
+    make install
+
+    NB: You should configure spd_client with petools and lapack.
+    Otherwise, pima will not build.
+
+12) vtd 20200501 or newer
+    Download and untar  from http://astrogeo.org/vtd
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --data=$PREFIX/share/vtd \
+                --with-petools=$PREFIX \
+                --with-ners=$PREFIX \
+                --with-cfitsio=$PREFIX \
+                --with-spd_client=$PREFIX 
+    make
+    make install
+
+13) fourpack 20200501 or newer
+    Download and untar from http://astrogeo.org/fourpack
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --with-petools=$PREFIX \
+                --with-fftw=$PREFIX \
+                --without-mkl
+
+    make
+    make install
+
+14) gvh 20200501 or newer
+    Download and untar from http://astrogeo.org/gvh
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --with-vtd=$PREFIX \
+                --with-ners=$PREFIX \
+                --with-petools=$PREFIX 
+    make
+    make install
+
+15) OPTIONAL: Difmap 2.4l or newer
+    See installation instructions at
+    http://brandeisastro.pbworks.com/w/page/14977091/Installing
+
+
+16) OPTIONAL: psolve 20200501  or newer
+    See installation instructions at
+    http://astrogeo.org/psolve
+
+
+IV. Building pima.
+------------------
+
+Finally, configure pima:
+
+source $PREFIX/bin/petools_vars
+./configure --prefix=$PREFIX             \
+            --with-petools=$PREFIX       \
+            --with-spd_client=$PREFIX    \
+            --with-cfitsio=$PREFIX       \
+            --with-curl=$PREFIX          \
+            --with-vtd=$PREFIX           \
+            --with-fourpack=$PREFIX      \
+            --with-gvh=$PREFIX           \
+            --with-ners=$PREFIX          \
+            --with-solve=[mk5_directory] \
+            --with-difmap=[difmap_directory] \
+	    --pima-fits=[fits_directory] \
+	    --pima-scratch=[pima_scratch_directory]
+	    --stable-share=[pima_share_directory]
+            --pima-exp-dir=[vlbi_experiment_directory]
+
+  Here 
+
+
+--with-solve   specifies installation directory for psolve.
+               Executables for psolve are located in 
+               bin sub-directory with respect to mk5-dir
+               If you do not have psolve installed, and do not wish
+               to have interface between PIMA and psolve, you can use
+               --without-solve
+
+--with-curl    Installation directory for curl. PIMA does not use curl,
+               but cfitsio 3.42 or new may be compiled in linked against
+               curl. If local build depends on curl, then PIMA needs
+               know where to find curl library if it installed in
+               a non-standard directory.
+
+--pima-fits    specifies a (big) directory with FITS-IDI file
+               for the example. 
+
+--pima-scratch specifies a (big) directory for scratch files
+               for the example. 
+
+--stable-share specifies a directory with a priori data, such as 
+               gain curves that PIMA reads only. PIMA installation
+               process does not overwrite files in that directory.
+
+--pima-exp-dir specifies a directory where subdirectories related
+               to specific VLBI experiments are located. If you
+               use PIMA wrapper scripts, the PIMA related files 
+               are expected to obey certain rules. In particular,
+               pima control files are supposed to e located in 
+               the subdirectory from --pima-exp-dir with a name
+               of the VLBI experiment in a lower case. If you
+               do not use PIMA wrapper scripts, you can specify
+               /tmp directory in order to configure PIMA.
+
+
+To compile and install run
+
+make 
+make install
+
+
+V. Post-installation configuration.
+-----------------------------------
+
+1) Tuning the FFTW library. 
+ 
+   The heart of PIMA is the Fast Fourier Transform (FFT). 
+   PIMA supports two libraries that implements the FFT:
+   the INTEL Mathematical Kernel Library (mkl) and the FFTW.
+   The mkl library is not open source: you can get it either
+   by paying $$ to Intel or you may be qualified for the free
+   non-commercial license. The Intel MKL library does not 
+   require tuning.
+
+   The FFTW is an open source library. It requires tuning
+   after installation. Using language in FFTW documentation,
+   you need to compute the "wisdom" (i.e. an ascii file that 
+   tells the routines how to compute the FFTW of a given 
+   dimension with the maximum speed) and store it in the file 
+   that PIMA will be using later.
+  
+   NB: the wisdom files depends
+       a) on the CPU;
+       b) operating memory;
+       c) number of threads.
+   
+   That means that the wisdom file computed for one computer
+   will not be optimized for another computer. The wisdom file 
+   made for 4 threads will be ignored when using with 1 thread
+   (The number of threads PIMA allowed to use is determined in
+    the PIMA configuration file).
+
+   The wisdom file is created by command create_fftw_plan which
+   is part of the fourpack library:
+
+   create_fftw_plan MODE Num_threads  $PREFIX/share/pima/pima_wis_small.inp \
+       [name_of_the_output_wisdom_file]
+
+   or 
+
+   create_fftw_plan MODE Num_threads  $PREFIX/share/pima/pima_wis_big.inp \
+       [name_of_the_output_wisdom_file]
+
+   where 
+      MODE is one of 
+         MEASURE    -- recommended mode. Takes 0.2-2 hours to compute
+         PATIENT    -- faster than MEASURE, but takes 2-3 days to compute
+         EXHAUSTIVE -- even faster than PATIENT, but may take several weeks
+                       to compute.
+
+      Num_threads   -- the number of threads. Recommended value: the number
+                       of cores (processors) at your system.
+
+      input_file    -- one of 
+                       $PREFIX/share/pima/pima_wis_small.inp 
+                       $PREFIX/share/pima/pima_wis_big.inp 
+    
+                       big file is needed for wide-field experiments.
+                       small file is sufficient for the majority of VLBI
+                       experiments. Small 1-thread version of the plan
+                       file is created during installation. Keep in mind 
+                       that big file requires at least 8 Gb RAM for its 
+                       computation and subsequent use.
+
+   You may interrupt and resume creation of a wisdom file at any time. 
+   create_fftw_plan reads the output file and honors computations that 
+   already have been done
+
+2) A priori files with data for vtd.
+
+   When you configure VTD with using Network Earth Rotation Service
+   (NERS), you do not need manually download/update the Earth 
+   Orientatin Parameter (EOP) time series.
+
+3) .Xdefaults
+
+   In order graphic to work properly, you need to add to your
+file $HOME/.Xdefaults the following line
+
+pgxwin.Win.iconize:     True
+
+and then add xrdb -merge $HOME/.Xdefaults in your shell startup
+file (or you have already that line in the start-uo file).
+
+4) Environment variables that control graphics
+
+  In order to run PG PLOT you need to specify several environment 
+  variables. Here is an example under tcsh:
+
+  setenv PGPLOT_DIR  "${PREFIX}/bin"            # where to find pgplot executables
+  setenv PGPLOT_FONT "${PGPLOT_DIR}/grfont.dat" # where to find fonts
+  setenv PGPLOT_DEV  "/XW"                      # tells that default is to print 
+                                                # the graphics to the screen
+  setenv PGPLOT_XW_MARGIN "1.0"                 # sets display margins
+
+
+  Environment variable DIAGI_PRICOM defines a command for printing
+  postscript files at the preferred printer from DiaGI interface.
+
+  Example under tcsh: setenv DIAGI_PRICOM    "lp -dFine"
+
+  Environment variable DIAGI_SCREEN overrides a system-wide default
+  screen size. Three screen sizes are supported: 
+  vast  -- 598x336mm
+  huge  -- 395x280mm
+  big   -- 330x215mm
+  small -- 290x180mm   
+
+  Example under tcsh: setenv DIAGI_SCREEN "huge"
+
+  Run diagi_demo command to see which size is more comfortable.
+  
+5) Running an example.
+
+   You need to download the fits file of r1447 VLBI experiment 
+   from http://astrogeo.org/d4/corr_fits/r1447/2010_09_07_r1447_01.fits
+   into directory specified as --pima-fits
+
+   Then you can run examples:
+
+pima $PREFIX/share/pima/r1447_x_pima.cnt load
+
+pima $PREFIX/share/pima/r1447_x_pima.cnt frib \
+     OBS: 346 \
+     FRIB.1D_RESFRQ_PLOT: XW \
+     FRIB.1D_RESTIM_PLOT: XW \
+     FRIB.1D_DRF_PLOT: XW
+
+
+See a step-by-step example of installation in doc/installation_example.txt

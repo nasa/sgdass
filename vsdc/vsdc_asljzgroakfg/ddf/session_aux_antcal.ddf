@@ -1,0 +1,18 @@
+# CDDIS file definition  Version 1.0  of 2019.10.22
+#
+# 2020.10.14 Leonid Petrov created
+#
+Short_description:    VLBI Antenna Calibration
+Long_description:     VLBI Antenna calibration data
+Format_file_name:     /vlbi/ivsformats/atncal.pdf
+Reference:            n/a
+DOI:                  n/a
+Filenaming_scheme:    @{date{%Y}}/@{sess}/@{sess}_@{sta}.anc
+File_location:        /vlbi/ivsdata/antcal
+Product_ID:           VLBI_DATA_ATNCAL
+Data_type:            VLBI
+Data_content_type:    Data
+Data_format:          ascii
+Validate_proc:        vsdc_antcal.py
+Magic:                # ANTCAL Format
+Compression_type:     bz2

@@ -1,0 +1,38 @@
+SITLIST Format  Version 2003.07.31
+#
+#  Created: 2015.11.07-08:04:54
+#
+#  Format description:
+#  1) File consists of records fixed length.
+#     Records can be one of three types:
+#     a) File format identification: the first record;
+#     b) Comment: the record which starts from # character;
+#     c) Data records.
+#
+#  2) Format of the data record:
+#     Field  1:8  -- Station name.
+#     Field 10:21 -- X coordinate of the site in meter.
+#     Field 23:34 -- X coordinate of the site in meter.
+#     Field 36:47 -- Z coordinate of the site in meter.
+#     Field 49:58 -- Date when the site produced first observation worth
+#                    analyzing in format YYYY.MM.DD
+#     Field 60:69 -- Date when the site produced last observation worth
+#                    analyzing in format YYYY.MM.DD or end for sites which
+#                    are deemed as active.
+#     Field 71:71 -- Technique code:
+#                    R for VLBI,
+#                    S for SLR,
+#                    G for GPS,
+#                    D for DORIS,
+#                    Technique code means that the site coordinate
+#                    are related to coordinates of the reference point
+#                    of the station of that technique.
+#     Field 73:81 -- Alternative station name.
+#     Field 83:92 -- Comment
+#     Field 95:98 -- CDP number of the station which defines coordinates
+#                    of the site.
+#     Field 100:  -- Long comment
+#
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP  D    Latitude    Longiutde Hei_or Place                   Conutry       H_ort H_ell
+#
+MATJIES   4998488.575  1876987.402 -3479190.231 begin      end        R                             1  -33.265377  20.581709   1039.                         Matjies       1047.  1081.

@@ -1,0 +1,17 @@
+      subroutine  dscal(n,da,dx,incx)
+      implicit none
+c
+c     scales a vector by a constant.
+c     uses unrolled loops for increment equal to one.
+c     jack dongarra, linpack, 3/11/78.
+c     mwh 730,vis 1/27/92
+c     note: incx must be non-negative
+c
+      double precision da,dx(1)
+      integer incx,n
+c
+      if(n.le.0)return
+c      call dvsmy(da,dx,incx,dx,incx,n)
+      call vec_$dmult_constant_i(dx,incx,n,da,dx,incx)
+      return
+      end

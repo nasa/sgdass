@@ -1,0 +1,75 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   Rourine fpp is a substutution of Intel Linux Fortran95.            *
+# *                                                                      *
+# *  ### 04-JUL-2003       fpp     v1.1 (c)  L. Petrov  04-NOV-2003 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+# --- Compile pass arguments in the form @file_name
+#
+#
+# --- Extract the file name
+#
+set len = `expr length $1` 
+set len  = `expr $len + 1`
+set file_name = `expr substr $1 2 $len `
+set cc_version  = "`${MK5_ROOT}/support/cc_version.csh version`"
+set f95_version = "`${MK5_ROOT}/support/f95_version.csh version`"
+#
+# --- gather contents of the file_name in the variaable opt
+#
+set opt = `cat $file_name`
+#
+set k = 0
+set opt_use  = ""
+loop:
+   set k = `expr $k + 1`
+   if ( $k > ${#opt} ) goto out_of_loop
+#
+# ----- Remove some options which are not needed, but make only harm
+#
+        switch ( $opt[$k] )
+          case "-D__PTRDIFF_TYPE__=int":
+              breaksw
+          case "-D__SIZE_TYPE__=unsigned":
+              breaksw
+          case "-D__WCHAR_TYPE__=int":
+              breaksw
+          case "-D__WINT_TYPE__=unsigned":
+              breaksw
+          case "-free"
+              if ( `$MK5_ROOT/support/line_equal_or_less.csh \
+                   $cc_version "3.3.1"` == 0    ) then
+                   set opt_use = "$opt_use "$opt[$k]
+              endif
+              breaksw
+          case "int":
+              breaksw
+          case "-4Ycpp":
+              breaksw
+          case "-4Ycvf":
+              breaksw
+          case "-4Ncvf":
+              if ( `$MK5_ROOT/support/line_equal_or_less.csh \
+                   $f95_version "7.2"` == 1 ) then
+                   set opt_use = "$opt_use "$opt[$k]
+              endif
+              breaksw
+          case "-D__WCHAR_TYPE__=long":
+              if ( `$MK5_ROOT/support/line_equal_or_less.csh \
+                   $f95_version "7.2"` == 1 ) then
+                   set opt_use = "$opt_use "$opt[$k]
+              endif
+              breaksw
+          default:
+            set opt_use = "$opt_use "$opt[$k]
+        endsw
+   goto loop
+out_of_loop:
+echo "/usr/bin/cpp $opt_use"
+#
+# --- invoke preprocessor cpp
+#
+cpp -P $opt_use

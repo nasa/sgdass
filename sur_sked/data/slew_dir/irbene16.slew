@@ -1,0 +1,19 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  IRBENE16  Ib
+LAST_UPDATE: IRBENE16  2018.05.19
+COORD:       IRBENE16  meters     3183649.615  1276902.735  5359264.576
+COORD:       IRBENE16  meters     3183295.000  1276276.000  5359611.000
+MOUNT:       IRBENE16  char       ALTAZ
+SLEW_AZ:     IRBENE16  deg/sec    2.0
+SLEW_EL:     IRBENE16  deg/sec    2.0
+ACCL_AZ:     IRBENE16  deg/sec^2  1.0
+ACCL_EL:     IRBENE16  deg/sec^2  1.0
+TSETTLE_AZ:  IRBENE16  sec        2.0
+TSETTLE_EL:  IRBENE16  sec        2.0
+EL_MIN:      IRBENE16  deg        3.0
+EL_MAX:      IRBENE16  deg       90.0
+AZ_RANGE:    IRBENE16  deg      -328.0 -32.0  32.0 328.0
+RECORDER:    IRBENE16  char      mark5
+PREOB:       IRBENE16  sec       10.0
+POSTOB:      IRBENE16  sec        2.0

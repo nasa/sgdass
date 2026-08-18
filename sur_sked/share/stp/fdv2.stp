@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    FDV2      char       H2
+LAST_UPDATE:   FDV2      char       2025.03.23
+COORD:         FDV2      meters     -1323959.129  -5332231.970  3232012.472
+MOUNT:         FDV2      char       ALTAZ
+#
+SLEW_AZ:       FDV2      deg/sec    9.9
+SLEW_EL:       FDV2      deg/sec    9.9
+ACCL_AZ:       FDV2      deg/sec^2  9.9
+ACCL_EL:       FDV2      deg/sec^2  9.9
+TSETTLE_AZ:    FDV2      sec        0.0
+TSETTLE_EL:    FDV2      sec        0.0
+#
+EL_MIN:        FDV2      deg        2.0
+EL_MAX:        FDV2      deg       90.0
+AZ_RANGE:      FDV2      deg      -90.0 90.0 270.0 450.0
+RECORDER:      FDV2      char      hrtr
+BACKEND:       FDV2      char      hrtr
+SETMODE:       FDV2      sec        0.0
+PREOB:         FDV2      sec        0.0
+POSTOB:        FDV2      sec        0.0
+#
+HOR_AZIM:      FDV2      deg        0.0  360.0
+HOR_ELEV:      FDV2      deg        2.0   2.0
+STOW_AZIM:     FDV2      deg        0.0
+STOW_ELEV:     FDV2      deg       90.0
+#
+CLOCK_DATES:   FDV2      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  FDV2      sec        0.0

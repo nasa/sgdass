@@ -1,0 +1,62 @@
+Specification of VLBI hardware setup in HDS format version 1.4 of 2023.06.03
+
+1. Introduction:
+================
+
+  A file in hds format describes a VLBI hardware setup in a level of 
+abstraction suitable for an astronomer in order the principle 
+investigator who may be ignorant of details of VLBI hardware at 
+a given station(s) would be able to design a correct frequency setup 
+and understand it.
+
+
+
+2. Syntax of a schedule in hds format:
+======================================
+
+  Schedule in hds format contains lines of 8-bit characters.
+The first line identifies format, its version, and date of 
+the hds format specification release. Lines that starts with 
+character # are considered as comments and discarded by a parser. 
+Each line that is not a comment contains a definition.
+
+  A definition have the following format:
+
+  keyword: value(s)
+  
+  Keywords and values, are separated by one or more blanks. A value 
+may not have blanks inside. 
+
+  The following keywords are supported: MODE_NAME, HDS_NAME, STATION, BAND
+
+2.1  MODE_NAME
+
+     Keyword MODE_NAME has one value: name of the mode. The name length should 
+     not exceed three characters.
+
+2.2  HDS_NAME
+
+     Keyword HDS_NAME has one value: name of the hardware setup. The name 
+     length should not exceed three characters.
+
+2.3  STATION
+
+     Keyword HDS_NAME has three values: a 8-character long upper case station
+     name, a 2-character long lower case station name, the wiring name.
+     wiring name is defined in the frequency definition table.
+
+2.4  BAND
+
+     Keyword BAND has four values: 
+     1) 1-character long upper case band name, 
+     2) positive band frequency in MHz defined as the low edge frequency
+     3) positive bandwidth in MHz 
+     4) dir or inv. 
+        Value dir means the frequency band will be sampled in the direct order
+        Value dir means the frequency band will be sampled in the inverted order
+
+     Band frequency X and bandwidth w designate the frequency band 
+     [X, X+w] MHz. If the last value is dir, then the first spectrum 
+     channel will start with frequency X and the last with frequency X+w.
+     If the last value is inv, then the first spectrum channel will start 
+     with frequency X+w and the last with frequency X.

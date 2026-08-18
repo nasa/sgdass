@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    NLVB      char       H8
+LAST_UPDATE:   NLVB      char       2025.03.23
+COORD:         NLVB      meters      -130822.256    -4762267.122     4226901.039
+MOUNT:         NLVB      char       ALTAZ
+#
+SLEW_AZ:       NLVB      deg/sec    9.9
+SLEW_EL:       NLVB      deg/sec    9.9
+ACCL_AZ:       NLVB      deg/sec^2  9.9
+ACCL_EL:       NLVB      deg/sec^2  9.9
+TSETTLE_AZ:    NLVB      sec        0.0
+TSETTLE_EL:    NLVB      sec        0.0
+#
+EL_MIN:        NLVB      deg        2.0
+EL_MAX:        NLVB      deg       90.0
+AZ_RANGE:      NLVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      NLVB      char      hrtr
+BACKEND:       NLVB      char      hrtr
+SETMODE:       NLVB      sec        0.0
+PREOB:         NLVB      sec        0.0
+POSTOB:        NLVB      sec        0.0
+#
+HOR_AZIM:      NLVB      deg        0.0  360.0
+HOR_ELEV:      NLVB      deg        2.0   2.0
+STOW_AZIM:     NLVB      deg        0.0
+STOW_ELEV:     NLVB      deg       90.0
+#
+CLOCK_DATES:   NLVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  NLVB      sec        0.0

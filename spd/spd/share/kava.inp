@@ -1,0 +1,44 @@
+SITLIST Format  Version 2003.07.31
+#
+#  Created: 2016.08.03_09:49:48
+#
+#  Format description:
+#  1) File consists of records fixed length.
+#     Records can be one of three types:
+#     a) File format identification: the first record;
+#     b) Comment: the record which starts from # character;
+#     c) Data records.
+#
+#  2) Format of the data record:
+#     Field  1:8  -- Station name.
+#     Field 10:21 -- X coordinate of the site in meter.
+#     Field 23:34 -- X coordinate of the site in meter.
+#     Field 36:47 -- Z coordinate of the site in meter.
+#     Field 49:58 -- Date when the site produced first observation worth
+#                    analyzing in format YYYY.MM.DD
+#     Field 60:69 -- Date when the site produced last observation worth
+#                    analyzing in format YYYY.MM.DD or end for sites which
+#                    are deemed as active.
+#     Field 71:71 -- Technique code:
+#                    R for VLBI,
+#                    S for SLR,
+#                    G for GPS,
+#                    D for DORIS,
+#                    Technique code means that the site coordinate
+#                    are related to coordinates of the reference point
+#                    of the station of that technique.
+#     Field 73:81 -- Alternative station name.
+#     Field 83:92 -- Comment
+#     Field 95:98 -- CDP number of the station which defines coordinates
+#                    of the site.
+#     Field 100:  -- Long comment
+#
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP  D    Latitude    Longiutde Hei_or Place                   Conutry       H_ort H_ell
+#
+KVNTN    -3171731.480  4292677.37   3481040.458 2010.09.30 end        R
+KVNUS    -3287268.156  4023449.120  3687380.179 2010.09.30 end        R
+KVNYS    -3042278.256  4045902.809  3867376.143 2009.12.01 end        R
+VERAIRIK -3521719.568  4132174.753  3336994.326 2003.01.01 end        R
+VERAISGK -3263994.648  4808056.357  2619949.395 2003.01.01 end        R
+VERAMZSW -3857241.856  3108784.803  4003900.595 2003.05.15 end        R 21702S012             7362
+VERAOGSW -4491068.894  3481544.829  2887399.622 2003.01.01 end        R

@@ -1,0 +1,121 @@
+# VTD Control file.   Format version of 2023.04.19
+#
+#  Lite configuration file for VTD
+#
+#  Created:     2005.08.09_15:01:59
+#  Last update: 2023.12.23_11:05:26
+#
+#
+# --- General files
+#
+DE_EPHEMERIDES:          /apr/eph/de440.eph
+#
+# --- Site positions and source coordinate catalogues
+#
+STATION_DESCRIPTION:     /apr/sta/station.desc
+STATION_COORDINATES:     /apr/sta/glo.sit
+STATION_VELOCITIES:      /apr/sta/glo.vel
+STATION_ECCENTRICITIES:  /apr/sta/ECCDAT.ecc
+SOURCE_COORDINATES:      /apr/sou/glo.src
+SOURCE_COORDINATES_2ND:  NONE
+SOURCE_COORDINATES_3RD:  NONE
+SOURCE_COORDINATES_4TH:  NONE
+SOURCE_PRLX_PRP_MOTION:  /apr/sou/sou.prl
+DIR_NZO:                 NONE
+#
+# --- Options for accounting for the Earth's rotation (ERM formalism)
+#
+AEM_FILE:                NONE
+ERM_FILE:                NONE
+#
+# --- Options for accounting for the Earth's rotation (IERS formalism)
+#
+LEAP_SECOND:             NERS
+HARMONIC_EOP_FILE:       /apr/eop/heo_20231023.heo
+EOP_SERIES:              NERS
+EOP_TIME_SCALE:          NERS
+UZT_MODEL:               NERS
+UZT_USE:                 NERS
+PRECESSION_EXPRESSION:   NERS
+NUTATION_EXPANSION:      NERS
+#
+EROT_COMPAT:             NONE
+GEODESIC_NUTATION:       NONE
+#
+# --- Solid Earth tides and the pole tide
+#
+SOLID_EARTH_TIDES_ZERO_FREQ:    MDG97AN
+SOLID_EARTH_TIDES_2ND_DEGREE:   MDG97AN
+SOLID_EARTH_TIDES_3RD_DEGREE:   MDG97
+POLE_TIDE_MODEL:                MDG97AN
+MEAN_POLE_MODEL:                NONE
+#
+# --- Position variations
+#
+POSVAR_FIL:  NONE
+POSVAR_MOD:  NONE
+POSVAR_INT:  NONE
+POSVAR_USE:  NONE
+#
+# --- Axis offset computations
+#
+AXIS_OFFSET_MODEL:              YES
+#
+# --- Antenna deformations:
+#
+ANTENNA_DEFORMATIONS_FILE: 	NONE
+ANTENNA_THERMAL_EXPANSION:      NONE
+#
+# --- Delays in the propagation media
+#
+METEO_DEF:                      CALC
+#
+HYDROSTATIC_ZENITH_DELAY:       SAASTAMOINEN
+WET_ZENITH_DELAY:               NONE
+HYDROSTATIC_MAPPING_FUNCTION:   NMFH
+WET_MAPPING_FUNCTION:           NONE
+#
+SLANT_PATH_DELAY_MODEL:         NONE
+EXTERNAL_DELAY_DIR: 		NONE
+EXTERNAL_DELAY_DIR_2ND: 	NONE
+EXTERNAL_DELAY_DIR_3RD: 	NONE
+EXTERNAL_DELAY_DIR_4TH: 	NONE
+SLANT_PATH_DELAY_BIAS_FILE:     NONE
+#
+ATMOSPHERE_PATH_DELAY_PARTIAL:  NMFW
+ATMOSPHERE_TILT_PARTIALS:       MACMILLAN_1995
+#
+IONOSPHERE_MODEL:               NONE
+IONOSPHERE_SCALE:               0.850
+SOU_DEBIAS_MODEL:               NONE
+#
+IONOSPHERE_DATA_FILE:           NONE
+IONOSPHERE_DATA_FILE_2ND:       NONE
+IONOSPHERE_DATA_FILE_3RD:       NONE
+IONOSPHERE_DATA_FILE_4TH:       NONE
+IONOSPHERE_DATA_FILE_5TH:       NONE
+IONOSPHERE_DATA_FILE_6TH:       NONE
+IONOSPHERE_DATA_FILE_7TH:       NONE
+IONOSPHERE_DATA_FILE_8TH:       NONE
+IONOSPHERE_DATA_FILE_9TH:       NONE
+#
+# --- Options for computing geometric part of the path delay
+#
+GRS_METRIC:                     ITRF2000
+TROP_AXOF_COUPLING:             NONE
+TROP_GEOMETRIC_COUPLING:        NONE
+PARALLACTIC_ANGLE:              YES
+GALACTIC_ABERRATION:            NONE
+#
+DOPPLER_EXPR:                   COARSE_2006
+#
+# --- Coupling effects
+#
+GEOM_EXPR_FAR_ZONE:             PK_2001
+GEOM_EXPR_NEAR_ZONE:            JN_2019
+SOURCE_STRUCTURE:               NONE
+#
+# --- Whether or not to analytically compute delay rate
+#
+DELAY_RATE:                     YES
+#

@@ -1,0 +1,133 @@
+      SUBROUTINE SCOR_CHIND (INDCHANGESTAT, INDCHANGECALIB, &
+     &                             JCAVAL, JCAPPL, JPRINT, &
+     &                             IPRINTCOORDX, IPRINTCOORDY, &
+     &                             ISTAND,JCSPCL)
+      IMPLICIT   NONE ! Updated by Jim Ryan for I*4 compliance, Sept 2002
+!
+! 1.  SCOR_CHIND PROGRAM SPECIFICATION
+!
+!     Updated to specificaly type integers which
+!-------------------------------------------------
+! 1.1
+!     IF THE GIVEN CALIBRATION IS AVAILABLE TO THE GIVEN STATION OR
+!     IS ONE OF THE SPECIAL CASES, THE
+!     SUBROUTINE APPLIES THE CALIBRATION IF NOT YET APPLIED, OR
+!     TERMINATES ITS APPLICATION IF ALREADY APPLIED.  IF THE CALIBRATION
+!     IS NOT AVAILABLE AND NOT ONE OF THE SPECIAL CASES,
+!     THE SUBROUTINE HAS NO
+!     EFFECT, EXCEPT SETTING A FLAG.  THE SUBROUTINE ALSO CHANGES THE
+!     SCREEN TO REFLECT THE CHANGE, IF ONE OCCURS.  AT THE PRESENT
+!     TIME, THE SUBROUTINE DOES NOT "TURN OFF" CALIBRATIONS WHICH
+!     CONFLICT WITH THE NEW CALIBRATION, OR APPLY A NEW CALIBRATION IF
+!     TURNING OFF THE OLD ONE LEFT THE STATION WITHOUT ANY
+!     CALIBRATIONS APPLIED TO IT.
+!
+!
+! 1.2 REFERENCES:
+!
+! 2.  SCOR_CHIND INTERFACE
+!
+! 2.1 Parameter File
+      INCLUDE 'solve.i'
+!
+! 2.2 INPUT Variables:
+!
+      INTEGER*2 JCAVAL(MAX_ARC_STA)
+      integer*4 iprintcoordx,iprintcoordy
+      INTEGER*2 JCSPCL,indchangestat,indchangecalib,istand
+      INTEGER*4 I4M1
+!
+! INDCHANGECALIB - Calibration to be changed for the specified station
+! INDCHANGESTAT - Station for which calibration is to be changed
+! IPRINTCOORDX/Y - X, Y coordinates of field which gives the status of
+!                  a calibration for the given station
+! ISTAND - Not used (used only by program SDBH)
+! JCAVL - List of calibrations available for each station
+! JCSPL - Flag for unavailable calibrations which can be applied anyway
+!
+! 2.3 OUTPUT Variables:
+!
+      INTEGER*2 JCAPPL(MAX_ARC_STA)
+      CHARACTER*15 JPRINT(MAX_ARC_STA)
+!
+! JCAPPL - List of calibrations applied to each station
+! JPRINT - Stores and prints status of each calibration
+!
+! 2.4 COMMON BLOCKS USED
+      INCLUDE 'precm.i'
+      INCLUDE 'ioncm.i'
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES:
+!       CALLED SUBROUTINES:
+!
+! 3.  LOCAL VARIABLES
+!
+      character*79 bufstr
+      integer*2 ierrx,ierrlin
+      integer*4 ix,iy
+      LOGICAL*2 KBIT
+!
+      DATA IERRX/0/, IERRLIN/30/
+      DATA I4M1 / -1 /
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!   JLR   921215   replaced -1J with I4M1
+!   kdb   950810   Finish changing for 32 sites
+!
+! 5.  SCOR_CHIND PROGRAM STRUCTURE
+!
+!     IF THE GIVEN CALIBRATION IS AVAILABLE FOR THE GIVEN STATION
+!     OR THE CALIBRATION IS ONE OF THE SPECIAL CASES...
+!
+      IF (KBIT (JCAVAL(INDCHANGESTAT), INDCHANGECALIB) .OR. &
+     &    KBIT (JCSPCL, INDCHANGECALIB)) THEN
+!
+!     IF THE CALIBRATION IS ALREADY APPLIED, TURN IT OFF AND CHANGE
+!     ITS SYMBOL ON THE SCREEN TO INDICATE IT'S NO LONGER APPLIED
+!
+        IF (KBIT (JCAPPL(INDCHANGESTAT), INDCHANGECALIB)) THEN
+          CALL SBIT ( JCAPPL(INDCHANGESTAT), INDCHANGECALIB, INT2(0) )
+          IF (KBIT (JCSPCL, INDCHANGECALIB)) THEN
+            JPRINT(INDCHANGESTAT)(INDCHANGECALIB:INDCHANGECALIB) = '-'
+          ELSE
+            JPRINT(INDCHANGESTAT)(INDCHANGECALIB:INDCHANGECALIB) = 'V'
+          END IF
+!
+!     IF THE CALIBRATION IS NOT YET APPLIED, APPLY IT AND CHANGE ITS
+!     SYMBOL ON THE SCREEN TO INDICATE IT'S APPLIED
+!
+        ELSE
+          CALL SBIT ( JCAPPL(INDCHANGESTAT), INDCHANGECALIB, INT2(1) )
+          JPRINT(INDCHANGESTAT)(INDCHANGECALIB:INDCHANGECALIB) = 'P'
+        END IF
+!
+!     CHANGE THE SYMBOL OF THE CALIBRATION ON THE SCREEN TO
+!     TO ACKNOWLEDGE THE CALIBRATION'S NEW STATUS.  SINCE THE USER
+!     HAS CHANGED A CALIBRATION, THE DEFAULT CALIBRATIONS ORIGINALLY
+!     PASSED TO SELCOR NO LONGER NECESSARILY EXIST.  CHANGE ISTAND
+!     TO 0, SO THAT IF SELCOR WAS CALLED FROM SDBH, SDBH WILL NOT
+!     PRINT A MESSAGE SAYING THAT THE STANDARD, DEFAULT CALIBRATIONS
+!     ARE STILL APPLIED, WHEN SELCOR RETURNS.
+!
+        CALL setcr_mn (IPRINTCOORDX, IPRINTCOORDY )
+        WRITE (bufstr, &
+     &       1110)JPRINT(INDCHANGESTAT)(INDCHANGECALIB:INDCHANGECALIB)
+ 1110   FORMAT (A1)
+        call addstr_f(bufstr(1:1) )
+        CALL setcr_mn (IPRINTCOORDX - I4M1, IPRINTCOORDY )
+        IF (ISTAND .NE. 0) ISTAND = 0
+!
+!     THE CALIBRATION IS NOT AVAILABLE FOR THE GIVEN STATION, SO FLAG
+!     THIS FACT
+!
+      ELSE
+          IX = IERRX
+          IY = IERRLIN
+          CALL setcr_mn (IX, IY )
+          call addstr_f("CAN'T BE APPLIED" )
+      END IF
+      RETURN
+      END

@@ -1,0 +1,10 @@
+# SGDASS color control file. Version of 2024.01.27
+#
+# Grey color palette
+#
+# Ind Name     Main color      Shadow color
+#
+   1  Good     144 144 144     212 212 212  
+   2  Neutral   80  80  80     172 172 172
+   3  Bad        0   0   0     160 160 160
+   6  Box      180 151  38     220 213 185

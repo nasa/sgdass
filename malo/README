@@ -1,0 +1,4 @@
+MALO (MAss LOading) package provides a number of programs
+for processing the output of numerical weather models and
+for computation of some derived quantities, such as 
+displacements caused by mass loading.

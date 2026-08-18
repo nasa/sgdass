@@ -1,0 +1,47 @@
+The following routines where added or updated to atp_20250822
+
+ 1. anc_clean.f
+    Cleans the anc derived type.
+
+ 2. anc_parse.f
+    - Now includes the parsing of all data from an anc file excluding
+      comments and datascopes.
+    - Another update involves checking for data from versions 2 and 3 of
+      the anc file, e.g., opacity and atmospheric brightness temperature.
+    - Also accounts for the old version of log2ant (0.96 2021.05.17),
+      and the latest version (1.0 2025.08.22)
+
+ 3. anc_scav.f
+    - Computes the scan average of the TSYS, TPI, and PCAL data as given
+      in a ANC derived type.
+    - Also accounts for the old version of log2ant (0.96 2021.05.17),
+      and the latest version (1.0 2025.08.22)
+
+ 4. anc_scav_main.f
+    program to parse either a binary or ascii standardized antenna
+    telemetry file, compute the scan averages of the TSYS, TPI, and/or
+    PCAL and write the output to a so called version 2 anc file.
+
+ 5. anc_write.f
+    subroutine to write contents of the ANC derived type to file, and
+    update the PROVENANCE block (if need be).
+
+ 6. atp_scans.f
+    updated to include scans from TPI.
+
+ 7. bnc_parse.f
+    - Akin to anc_parse, it now includes the parsing of data from the
+      ANC derived type, and also accounts for the different versions
+      of log2ant.
+
+ 8. bnc_write.f
+    write the contents of the ANC derived type to a binary file, while
+    accounting for the different versions of log2ant.
+
+ 9. tpi_filter.f
+    filters the tpi block for outliers, by either frequency, or time.
+
+10. tpi_stats.f
+    compute the average and RMS values of each scan for TPION and
+    TPIOFF. At present we assume TPIZERO to be empty, and just assign
+    a -999 value.

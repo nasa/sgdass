@@ -1,0 +1,14 @@
+SPD_CLIENT  Format version of 2015.01.10
+#
+#  SPD client configuration file example
+#
+#  ssh -p 441 -R 16000:localhost:16000  lpetrov@ertha.org
+#  ssh -L 16000:localhost:16000 lpetrov@4x
+#  ssh -fNL 16000:localhost:16000 lpetrov@gs698-xyz4.gsfc.nasa.gov
+#
+SERVER_NAME:  localhost
+SERVER_PORT:  16000
+CONN_TIMEOUT: 40.0
+SPD_LIB_PATH: /opt64/lib
+SPD_TYPE_1:   532nm
+SPD_TYPE_2:   radio

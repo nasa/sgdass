@@ -1,0 +1,3924 @@
+%\documentclass[11pt]{article}
+\documentstyle[big,11pt,epsf]{article}
+%
+%  First draft:  2006.08.15_13:55:25
+%  Last updated: 2014.08.21_13:17:31
+%
+\input mace.tex
+\newcommand{\pid}   {\par\hangindent=2em\hangafter=-9\noindent}
+\newcommand{\ppid}  {\par\hangindent=4em\hangafter=-9\noindent}
+\newcommand{\pppid} {\par\hangindent=6em\hangafter=-9\noindent}
+\newcommand{\ppppid}{\par\hangindent=8em\hangafter=-9\noindent}
+%\newcommand{\nthr}[1]{ \multicolumn{3}{ @{} l }{#1} }
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+\newcommand{\dint}{\int\hspace{-0.25em}\int}
+\newcommand{\hh}{\hphantom}
+\newcommand{\hpp}{\hphantom+}
+\newcommand{\hbb}{\hspace{-0.5em}}
+\newcommand{\hpm}{\hphantom-}
+\newcommand{\vhhhex}{ \vspace{0.125ex} }
+\newcommand{\vhhex}{ \vspace{0.25ex} }
+\newcommand{\vhex}{ \vspace{0.5ex} }
+\newcommand{\vnhex}{ \vspace{-0.5ex} }
+\newcommand{\vnex}{ \vspace{-1.0ex} }
+\newcommand{\vex}{\vspace{1ex}}
+\newcommand{\veX} { \vspace{1.0ex} \vphantom{\Frac{m}{s}} }
+\newcommand{\den}{\Frac{1}{c}\Frac{1}{1 + \Frac{1}{c}\lp \vec{V_{\earth}}(t_1)\, + \dmat{E}(e(t_1))\,\vec{r}_2\rp} }
+\newcommand{\matd}[1]{\Begmat {\widehat {\mathstrut \dot{\cal #1} }} \Endmat }
+\newcommand{\matdd}[1]{\Begmat {\widehat {\mathstrut \ddot{\cal #1} }} \Endmat }
+\newcommand{\Sum}{\displaystyle\sum}
+% \newcommand{\ntab}[2]{ \multicolumn{1}{#1}{#2} }
+\newcommand{\nntab}[2]{ \multicolumn{2}{#1}{#2} }
+\newcommand{\nnntab}[2]{ \multicolumn{3}{#1}{#2} }
+\newcommand{\nnnntab}[2]{ \multicolumn{4}{#1}{#2} }
+\newcommand{\Deg}[1]{#1^\circ}
+\newcommand{\mss}[1]{\mbox{\scriptsize #1}}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+\newcommand{\twofbox}[2]{ \fbox{\rule{0mm}{4ex}%
+\Begmat\stackrel{\mbox{#1\hfill}}{\mbox{#2\hfill}}\Endmat } }
+\newcommand{\dintinf}{\int\limits_{\enskip-\infty}^{\enskip+\infty}\hspace{-0.75em}\int}
+
+\voffset    = -25mm
+\hoffset    = -15mm
+\textwidth  = 160mm
+\textheight = 230mm
+\tolerance  = 600
+\hfuzz      = 0.3mm
+
+\title {  \LARGE\bf Memo: Library VTD for computation of VLBI time delay.
+                          Description of the algorithm. }
+\author{ {\large\sc L. Petrov} \\
+         {\small Leonid.Petrov@lpetrov.net }
+       }
+\date{Revision of 2014.08.21}
+
+\begin{document}
+
+
+\maketitle
+
+\hspace{0.05\textwidth}
+\begin{minipage}{0.82\textwidth}
+\small\it
+   An algorithm for computing VLBI time delay partial derivatives with
+respect to parameters of the model, the algorithm of parameter estimation
+is described.
+\end{minipage}\par\bigskip\bigskip\par
+
+\section{Introduction}
+
+  The method of VLBI first proposed by \cite{r:mat65}  allows to measure
+precisely the time delay and its rate of change. The time delay is defined
+as {\it a difference between two intervals: a) the interval of proper time
+measured by clocks of the first station between events: arrival the wavefront
+to the reference point of the first antenna and clock synchronization and
+b) the interval of proper time measured by clocks of the second station
+between events: arrival the wavefront to the reference point of the second
+antenna and clock synchronization}. The post-correlator software evaluates
+the time delay and its time derivative to a certain moment of time at time
+scale TAI called {\it fringe reference time} within the interval of
+observation, which is typically 20--700 second long.
+
+  In this paper, the algorithm for computing the time delay and delay rate
+is presented in chapter \ref{s:algorithm}. The order of narration in this
+chapter follows the order of derivation of this quantity: first the
+expression for the time delay will be derived, then the algorithm for computing
+of position of the emitter and receivers in the inertial coordinate system,
+is described. The motion of receivers is decomposed into rotation and
+deformation. Then effects of propagation in refractive medium are taken into
+account. Finally, the coupling effects are taken into account.
+
+  The chapter \ref{s:implementation} follows the order of computing the
+intermediate quantities which will be finally substituted in the expression
+for time delay and delay rate. Description of formats of input files needed
+for implementation of calculation is presented in document 
+{\tt vtd\_format.txt} .
+
+  The truncation level for computation is $10^{-13}$  s for delay and $10^{-16}$
+s/s for delay rate. If the apriori were perfect the accuracy for time delay
+computation would be at that level. In practice, the theoretical path
+delay can be predicted with the error of \flo{1--10}{-9} s.
+
+\section{Algorithm for computation of the theoretical path delay, delay rate
+and partial derivatives with respect to parameters of model}
+\label{s:algorithm}
+
+\subsection{Expression for geometric path delay}
+
+  Let us have two stations \#1 and \#2. Reference station \#1 receives 
+a radio wave form source $a$ in time $t_1$ according to its local clock 
+which are assumed synchronized with TAI via GPS. Remote station \#2 receives 
+a radio wave from the emitter $e$ in time $t_2$ according to its clock 
+which are also assumed synchronized with TAI via GPS. The problem is, 
+knowing position and velocity of stations \#1, \#2, and object $a$,
+what will be the time $t_2$?
+
+  We have three events: emission of the radio wave with coordinates
+$ \vc{R}_e, T_e $ in a barycentric coordinate system and two events of
+receiving that radio wave at stations \#1 and \#2 with coordinates
+$\vc{r}_1, t_1$, $\vc{r}_2, t_2$ in a geocentric coordinate system.
+
+  The post Newtonian metric in these coordinates can be written this way:
+
+\beq
+\begin{array}{ll}
+   G_{00} = \hphantom{-\delta_{mn}A} 1 - 2 \Frac{U}{c^2} + 2\L_b &
+            \; + \; O(1/c^4) \\
+   G_{0k} =                                                      &
+            \hpp \; \; O(1/c^3) \\
+   G_{mn} = -\delta_{mn} \lp 1 + 2 \Frac{U}{c^2} - 2\L_b\rp      &
+            \; + \; O(1/c^4) \\
+\end{array}
+\eeq{e:e1}
+
+\beq
+\begin{array}{ll}
+   g_{00} = \hphantom{-\delta_{mn}A} 1 - 2 \Frac{U_\oplus}{c^2} + 2\L_g &
+            \; + \; O(1/c^4) \\
+   g_{0k} =                                                      &
+            \hpp \; \; O(1/c^3) \\
+   g_{mn} = -\delta_{mn} \lp 1 + 2 \Frac{U_\oplus}{c^2} - 2\L_g\rp      &
+            \; + \; O(1/c^4) \\
+\end{array}
+\eeq{e:e2}
+%
+  for the barycentric and geocentric coordinate systems respectively. Here
+$U$ is the sum of the gravitational potential of all external bodies
+in the geocenter, $U_\oplus$ --- geopotential, $L_b$ and $L_g$ are some
+arbitrary scaling constants. Their numerical values depends on a convention.
+Parameters $L_b$ and $L_g$ were introduced into the expression for the metric
+artificially. Equations of general relativity allows scaling transformation.
+When the coordinate system is defined, 7 parameters should be specified:
+three parameters of the origin, three parameters of orientation, and
+{\it the scaling parameter}. In physics usually $L_b \: =\: L_g = \: 0$.
+That implies that in the infinity the metric tensor becomes the Minkowsky
+tensor. In geodesy various values for
+$L_b$ and $L_g$ were used:
+%
+  \begin{itemize}
+       \item TDB baricenteric coordinate system,
+             $L_b = \Frac{f M\sun}{\bar{R}\sun \, c^2} =
+              \flo{1.48082686741}{-8}$, $L_g = 0$;
+
+       \item ITRF2000 (or IERS1992) geocentric coordinate system,
+             $L_b = 0$; $L_g = \flo{6.969290134}{-10} \approx 
+             \Frac{f M\earth}{\bar{R}\earth c^2} + 
+             \Frac{2}{3c^2} \Omega\earth^2 R\earth$;
+
+       \item IAU2000 baricenteric coordinate system, $L_b \: =\: L_g = \: 0$.
+
+       \item IERS1996 geocentric coordinate system,
+             $L_b = 0$; $L_g = -\Frac{f M\earth}{\bar{R}\earth \, c^2} =
+                    -\flo{6.969290134}{-10} \approx
+             -\Frac{f M\earth}{\bar{R}\earth c^2} - 
+              \Frac{2}{3c^2} \Omega\earth^2 R\earth$;
+\end{itemize}
+%
+  where $\Omega\earth$ is the nominal Earth's angular velocity.
+
+  Since coordinates of the emitter are represented in the barycentric
+coordinate system, let us first compute time delay as the difference of
+barycentric time coordinates and then transform it to the difference of
+intervals of proper time which are related to quantities derived from
+analysis of VLBI fringe phases.
+
+  First, transform coordinates $\vc{r}_1, t_1$, $\vc{r}_2, t_2$ from the
+geocentric to the barycentric coordinate system. Using expression for
+metric \eref{e:e1}, \eref{e:e2} we find
+
+\beq
+ \vc{R}_1(T_1) = \biggl(1 - \Bigl(\Frac{U\sun}{c^2} - L_b\Bigr) \biggr) \, \vc{r}_1 -
+           \Frac{1}{2 c^2} \: ( \vc{V}\earth \, \vc{R}\earth ) \, \vc{V}\earth
+    \nonumber \\
+%
+ \vc{R}_2(T_1) = \biggl(1 - \Bigl(\Frac{U\sun}{c^2} - L_b\Bigr) \biggr) \, \vc{r}_2 -
+           \Frac{1}{2 c^2} \: ( \vc{V}\earth \, \vc{R}\earth ) \, \vc{V}\earth
+    \nonumber \\
+%
+    T_1 = t_1 + \Frac{1}{c^2} \: \vc{r}_1 \, \vc{V}_\oplus
+              + \Frac{1}{c^2} \dss\int\limits_{t_0}^t
+                \biggl( \Frac{1}{2} v^2 + U \biggr) \; dt  + 32.184
+\eeq{e:e3}
+%
+  Here we retain only contribution of the gravitational potential of the Sun.
+
+The barycentric travel time of the signal from the emitter $a$ to station \#1
+and to station \#2 are
+%
+\beq
+%
+\begin{array}{ll}
+T_1 - T_e = & \Frac{1}{c} \biggl| \vc{R}_e(T_e) - \vc{R}_1(T_1) \biggr| +
+              T_{1,grav}  \\
+
+T_2 - T_e = & \Frac{1}{c} \biggl| \vc{R}_e(T_e) - \vc{R}_2(T_2) \biggr| +
+              T_{2,grav}  \\
+%% %
+%% T_{grav_1}  = &  \dss \sum_k \Frac{2  f  M_k }{c^3} \log \Biggl|
+%%     \Frac{ | \vc{R}_k(T'_k) - \vc{R}_e(T_e)| \; + \;
+%%            | \vc{R}_k(T'_k) - \vc{R}_1(T_1)| \; + \;
+%%            | \vc{R}_e(T_e)  - \vc{R}_1(T_1)| }
+%% %
+%%          { | \vc{R}_k(T'_k) - \vc{R}_e(T_e)| \; + \;
+%%            | \vc{R}_k(T'_k) - \vc{R}_1(T_1)| \; - \;
+%%            | \vc{R}_e(T_e)  - \vc{R}_1(T_1)| \:    } \Biggr| \vspace{1ex} \\
+%% %
+%% T_{grav_2}  = &  \dss \sum_k \Frac{2  f  M_k }{c^3} \log \Biggl|
+%%     \Frac{ | \vc{R}_k(T'_k) - \vc{R}_e(T_e)| \; + \;
+%%            | \vc{R}_k(T'_k) - \vc{R}_2(T_2)| \; + \;
+%%            | \vc{R}_e(T_e)  - \vc{R}_2(T_2)| }
+%% %
+%%          { | \vc{R}_k(T'_k) - \vc{R}_e(T_e)| \; + \;
+%%            | \vc{R}_k(T'_k) - \vc{R}_2(T_2)| \; - \;
+%%            | \vc{R}_e(T_e)  - \vc{R}_2(T_2)| \:    } \Biggr|
+%%                                                                 \vspace{1ex} \\
+T_{i,grav}  = &  \dss \sum_k \Frac{2  f  M_k }{c^3}                  \\ &
+                 \biggl(
+                    1 + \Frac{1}{c} \dvc{R}_k(T'_e) \vce{S}(T_i,T'_e)
+                 \biggr)
+                      \ln \lp |\vc{R}_e(T_e) - \vc{R}_k(T'_e)| +
+                              (\vc{R}_e(T_e) - \vc{R}_k(T'_e))
+                               \vce{S}(T_i,T'_e)
+                          \rp -                                      \\ &
+%
+                 \biggl(
+                    1 + \Frac{1}{c} \dvc{R}_k(T'_k) \vce{S}(T_i,T'_e)
+                 \biggr)
+                     \ln \lp |\vc{R}_i(T_i) - \vc{R}_k(T'_e)| +
+                             (\vc{R}_i(T_i) - \vc{R}_k(T'_e))
+                              \vce{S}(T_i,T'_e)
+                         \rp
+\end{array} \hspace{-2em}               
+\eeq{e:e4}
+
+
+  where $f$ is the universal gravitational constant, $M_k$ is the mass
+of the gravitating body, summation is done over all big planets of the
+Solar system, excluding the Pluto, but including the Moon. Position of
+the gravitating body in \eref{e:e4} is taken in the retarded moment
+of barycentric time $T'_k$ which is a solution of the gravitation
+null-cone equation:
+%
+\beq
+           T'_k = T_1 - \Frac{1}{c}
+                  \biggl| \vc{R}_1(T_1) - \vc{R}_k(T'_k) \biggr|
+\eeq{e:e6}
+
+  Retarded moment of emission $T'_e$ is a solution of a similar
+gravitation null-cone equation:
+%
+\beq
+           T'_e = T_1 - \Frac{1}{c}
+                  \biggl| \vc{R}_1(T_1) - \vc{R}_k(T'_e) \biggr|
+\eeq{e:e7}
+
+The vector towards the source $ \vce{S}(T_i,T_e) $ is
+
+\beq
+   \vce{S}(T_i,T'_e)  = \Frac{\vc{R}_i(T_i) - \vc{R}_e(T'_e)}
+                            {|\vc{R}_i(T_i) - \vc{R}_e(T'_e)|}
+\eeq{e:e8}
+
+  Derivation of expression \eref{e:e4} was made by many authors. At present,
+one of the most comprehensive papers is the article of \cite{r:ks1999}.
+For solving equations \eref{e:e4} two cases should be considered
+separately, when the object is in the far zone, i.e. we can consider the
+wavefront flat, and the case one cannot neglect wavelength curvature.
+This happens when the diurnal parallax of the object exceeds the error of
+delay computation, $ \sigma\tau/|\tau|, 10^{-11}$ in our case.  This is true
+for the objects within the Solar System.
+
+\subsubsection{VLBI time delay for a far zone object}
+
+  In the case, when $ \Frac{|R_i|}{|R_e|} < \sigma_\tau/|\tau| $ expression
+for gravitational excess delay \eref{e:e4}
+$ \tau_{grav} = T_{1,grav} - T_{2,grav} $ is reduced to
+%
+\beq
+  \tau_{grav} =
+   2 \dss\sum_{k=1} \Frac{f \, M_k}{c^3} \lp
+                    1 + \Frac{1}{c} \dvc{R}_k(T'_{1k}) \cdot \vce{S} \rp \;
+     \ln  \Frac{|\vc{R}_k(T'_k)   - \vc{R}_1| + \vce{S} \cdot
+                (\vc{R}_k(T'_{k}) - \vc{R}_1 ) }
+                {|\vc{R}_k(T'_k)   - \vc{R}_2| + \vce{S} \cdot
+                (\vc{R}_k(T'_{k}) - \vc{R}_2 ) }
+\eeq{e:e9}
+
+  Implicit equation for time delay \eref{e:e4} can be simplified using by
+expanding it in series. For any vector $\vc{A}$ and $\vc{b}$ such that
+$ |\vc{b}| \ll |\vc{A}| $ the module of their difference
+$ |\vc{A} - \vc{b}| $ can be expressed as
+%
+\beq
+     | \vc{A} - \vc{b} | = |A| + \vc{a} \cdot \vc{b} +
+                     O\biggl( \frac{b^2}{|A|} \biggr)
+\eeq{e:e10}
+%
+where $ \vc{a} = \Frac{A}{|A|}$. Then the difference of barycentric time
+coordinates can be written as
+%
+\beq
+   T_2 - T_1 = \Frac{1}{c} \lp \vc{R}_1(T_1) - \vc{R}_2(T_2) \rp \vce{S} +
+               \tau_{grav} + \tau_{p}
+\eeq{e:e11}
+%
+   where $\tau_{p}$ is an additional delay which takes into account extra delay
+caused by the propagation media.
+
+  After expansion $\vc{R}_2(T_2)$ near instant $T_2$ as
+%
+\beq
+ \vc{R}_2(T_2) = \vc{R}_2(T_1) + \dvc{R}_2(T_1)(T_2 - T_1) +
+                   O( \ddvc{R}_2(T_2-T_1)^2 )
+\eeq{e:e12}
+%
+we have
+%
+\beq
+   T_2 - T_1 = \Frac{1}{c}
+               \Frac{ \biggl( R_1(T_1) - R_2(T_2) \biggr) \cdot \vce{S} +
+                      \tau_{grav} + \tau_p }
+                    {1 + \Frac{1}{c} \dvc{R}_2(T_1) \cdot \vce{S}}
+\eeq{e:e13}
+%
+  Now we should relate baricenteric vectors of site positions with geocentric
+vector coordinate and transform the difference of baricenteric time
+coordinates $T_2 - T_1$ to the difference of intervals of proper time
+between events of coming the wavefront to stations \#1 and \#2 and 
+clock syncrhonization.  The differences of barycentric time coordinates
+$ T_1  - T_{sync} $ and $ T_2 - T_{sync} $ are first to transformed
+to geocentric coordinate system, then these differences of geocentric
+time coordinates are transformed to intervals of proper time.
+
+  Term $ \Frac{1}{c^2} \, \dss \int \biggl( \Frac{1}{2} v^2 + U \biggr) \, dt $
+in \ref{e:e3} deserves special consideration. This sum of centrifugal 
+and gravitational potential describes the difference in clock rate 
+at a station with respect to the geocentric time. First, notice, time 
+as measured by station clock synchronized in TAI or 
+TT\footnote{TT - TAI = 32.184}. TAI cooresponds to proper time of 
+a hypotetical clock on the geoid. For a station that has the height 
+above the geoid, so-called orthometric height, this term is reduced
+$ -\Frac{1}{c^2} \, \dss \int \biggl( \frac{2}{3}\Omega_\oplus^2 R_\oplus \cos^2 \phi 
+\, + \, g_{loc} \biggr) h_{ort} \, dt $, where $g_{loc}$ is the local gravity 
+acceleration. Neglecting site position variations due to tides and mass
+loading, the expression under integral is constant. Integration will give
+a linear trend and an arbitrary integration constant. The value of the 
+constant corresponds to clock syncrhonization that occurs before the 
+experiment start.
+
+Finally, we get the following expression for time delay in the far zone:
+%
+\beq
+   \begin{array}{l}
+      \biggl((t_{2p} - t_{sync}) - (t_{1p} - t_{sync})\biggr)(t_1) = \\ \hspace{1em}
+%
+      \Frac{1}{ 1 + \Frac{1}{c} (\vc{V}_\oplus + \dvc{r}_2 ) \cdot \vce{S} }
+              \;
+%
+      \Biggl(
+            \Frac{1}{c} \bigl(\vc{r}_1(t_1) - \vc{r}_2(t_1) \bigr) 
+                        \cdot \vce{S} \;
+            \biggl[1 -
+               \biggl(2 \Frac{f M_\odot} { |\vc{R}_\oplus| c^2 } - L_b \biggr) -
+               \biggl( \Frac{U_\oplus}{c^2} - L_g \biggr) -
+               \Frac{|\vc{V}_\oplus|^2}{2c^2} -
+\\ \hspace{1em}
+%
+               \Frac{\vc{V}_\oplus \cdot \dvc{r}_2}{c^2}
+            \biggr] \: + \:
+            \Frac{1}{c^2} \vc{V}_\oplus \cdot ( \vc{r}_1(t_1) - \vc{r}_2(t_1) )
+                 \biggl( 1 + \Frac{1}{2c} \vc{V}_\oplus \cdot \vce{S} \biggr)
+                 \: - \:
+                 \Frac{1}{c} \, \rho \, ( \vc{r}_1(t_1) - \vc{r}_2(t_1) ) \,
+                 \Frac{\vc{R}_\oplus}{\bar{D}_\oplus} \: + \:
+                 \tau_{grav} \: + \: \tau_p 
+            \Biggr) \: - \:
+\\ \hspace{1em}
+            \Frac{1}{c^2}
+            \Biggl( g_{loc,2} \, h_{ort,2} - g_{loc,1} \, h_{ort,1} + 
+                    \Frac{2}{3} R_\oplus \Omega_\oplus^2 \
+                    \bigl( \cos^2 \phi_{gc,2} \, h_{ort,2} - 
+                           \cos^2 \phi_{gc,1} \, h_{ort,1} 
+                    \bigr)
+            \Biggr) \cdot (t_{1p} - t_{sync})
+   \end{array}
+\eeq{e:e14}
+%
+  where $\rho$ is the annual parallax of the observed source, $\phi$ is
+geocentric latitude, and $ \bar{D}_\oplus $ is the mean distance between 
+the barycenter of the Solar System and the barycenter the 
+system Earth--Moon (astronomical unit). We can neglect dependence of 
+the gravitational potential on height for ground stations and compute it as 
+$U_\oplus = \Frac{f M_\oplus}{ | r_{\oplus}| }$ and omite $v_2^2/c^2$
+for ground stations.
+
+  The time delay is itself a function of time. The argument of its time 
+dependence is the geocentric time $t_1$ of the event of wavefront coming 
+to reference station \#1. Differentiating this expression with respect 
+to time and discarding terms which are less than $ 10^{-16}$, we get
+
+\beq
+   \begin{array}{l}
+%%      \Ddt{(t_2 - t_2)} = \\ \hspace{1em}
+      \Ddt{}\biggl((t_{2p} - t_{sync}) - (t_{1p} - t_{sync})\biggr)(t_1) = \\ 
+      \hspace{1em}
+
+%
+      \Frac{1}{ 1 + \Frac{1}{c} (\vc{V}_\oplus + \dvc{r}_2 ) \cdot \vce{S} }
+              \;
+%
+      \Biggl(
+            \Frac{1}{c} ( \dvc{r}_1 - \dvc{r}_2 ) \cdot \vce{S} \;
+            \biggl[1 -
+               \biggl(2 \Frac{f M_\odot} { |\vc{R}_\oplus| c^2 } - L_b \biggr) -
+               \biggl( \Frac{U_\oplus}{c^2}- L_g \biggr) -
+               \Frac{|\vc{V}_\oplus|^2}{2c^2} -
+               \Frac{\vc{V}_\oplus \cdot \dvc{r}_2}{c^2}
+            \biggr] + \\ \hspace{1em}
+%
+            \Frac{1}{c^2} \lp \dvc{V}_\oplus \cdot ( \vc{r}_1 - \vc{r}_2 ) +
+                              \vc{V}_\oplus  \cdot ( \dvc{r}_1 - \dvc{r}_2 ) \rp
+                 \biggl( 1 + \Frac{1}{2c} \vc{V}_\oplus \cdot \vce{S} \biggr) -
+                 \Frac{1}{c} \, \rho \, ( \dvc{r}_1 - \dvc{r}_2 ) \,
+                 \Frac{\vc{R}_\oplus}{\bar{D}_\oplus} +
+                 \ddt{\tau_{grav}} + \ddt{\tau_p}
+      \Biggr) - \\ \hspace{1em}
+      \Frac{1}{c}\Frac{ ( \dvc{V}_\oplus  + \ddvc{r}_2 ) \cdot \vce{S} }
+                      {\Biggl( 1 + \Frac{1}{c} ( \vc{V}_\oplus + \dvc{r}_2 )
+                              \cdot \vce{S} \Biggr)^2 }
+      \Biggl(
+            \Frac{1}{c} ( \vc{r}_1 - \vc{r}_2 ) \cdot \vce{S} +
+            \Frac{1}{c^2} \vc{V}_\oplus \cdot ( \vc{r}_1 - \vc{r}_2 ) +
+            \Frac{1}{c} \, \rho \, ( \vc{r}_1 - \vc{r}_2 ) \,
+            \Frac{\vc{R}_\oplus}{\bar{D}_\oplus} +
+            \tau_{grav} + \tau_p
+      \Biggr) - \\ \hspace{1em}
+      \Frac{1}{c^2}
+      \Biggl( g_{loc,2} \, h_{ort,2} - g_{loc,1} \, h_{ort,1} + 
+              \Frac{2}{3} R_\oplus \Omega_\oplus^2 \
+              \bigl( \cos^2 \phi_2 \, h_{ort,2} - \cos^2 \phi_1 \, h_{ort,1} 
+              \bigr)
+       \Biggr) 
+   \end{array}
+\eeq{e:e15}
+%
+and
+%
+\beq
+   \begin{array}{lcl}
+    \Ddt{\tau_{grav}} & = &
+        2 \dss\sum_{k=1} \Frac{f \, M_k}{c^3} \lp
+                                  1 + \vce{S}\cdot \ddvc{R}_k(T'_{1k}) \rp \;
+          \ln  \Frac{|\vc{R}_k(T'_k)   - \vc{R}_1| + \vce{S} \cdot
+                     (\vc{R}_k(T'_{k}) - \vc{R}_1 ) }
+                    {|\vc{R}_k(T'_k)   - \vc{R}_2| + \vce{S} \cdot
+                      (\vc{R}_k(T'_{k}) - \vc{R}_2 ) } \: +
+     \\ & &
+         2 \dss\sum_{k=1} \Frac{f \, M_k}{c^3} \lp
+                                  1 + \vce{S}\cdot \dvc{R}_k(T'_{1k}) \rp \cdot
+     \\ & &
+           \Bigggl( \Frac{ - \Frac{ \dvc{R}_k(T'_k) \cdot \vc{R}_1 +
+                                    \vc{R}_k(T'_k)  \cdot \dvc{R}_1 }
+                          {|\vc{R}_k(T'_k) - \vc{R}_1|} +
+                          (\dvc{R}_k(T'_k)   - \dvc{R}_1) \cdot \vec{S}
+                    }
+                    {|\vc{R}_k(T'_k) - \vc{R}_1| +
+                     (\vc{R}_k(T'_k)   - \vc{R}_1) \cdot \vec{S}
+                    } \: - \:
+     \\ & &
+           \hphantom{\Bigggl(}
+                     \Frac{ - \Frac{  \dvc{R}_k(T'_k) \cdot \vc{R}_2 +
+                                       \vc{R}_k(T'_k)  \cdot \dvc{R}_2 }
+                          {|\vc{R}_k(T'_k) - \vc{R}_2|} +
+                          (\dvc{R}_k(T'_k)   - \dvc{R}_2) \cdot \vec{S}
+                    }
+                    {|\vc{R}_k(T'_k) - \vc{R}_2| +
+                     (\vc{R}_k(T'_k)   - \vc{R}_2) \cdot \vec{S}
+                    }
+           \Bigggr)
+   \end{array}
+\eeq{e:e16}
+
+  In practice, the last term, linear in time for time delay and constant
+for delay rate is usually ignored since it is not distingioshable from
+the Hydrogen clock frequency offset. This term is solved for during 
+post-processing dat aanalysis.
+
+\subsubsection{VLBI time delay when one of antenna is at the Earth's orbit}
+\label{s:orbit}
+
+  One of the elements of the radiointerferometer may be at the Earth's orbit.
+Equations for time delay and its time derivatives \ref{e:e14}--\ref{e:e16}
+remain valid for this case, except the last term that accounts for difference
+in clock rate. The satellite orbit should be transformed to the geocentric 
+coordinate system with the same expression for metric as for coordinates 
+of ground stations before computations.
+
+  In the case if the orbiting station has the clock that preserves its count
+through the entire experiment, the path delay is computed the same way
+as for the baseline between ground stations, except the fact that the ground 
+and the orbiting station have different model of their motion.
+
+  The orbiting station may or may not have a continuous time counter. 
+For instance, Radioastron has its on-board Hydrogen maser clock that feeds 
+both the receiver and the sampler, but the sample counter is implicitly
+reset at the beginning of each scan (Y.~Kovalev (2012), private communication).
+The reading of the clock of the ground downlink station is written
+in the time tag field in the scan header of data record of the orbiting 
+telescope. It should be stressed that the delay is still determined as 
+a difference of intervals proper time between events of coming the wavefront 
+to the station and clock synchronization measured with station clocks for 
+both ground station and orbiting station. It is the on-board clock that 
+generates the rail of samples and send the digitized samples down to
+the Earth. The interval of time of each sample relative to the first sample
+of a scan is the proper time of the on-board clock.
+
+  Clock synchronization usually done only once per experiment for ground 
+stations. For the orbiting station without a continuous time counter, clock 
+synchronization is done at the beginning of each scan. The difference 
+between the time coordinate at the orbiting station $t_s$ and the time 
+coordinate at the downlink station $t_d$ for the observer at the downlink
+station can be found by solving the light-cone equation
+%
+\beq
+   t_s - t_d = \Frac{1}{c} | \vc{r}_s(t_d + (t_s - t_d)) - \vc{r}_d |
+\eeq{e:e16a}
+%
+  where $\vc{r}_d$ is the position of the downlink station in the geocentric
+coordinate system and $\vc{r}_s$ is the position of the satellite
+in the geocentric coordinate system according to its ephemeride.
+
+  This equation is solved by iterations. Then the time tag of the first
+sample of a scan from the orbiting telescope is $t_d - (t_s - t_d)$. 
+For ground station the a~priori clock model is computed from results 
+of clock synchronization before and after experiment. The difference between
+the sampler clock minus TAI is approximated with a liner function and 
+subtracted from the geometric path delay. For the orbiting station without 
+a continuous time counter, clock of the downlink station is
+synchronized against TAI using the same way as for other ground stations.
+Then the delay between the orbiting and the downlink station,
+$t_s - t_d$, considered constant for each scan, is added to the 
+geometric delay. This difference represents the clock synchronization 
+errors and is constant for every sample of a scan. For the next scan
+a new difference $t_s - t_d$ is computed for the time of recording
+the first sample.
+
+  In the case if the second station of a baseline is on the orbit,
+$\tau \, \vec{v}^2_2/c^2$ is not negligible and $U\earth$ cannot be 
+computed as $\Frac{fM\earth}{R\earth}$ in expression 
+\ref{e:e14}--\ref{e:e15}. We need to add the following terms
+$\tau_a$ and $\Ddt{}\tau_a$ to expressions \ref{e:e14}--\ref{e:e15}:
+
+\beq
+  \begin{array}{lcr}
+     \tau_a & = & - \Frac{\vec{v}^2_2}{2 c^2} ( \vc{r}_1 - \vc{r}_2 ) \cdot \vce{S} 
+                \: + \:
+                \Frac{fM\earth}{c^2}\lp \frac{1}{|\vc{r}_2|} - 
+                     \frac{1}{R\earth} \rp \, 
+                \vc{r}_2 \cdot \vce{S}      \\
+%
+   \Ddt{} \tau_a & = & - \Frac{\vec{v}^2_2}{2 c^2} 
+                            ( \dvc{r}_1 - \dvc{r}_2 ) \cdot \vce{S} 
+                \: + \:
+                \Frac{fM\earth}{c^2}\lp \frac{1}{|\vc{r}_2|} - 
+                     \frac{1}{R\earth} \rp \, 
+                \dvc{r}_2 \cdot \vce{S}
+  \end{array}
+\eeq{e:e16b}
+
+
+  In the case if the first station of a baseline is on the orbit,
+corrections $\tau_b$ and $\Ddt{}\tau_b$ should be added to 
+expressions \ref{e:e14}--\ref{e:e15}:
+
+\beq
+  \begin{array}{lcr}
+     \tau_b & = & 
+                - \Frac{fM\earth}{c^2}\lp \frac{1}{|\vc{r}_1|} - 
+                        \frac{1}{R\earth} \rp \, 
+                  \vc{r}_1 \cdot \vce{S}      \\
+%
+   \Ddt{} \tau_b & = & 
+                 - \Frac{fM\earth}{c^2}\lp \frac{1}{|\vc{r}_1|} - 
+                         \frac{1}{R\earth} \rp \, 
+                   \dvc{r}_1 \cdot \vce{S}
+  \end{array}
+\eeq{e:e16c}
+
+  In a case of a ground station term 
+$ \Frac{1}{c^2} \, \dss \int \biggl( \Frac{1}{2} v^2 + U \biggr) \, dt $
+is reduced to a small linear function with rate approximately 
+$10^{-16} \cdot h_{ort}$. Since velocity and distance to the spacecraft 
+is changing during experiment, this term cannot be reduced. Instead,
+we have to integrate this expression
+%
+\beq
+  \Delta t = \dss \Frac{1}{c^2} \int\limits_{t_{s,sync}}^{t_{s,obs}} 
+       \biggl(  \Frac{1}{2} \dot{r}_s^2(t) + \Frac{fM_\oplus}{|r_s(t)|}
+              - \Frac{f M_\oplus}{R_\oplus} - \Frac{2}{3}\Omega_\oplus^2 R_\oplus^2
+              + fM_{moon}\biggl(\Frac{1}{|r_s(t)|} - \Frac{1}{|R_\oplus|} \biggr)
+       \biggr) \, dt
+\eeq{e:e16d}
+%
+  using satellite ephemerides. I emphasize here in the lower and upper 
+limits that the time coordinate at the orbiting satellite should be used 
+that is related to downlink station time $t_d$ via expression \ref{e:e16a}.
+
+  For observations with the orbiting station that does not have a 
+sample counter, clock synchronization occurs at the nominal start time. 
+Term $\Delta t$ is either added if the orbiting station is 
+a reference station \#1 or subtracted if the orbiting station is a remote
+station \#2.
+
+\subsubsection{VLBI time delay for a near zone object}
+
+  If the object is in the near zone, then the most straightforward way
+of solving equations \eref{e:e4} is the method of consecutive
+iterations. At the first iteration we set the the right-hand side
+$T_{ap} := T_1$, \quad $T'^{p}_k := T_1$ and $ T_{2p} := T_2$. Then
+
+\beq
+\begin{array}{ll}
+  T_e & := T_{ap} \; - \; \Frac{1}{c}
+                  \biggl| \vc{R}_e(T_{ap}) - \vc{R}_1(T_1) \biggr| \; - \;
+           T^p_{grav_1}  \\
+%
+  T'_k & := T_1 - \Frac{1}{c} \biggl| \vc{R}_1(T_1) - \vc{R}_k(T'^{p}_k) \biggr| \\
+%
+  T^{p}_{grav_1} & =  \dss \sum_k \Frac{2  f  M_k }{c^3} \log \Biggl|
+    \Frac{ | \vc{R}_k(T'^{p}_k) - \vc{R}_e(T_{ap})| \; + \;
+           | \vc{R}_k(T'^{p}_k) - \vc{R}_1(T_1)| \; + \;
+           | \vc{R}_e(T_e)  - \vc{R}_1(T_1)| }
+%
+         { | \vc{R}_k(T'^{p}_k) - \vc{R}_e(T_{ap})| \; + \;
+           | \vc{R}_k(T'^{p}_k) - \vc{R}_1(T_1)| \; - \;
+           | \vc{R}_e(T_e)      - \vc{R}_1(T_1)| \:    } \Biggr| \vspace{1ex} \\
+%
+  T^{p}_{grav_2} & =  \dss \sum_k \Frac{2  f  M_k }{c^3} \log \Biggl|
+    \Frac{ | \vc{R}_k(T'^{p}_k) - \vc{R}_e(T_{ap})| \; + \;
+           | \vc{R}_k(T'^{p}_k) - \vc{R}_2(T_2)| \; + \;
+           | \vc{R}_e(T_e)  - \vc{R}_2(T_2)| }
+%
+         { | \vc{R}_k(T'^{p}_k) - \vc{R}_e(T_{ap})| \; + \;
+           | \vc{R}_k(T'^{p}_k) - \vc{R}_2(T_2)| \; - \;
+           | \vc{R}_e(T_e)      - \vc{R}_2(T_2)| \:    } \Biggr| \\
+%
+  T_2 & := T_e + \Frac{1}{c} \biggl| \vc{R}_e(T_e) - \vc{R}_2(T_{2p}) \biggr| +
+           T_{grav_2}
+\end{array}
+\eeq{e:e17}
+%
+
+  Without a non-negligible loss of accuracy we can compute
+$ \vc{R}_k(T'^{p}_k) $ and $ \vc{R}_2(T_{2p}) $ as
+%
+\beq
+  \vc{R}_k(T'^{p}_k) = \vc{R}_k(T_1) \; + \;
+                        \dot{\vc{R}}(T_1) \, (T'^{p}_k - T_1)
+%
+   \nonumber \\
+%
+  \vc{R}_2(T_{2p})   = \vc{R}_2(T_2) \; + \;
+                        \dot{\vc{R}}(T_2)  \, (T_{2p} - T_2)
+\eeq{e:e18}
+%
+  where $\vc{R}_k(T_1)$ and $\vc{R}_2(T_2)$ are computed from geocentric
+station coordinates using equations \ref{e:e3}.
+
+  In general, we have to use the ephemerides of the emitter at each step of
+iteration in order to get its precise position at a new moment of time.
+
+  There is a special case which should be handled separately: when of the
+receivers is located in the geocenter, the expression for metric
+\eref{e:e1}--\eref{e:e2} is not valid and if used formally, a singularity
+occurs. It should be noted that modeling of the receiver in the geocenter
+does not a physical meaning, and this delay occurs only in intermediate
+computations. Therefore, it can be set to an arbitrary value. It is set
+to zero in the present algorithm.
+
+\bigskip
+
+%%  The baricenteric time delay is $ (T_2 - T_e) - (T_1 - T_e) $. Care should be
+%%taken in computing this difference, since a catastrophic loss of precision
+%%may occur in subtracting two big quantities even in computation with double
+%%precision. One way is to use the quad precision in computing the difference
+%%
+%%\beq
+%%  \biggl| \vc{R}_e(T_e) - \vc{R}_1(T_1) \biggr| -
+%%  \biggl| \vc{R}_e(T_e) - \vc{R}_2(T_2) \biggr|
+%%\eeqn
+%%
+%%  Another way is to expand this difference in the series.
+%%If $ |\vc{A}| \gg |\vc{b}|$, and $ |\vc{A}| \gg |\vc{c}|$ the difference
+%%$ |\vc{A} - \vc{b} | - |\vc{A} - \vc{c} | $ can be expanded this way:
+%%%
+%%\beq
+%%  \begin{array}{ll}
+%%  |\vc{A} - \vc{b} | - |\vc{A} - \vc{c} | \approx &
+%%    \Frac{|\vc{A}|}{2}(\beta - \gamma) \biggl[
+%%    1 \: - \: c_1\, (\beta + \gamma) \: + \:
+%%    c_2\, (\beta^2 + \beta\, \gamma + \gamma^2) +
+%%%
+%%  \\ &
+%%%
+%%    c_3\, (\beta^3 + \beta^2\, \gamma + \beta \, \gamma^2 + \gamma^3) \: - \:
+%%    c_4\, (\beta^4 + \beta^3\, \gamma + \beta^2 \, \gamma^2 + \beta \, \gamma^3
+%%           + \gamma^4 ) + \ldots \biggr]
+%%  \end{array}
+%%\eeq{e:e8}
+%% where $ \beta =    \Frac{b^2}{A^2} \; - \;
+%%                  2 \Frac{\vc{A}}{|A|} \, \Frac{\vc{b}}{|A|}$, \quad
+%%       $ \gamma =   \Frac{c^2}{A^2} \; - \;
+%%                  2 \Frac{\vc{A}}{|A|} \, \Frac{\vc{c}}{|A|}$,
+%%and
+%%
+%%\noindent
+%%$
+%%  c_1 = \Frac{1}{4},         \quad
+%%  c_2 = \Frac{1}{2} \, c_1,  \quad
+%%  c_3 = \Frac{5}{4} \; \Frac{1}{2} \, c_2,  \quad
+%%  c_4 = \Frac{7}{5} \; \Frac{1}{2} \, c_3,  \quad
+%%  c_5 = \Frac{9}{6} \; \Frac{1}{2} \, c_4,
+%%$ \enskip etc.
+
+  The barycentric delay is formulated as a difference of barycentric time
+coordinates of events of emittance the radio wave and its receiving.
+However, we should remember that coordinates are not measurable quantities.
+They should be transformed to intervals of proper time. The VLBI time delay
+which emerges in analysis of fringe phases is defined as the difference
+of two intervals of proper time: 1) the interval of proper time of station
+\#2 between events: coming the wave front to the reference point on the
+moving axis and clock synchronization; 2) the interval of proper time
+of station \#1 between events: coming the wave front to the reference point
+on the moving axis and clock synchronization. The time delay is referred
+to the moment of coming the wave front to the reference point on the moving
+axis of the first antenna at time measured by the time-scale TAI.
+The reference point of the station for which modeling is done is defined
+as the point on the moving axis which has the minimal distance to the
+fixed axis. In the  case if axes intersect, this is the point of their
+intersection. The differences of barycentric time coordinates
+$ T_1  - T_{sync} $ and $ T_2 - T_{sync} $ are first to transformed
+to geocentric coordinate system, then these differences of geocentric
+time coordinates are transformed to intervals of proper time using this
+expression which follows from \eref{e:e1}--\eref{e:e2}:
+%
+\beq
+   (t_{2p} - t_{sync}) - (t_{1p} - t_{sync}) = &
+   \biggl( 1 - \Bigl( \Frac{U\sun}{c^2}   - L_b + \Frac{V\earth^2}{2\,c^2} \Bigr)
+             - \Bigl( \Frac{U\earth}{c^2} - L_g + \Frac{v_1\earth^2}{2\,c^2}\Bigr) \biggr) \;
+   ( T_2 - T_1 ) + \nonumber \\ &
+   \Frac{ (\vc{r}_1(t_1) - \vc{r}_2(t_2)) \, \vc{V}_{\oplus} }{c^2} \; + \;
+   a \; + \; b \, (t_1 - t_{sync})
+\eeq{e:e19}
+%
+  where $a$ and $b$ are some quantities. Their value is irrelevant, since
+they cannot be distinguished from errors of clock model.
+
+\subsection{Computation of station position vector in geocentric inertial
+coordinate system}
+
+  Time delay depends on the baricenteric position vector of the emitter and
+the geocentric position vector in the inertial coordinate system. The
+geocentric system is considered kinematicly non-rotating with respect
+to the barycentric coordinate system and therefore, can be labeled as
+a ``celestial coordinate system''. When we describe site position, it is
+convenient to relate it to the Earth crust fixed coordinate system, because
+in that system the motion of the antenna reference point is slow. This
+coordinate system is labeled as a ``terrestrial coordinate system''. The
+transformation of the position vector from the terrestrial coordinate
+$ \vc{r}_{\tiny\sc t} $ system to the celestial coordinate system
+$ \vc{r}_{\tiny\sc c} $ can be represented as
+%
+\beq
+   \vc{r}_{\tiny\sc c} = \mat{M}(t) \, \vc{r}_{\tiny\sc t}    \: + \:
+                         \vc{q}(t) \times \vc{r}_{\tiny\sc t} \: + \: 
+                         \vc{d}_{\tiny\sc t}(t) 
+\eeq{e:e20}
+%
+  where $ \mat{M} $ is the apriori rotation matrix, $ \vc{q} $ --- the small
+vector of perturbing rotation, $ \vc{d}_{\tiny\sc t} $ --- the vector of site
+motion the terrestrial coordinate system. The site motion can be decomposed
+on 1) secular motion due to plate tectonic; 2) harmonic site position
+variations caused by a) solid Earth tides; b) ocean loading; c) atmospheric
+pressure loading; d) hydrology loading; e) empirical deformations; 3) motion
+of the antenna reference due to antenna slewing.
+
+\subsubsection{Reduction for the Earth's rotation}
+
+  Decomposition of the Earth rotation into the vector of small perturbing
+rotation $ \vc{q}(t) $ and the matrix of finite rotation $ \mat{M} $ is not
+unique, and there are different ways to perform it. The rotation vector
+$ \vc{q}(t) $ is small in the sense that one can neglect squares of its
+components.
+
+  Three combinations of $ \vc{q}(t) $ and $ \mat{M} $ are considered:
+\begin{itemize}
+   \item  Newcomb-Andoyer formalism
+      \beq
+         \begin{array}{l@{}l}
+            \vc{q}  & = 0 \\
+            \mat{M} & =
+%
+            \widehat{\mathstrut\cal R}_3(\zeta_0)  \cdot
+            \widehat{\mathstrut\cal R}_2(\theta_0)  \cdot
+            \widehat{\mathstrut\cal R}_3(z)  \cdot
+            \widehat{\mathstrut\cal R}_1(-\epsilon_0)  \cdot
+            \widehat{\mathstrut\cal R}_3(\Delta\psi)  \cdot
+            \widehat{\mathstrut\cal R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+            \widehat{\mathstrut\cal R}_3(-S) \cdot
+            \widehat{\mathstrut\cal R}_2(X_p)
+            \widehat{\mathstrut\cal R}_1(Y_p)
+         \end{array}
+       \eeq{e:e21}
+%
+   \item  Ginot-Capitaine formalism:
+      \beq
+         \begin{array}{l@{}l}
+            \vc{q}  & = 0 \\
+            \mat{M} & =
+%
+	    \mat{R}_3(-E) \cdot
+	    \mat{R}_2(-d) \cdot
+	    \mat{R}_3( E) \cdot
+	    \mat{R}_3( s) \cdot
+	    \mat{R}_3(-\theta) \cdot
+	    \mat{R}_3(-s') \cdot
+	    \mat{R}_1(Y_p) \cdot
+	    \mat{R}_2(X_p)
+         \end{array}
+      \eeq{e:e22}
+%
+   \item  Empirical Earth Rotation Model (EERM):
+%
+     \beq
+       \vc{q}(t) = & \left(
+       \begin{array}{ll}
+          \displaystyle\sum_{k=1-m}^{n-1} f_{1k} \, B_k^m(t) \: + &
+          \displaystyle\sum_{j}^{N} \left( P^c_{j} \cos \omega_m \, t \: + \:
+                                        P^s_{j} \sin \omega_j \, t \right) \:
+          \vspace{0.5ex} \\
+           & + \, t \, \left( S^c_{j} \cos -\Omega_n \, t \: + \:
+                        S^s_{j} \sin -\Omega_n \, t \right)
+          \vspace{0.5ex} \vspace{2ex} \\
+%
+          \displaystyle\sum_{k=1-m}^{n-1} f_{2k} \, B_k^m(t) \: + &
+          \displaystyle\sum_{j}^{N} \left( P^c_{j} \sin \omega_j \, t \: - \:
+                             P^s_{j} \cos \omega_j \, t \right) \:
+          \vspace{0.5ex} \\
+          & + \, t \, \left( S^c_{j} \sin -\Omega_n \, t \: - \:
+                     S^s_{j} \cos -\Omega_n \, t \right)
+          \vspace{0.5ex} \vspace{2ex} \\
+%
+          \displaystyle\sum_{k=1-m}^{n-1} f_{3k} \, B_k^m(t) \: + &
+          \displaystyle\sum_{j}^{N} \left( E^c_{j} \cos \omega_j \, t +
+                                           E^s_{j} \sin \omega_j \, t \right)
+          \\
+       \end{array}
+       \right) \\
+            \mat{M} = &
+            \widehat{\mathstrut\cal R}_3(\zeta_0)  \cdot
+            \widehat{\mathstrut\cal R}_2(\theta_0)  \cdot
+            \widehat{\mathstrut\cal R}_3(z)  \cdot
+            \widehat{\mathstrut\cal R}_1(-\epsilon_0)  \cdot
+            \widehat{\mathstrut\cal R}_3(\Delta\psi_e)  \cdot
+            \widehat{\mathstrut\cal R}_1(\epsilon_0 + \Delta\epsilon_e) \cdot
+            \widehat{\mathstrut\cal R}_3(-S)
+       \nonumber
+     \eeq{e:e23}
+\end{itemize}
+
+  All three approaches provide the same transformation with the same accuracy.
+Only two formalisms Newcomb-Andoyer and the EERM approaches are considered
+here.
+
+  Parameters of the Newcomb-Andoyer formalism:
+\beq
+   \begin{array}{lcl}
+      \zeta_0    & = & \zeta_{01} \, t + \zeta_{02} \, t^2 + \zeta_{03} \, t^3 \\
+%
+      \theta_0   & = & \theta_{01} \, t + \theta_{02} \, t^2 + \theta_{03} \, t^3 \\
+%
+       z         & = & z_1 \, t + z_2 \, t^2  + z_3 \, t^3  \\
+%
+      \epsilon_0 & = & \epsilon_{00} + \epsilon_{01} \, t +
+                       \epsilon_{02} \, t^2                         \\
+%
+      \Delta\psi & = & \displaystyle \sum_i^l
+                       \biggl(\: ( \Psi_i^{pro} + {\Psi'}_i^{pro} T_J ) \:
+                       \: \sin \: \Bigl( \dss\sum_j^m k_{ji} a_j(T_J) \Bigr) + \\
+                       & & \hphantom{\sum \biggl(\:\:\: \biggr.}
+                       ( \Psi_i^{ret} + {\Psi'}_i^{ret} T_J )
+                         \cos \Bigl( \dss\sum_j^m k_{ji} a_j(T_J) \Bigr)
+                         \biggr) + \Psi_0 + \dot{\Psi}_0 T_J +
+                         \delta\psi_{geod} \\
+%
+      \Delta\epsilon
+                 & = & \displaystyle \sum_i^l
+                       \biggl(\: ( E_{pi}^{pro} + {E'_{pi}}^{pro} T_J ) \:
+                       \: \cos \: \Bigl( \dss\sum_j^m k_{ji} a_j(T_J) \Bigr) + \\
+                       & & \hphantom{\sum \biggl(\:\:\: \biggr.}
+                       ( E_{pi}^{ret} + {E'_{pi}}^{ret} T_J )
+                         \sin \Bigl( \dss\sum_j^m k_{ji} a_j(T_J) \Bigr)
+                         \biggr) + E_{p0} + \dot{E}_{p0} T_J +
+                         \delta\epsilon_{geod} \\
+%
+      S   & = & S_0 + (\Omega_n + \zeta_{01} + z_1 ) \, t +
+                    (\zeta_{02} + z_2 ) \, t^2 +
+                    (\zeta_{03} + z_3 - \Frac{1}{6} \theta^2 ) \, t^3  \\
+%
+          &   & - (\zeta_{01} + z_1 ) \,
+                   \dss\int\limits_{t_o}^{t} \Delta\epsilon(t) \, dt -
+                   \sin\epsilon_o \dss\int\limits_{t_o}^{t} \Delta\psi'(t) \,
+                                  \Delta\epsilon(t) \, dt \\
+          &   & +   \Delta\psi \, \cos\epsilon_0 +
+                    \dss \kappa \mbox{UT1}(t) \: + A_s \: + B_s \, t
+   \end{array}
+\eeq{e:e24}
+%
+  $a_j$ are so-called fundamental arguments represented by lower degree
+polynomials,  The last two ad hoc spurious terms may be included
+for no particular reason. The geodesic nutation $ \delta\psi_{geod},
+\delta\epsilon_{geod}, $
+is represented in the form of expansion
+%
+\beq
+  \begin{array}{lcl}
+     \delta\psi_{geod}     & = & \dss\sum_{i=1}^{i=6} - A_{ng} \sin
+        ( \phi_i + (f_i + \Omega_n + z_1 + \zeta_{01} + \dot{\Psi}_0 ) \, t ) \\
+     \delta\epsilon_{geod} & = & \dss\sum_{i=1}^{i=6} \hpm A_{ng} \cos
+        ( \phi_i + (f_i + \Omega_n + z_1 + \zeta_{01} + \dot{\Psi}_0 ) \, t )
+  \end{array}
+\eeq{e:e25}
+%
+  The integral of cross precession-nutation and nutation-nutation terms
+\hspace{20em} \linebreak
+$ - \dss\int\limits_{t_o}^{t} \lp (z_{1} + \zeta_{01}) \Delta\epsilon(t) \: + \:
+  \Delta\psi'(t) \, \Delta\epsilon(t) \, \sin\epsilon_o \rp dt $ have the
+secular and periodic terms. The secular with term truncated to the
+$10^{-12}$~rad level has a form
+%
+\beq
+   B_{nn} T_J = \Frac{1}{2} \dss \sum_i^l \, \sum_j^m k_{ji} \,
+                \tss\ddt{a}(T_J) \,
+                \Psi^{pro}_i \,  E^{pro}_i \, \sin \epsilon_0 \, T_J
+\eeq{e:e26}
+%
+  Other periodic terms can be presented in the form
+\beq
+      \rho(T_J) = \rho_c \cos ( \phi_{\rho} + f_{\rho} T_J ) +
+                  \rho_s \sin ( \phi_{\rho} + f_{\rho} T_J )
+\eeq{e:e27}
+
+  To summarize, the matrix of the transformation according to the
+Newcomb-Andoyer formalism using the MHB2000 semi-empirical nutation
+expansion depends on
+%
+\begin{itemize}
+   \item 9 precession parameters: $ \zeta_{0i}, \theta_{0i}, z_i$;
+   \item 3 parameters of expansion of the angle of inclination of the ecliptic
+         to the equator $\epsilon_{0i}$;
+   \item $ 14\times 3 = 42 $ low degree coefficients of expansion of fundamental
+           arguments over time;
+   \item $ 14\times 1365 = 19110 $ integer multipliers $k_{ij}$;
+   \item $ 1365 \Psi^{pro}  $ coefficients of the prograde nutation in
+                               longitude;
+   \item $ 1365 \Psi'^{pro} $ coefficients of the rate of change of the
+                               prograde nutation in longitude;
+   \item $ 1365 \Psi^{ret}  $ coefficients of the retrograde nutation
+                               in longitude;
+   \item $ 1365 \Psi'^{ret} $ coefficients of the rate of change of
+                               the retrograde nutation in longitude;
+   \item $ 1365 E^{pro}  $ coefficients of the prograde nutation in obliquity;
+   \item $ 1365 E'^{pro} $ coefficients of the rate of change of the prograde
+                            nutation in obliquity;
+   \item $ 1365 E^{ret}  $ coefficients of the retrograde nutation in
+                            obliquity;
+   \item $ 1365 E'^{ret} $ coefficients of the rate of change of the
+                            retrograde nutation in longitude;
+   \item $ S_0 $ --- nominal position angle of the Earth at J2000;
+   \item $ \Omega_n $ --- nominal angular velocity of the Earth;
+   \item $ B_{nn} $ --- secular term of the nutation-nutation cross-terms;
+   \item $ 6\times 3 = 18 $ phases and frequencies, and amplitudes of the
+                            geodesic nutation expansion;
+   \item $ 15\times 4 = 60 $ phases and frequencies, and amplitudes of periodic
+                             nutation-precession and nutation-nutation cross
+                             terms.
+   \item $ 2 $ spurious ad~hoc terms $A_s$ and $B_s$.
+   \item $ \kappa $ --- scaling parameter of the UT1 function
+\end{itemize}
+
+  In total, 30168 parameters! In addition to that, three empirical
+functions UT1(t), $X_p$(t), and $Y_p$(t) describes non-predictable part of
+the transformation. These empirical functions are typically sampled with a step
+of 1 day, which requires for describing the Earth's rotation at the period
+of 20 years, $365 \times 3 \times 20 = 21900$ terms. The transformation in
+this form does not account for the free core nutation, and therefore, has
+the accuracy not exceeding $10^{-9}$, even if empirical the functions UT1(t),
+$X_p$(t), and $Y_p$(t) would have been known with an infinite accuracy.
+
+  Parameters of the EERM formalism:
+%
+\begin{eqnarray}
+   \begin{array}{lcl}
+      \zeta_0    & = & \zeta_{01} \, t + \zeta_{02} \, t^2 \\
+%
+      \theta_0   & = & \theta_{01} \, t + \theta_{02} \, t^2 \\
+%
+       z         & = & z_1 \, t + z_2 \, t^2  \\
+%
+      \epsilon_0 & = & \epsilon_{00} + \epsilon_{01} \, t +
+                       \epsilon_{02} \, t^2                         \\
+%
+      \Delta\psi & = & \displaystyle \sum_j^3
+                       -n_j \, \sin ( \phi^{n}_{j} + \omega^{n}_{j} \, t +
+                                      \dot{\omega}^{n}_{j} \, t^2/2 )
+                       \, / \, \sin\epsilon_0  \\
+%
+      \Delta\epsilon
+                 & = & \displaystyle \sum_j^3 \hphantom{-}
+                        n_j \, \cos ( \phi^{n}_{j} + \omega^{n}_{j} \, t +
+                                      \dot{\omega}^{n}_{j} \, t^2/2 )  \\
+%
+      S   & = & S_0 + E_0 + (\Omega_n + \zeta_{01} + z_1 + E_1 ) \, t +
+                    (\zeta_{02} + z_2 + E_2 ) \, t^2 + \\
+          &   & - (\zeta_{01} + z_1 ) \, \dss
+                   \int\limits_{t_o}^{t} \Delta\epsilon(t) \, dt -
+                   \sin\epsilon_o \int\limits_{t_o}^{t} \Delta\psi'(t) \,
+                                  \Delta\epsilon(t) \, dt \\
+          &   & +   \Delta\psi \, \cos\epsilon_0 +
+                    \displaystyle
+                    \sum_i^2 \left( E^c_i \cos \omega^{e}_{i} \,t +
+                                    E^s_i \sin \omega^{e}_{i} \, t \right)
+   \end{array}
+\eeq{e:e28}
+%
+\begin{itemize}
+   \item 6 precession parameters: $ \zeta_{0i}, \theta_{0i}, z_i$;
+   \item 3 parameters of expansion of the angle of inclination of the ecliptic
+         to the equator $\epsilon_{0i}$;
+   \item $4\times 3 = 12$ parameters of expansion of $\delta\psi$ and
+         $\delta\epsilon$;
+   \item $ S_0 $ --- nominal position angle of the Earth at J2000;
+   \item $ \Omega_n $ --- nominal angular velocity of the Earth;
+   \item $3 $ parameters of $E_0, E_1, E_2$ of empirical shift, drift and
+              acceleration of the apriori $E_3$ Euler angle;
+   \item $ B_{nn} $ --- secular term of the nutation-nutation cross-terms;
+   \item $ 5\times 4 = 20 $ phases and frequencies, and amplitudes of periodic
+                             nutation-precession and nutation-nutation cross
+                             terms.
+   \item $ 3\times 2 = 6 $ frequencies and the amplitudes a~priori terms
+                           of the harmonic expansion of the $E_3$ Euler angle.
+\end{itemize}
+%
+   In total, 53 parameters. The empirical function $\vc{q}_e(t)$ consists of
+approximately 500 terms of expansion into the Fourier basis, i.e.
+$500 \times 5=2500$ parameters and 12100 parameters of the expansion into
+the B-spline basis over the 20 year period
+($20\times 365 \times (1+2/3)=12100$), considering the time span for the
+B-spline basis 3 days for the first two components of the probating
+rotation vector $\vc{q}_e(t)$ and 1 day for the third component.
+
+  Computation of station velocity and acceleration requires the first and
+the second time derivative of vector $\vec{q}_e$ and matrix $\mat{M}$.
+The first derivative of the matrix $\mat{M}$ is computed as
+%
+\beq
+   \begin{array}{l}
+     \Frac{\partial}{\partial t} \mat{M}(t) = \\ \hspace{2em}
+             \matd{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \matd{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: + \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \matd{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \matd{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: + \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \matd{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: + \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \matd{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: + \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: + \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \matd{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \matd{R}_3(Y_p)
+  \end{array}
+\eeq{e:e29}
+%
+  For computing the second derivative with relative accuracy $10^{-5}$ it
+is sufficient to retain 8 terms:
+\beq
+   \begin{array}{l}
+     \Frac{\partial^2}{\partial t^2} \mat{M}(t) = \\ \hspace{2em}
+         \hphantom{2\,}
+             \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \mat{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \matdd{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+         2\, \matd{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: + \\ \hspace{2em}
+%
+         2\, \mat{R}_3(\zeta_0)  \cdot
+             \matd{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+         2\, \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \matd{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+         2\, \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \matd{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+         2\, \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \matd{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+         2\, \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \matd{R}_2(-X_p) \cdot
+             \mat{R}_3(Y_p) \: - \\ \hspace{2em}
+%
+         2\, \mat{R}_3(\zeta_0)  \cdot
+             \mat{R}_2(\theta_0)  \cdot
+             \mat{R}_3(z)  \cdot
+             \mat{R}_1(-\epsilon_0)  \cdot
+             \mat{R}_3(\Delta\psi)  \cdot
+             \mat{R}_1(\epsilon_0 + \Delta\epsilon) \cdot
+             \matd{R}_3(-S) \cdot
+             \mat{R}_2(-X_p) \cdot
+             \matd{R}_3(Y_p)
+  \end{array}
+\eeq{e:e30}
+%
+  Expression fir the first two derivatives of $\vec{q}_e$ is
+\beq
+    \vc{\dot{q}}(t) = & \left(
+       \begin{array}{ll}
+          m \displaystyle\sum_{k=1-m}^{n-1} f_{1k} \, B_k^{m-1}(t) \: + &
+          \displaystyle\sum_{j}^{N} \omega_j
+                \left( -P^c_{j} \sin \omega_j \, t \: + \:
+                                        P^s_{j} \cos \omega_j \, t \right) \:
+          \vspace{0.5ex} \\ & \hphantom{t \, \Omega_n} +
+           \left( S^c_{j} \cos -\Omega_n \, t \: + \:
+                        S^s_{j} \sin -\Omega_n \, t \right)
+          \vspace{0.5ex} \\ &
+           - t \: \Omega_n \left( -S^c_{j} \sin -\Omega_n \, t \: + \:
+                        S^s_{j} \cos -\Omega_n \, t \right)
+          \vspace{0.5ex} \vspace{2ex} \\
+%
+          m \displaystyle\sum_{k=1-m}^{n-1} f_{2k} \, B_k^{m-1}(t) \: + &
+          \displaystyle\sum_{j}^{N} \omega_j
+              \left( P^c_{j} \cos \omega_j \, t \: + \:
+                             P^s_{j} \sin \omega_j \, t \right) \:
+          \vspace{0.5ex} \\ & \hphantom{t \, \Omega_n} +
+          \left( S^c_{j} \sin -\Omega_n \, t \: - \:
+                     S^s_{j} \cos -\Omega_n \, t \right)
+          \vspace{0.5ex} \\
+          & - t \: \Omega_n \left( S^c_{j} \cos -\Omega_n \, t \: + \:
+                     S^s_{j} \sin -\Omega_n \, t \right)
+          \vspace{0.5ex} \vspace{2ex} \\
+%
+          m \displaystyle\sum_{k=1-m}^{n-1} f_{3k} \, B_k^{m-1}(t) \: + &
+          \displaystyle\sum_{j}^{N} \omega_j
+                       \left( - E^c_{j} \sin \omega_j \, t +
+                                E^s_{j} \cos \omega_j \, t \right)
+          \\
+       \end{array}
+       \right)
+\eeq{e:e31}
+%
+\beq
+    \vc{\ddot{q}}(t) = & \left(
+       \begin{array}{ll}
+          m\,(m-1) \displaystyle\sum_{k=1-m}^{n-1} f_{1k} \, B_k^{m-2}(t) \:\: - &
+          \displaystyle\sum_{j}^{N} \omega^2_j
+                \left( -P^c_{j} \cos \omega_j \, t \: + \:
+                                        P^s_{j} \sin \omega_j \, t \right) \:
+          \vspace{2ex} \\
+%
+          m\,(m-1) \displaystyle\sum_{k=1-m}^{n-1} f_{2k} \, B_k^{m-2}(t) \:\: - &
+          \displaystyle\sum_{j}^{N} \omega^2_j
+              \left( P^c_{j} \sin \omega_j \, t \: - \:
+                     P^s_{j} \cos \omega_j \, t \right) \:
+          \vspace{2ex} \\
+%
+          m\,(m-1) \displaystyle\sum_{k=1-m}^{n-1} f_{3k} \, B_k^{m-1}(t) \:\: - &
+          \displaystyle\sum_{j}^{N} \omega^2_j
+                 \left( - E^c_{j} \sin \omega_j \, t +
+                          E^s_{j} \sin \omega_j \, t \right)
+          \\
+       \end{array}
+       \right)
+\eeq{e:e32}
+%
+   The parameterization of the Earth rotation according to the Newcomb-Andoyer
+representation requires knowledge of empirical functions UT1(t), $X_p(t)$,
+$Y_p(t)$. They are presented in the form of of time series with equal time
+spacing. The empirical EOP function used for data reduction are produced from
+analysis of observations with applying smoothing, filtering and re-sampling.
+Coefficients of the interpolating spline of the 3rd degree are computed
+using several points around the date of interest. A strong periodic signal
+caused by zonal tides affects function UT1(t). In order to alleviate effect
+of this signal in interpolation, the contribution of zonal tides to UT1
+can be subtracted from the initial UT1(t) series at epochs of nodes, and
+then computed to the epoch of observation and added back. The contribution
+to UT1 caused by zonal tides can be obtained either from analysis of
+observations or from a a theory. In both case it is presented in the form
+of quasi-harmonic expansion:
+%
+\beq
+    \Delta\mbox{UT1}(t) = \dss\sum_{i}^{n}
+        Z_{ci} \cos ( \phi_i + \omega_i\, t + \dot{\omega}_i\, t^2/2 ) +
+        Z_{si} \sin ( \phi_i + \omega_i\, t + \dot{\omega}_i\, t^2/2 )
+\eeq{e:e33}
+
+\subsection{Reduction for station secular motion}
+
+  In the most general from, the reduction secular motion of an antenna can be
+presented in the form
+%
+\beq
+    \vc{r}_{\tiny\sc t}(t) =
+                             \vc{r}_{0}(t) \: + \:
+                             \dvc{r}(t)    \: + \:
+                             \dss \sum_{k=1-m}^{n-1} F_{k} \, B_k^m(t)
+\eeq{e:e34}
+%
+  where $B_k^m$ is the spline of the $m$ degree. The spline may have multiple
+nodes and account for the discontinuity in positions and velocities.
+The discontinuities may arise from either tectonic events: earthquakes or
+volcanic activity or be a result of a human activity, such as rail repairs.
+The linear part of the secular motion is caused by the plate tectonic and
+the isostatic glacial adjustment. The separation of the motion into linear
+part and expansion into the B-spline basis is entirely arbitrary.
+
+\subsection{Reduction for the displacement caused by antenna slewing}
+
+  An antenna has a fixed axis $A$ and a moving axis $B$ (figure~\ref{f:axes}).
+In general, these axis do not intersect. Even if the antenna was designed
+to have intersecting axes, during the manufacturing process the moving axis
+may be shifted at 1--10~mm from the fixed axis. The antenna reference point
+$f$ is the point on the fixed axis which is the closest to the moving axis.
+The antenna position is referred to that point. The fringe phase is referred
+to the phase center of the receiver that is located at the primary or
+secondary focus of the antenna $p$. During antenna slewing, position of the
+point $b$ on the moving axis that is located at the point the closest of the
+fixed axis changes with respect to the reference point, unless the axes are
+perfectly intersect. We can notice that the vector $\vc{bp}$ is always
+coincides with the source vector $\vce{S}$ during observation, therefore,
+the VLBI path delay for wave propagation from the point $p$ to the point
+$b$ is constant and cannot be distinguished from the clock offset. Therefore,
+we do not need to make reduction from the point $p$ to the point $b$. However,
+we need to perform reduction from the point $b$ to the point $f$, i.e.,
+to compute delay for wave propagation from the point $b$ to the point $f$.
+We will achieve it by computing the vector $\vc{fb}$ in the terrestrial
+coordinate system and adding it to the a~priori station position.
+
+\begin{figure}
+   \caption{Antenna axes \label{f:axes}}
+   \par\vspace{1ex}\par
+   \centerline{\mbox{ \epsfclipon
+                      \epsfxsize=0.5\textwidth
+                      \epsffile{antenna_axis.eps}
+                    }
+              }
+\end{figure}
+
+  Different types of antenna mountings can be classified according to
+direction of the unit vector of the fix antenna \vc{A}%
+%
+\begin{itemize}
+     \item {\sf Azimuthal mounting}:
+         \beq
+             \vce{a}_{\tiny\sc u} = \lp
+                                       \begin{array}{c}
+			                      1 \\ 0 \\ 0
+                                       \end{array}
+                                   \rp
+         \eeq{e:e35}
+%
+     \item {\sf Horizontal XY-N mounting}:
+         \beq
+             \vce{a}_{\tiny\sc u} = \lp
+                                       \begin{array}{c}
+			                      0 \\ 0 \\ 1
+                                       \end{array}
+                                   \rp
+         \eeq{e:e36}
+%
+     \item {\sf Horizontal XY-E mounting}:
+         \beq
+             \vce{a}_{\tiny\sc u} = \lp
+                                       \begin{array}{c}
+			                      0 \\ 1 \\ 0
+                                       \end{array}
+                                   \rp
+         \eeq{e:e37}
+%
+     \item {\sf Equatorial mounting}:
+         \beq
+             \vce{a}_{\tiny\sc c} = \lp
+                                       \begin{array}{c}
+			                      1 \\ 0 \\ 0
+                                       \end{array}
+                                   \rp
+         \eeq{e:e38}
+%
+     \item {\sf Special case of RICHMOND}
+         \beq
+             \vce{a}_{\tiny\sc u} =
+               \lp
+                 \begin{array}{l}
+                     \cos 39^\circ 03' 36'' \cdot \cos -00^\circ 07' 12'' \\
+                     \cos 39^\circ 03' 36'' \cdot \sin -00^\circ 07' 12'' \\
+                     \sin 39^\circ 03' 36''
+                 \end{array}
+               \rp
+         \eeq{e:e39}
+\end{itemize}
+%
+   Subscript $_{\tiny\sc u}$ means the the vector is in the local topocentric
+Up-East-North coordinate system. This can be converted from to the terrestrial
+coordinate system through this rotation matrix transformation:
+%
+\beq
+   \vc{r}_{\tiny\sc t} =
+   \lp
+      \begin{array}{lll}
+             \hpm \cos \phi_{geod} \, \cos \lambda & -\sin \lambda &
+                                   -\sin \phi_{geod} \, \cos \lambda        \\
+             \hpm \cos \phi_{geod} \, \sin \lambda &  \hpm \cos \lambda &
+                                   -\sin \phi_{geod} \, \sin \lambda        \\
+             \hpm \sin \phi_{geod}                &  \hpm 0            &
+                                   \hpm \cos \phi_{geod}
+      \end{array}
+   \rp \: \vc{r}_{\tiny\sc u}
+\eeq{e:e40}
+
+  The geodetic latitude $\phi_{geod}$ is computed according to
+\cite{r:bowring85} equations:
+\beq
+  \phi_{geod} & = & \arctg \Frac{ r_3(1-f\earth) +
+            (2f\earth -f\earth^2)\, R\earth \sin^3 \mu }
+            { r_p(1-f\earth) ( r_p - (2f\earth -f^2\earth)\, \cos^3 \mu ) }
+      \nonumber \\
+          r_p & = & \sqrt { r^2_1 + r_2^2 }
+      \nonumber \\
+          \mu & = & \arctg \left( \Frac{r_3}{r_p} \left[ \left( 1-f \right) +
+                    \Frac{ (2f\earth -f\earth^2)R\earth }{ |r| } \right] \right)
+      \nonumber \\
+      h_{ort} & = & r_p \cos \phi_{geod}  + r_3 \sin \phi_{geod} - R\earth
+                    \sqrt { 1 - (2f\earth -f\earth^2)\sin^2 \phi_{geod} }
+\eeq{e:e41}
+%
+   where $f\earth$ is the Earth's figure flattening and $e\earth$ is its
+eccentricity.
+
+  The vector $\vc{fb}$ is expressed as
+%
+\beq
+    \vc{fb} \enskip = \enskip
+    l \Frac{ \vce{a} \vpd [ \vce{S}_{app} \vpd \vce{a} ]   }
+           { \left| \vce{a} \vpd [ \vce{S}_{app} \vpd \vce{a} ] \right| }
+      \enskip = \enskip
+           l \Frac{   \vce{S}_{app} - \vce{a} ( \vce{S}_{app} \spd \vce{a})   }
+                  { | \vce{S}_{app} - \vce{a} ( \vce{S}_{app} \spd \vce{a}) | }
+\eeq{e:e42}
+%
+  where $l$ is a parameter called ``antenna axis offset'', and
+$\vce{S}_{app}$ is an apparent source vector. The maximum value of the
+antenna axis offset may reach 14 meters, therefore, in order to reach
+$10^{-13}$~s accuracy in delay prediction, we need to compute vector
+$\vec{fb}$ with accuracy $10^{-5}$. At this level of accuracy we should
+take into account annual aberration and refraction.
+
+  The annual aberration shifts the position vector as
+%
+\beq
+     \vce{s}_a = \Frac{1}{c}\vc{V}\earth -
+                  \Frac{1}{c} ( \vce{s}\spd\vc{V}\earth ) \spd \vce{s}
+\eeq{e:e43}
+%
+   The refractively angle $\rho$ can be computed using this expression
+\cite{r:masterfit}:
+%
+\beq
+     \rho = \Frac{\flo{3.13}{-4}}{\tg E}
+\eeq{e:e44}
+%
+   where $E$ is the source elevation. Reduction for refractively is equivalent
+to rotation the source vector at the angle $rho$ in the plane common to the
+the direction to the zenith and the source vector. Therefore, the position
+vector reduced for refraction is
+$ \vce{s}_\rho = \cos \rho \,\, \vce{s} + \sin \rho \,\, \vce{s}_{\,\perp} $,
+where \( \vce{s}_{\,\perp} \) --- the vector in the plane common for the zenith
+vector an the vector which is perpendicular to the source vector:
+$ \vce{s}_{\,\perp} = [\vce{s} \vpd \vce{r}_3 ] \vpd \vce{s}$, where
+$ \vce{r} $ is the unit vector $\frac{\vc{r}}{|r|}$.
+
+  Combining expressions \ref{e:e43}--\ref{e:e44}, we get the following
+expression for the apparent source vector:
+%
+\beq
+  \begin{array}{rcl}
+    \vce{S}_{app} & = & \Frac{1}{c}\vc{V}\earth -
+                  \Frac{1}{c} ( \vce{S}\spd\vc{V}\earth ) \spd \vce{S} \, +
+    \vspace{1pt} \\
+       & & \cos \lp \flo{3.13}{-4} \cdot \Frac{ \sqrt{ 1 - \vce{r}_3
+                \spd \vce{S} } } { \vce{r}_3 \spd \vce{S} } \rp \vce{S} \, +
+    \vspace{1pt} \\
+              & & \sin \lp \flo{3.13}{-4} \cdot \Frac{ \sqrt { 1 - \vce{r}_3
+                       \spd \vce{S} } } { \vce{r}_3 \spd \vce{S} } \rp
+                       \lp \vce{r}_3 - ( \vce{r}_3 \spd \vce{S} ) \vce{S} \rp
+   \end{array}
+\eeq{e:45}
+%
+   Since the source vector in in the inertial coordinate system, other
+vectors, $\vc{r}$ and $\vce{a}$ should be transformed into the inertial
+coordinate system before computation of $\vce{S}_{app}$.
+
+\subsection{Reduction for Earth solid tides}
+
+\subsubsection{Algorithm for the computation of displacements due to solid
+               Earth tide of the second Degree}
+
+  \cite{r:mat95} proposed the following formalism for the representation of
+a displacement field caused by the solid Earth tides of the second degree:
+%
+\beq
+   \begin{array}{l}
+      \vec{d}_{\sc{ren}} = \\ \hspace{2em}
+          \Sum_{m=0}^{m=2} \Frac{\Phi^m_2 a_e^2}{g_e}
+          \Biggl[ \Biggr.
+                  \Bigl(h^{(0)} + h^{(2)} P^0_2 \Bigr) \, {\bf{R}}^m_2 \: + \:
+                        h'                             \, {\bf{R}}^m_0 \: + \:
+
+                  \Bigl(l^{(0)} + l^{(2)} P^0_2 \Bigr) \, {\bf{S}}^m_2 \: + \:
+                        l^{(1)}P^0_1                   \, {\bf{T}}^m_2 \: + \:
+                        l'                             \, {\bf{T}}^m_1
+          \Biggl.\Biggr]
+    \end{array}
+\eeq{e:a01}
+%
+where $\Phi^m_2$ is the tidal potential of the second degree and {\bf R, S, T}
+denote radial, transverse spheroidal and toroidal vector harmonic fields:
+%
+\beq
+   {\bf{R}}^m_\ell =      \vec{r} \, Y^m_\ell             \qquad\quad
+   {\bf{S}}^m_\ell = r \,         \nabla Y^m_\ell         \qquad\quad
+   {\bf{T}}^m_\ell = i \, \vec{r} \times \nabla Y^m_\ell  \quad
+\eeq{e:a02}
+%
+here $\vec{r}$ \enskip is a unit station coordinate vector,
+$Y_{\ell}^m$ is a spherical harmonic function of degree $\ell$ and order $m$
+normalized over the unit sphere, $a_e$ is the Earth's equatorial radius,
+$g_e$ is the gravity acceleration at the equator, $P_\ell^m$ is
+a Legendre function, and $h$ and $l$ are the generalized Love numbers:
+
+\par\bigskip\par
+\begin{flushleft}
+\begin{tabular}{l @{\,---\,} l }
+  $ h^{(0)}    $ & principal Love number; \\
+  $ h^{(i)}    $ & out-of-phase radial Love number; \\
+  $ h^{(2)}    $ & latitude Love number ; \\
+  $ h^{\prime} $ & zero degree Love number; \\
+  $ l^{(0)}    $ & principal Shida number; \\
+  $ l^{(i)}    $ & out-of-phase Shida number; \\
+  $ l^{(1)}    $ & second degree toroidal Love number; \\
+  $ l^{(2)}    $ & latitude Shida number; \\
+  $ l^{\prime} $ & first degree toroidal Love number; \\
+\end{tabular}
+\end{flushleft}
+\par\bigskip\par
+
+\newpage
+
+   In order to transform equation \eref{e:a01} to the form suitable for
+computations we do the following operations:
+1)~substitute direct expressions for vector harmonic fields \eref{e:a02};
+2)~add out-of-phase terms;
+3)~expand the tidal potential in a Fourier time series;
+4)~separate the terms which depend on station latitude and longitude from
+the terms which depend on time.
+After some algebra we get the following expression for a tidal displacement
+vector $\vec{d}_{\sc{ren}}$ with radial, east and north components:
+%
+
+\begin{table}[h]
+% \par\vspace{-11ex}\par
+\beq
+   \begin{array}{ll}
+   \vec{d}_{\sc{ren}} = &
+   \dss \sum_{m=0}^{m=2} \left(
+   \begin{array}{l c r}
+       \hphantom{-}
+       \vec{X}^{rc}_1(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                              \vec{L}^r_1(k) \, \cos{ \gamma_{km}} & - &
+%
+       \vec{X}^{rs}_1(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                              \vec{L}^r_1(k) \, \sin{ \gamma_{km}} \vex \\
+%
+       \hphantom{-}
+       \vec{X}^{rc}_2(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                              \vec{L}^r_2(k) \, \sin{ \gamma_{km}} & + &
+%
+       \vec{X}^{rs}_2(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k
+                              \vec{L}^r_2(k) \, \cos{ \gamma_{km}} \vex \\
+%
+       \hphantom{-}
+       \vec{X}^{rc}_3(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                              \vec{L}^r_3(k) \, \cos{ \gamma_{km}} & - &
+%
+       \vec{X}^{rs}_3(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                              \vec{L}^r_3(k) \, \sin{ \gamma_{km}} \vex \\
+%
+   \end{array}
+   \right) +  \veX \veX \\ &
+%
+   \dss \sum_{m=0}^{m=2}
+   \left(
+   \begin{array}{l c r}
+      - \vec{X}^{ic}_1(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                               \vec{L}^i_1(k) \, \sin{ \gamma_{km}} & - &
+%
+        \vec{X}^{is}_1(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                               \vec{L}^i_1(k) \, \cos{ \gamma_{km}} \vex  \\
+%
+   \hpm \vec{X}^{ic}_2(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                               \vec{L}^i_2(k) \, \cos{ \gamma_{km}} & - &
+%
+        \vec{X}^{is}_2(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                               \vec{L}^i_2(k) \, \sin{ \gamma_{km}} \vex  \\
+%
+      - \vec{X}^{ic}_3(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                              \vec{L}^i_3(k) \, \sin{ \gamma_{km}}  & - &
+%
+        \vec{X}^{is}_3(m,\phi) \cdot \dss \sum_{k=1}^{n(m)} A_k     \,
+                               \vec{L}^i_3(k) \, \cos{ \gamma_{km}} \vex  \\
+%
+   \end{array}
+   \right)
+   \end{array}
+\eeq{e:a04}
+\end{table} % \ns
+
+%
+\par\noindent
+  where vector $ \vec{X} $ depends only on station coordinates:
+
+\par\medskip\par
+\begin{flushleft}
+     \begin{tabular}{r @{\,} c @{\,} l }
+        $ \vec{X}^{rc}_j(m,\phi) $ & = & $ \vec{Z}^r_j(m,\phi) \cdot \cos
+           m \lambda $ \vex\\
+        $ \vec{X}^{rs}_j(m,\phi) $ & = & $ \vec{Z}^r_j(m,\phi) \cdot \sin
+           m \lambda $ \vex\\
+        $ \vec{X}^{ic}_j(m,\phi) $ & = & $ \vec{Z}^i_j(m,\phi) \cdot \cos
+           m \lambda $ \vex\\
+        $ \vec{X}^{is}_j(m,\phi) $ & = & $ \vec{Z}^i_j(m,\phi) \cdot \sin
+           m \lambda $ \vex\\
+     \end{tabular}
+\end{flushleft}
+
+\par\vspace{-3ex}\par
+\beq
+\eeq{e:a05}
+
+%
+\par\noindent
+  here $\phi$ is geocentric latitude and $\lambda$ is positive towards
+east longitude. Vector $\vec{Z}$ is
+\goodbreak
+
+\beq
+   \begin{array}{ l @{\:} c @{\:} c @{\hspace{2.5em}} l @{\:} c @{\:} c }
+      \vec{Z}^r_1 & = & \left(
+                        \begin{array}{r}
+                               \bar{P}^m_2          \Frac{1}{g_e}    \veX \\
+                               P^0_2 \, \bar{P}^m_2 \Frac{1}{g_e}    \veX \\
+                               0                                     \veX \\
+                                              \Frac{1}{g_e}          \veX \\
+                        \end{array}
+                        \right) &
+      \vec{Z}^i_1 & = & \left(
+                               \begin{array}{r}
+                                     \bar{P}^m_2    \Frac{1}{g_e} \veX \\
+                               \end{array}
+                        \right)
+      \vex \vex \\
+%
+      \vec{Z}^r_2 & = & \left(
+                        \begin{array}{r}
+                          - \Frac{m}{\cos{\phi}} \, \bar{P}^m_2
+                                                          \Frac{1}{g_e} \veX \\
+                          - \Frac{m}{\cos{\phi}} \, P^0_2 \, \bar{P}^m_2
+                                                          \Frac{1}{g_e} \veX \\
+                            P^0_1 \Der{\bar{P}^m_2}{\phi} \Frac{1}{g_e} \veX \\
+                          \Der{\bar{P}^m_1}{\phi}         \Frac{1}{g_e} \veX \\
+                        \end{array}
+                        \right) &
+%
+      \vec{Z}^i_2 & = & \left(
+                               \begin{array}{r}
+                                      - \Frac{m}{\cos{\phi}} \, \bar{P}^m_2
+                                                          \Frac{1}{g_e} \veX \\
+                                \end{array}
+                        \right)
+%
+      \vex \vex \\
+%
+      \vec{Z}^r_3 & = & \left(
+                        \begin{array}{r}
+                          \Der{\bar{P}^m_2}{\phi}         \Frac{1}{g_e} \veX \\
+                          P^0_2 \, \Der{\bar{P}^m_2}{\phi}\Frac{1}{g_e} \veX \\
+                          - \Frac{m}{\cos{\phi}} \, P^0_1 \,\bar{P}^m_2
+                                                          \Frac{1}{g_e} \veX \\
+                          - \Frac{m}{\cos{\phi}} \, \bar{P}^m_1
+                                                          \Frac{1}{g_e} \veX \\
+                        \end{array}
+                        \right) &
+%
+      \vec{Z}^i_3 & = & \left(
+                                \begin{array}{r}
+                                       \Der{\bar{P}^m_2}{\phi}
+                                                          \Frac{1}{g_e} \veX \\
+                                \end{array}
+                        \right)
+  \end{array}
+\eeq{e:a06}
+
+$P^0_m$ is a Legendre function normalized to have maximal
+value 1:
+\beq
+  \small
+  \begin{array}{ l @{\hspace{1.5em}} l @{\hspace{1.5em}} l }
+         P^0_1 = \sin{ \phi } &
+         P^1_1 = \cos{ \phi } &
+         P^2_1 = 0
+%
+         \vex \\
+%
+         P^0_2 = \left( \Frac{3}{2} \sin^2{\phi} - \Frac{1}{2} \right) &
+         P^1_2 = 2 \sin{\phi} \, \cos{\phi}                            &
+         P^2_2 = \cos^2{\phi}
+  \end{array}
+\eeq{e:a07}
+%
+  and $\bar{P}^m_{l}$ are Legendre functions normalized over the surface of the
+unit sphere:
+%
+\beq
+  \small
+  \begin{array}{ l @{\hspace{2.5em}} l @{\hspace{2.5em}}  l }
+     \bar{P}^0_1 = P^0_1                              &
+     \bar{P}^1_1 = P^1_1                              &
+     \bar{P}^2_1 = P^2_1                              \vex \\
+%
+     \bar{P}^0_2 = \sqrt{\Frac{5} {4 \pi} } \, P^0_2  &
+     \bar{P}^1_2 = \sqrt{\Frac{15}{32 \pi}} \, P^1_2  &
+     \bar{P}^2_2 = \sqrt{\Frac{15}{32 \pi}} \, P^2_2
+  \end{array}
+\eeq{e:a08}
+%
+  $g_e$ --- the Earth's equatorial gravity acceleration.
+
+%\par\smallskip\par
+
+  The summing in \eref{e:a04} is done over the constituents of the spectral
+expansion of the tide-generating potential which is assumed to be in the form
+%
+\beq
+   \Phi^m_2(t,r) = \dss \sum_{m=0}^{m=2}
+                   \biggl( \Frac{r}{a_e} \biggr)^2 \bar{P}^m_2(\phi)
+                   \cdot \dss \sum_{k=1}^{n(m)} A_k \cdot \cos \gamma_{km}
+   \qquad
+\eeq{e:a09}
+%
+ where $r$ is the distance from the geocenter, $a_e$ is the semi-major
+axis of the Earth, $A_k$ is the normalized amplitude of the $k$-th tidal
+wave and $\gamma_{km}$ is its argument:
+%
+\beq
+   \gamma_{km} = \psi_k + \theta_k + \omega_k \, t_{\sc{tdb}} +
+          m \, \Frac{2 \pi({\sc{ut1}}(t) - t_{\sc{tdb}})}{86400}
+   \qquad
+\eeq{e:a10}
+%
+  $\psi_k$ is the phase of the k-th wave, $\theta_k$ and $\omega_k$ are the
+phase and frequency of the harmonic argument of that wave. $t_{\sc{tdb}}$ is
+the time elapsed since the fundamental epoch J2000.0 ($12^h$ 1 January, 2000)
+at the TDB scale. The difference $ {\sc ut1} - t_{\sc{tdb}}$ in \eref{e:a10}
+takes into account variations in the Earth's rotation which were omitted in
+producing the tidal potential series. The variable m=0,1,2 in
+\ref{e:a04}--\ref{e:a06} denotes the order of a tidal wave, subscript index
+1,2,3 denotes component of the displacement vector: radial, east, north, and
+summation is carried out over spectral harmonics of the tidal expansion.
+The number of constituents in sum \eref{e:a09}, $ n(m) $, is determined by
+a truncation level.
+
+  The vector of generalized Love numbers is presented in the form
+\beq
+  \begin{array}{lcl @{\hspace{2em}} lcl }
+     \vec{L}^r_1 & = & \bigl( \: h^{(0)}, \: h^{(2)}, \: 0,         \:
+                 h^{\prime}   \: \bigr)^{\bf \top}                  &
+     \vec{L}^i_1 & = & h^{(i)} \vex \\
+%
+     \vec{L}^r_2 & = & \bigl( \: l^{(0)}, \: l^{(2)}, \: l^{(1)},   \:
+                 l^{\prime}   \: \bigr)^{\bf \top}                  &
+     \vec{L}^i_2 & = & l^{(i)} \vex \\
+%
+     \vec{L}^r_3 & = & \bigl( \: l^{(0)}, \: l^{(2)}, \: l^{(1)},   \:
+                 l^{\prime}   \bigr)^{\bf \top}                     &
+     \vec{L}^i_3 & = & l^{(i)} \vex \\
+  \end{array}
+  \quad
+\eeq{e:a11}
+
+\bigskip
+
+  All generalized Love numbers are considered to be complex and
+frequency-dependent. The generalized Love numbers are computed according to
+the analytical expressions presented in \cite{r:mat01} with corrections for
+some specific tidal waves taken from the tables.
+
+  The advantages of this scheme are that the sums like \quad $ \sum A_k \,
+\vec{L}^r_1(k) \, \sin{ \gamma_{km}} $ \quad depend only on time and
+do not depend on station coordinates, and therefore, may be used for the
+calculation of displacements of many stations at the same epoch. The vectors
+$\vec{X}$ do not depend on time and are computed only once.
+
+  The HW95 expansion contains sine and cosine coefficients $C_0$ and $S_0$.
+Having these coefficients, we can compute phases and amplitudes for
+\eref{e:a04} as \enskip $ \psi_k = -\arctan \Frac{S_{0k}}{C_{0k}} $ \enskip
+and \enskip $ A^m_k = \rho(m)\, \sqrt{ C_{0k}^2 + S_{0k}^2 } $\enskip , where
+$\rho(m)$ is a re-normalization factor. It is
+\enskip $ \sqrt{4 \pi} $ \enskip for tides of the 0-th
+order and \enskip $ \sqrt{8 \pi} $ \enskip for other tides.
+
+  Frequencies and phases of tidal constituents are easily computed via
+coefficients at fundamental arguments.
+%
+\beq
+  \begin{array}{r@{\:}c@{\:}l}
+     \theta_i   &=& \hphantom{6} \dss \sum_{j=1}^{j=11} k_{ij} \, F_{jo} +
+                    \theta_{ai}                                \vhex \veX  \\
+     \omega_i   &=& \hphantom{6} \dss \sum_{j=1}^{j=11} k_{ij} \, F_{j1} +
+                    \omega_{ai}                                \vhex \veX  \\
+  \end{array}
+\eeq{e:a14}
+%
+  where $ F_{jq} $ are fundamental coefficients from the theory of planetary
+motion \cite{r:simon}. We neglected terms of the 2-nd degree and higher.
+
+\subsubsection{Algorithm for the computation of displacements due to solid
+               Earth tides of the 3-rd degree}
+
+   For computation of displacements due to solid Earth tides of the 3-rd degree
+with a precision of 0.1mm we can neglect frequency dependence of Love numbers
+and an admixture of terms in tide-generating potential other than 3-rd degree
+as well as out-of-phase Love numbers. Therefore, vector of displacements
+can be written in the form
+
+\beq
+   \small
+   \vec{d}_{\sc{ren}} = \dss \sum_{m=0}^{m=3} \left(
+   \begin{array}{l}
+       X^{3c}_1(m,\phi) \, h_3 \cdot  \Sum_{k=1}^{n(m)} A_k  \,
+                               \cos{   \gamma_{km}}          \quad - \quad
+       X^{3s}_1(m,\phi) \, h_3 \cdot   \Sum_{k=1}^{n(m)} A_k \,
+                               \sin{   \gamma_{km}}                    \vex \\
+%
+       X^{3s}_2(m,\phi) \, l_3 \cdot  \Sum_{k=1}^{n(m)} A_k  \,
+                               \sin{   \gamma_{km}}          \quad + \quad
+       X^{3c}_2(m,\phi) \, l_3 \cdot   \Sum_{k=1}^{n(m)} A_k \,
+                               \cos{   \gamma_{km}}                    \vex \\
+%
+       X^{3c}_3(m,\phi) \, l_3 \cdot  \Sum_{k=1}^{n(m)} A_k  \,
+                               \cos{   \gamma_{km}}          \quad - \quad
+       X^{3s}_3(m,\phi) \, l_3 \cdot   \Sum_{k=1}^{n(m)} A_k \,
+                               \sin{   \gamma_{km}}
+   \end{array}
+   \right)
+\eeq{e:a15}
+
+\par\noindent
+  where $X$ depends only on station coordinates in the following way:
+
+\par\bigskip\par
+\begin{flushleft}
+     \begin{tabular}{r @{\,} c @{\,} l }
+        $ X^{3c}_j(m,\phi) $ & = & $ Z^3_j(m,\phi) \cdot \cos
+           m \lambda $ \vex \\
+        $ X^{3s}_j(m,\phi) $ & = & $ Z^3_j(m,\phi) \cdot \sin
+           m \lambda $ \vex\\
+     \end{tabular}
+\end{flushleft}
+\label{e:a16}
+%
+\par\medskip\noindent
+%
+ here $Z^3_j$ is
+%
+\beq
+   \begin{array}{ l }
+      Z^3_1(m,\phi) = \bar{P}^m_3                       \Frac{1}{g_e} \veX  \\
+      Z^3_2(m,\phi) = -\Frac{m}{\cos \phi} \bar{P}^m_3  \Frac{1}{g_e} \veX  \\
+      Z^3_3(m,\phi) = \Der{\bar{P}^m_3}{\phi}           \Frac{1}{g_e}
+   \end{array} \quad
+\eeq{e:a17}
+
+  Legendre functions of third order are
+\beq
+   \begin{array}{ l }
+   P^0_3 = \lp \frac{5}{2} \sin^3 {\phi}- \frac{3}{2} \sin{\phi} \rp
+           \vex \\
+   P^1_3 = \lp \frac{5}{2} \sin^2 {\phi}- \frac{1}{2} \sin{\phi} \rp \cos{\phi}
+           \vex \\
+   P^2_3 = \sin{\phi} \cos^2{\phi}
+           \vex \\
+   P^3_3 = \cos^3{\phi}
+   \end{array}
+\eeq{e:a18}
+%
+\beq
+   \begin{array}{ l @{\qquad} l }
+          \bar{P}^0_3 = \sqrt{\Frac{7}{4    \, \pi}} P^0_3 &
+          \bar{P}^1_3 = \sqrt{\Frac{21}{16  \, \pi}} P^1_3   \vex \\
+          \bar{P}^2_3 = \sqrt{\Frac{105}{32 \, \pi}} P^2_3 &
+          \bar{P}^3_3 = \sqrt{\Frac{35}{64  \, \pi}} P^3_3
+   \end{array}
+\eeq{e:a19}
+
+\par\smallskip\par
+
+  Analogously to the tides of the second degree, the amplitudes of the
+tide-generating potential produced from the HW95 expansion should be
+multiplied by the same re-normalization factors.
+
+\subsection{Computing displacements caused by pole tide}
+
+  Earth's rotation causes the deformation of the Earth's figure. The variations
+in the Earth's rotation causes time variable deformations.
+The centrifugal potential at the point in the Earth with coordinate vector
+$\vc{r}$ is
+%
+\beq
+       V_c = \Frac{1}{2} ( \vc{r} \times \vec\Omega )
+\eeq{e:p1}
+%
+   where $\vec{\Omega}$ is the vector of the Earth's angular velocity. This
+potential has a permanent component and the variable one. The permanent
+component causes a permanent displacement which cannot be observed. According
+to an agreement, the variable part of the centrifugal potential is determined
+as $ V_{vc} = \Frac{1}{2} ( \vc{r} \times \vec\Omega_{vc} ) $ where
+\beq
+   \vec\Omega_{vc} = \Omega_n \lp
+      \begin{array}{c}
+         E_1 - E_{10} - E_{11} \, t \\
+         E_2 - E_{20} - E_{21} \, t \\
+         1
+      \end{array}
+    \rp
+\eeq{e:p2}
+%
+  where $\Omega_n$ is the nominal Earth's angular velocity and $E_1, E_2,
+E_{11}, E_{21}$ are reference position of the vector of the angular velocity
+and its reference rate of change. Variations of third component of the vector
+of the Earth's angular is two order of magnitude less than the variations of
+the first and second component, and can be neglected. Since the dependence
+of the centrifugal potential with radius is the same as for the
+tide-generating potential, the theory of the solid Earth tides can be
+applied for computing displacements caused by variations of the vector
+of the Earth's angular velocity. Using expression \ref{e:a01} for tidal
+displacements, after simple algebra we get the following expression for
+displacement caused by pole tide:
+%
+\beq
+   \vec{d}_{\sc{ren}} = \lp
+   \begin{array}{l}
+      h_2   (\omega_{SA}) \: \Frac{\Omega_n^2 \; r^2}{g_{loc}} \,
+            \hphantom{\sqrt{1 - \underline{r}_3^2}}
+            \Bigl(
+                  -\underline{r}_1 \, ( E_2 + E_{10} + E_{21} \, t ) \; + \;
+                   \underline{r}_2 \, ( E_1 - E_{10} - E_{11} \, t )
+            \Bigr)  \vex \\
+      \ell_2(\omega_{SA}) \: \Frac{\Omega_n^2 \; r^2}{g_{loc}} \,
+            \Frac{\underline{r}_3}{\sqrt{1 - \underline{r}_3^2}} \,
+            \Bigl( \hpm
+                   \underline{r}_1 \, ( E_1 - E_{10} - E_{11} \, t ) \; + \;
+                   \underline{r}_2 \, ( E_2 - E_{20} - E_{21} \, t )
+            \Bigr) \vex \\
+      \ell_2(\omega_{SA}) \: \Frac{\Omega_n^2 \; r^2}{g_{loc}} \,
+            \Frac{1 - 2\, \underline{r}_3^2}{\sqrt{1 - \underline{r}_3^2}} \,
+            \Bigl(
+                  -\underline{r}_1 \, ( E_2 + E_{10} + E_{21} \, t ) \; + \;
+                   \underline{r}_2 \, ( E_1 - E_{10} - E_{11} \, t )
+            \Bigr)  \vex
+   \end{array}
+   \rp
+\eeq{e:p3}
+%
+  Love numbers are taken for the annual frequency
+$ \omega_{SA} = \flo{1.991}{-7}$ rad s${}^{-1}$. It should be noted, there
+is no unanimous agreement which parameters $E_1, E_2, E_{11}, E_{21}$ to use
+in the expression \ref{e:p3}. These parameters can be determined from fitting
+empirical series of $\vc{q}(t)$. But since the polar motion is a stochastic
+process, regression parameters depend on the time period of estimation.
+Change in $E_1, E_2, E_{11}, E_{21}$ will result in change of estimates of
+site position and velocity.
+
+\subsection{Computing displacements caused by mass loading}
+
+  Displacement caused by various mass loading, ocean, atmospheric pressure,
+hydrology, are computed by evaluating the convolution integral over the
+land and over the ocean:
+%
+\beq
+        u(\vec{r},t) = u_{\sc l}(\vec{r},t) + \Delta \bar{P}_o(t) \, u_o
+\eeq{e:b1}
+%
+where $ \Delta \bar{P}_o(t) $ is the uniform sea-floor pressure and
+$u_{\sc l}(\vec{r},t)$, $u_o(\vec{r}\,)$ are
+%
+\beq
+  \begin{array}{rcl}
+      u_{\sc l}(\vec{r},t) &=& \dss\sum_{i=1}^{n} \sum_{j=1}^{m} \,
+                           \Delta P(\vec{r}{\,'\!}_{ij},t) \,
+                           q(\vec{r},\vec{r}{\,'\!}_{ij}) \, \cos \phi_i \,
+                           \dint\limits_{\hbb\! cell_{ij}}
+                           G(\psi(\vec{r},\vec{r}{\,'}_{ij})) \, ds
+                           \vspace{0.5ex} \\
+      u_o(\vec{r}\,) &=& \dss\sum_{i=1}^{n} \sum_{j=1}^{m} \,
+                           q(\vec{r},\vec{r}{\,'\!}_{ij}) \, \cos \phi_i \,
+                           \dint\limits_{\hbb\! cell_{ij}}
+                           G(\psi(\vec{r},\vec{r}{\,'\!}_{ij})) \, ds
+   \end{array}
+\eeq{e:b2}
+%
+ and index $i$ runs over latitude and index $j$ runs over longitude. Here
+the integration over the sphere is replaced with a sum of integrals over small
+cells. $q=1$ for the vertical component.
+
+  Green's functions have a singularity in 0, so care must be taken in using
+numerical schemes for computing the convolution integral. Although the Green's
+function cannot be represented analytically over the whole range of its
+argument, we can always find a good approximation over a small range.
+We approximate the function $ G(\psi) \cdot \psi $ by a polynomial of the
+third degree
+\mbox{$ \alpha + \beta \, \psi + \gamma \, \psi^2 + \delta \, \psi^3 $}.
+In order to compute the integral \ref{e:b2} over the cell, we introduce
+a two-dimensional Cartesian coordinate system with the origin in the center
+of the cell and the axis $x$ towards east, the axis $y$ towards north.
+We neglect the Earth's curvature and consider the cell as a rectangle with
+borders [-a, a], [-b, b] on the $x$ and $y$ axes respectively. Then the
+integral of the Green's function over the cell with respect to a site with
+coordinates ($x_s$, $y_s$) is evaluated analytically:
+
+\beq
+   \begin{array}{ll}
+         \dss \dint\limits_{\hbb\!\! cell} G(\psi(x_s,y_s)) \, ds = &
+          \dss \int\limits_{\hbb -b}^{b} \int\limits_{\hbb -a}^{a} \:
+                      \Biggl(
+                             \Frac{\alpha}{\sqrt{x^2 + y^2}}  \: + \:
+                                   \beta                      \: + \:
+                                   \gamma \, \sqrt{x^2 + y^2} \: + \:
+                                   \delta (x^2 + y^2)
+                      \Biggr) \, dx \, dy =            \vex \vex \vex \vex \\ &
+          \biggl( \alpha \, y_2 + \Frac{\gamma}{6} \, y^3_2 \biggr)
+                  \ln \Frac{x_2 + z_{22}}{x_1 + z_{12}}       \: - \:
+          \biggl( \alpha \, y_1 + \Frac{\gamma}{6} \, y^3_1 \biggr)
+                  \ln \Frac{x_2 + z_{21}}{x_1 + z_{11}}       \: + \: \vex \\ &
+          \biggl( \alpha \, x_2 + \Frac{\gamma}{6} \, x^3_2 \biggr)
+                  \ln \Frac{y_2 + z_{22}}{y_1 + z_{21}}       \: - \:
+          \biggl( \alpha \, x_1 + \Frac{\gamma}{6} \, x^3_1 \biggr)
+                  \ln \Frac{y_2 + z_{12}}{y_1 + z_{11}}       \:\: +  \vex \\ &
+          (y_2 - y_1) \, (x_2 - x_1)
+                \Biggr[ \beta + \Frac{\delta}{3}
+                        \biggl(
+                                 z^2_{11} + z^2_{22} + x_1 \, x_2 + y_1 \, y_2
+                        \biggr)
+                \Biggr]                                       \:\: +  \vex \\ &
+          \Frac{\gamma}{3}
+                \Biggr[
+                    x_2 \, \biggl( y_2 \, z_{22} - y_1 \, z_{21} \biggr) \: - \:
+                    x_1 \, \biggl( y_2 \, z_{12} - y_1 \, z_{11} \biggr)
+                \Biggr]
+%
+      \vspace{3ex} \\ & \hspace{2em}
+%
+        \begin{array}{l @{\hspace{4em}} l}
+           x_1 =  -a - x_s   &  x_2 = \hpm a - x_s  \vex \\
+           y_1 =  -b - y_s   &  y_2 = \hpm b - y_s  \vex \\
+           z_{11} = \sqrt{x_1^2 + y_1^2}  &  z_{12} = \sqrt{x_1^2 + y_2^2}
+                                                    \vex \\
+           z_{21} = \sqrt{x_2^2 + y_1^2}  &  z_{22} = \sqrt{x_2^2 + y_2^2}
+        \end{array}
+   \end{array}
+\eeq{e:b3}
+\par\medskip\par
+
+  Coordinates $x_s, y_s$ are  computed as
+%
+\beq
+        x_s = \vec{E}(\vec{r}{\,'\!}_{ij}) \cdot
+              \vec{T}(\vec{r}{\,'\!}_{ij},\vec{r}\,) \qquad\qquad
+        y_s = \vec{N}(\vec{r}{\,'\!}_{ij}) \cdot
+              \vec{T}(\vec{r}{\,'\!}_{ij},\vec{r}\,)
+\eeq{e:b4}
+%
+where $\vec{T}(\vec{r}{\,'\!}_{ij},\vec{r}\,)$ is
+%
+\beq
+     \vec{T}(\vec{r}{\,'\!}_{ij},\vec{r}\,) = \Frac
+       {   \vec{r}{\,'\!}_{ij} \times [ \vec{r} \times \vec{r}{\,'\!}_{ij} ]   }
+       { | \vec{r}{\,'\!}_{ij} \times [ \vec{r} \times \vec{r}{\,'\!}_{ij} ] | }
+\eeq{e:b5}
+%
+and $\vec{E}(\vec{r}{\,'\!}_{ij}), \vec{N}(\vec{r}{\,'\!}_{ij})$ are unit
+vectors in east and north direction with respect to the center of the cell:
+%
+\beq
+     \vec{E}(\vec{r}{\,'\!}_{ij}) = \left(
+        \begin{array}{r}
+           \sin \lambda'  \\
+           \cos \lambda'  \\
+	   0              \\
+        \end{array}
+        \right)
+        \qquad \qquad
+%
+     \vec{N}(\vec{r}{\,'\!}_{ij}) = \left(
+        \begin{array}{r}
+          \hpm \sin \phi' \cos \lambda'  \\
+             - \sin \phi' \sin \lambda'  \\
+	  \hpm \cos \phi'
+        \end{array}
+        \right)
+\eeq{e:b6}
+
+  It was found that when the coefficients $ \alpha(\psi) $, $ \beta(\psi) $,
+$ \gamma(\psi) $ and $ \delta(\psi) $ are computed with the step 0.002 rad
+over the range [0, 0.16] rad, and with the step 0.02 rad over the range
+[0.16, $\pi$], the error of the approximation of the integral~\ref{e:b3}
+for a cell of size 0.044 rad ($\Deg{2}\!.5$) does not exceed 1\%.
+At large angular distances we can consider the Green's function to be constant
+over the cell. For an angular distance more than 0.16 rad, taking the Green's
+function out of the integral \ref{e:b2} and replacing it with the value
+at the angular distance between the site and the center of the cell causes
+an error of less than 1\%.
+
+  Two land-sea masks are used for practical computation: coarse with the
+resolution of the surface pressure grid, and fine. If the cell of the coarse
+land-sea mask is completely land or completely sea, this cell is used for
+computing the integral \ref{e:b3}. Otherwise, the coarse resolution cell is
+subdivided in smaller cells of the fine resolution grid, and the integral over
+each fine resolution cell is computed independently. The surface pressure is
+considered as defined at the corners of the coarse resolution cell.
+The pressure at the center of the cell is obtained by bi-linear interpolation.
+When $u_{\sc l}(\vec{r}\,)$ is computed, the cells which are over ocean are
+bypassed. Alternatively, the cells which are over land are bypassed when
+$u_o(\vec{r}\,)$ is computed.
+
+  The computation of horizontal vectors is done separately for north and east
+components. The north and east components of the vector
+$\vec{q}(\vec{r},\vec{r}\,')$ are
+%
+\beq
+    \vec{q}_{\sc n}(\vec{r},\vec{r}\,') = - \vec{T}(\vec{r},\vec{r}\,')
+             \cdot \vec{N}(\vec{r}\,) \qquad\qquad
+    \vec{q}_{\sc e}(\vec{r},\vec{r}\,') = - \vec{T}(\vec{r},\vec{r}\,')
+             \cdot \vec{E}(\vec{r}\,)
+\eeq{e:a7}
+%
+  where $\vec{T}(\vec{r},\vec{r}\,')$ is defined in a way similar
+to \ref{e:b5}, but with the reverse order of arguments,
+$\vec{E}(\vec{r}\,), \vec{N}(\vec{r}\,)$ are defined according to \ref{e:b6},
+but are the unit north and east vectors for the site under consideration.
+
+  Displacement caused by ocean tidal mass loading, non-tidal ocean mass
+loading, atmosphere pressure loading and hydrology loading are computed the
+same ways. Only the the pressure fields $ \Delta P(\vec{r}{\,'\!}_{ij},t) $,
+$ \Delta \bar{P}_oP(\vec{r}{\,'\!}_{ij},t) $ differ. These are empirical
+functions which are derived from analysis of observations.
+
+\subsection{Tropospheric path delay}
+
+   Propagation medium causes an additional delay $\tau_m$, which can be
+written in the form of the integral along the path $l$, which in general
+is bended:
+%
+\beq
+     \tau_m = \int \bigl( n(l) - 1 \bigr) dl
+\eeq{p8:e1}
+
+   Traditionally path delay $\tau_m$ in the ionosphere, the neutral equilibrium
+atmosphere, and in the non-equilibrium constituent of the atmosphere is
+considered separately. The ionosphere is a dispersive medium, so there exists
+a linear combination of observables at two or more frequencies which reduces
+the ionospheric contribution to that combination to zero. The propagation of
+the signal in the neutral atmosphere depends on the dependence of
+the refractivity with height and possibly with spatial coordinates.
+This dependence can be computed on the basis of the gas law for the
+equilibrium component, and the integral \ref{p8:e1} can be computed
+analytically. It turns out, in that case the integral \ref{p8:e1} depends only
+on the surface pressure and the local gravity acceleration. The integral
+\ref{p8:e1} should be computed numerically using empirical data about the
+global partial refractivity distribution due to the non-equilibrium constituent.
+Being viewed in the local topocentric coordinate system, the tropospheric
+path delay depends on elevation and azimuth. This can be parameterized
+in the form
+%
+\beq
+   \tau_{tr} = \rho_{zd}R_{zd}(E_v,A) + \rho_{zw}R_{zw}(E_v,A)
+\eeq{p8:e2}
+%
+   where $A$ is the azimuth and $E_v$ is the source elevation {\it ignoring}
+bending in the atmosphere, but taking into account annual aberration,
+$E_v = \mbox{arcsin} ( \vec{r_3}_{\tiny\sc c} \vc{S}_a)$. The tropospheric
+path delay
+is split into two parts, the equilibrium (dry) and the non-equilibrium part
+\cite{r:davis85}. Both the equilibrium and the non-equilibrium parts are
+presented as a product of the part which depends on ground meteorological
+parameters, and the dimensionless part called mapping function, which
+depends only on elevation and azimuth and normalized to unity in the
+zenith direction. Thus, the first part of the product has a meaning of
+zenith path delay.
+
+  In the past various expressions were proposed for the zenith path delay
+and the mapping function. Currently, the expression of Saastamoinen for the
+zenith path delay and the Niell mapping function are used. There is no
+evidence that alternative expressions which use ground meteorological
+information produce better results.
+
+  Saastamoinen expression \cite{r:saa72a,r:saa72b} for the non-equilibrium 
+(dry) zenith path delay:
+\beq
+       \begin{array}{rcl}
+              \rho_{zd} & = & \Frac{K_d \,R}{M_d\, c} \cdot
+                        \Frac{P}{ g_{loc} - \der{g}{h}(0.9h_{ort} + 7300) }
+        \vex \\
+              \rho_{zw} & = & \Frac{K_d \,R}{M_d\, c} \cdot
+                    \Frac{ 1255 \bigl( ( T\deg\,C + 273.15) + 0.05 \bigr)
+                         E_w } { g_{loc} - \der{g}{h}(0.9h_{ort} + 7300) }
+       \end{array}
+\eeq{p8:e3}
+%
+   where
+    \begin{itemize}
+       \item [] \( K_d =\flo{7.7604}{-4} \) --- dry air refractivity;
+       \item [] \( R = 8.314742 \) (J $\cdot$ K${}^{-1} \cdot$ mole${}^{-1}$)  ---
+                                        the universal gas constant;
+       \item [] \( M_d =28.9644 \) --- the mole mass of dry air;
+       \item [] \( c \)   --- velocity of light;
+       \item [] \( P \)   --- the surface total pressure (Pascal);
+       \item [] \( E \)   --- the surface partial pressure of water
+                              vapor (Pa);
+       \item [] \( T\deg\,C \) --- the surface temperature (in Celsius)
+       \item [] \( g_{loc} \)  --- the local gravity acceleration;
+       \item []  \( h_{ort} \) --- ortometric height of the antenna
+                                   reference point (ref \ref{e:e41}).
+    \end{itemize}
+
+   The following expression for the local gravity acceleration can be used:
+%
+\beq
+      g_{loc}= g_e \Frac{ 1 + \der{g}{\phi} \sin^2 \phi_{ast} }
+                        { \sqrt { 1 - (2f\earth -f\earth^2) \, \sin^2
+                          \phi_{geod} } } +
+                        \der{g}{h} h_{ort}
+\eeq{p5:e3}
+%
+  where \( g_e \)   --- the equatorial gravity acceleration.
+
+  The absolute humidity $E_w$ is not measured directly but deduced from
+observations of the of the relative humidity, i.e. the ration of the partial
+water vapor pressure to the pressure of the saturated water vapor at a given
+temperature. The following expression of \cite{r:goff} for the pressure of the
+saturated water vapor $E_s$ accepted by the International Meteorological
+Association can be used which is accurate to a 0.02\% level:
+%
+\beq
+   \begin{array}{rcl}
+   \lg E_s & = & 10.795\,74 \lp 1 - \Frac{T\deg\,K_i}{T\deg\,K}  \rp -   \\&&
+                 5.028\,00 \lg \lp  \Frac{T\deg\,K}{T\deg\,K_i}  \rp +   \\&&
+                \flo{1.504\,75}{-4} \cdot \lp 1 - 10^{\tss -8.2969
+                \lp \frac{T\deg\,K}{T\deg\,K_i} - 1 \rp} \rp -           \\&&
+                \flo{4.287\,3}{-4} \cdot \lp 1 - 10^{\tss -4.769\,55 \lp
+                \frac{T\deg\,K}{T\deg\,K_i} - 1 \rp} \rp                 \\&&
+               + 2.786\,14
+   \end{array}
+\eeq{p8:e5}
+%
+   here $T\deg\,K_i$ is the triple point of water
+$(T\deg\,K_i = 273\deg.16 K$).
+
+  In the case, if no pressure measurement were done at the antenna, so-called
+standard atmosphere of the International Meteorological Association can
+be used. The dependence of the atmospheric pressure on height for the
+standard atmosphere (table 3.9-2 in \cite{r:hrgian} can be approximated
+with the accuracy better 7~Pa at the height range [-700, 5500] meters using
+the following regression:
+%
+\beq
+  \begin{array}{rcl}
+      P & = & 101324.2 \cdot \exp \bigl( -\flo{1.1859}{-4} H_g -
+              \flo{1.1343}{-9} H_g^2 -  \\
+        &   & \flo{2.5644}{-14} H_g^3 \bigr)
+  \end{array}
+\eeq{p8:e7}
+%
+ where $H_g$ is the geopotential height, which on the Earth surface can
+be computed as
+%
+\beq
+      H_g = \Frac{ 9.806\,65 }{ g_{loc} } h_{ort}
+\eeq{p8:e8}
+
+  In general the barometer is located at a different height than the antenna
+reference point. The air pressure at the antenna reference point differs
+from the air pressure of the barometer at
+$ \Delta P = -101324.2 \cdot \flo{1.1859}{-4} \Delta h$.
+
+  The global Niell mapping functions \cite{r:nmf} $R_d(E)$ and
+$R_e(E)$ are used:
+%
+\beq
+  R(E) =
+            \Frac{ 1 + \Frac{ a }{ 1 + \Frac{ b }{ 1 + c } } }
+                 { \sin E + \Frac{ a }{ \sin E + \Frac{b}{ \sin E + c}}}+
+        \lp \Frac{1}{\sin E} -
+            \Frac{ 1 + \Frac{ a_t }{ 1 + \Frac{ b_t }{ 1 + c_t } } }
+                 { \sin E + \Frac{ a_t }{ \sin E + \Frac{b_t}{ \sin E + c_t}}}
+        \rp \cdot \flo{}{-3} h_{ort}
+\eeq{p8:e9}
+
+  Coefficients $a, b, c$ depends on latitude and time for the the hydrostatic
+mapping function, and only on latitude for the non-hydrostatic mapping
+function. The coefficients $a_t, b_t, c_t$ are constants for the hydrostatic
+mapping function and zero for the non-hydrostatic mapping function:
+%
+\beq
+   \begin{array}{l @{\qquad} l @{\qquad} l}
+      a_h    = \dss\sum_k^7 a_{1k} \, B^1_k(|\phi|) -
+               \dss\sum_k^7 a_{2k} \, B^1_k(|\phi|) \cos ( \psi_0 + \omega_{sa} t ) &
+      a_w    = \dss\sum_k^7 a_{3k} \, B^1_k(|\phi|) &
+      a_{ht} = \mbox{const} \\
+%%
+      b_h    = \dss\sum_k^7 b_{1k} \, B^1_k(|\phi|) -
+               \dss\sum_k^7 b_{2k} \, B^1_k(|\phi|) \cos ( \psi_0 + \omega_{sa} t ) &
+      b_w    = \dss\sum_k^7 b_{3k} \, B^1_k(|\phi|) &
+      b_{ht} = \mbox{const} \\
+%%
+      c_h    = \dss\sum_k^7 c_{1k} \, B^1_k(|\phi|) -
+               \dss\sum_k^7 c_{2k} \, B^1_k(|\phi|) \cos ( \psi_0 + \omega_{sa} t ) &
+      c_w    = \dss\sum_k^7 c_{3k} \, B^1_k(|\phi|) &
+      c_{ht} = \mbox{const} \\
+%%
+   \end{array}
+\eeq{p8:e10}
+%
+   and $a_{wt} = b_{wt} = c_{wt} = 0$. Here $\omega_{sa}$ --- the angular
+frequency, which corresponds to the period of one year, $B^1_k(|\phi|)$
+is the B-spline of the 1st degree which depends on the absolute value of
+the geocentric latitude.
+
+  In a case if the distribution of residual refractivity is known, mapping
+function can be computed by integration. Let us consider a case when 
+a) the {\it residual} atmosphere is considered uniform, i.e. its density
+does not depends on longitude and latitude; b) dependence of the 
+{\it residual} refractivity on height $h$ is described by a Gaussian layer 
+model: $r(h) = r_o \exp{-4\ln(2)\, (h-h_l)^2/w^2}$, where $h_l$ is the 
+height of the layer with maximum residual refractivity and $w$ is the 
+full width half maximum of the distribution; c) bending in the atmosphere
+is neglected.
+
+\begin{figure}
+   \caption{Geometry of modeling residual refractivity}
+   \par\vspace{1ex}\par
+   \centerline{\mbox{ \epsfclipon
+                      \epsfxsize=0.5\textwidth
+                      \epsffile{mf_drawing.eps}
+                    }
+              }
+   \label{f:mf}
+\end{figure}
+
+   According to that model, photon propagates along slanted direction $s$.
+Within interval $\Delta d$ the path delay is proportional to $r(s) ds$.
+The photon at at distance $s$ has height $h$ which by solving the triangle
+with sides $R, s, R+h$ in figure~\ref{f:mf} is 
+$ h = R (\sqrt{1 + 2 \sin e \, s/R + (s/R)^2} -1 )$. For the vertical
+direction, the integral of refractivity over the path is proportional
+to integral $ \dss\int \exp\{ -4\ln2 \: (h-h_l)^2/w^2 \} \, dh$. Thus, 
+the mapping  function for the residual atmosphere is
+
+\beq
+   m(e) = \Frac{ \dss\int\limits_{0}^{\infty} \exp\{ - 4 \ln 2 \; R^2/w^2 \;
+                 \Bigl(\sqrt{1 + 2\sin e \, y + y^2} - (1 + h_l/R)\Bigr)^2 \; dy \}
+               }
+               { \dss\int\limits_{0}^{\infty} \exp\{ 4 \ln 2 \; (h-h_l)^2/w^2 \} 
+               \, dh
+               },
+\eeq{e:a8}
+%
+  where $y=s/R$. In practice, the limits of the integral in the denominator
+falls below some value $\epsilon$. For instance, the expression under integral
+is below $\flo{1.5}{-5}$ outside these limits: 
+$h_{\min} = \min(0,h_l - 2w), \enskip h_{\max} = h_l + 2w$. Analogously, 
+using the relationship between $y$ and $h$ by solving triangle with sides 
+$R, s, R+h$ we find limits for the nominator: 
+
+\beq
+  y_{\min} & = & \sqrt { \sin^2 e + 2h_{\min}/R + (h_{min}/R)^2 } - \sin e,  \hfill \\
+  y_{\max} & = & \sqrt { \sin^2 e + 2h_{\max}/R + (h_{max}/R)^2 } - \sin e . \hfill
+\eeq{e:a9}
+
+\subsection{Ionospheric path delay}
+
+  Electromagnetic wave propagates in plasma with phase velocity
+\beq
+    v_p = c \sqrt{ 1 - \Frac{N_v \, e^2}{m_e \, \epsilon_o \, \omega^2} }
+\eeq{e:i1}
+where $N_v$ --- electron density, $e$ --- charge of an electron, $m_e$ ---
+mass of an electron, $\epsilon_o$ --- permittivity of free space, $\omega$ ---
+angular frequency of the wave and c --- velocity of light in vacuum. Phase
+velocity in ionosphere is faster than velocity of light in vacuum.
+
+  After integration along ray path, expanding expression \ref{e:i1} with
+holding only the term of the first order, we get the following expression for
+additional phase rotation caused by ionosphere:
+\beq
+    \Delta\phi = - \Frac{\alpha}{\omega}
+\eeq{e:i2}
+where $ \alpha $ is
+\beq
+     \alpha = \Frac{e^2}{ 2 \, c \, m_e \,  \epsilon_o }
+              \lp \int N_v \, d s_1 - \int N_v \, d s_2 \rp
+\eeq{e:i3}
+  $s_1$ and $s_2$ are paths of wave propagation from a source to the
+first and second station of the radio interferometer.
+
+  If to express $\int N_v \, d s $ in units \flo{1}{16} electrons/$m^2$
+(so-called TEC units) then after having substituted values of constants we get
+\beq
+   \alpha = \flo{5.308018}{10} \:\: \mbox{sec}^{-1}
+\eeqn
+
+  A fringe phase in channel $i$ is expressed as
+\beq
+     \phi_i = \tau_{ph} \, \omega_o + \tau_{gr} \, (\omega_i - \omega_o) -
+              \Frac{\alpha}{\omega_i}
+\eeq{e:i4}
+  where $\omega_o$ --- is a reference sky frequency.
+
+  Unknown quantities phase and group delays: $\tau_{ph}$ and $\tau_{gr}$ can
+be determined from equations \eref{e:i4} by using weighted LSQ. Equations
+of conditions for such a problem can be written as
+\beq
+     \tau_{ph} \Der{\phi_i}{\tau_{ph}} + \tau_{gr} \Der{\phi_i}{\tau_{gr}} =
+     \phi_i + \Frac{\alpha}{\omega_i}
+\eeq{e:i5}
+
+  Actually, group and phase delays are obtained in fringing software by
+minimizing delay resolution function. However, it can be demonstrated that
+this method gives the same results as solving equations \eref{e:i5} by LSQ
+provided
+\begin{itemize}
+   \item weights $ \Frac{(U_i + L_i) \, A_i}{\nu} $ are ascribed equations
+         of conditions. $U_i$ and $L_i$ is the number of processed samples
+         in upper and lower sideband of the $i$-th channel, $A_i$ amplitude
+         in this channel, $\nu$ --- sampling rate.
+
+   \item residual phases are not large. In practice the difference in estimates
+         of group delay obtained by minimizing delay resolution function and
+         by solving equations of conditions does not exceed 0.1~ps if
+         residual phases are less than 0.4 rad (\deg{23}).
+\end{itemize}
+
+  Now let's obtain explicit expression for delays by solving \eref{e:i4}
+by LSQ:
+\beq
+   \hat{x} = \lp( r\tra{A}) \, r A \rp^{-1} \, (r\tra{A}) \, x
+\eeq{e:i6}
+where $A$ --- matrix of equations of conditions, $r$ --- vector of weights,
+$x$ --- vector of right parts of equations of conditions.
+
+  Partial derivatives are
+\beq
+     \Der{\phi_i}{\tau_{ph}} = \omega_o
+     \hspace{5em}
+     \Der{\phi_i}{\tau_{gr}} = \omega_i - \omega_o
+\eeq{e:i7}
+
+  We can use the explicit expression for an invert of a symmetrical 2x2 matrix:
+\beq
+    \left(
+    \begin{array}{r@{\qquad}r}
+           A_{11} & A_{12}  \vspace{3.5ex} \\
+           A_{12} & A_{22}  \\
+    \end{array}
+    \right)^{-1}
+    =
+    \left(
+    \begin{array}{rr}
+           \Frac{A_{22}}{\Delta} & -\Frac{A_{12}}{\Delta}  \vhex  \\
+          -\Frac{A_{12}}{\Delta} &  \Frac{A_{11}}{\Delta}         \\
+    \end{array}
+    \right)
+%
+    \hspace{3em} \Delta = A_{11}A_{22} - A_{12}^2
+\eeq{e:i8}
+
+  We can easily find blocks of normal matrix and normal vector:
+\beq
+  \begin{array}{rcl}
+    r A_{11} & = & \omega_o^2 \Sum_i^n r_i                           \vhex  \\
+    r A_{12} & = & \omega_o   \Sum_i^n r_i (\omega_i - \omega_o )    \vhex  \\
+    r A_{22} & = &            \Sum_i^n r_i (\omega_i - \omega_o )^2  \vhex  \\
+    \Delta   & = & \omega_o^2 \lp \Sum_i^n r_i \cdot
+                   \Sum_i^n r_i ( \omega_i - \omega_o)^2  -
+                   \lp \Sum_i^n r_i ( \omega_i - \omega_o ) \rp^2 \, \rp
+  \end{array}
+\eeq{e:i9}
+
+  Then we can write solution of system of normal equations \eref{e:i7}:
+\beq
+    \lp
+    \begin{array}{l}
+           \tau_{ph}   \vspace{3.5ex} \\
+           \tau_{gr}   \\
+    \end{array}
+    \rp
+%
+    =
+%
+    \lp
+    \begin{array}{rr}
+           \Frac{A_{22}}{\Delta} & -\Frac{A_{12}}{\Delta}  \vhex \\
+          -\Frac{A_{12}}{\Delta} &  \Frac{A_{11}}{\Delta}       \\
+    \end{array}
+    \rp
+%
+    \:
+%
+    \lp
+    \begin{array}{l@{\:}c@{\:}l}
+       \omega_o \Sum_i^n r_i \phi_i &+&
+                \alpha \, \omega_o \Sum_i^n \frac{r_i}{\omega_i}       \vhex \\
+       \omega_o \Sum_i^n r_i ( \omega_i - \omega_o ) \phi_i &+&
+                \alpha \, \Sum_i^n {r_i}\frac{\omega_i -\omega_o}{\omega_i} \\
+    \end{array}
+    \rp
+\eeq{e:i10}
+  or after some algebra
+\beq
+   \begin{array}{r@{\,}c@{\,}l}
+   \tau_{ph} &=& \Frac{ \Sum_i^n r_i (\omega_i - \omega_o)^2 \cdot
+                      \Sum_i^n r_i \phi_i -
+                      \Sum_i^n r_i ( \omega_i - \omega_o )
+                               \Sum_i^n r_i ( \omega_i - \omega_o ) \phi_i }
+                    {\omega_o \lp \Sum_i^n r_i \cdot
+                       \Sum_i^n r_i ( \omega_i - \omega_o)^2  -
+                       \lp \Sum_i^n r_i ( \omega_i - \omega_o ) \rp^2 \, \rp}
+             - \Frac{\alpha}{\omega^2_{ph}}
+%
+   \vhex\vhex \\
+%
+   \tau_{gr} &=& \Frac{ \Sum_i^n r_i \cdot
+                      \Sum_i^n r_i (\omega_i - \omega_o) \phi_i -
+                      \Sum_i^n r_i ( \omega_i - \omega_o )^2
+                               \Sum_i^n r_i \phi_i }
+                    { \lp \Sum_i^n r_i \cdot
+                          \Sum_i^n r_i ( \omega_i - \omega_o)^2  -
+                      \lp \Sum_i^n r_i ( \omega_i - \omega_o ) \rp^2 \, \rp}
+             + \Frac{\alpha}{\omega^2_{gr}}
+   \end{array}
+\eeq{e:i11}
+  where $\omega_{ph}$ and $\omega_{gr}$ are
+\beq
+   \begin{array}{r@{\,}c@{\,}l}
+   \omega_{ph} &=& \sqrt { \omega_o \, \Frac
+                 { \Sum_i^n r_i \cdot
+                   \Sum_i^n r_i (\omega_i - \omega_o)^2  -
+                   \lp \Sum_i^n r_i ( \omega_i - \omega_o ) \rp^2 \,
+                 }
+%
+                 {
+                   \Sum_i^n r_i (\omega_i - \omega_o)
+                   \Sum_i^n r_i \frac{(\omega_i - \omega_o)}{\omega_i} -
+                   \Sum_i^n r_i (\omega_i - \omega_o)^2 \cdot
+                   \Sum_i^n \frac{r_i}{\omega_i}
+                 } }
+%
+   \vhex\vhex\vhex \\
+%
+   \omega_{gr} &=& \sqrt \Frac
+                 { \Sum_i^n r_i \cdot
+                          \Sum_i^n r_i ( \omega_i - \omega_o)^2  -
+                      \lp \Sum_i^n r_i ( \omega_i - \omega_o ) \rp^2 \,
+                 }
+%
+                 {
+                   \Sum_i^n r_i ( \omega_i - \omega_o )
+                   \Sum_i^n \frac{r_i}{\omega_i} -
+                   \Sum_i^n r_i \cdot
+                   \Sum_i^n r_i \frac{(\omega_i - \omega_o)}{\omega_i}
+                 }
+   \end{array}
+\eeq{e:i12}
+
+$\omega_{ph}$ and $\omega_{gr}$ are called effective ionosphere frequencies
+for ionosphere contribution. They have clear physical meaning: if the
+wide-band signal be replaced by a quasi-monochromatic signal with a group
+or phase effective ionosphere frequency then contribution to group or phase
+delay would be the same.
+
+\subsubsection{Ionosphere-free linear combinations}
+
+   Using notion of ionosphere effective frequencies we can express observed
+group and phase delays at X and S bands through ionosphere free delay
+$\tau_{if}$ and parameter $\alpha$:
+%
+\beq
+    \begin{array}{rcl}
+        \tau_{gx} & = & \tau_{if} + \Frac{\alpha}{\omega_{gx}^2}   \vhex \\
+        \tau_{gs} & = & \tau_{if} + \Frac{\alpha}{\omega_{gs}^2}   \vhex \\
+        \tau_{px} & = & \tau_{if} - \Frac{\alpha}{\omega_{px}^2}   \vhex \\
+        \tau_{ps} & = & \tau_{if} - \Frac{\alpha}{\omega_{ps}^2}   \vhex \\
+    \end{array}
+\eeq{e:i13}
+%
+  Here the first letter in indexes stands for group or phase delay and the
+second letter stands for X or S band. Using these equations we can eliminate
+unknown parameter $\alpha$ and express ionosphere free delay through a linear
+combination of two or three observables. The most important ionosphere-free
+linear combination of observables are given below:
+%
+\beq
+  \begin{array}{rcl}
+   \mbox{G\_Gxs}
+          & = & \Frac{\omega_{gx}^2}{\omega_{gx}^2 - \omega_{gs}^2} \tau_{gx} -
+                \Frac{\omega_{gs}^2}{\omega_{gx}^2 - \omega_{gs}^2} \tau_{gs}
+                \vhex \\
+   \mbox{PxGs}
+          & = & \Frac{\omega_{px}^2}{\omega_{px}^2 + \omega_{gs}^2} \tau_{px} +
+                \Frac{\omega_{gs}^2}{\omega_{px}^2 + \omega_{gs}^2} \tau_{gs}
+                \vhex \\
+   \mbox{PxGx}
+          & = & \Frac{\omega_{px}^2}{\omega_{px}^2 + \omega_{gx}^2} \tau_{px} +
+                \Frac{\omega_{gx}^2}{\omega_{px}^2 + \omega_{gx}^2} \tau_{gx}
+  \end{array}
+\eeq{e:i14}
+
+  Alternative way is to use expression for ionosphere contribution to
+group delay at X band:
+\beq
+    \tau_{igx} = \Frac{\omega_{gs}^2}{\omega_{gx}^2 - \omega_{gs}^2} \,
+                 (\tau_{gx} - \tau_{gs})
+\eeq{e:i15}
+%
+  One can say $\tau_{igx}$ is to be added to  theoretical delay and thus 
+it will ``correct'' or ``calibrate'' group delay at X band for the 
+ionosphere contribution. This approach is rather ugly since ``calibration'' 
+or ``correction'' to group delay already contains this quantity (we correct 
+observable X using the measurement of this observable itself). In order 
+to avoid this logical pitfall is its preferable that the concept of 
+ionosphere-free linear combinations of observables should be used.
+
+  Ionosphere frequencies vary from an experiment to experiment and they
+even varies during the same experiment. The table below shows typical
+{\it cyclic} ionosphere frequencies and ionosphere delays for experiment
+c1014 (01JUL09XA):
+
+\beq
+  \begin{array}{rcl@{\quad\quad}rcl}
+     f_{gx}     & = & \flo{8.557}{9} \:\:  \mbox{Hz}                  &
+     f_{gs}     & = & \flo{2.293}{9} \:\:  \mbox{Hz}                  \\
+     f_{px}     & = & \flo{8.215}{9} \:\:  \mbox{Hz}                  &
+     f_{ps}     & = & \flo{2.233}{9} \:\:  \mbox{Hz}                  \\
+     \tau_{igx} & = & 18.3  \:\, \Delta \mbox{TEC} \:\:  \mbox{ps}  &
+     \tau_{igs} & = & 255.6 \:\, \Delta \mbox{TEC} \:\:  \mbox{ps}  \\
+     \tau_{ipx} & = & 19.9  \:\, \Delta \mbox{TEC} \:\:  \mbox{ps}  &
+     \tau_{ips} & = & 269.5 \:\, \Delta \mbox{TEC} \:\:  \mbox{ps}  \\
+  \end{array}
+\eeq{e:i16}
+
+\subsubsection{Ionosphere calibration using ionosphere electron contents
+from GPS}
+
+  GPS observations are made at two frequencies, 1.2276 and 1.57542~GHz.
+A linear combination of two observables provides an estimate of the 
+instantaneous TEC. Analysis of continuous GPS observations from a global 
+network  comprising 100--300 stations makes it feasible to derive an
+empirical model of the total electron contents over the span of 
+observations using data assimilation technique. Such a model is routinely
+delivered by GPS data analysis centers since 1998. The model provides 
+values of the TEC on a regular 3D grid. The axes of the grid are longitude,
+latitude, and time. The accuracy and resolution of GPS TEC model is 
+constantly improving and is expected to improve in the future. In 2010,
+several analysis centers produced TEC model outputs with spatial 
+resolution $5^\circ \times 5^\circ$ and time resolution 2~hours.
+
+\begin{figure}
+   \caption{Ray passing through the ionosphere \label{f:iono}}
+   \par\vspace{1ex}\par
+   \centerline{\mbox{ \epsfclipon
+                      \epsfxsize=0.5\textwidth
+                      \epsffile{iono_300.eps}
+                    }
+              }
+\end{figure}
+
+  For the purpose of modeling, the ionosphere is considered as a thin
+spherical layer at the constant height $H$. Typical value of $H$ is 450~km.
+In order to compute the TEC from GPS maps we need to know the coordinates
+of the point at which the ray pierce the ionosphere --- point J in 
+figure~\ref{f:iono}. First we find the distance from the station to the 
+ionosphere piercing point $D = |SJ|$ by solving triangle $OSP$. Noticing
+that $|OS| = R\earth$ and $|OJ| = R\earth +H$, we immediately get
+%
+\beq
+   \begin{array}{rcl}
+     \beta & = & \arcsin \Frac{ \cos E }{1 + \frac{H}{R\earth}} \vex \\
+      D    & = & R\earth \sqrt{ 
+                  2 \frac{H}{R\earth} \lp 1 - \sin\lp E + \beta \rp\rp +
+                    \lp \frac{H}{R\earth} \rp^2 }
+   \end{array}
+\eeq{e:i17}
+
+  Then Cartesian coordinates of point $J$ are $\vec{r} + D\vec{s}$. 
+Transforming them into polar coordinates geocentric latitude and longitude,
+we get arguments for interpolation in the 3D grid. Since the accuracy of
+TEC models relatively low, the choice of interpolation is irrelevant.
+The VTD uses 3-dimensional B-spline interpolation by expanding the TEC field
+into the tensor products of basic splines of the 3rd degree, although linear 
+interpolation between the closest nodes of the grid would be sufficient.
+Interpolating the TEC model output, we get the TEC through the vertical
+path $|JI_o|$. The slanted path $|JI_1|$ is $|JI_o|/\cos{\beta}$. Therefore, we 
+need to multiply the vertical TEC by $1/\cos{\beta(E)}$, which maps the 
+vertical path delay through the ionosphere into the slanted path delay. Here we
+neglect the ray path bending in the ionosphere. We also neglect Earth's
+ellipticity, since the Earth was considered spherical in the data assimilation
+procedure of the TEC model.
+
+  Combining equations, we get the final expression for the contribution
+of the ionosphere to path delay:
+%
+\beq
+  \tau_{iono} = \pm \Frac{\alpha}{4\, \pi^2 \, f^2_{\mbox{eff}} } \: 
+                \mbox{TEC} \: \Frac{1}{\cos{\beta(E)}} \quad,
+\eeq{e:i18}
+  where $f_{\mbox{eff}}$ is the effective {\it cyclic} frequency, and sign
+plus is for contribution to group delay, and sign minus is for contribution
+to phase delay.
+
+\subsection{Delay caused by source structure}
+
+  In derivation of the expression for VLBI delay we assumed that the source
+is point-like. In general, the complex coherence function $\Gamma_{12}$
+according to the Van~Zitter--Zernike theorem is
+%
+\beq
+   \Gamma_{12}(b_x,b_y,\omega) = e^{\tss i\omega\tau_0} \dintinf B(x,y,\omega)
+         e^{\tss -2\pi i (x b_x + y b_y )/ \lambda} dx\,dy
+\eeq{p9:e1}
+  where $\omega$ is the angular reference frequency of received signal,
+$\lambda$ is the wavelength wavelength, $\tau_0$ --- the geometric delay to
+the reference point on the source, $B$ --- the two-dimensional function
+of the brightness distribution, which depends on local Cartesian spatial
+coordinates $x$, $y$. These coordinates are zero in the point to
+which $\tau_0$ corresponds. $b_x$, $b_y$ are projection of the baseline
+vector $\vc{b} = \vc{r}_1 - \vc{r}_2$ to the plane that is perpendicular
+to the center of the map (x=0, y=0). Integral \eref{p9:e1} is called
+visibility function.
+
+  Ort \vce{y} of the local Cartesian spatial coordinates related to the source
+position is defined as a unit vector which lies in the plane of vectors
+$\vce{S}$ and $\vce{z}$ and is perpendicular to \vce{s} (where \vce{z} is
+the unit vector in the direction of the pole, i.e $\vce{z}_{\sc\tiny t} =
+(0, 0, 1){}^{{}^{\bf \top}}$). Ort $x$ is defined as the vector which is
+perpendicular to both \vce{s} and \vce{y}, in such a manner that three vectors
+\( (\vc{x}, \vc{y}, \vce{s}) \) would form the right triplet:
+%
+\beq
+  \begin{array}{rcl}
+      \vc{x} & = & \Frac{ \vc{z} \vpd \vce{s} }{ |\vc{z} \vpd \vce{s}| }   \\
+      \vc{y} & = & \Frac{ \vce{s} \vpd \vc{x} }{ |\vce{s} \vpd \vc{x}| } =
+                   \Frac{ \vc{z} - \vce{s} \spd ( \vce{s} \spd \vc{z} )  }
+                        {|\vc{z} - \vce{s} \spd ( \vce{s} \spd \vc{z} )| }
+  \end{array}
+\eeq{p9:e2}
+
+   The phase of the coherence function is expressed as
+%
+\beq
+     \Phi = \tau_0 \omega + \arctg
+            \Frac{\mbox{Im}\, V(b_x,b_y,\omega)}{\mbox{Re}\, V(b_x,b_y,\omega)}
+\eeq{p9:e3}
+%
+  Here we denoted the visibility function (integral in \ref{p9:e1}) with
+letter $V$. The contribution of the source structure to phase delay is the
+second term in \ref{p9:e3} divided by the speed of light:
+%
+\beq
+    \tau_{ps} = \Frac{1}{c} \arctg
+            \Frac{\mbox{Im}\, V(b_x,b_y,\omega)}{\mbox{Re}\, V(b_x,b_y,\omega)}
+\eeq{p9:e4}
+
+  The group delay is determined as
+%
+\beq
+    \tau_{gs} = \Der{}{\omega} V(b_x,b_y,\omega)
+\eeq{p9:e5}
+
+  We can transform expression \ref{p9:e5} to
+\beq
+  \begin{array}{r@{}l}
+   \tau_{str}(b_x,b_y) = \Frac{2\pi}{c|V|^2} \Biggl[ &
+                       \Re V(b_x,b_y)\cdot\lp \vc{b}_s \spd
+                       \Vc{\rm \Im \lp \nabla V(b_x,b_y) \rp } \rp -
+                                                  \\ &
+                       \Im V(b_x,b_y)\cdot\lp \vc{b}_s \spd
+                       \Vc{\rm \Re \lp \nabla V(b_x,b_y) \rp } \rp
+                                              \Biggl]
+  \end{array}
+\eeq{p9:e6}
+
+   where
+\beq
+  \mbox{ \( \vc{b}_s = \lp \begin{array}{l@{}}
+                                     \vc{b} \spd \vc{x}  \\
+                                     \vc{b} \spd \vc{y}
+                              \end{array}
+                          \rp \)  }
+  \qquad
+  \mbox{ \( \Vc{\nabla V} = \lp \begin{array}{l@{}}
+                                          \Der{}{b_x} V \\
+                                          \Der{}{b_y} V
+                                   \end{array}
+                               \rp \) }
+\eeq{p9:e7}
+
+   This gives us an expression for the contribution of the source structure
+to group delay in the general form.
+
+\subsection{Coupling effects}
+
+  There is a term $\tau_p$, the propagation delay, in the expression for
+time delay \ref{e:e13}. It is convenient to take it out the expression
+\ref{e:e13}, since the propagation delay depends on meteorological
+parameters which cannot be predicted in advance. If we take the term
+$\tau_p$ out of \ref{e:e13}, than the total delay is
+%
+\beq
+    t_2 - t_1 = (t_2 - t_1){}_{geom} + \tau_p -
+           \Frac{1}{c} \vc{V}\earth \cdot \vce{S} \, \tau_p
+\eeq{e:c1}
+%
+   where $(t_2 - t_1){}_{geom}$ is the contribution to delay without
+delay in the medium of propagation. The last term which give rises from
+the denominator in \ref{e:e13} is called coupling between the geometric
+delay and the propagation delay.
+
+  The second coupling effects give rise due to change of the height of the
+phase center of the receiver due to slewing as
+$\Delta h = \vc{fb} \cdot \vc{r}_{3\sc\tiny c}$. The path
+length through the atmosphere is changing and therefore, the tropospheric
+path delay. Since the expression for the zenith was referred to the reference
+point of the antenna, a small correction is needed. Since the tropospheric
+path delay is proportional to the surface pressure,
+$\Delta\tau_p = \tau_p \Frac{\Delta P}{P}$. Using expression \ref{p8:e7},
+we get
+%
+\beq
+    \Delta \tau_{ca} = \flo{-1.1859}{-4}
+       \lp
+           \tau_{t1} \, \vc{fb}_1 \cdot \vc{r}_{1,3\sc\tiny c} -
+           \tau_{t2} \, \vc{fb}_2 \cdot \vc{r}_{2,3\sc\tiny c}
+       \rp
+\eeq{e:c2}
+  where $\vc{r}_{1,3\sc\tiny c}$ denotes the 3rd component of the position
+vector in the geocentric inertial coordinate system of the 1st antenna,
+and $\vc{r}_{1,3\sc\tiny c}$ denotes the 3rd component of the position
+vector of the 2nd antenna. $\tau_{ti}$ is the tropospheric path delay at
+the $i$th antenna. The additional delay \ref{e:c2} is called ``coupling
+between the antenna axis and the tropospheric path delay''.
+
+\section{Implementation of computation of the theoretical path delay, delay rate
+and partial derivatives with respect to parameters of model}
+\label{s:implementation}
+
+  The model described above is implemented in library VTD. Computation
+procedures is specified in the control file. The control file has the
+syntax of a pair {\sf keyword}---{\tt value}. The value may be either
+the name of the file with a~priori values, or the option code, or the name
+of another control file. The computation procedure for delay, delay rate
+and partial derivatives of delays over parameters of the model has many
+options. Care should be taken for using options. Some options are designed
+for comparison tests only, some options produce correct results only if
+they correspond to specific a~priori files.
+
+\subsection{Computation before processing the first observation}
+
+  Some reduction quantities can be computed beforehand when a range of
+instants of observations, typically 24 hour or less, is known.
+
+  Before processing the first observation station coordinates from the input
+catalogue specified in the keyword {\sf STATION\_COORDINATES} are read.
+The following quantities are computed for each station: longitude, geocentric
+latitude, geodetic latitude, orthometric height (the hight with respect to the
+reference ellipsoid), local gravity acceleration, transformation matrix from
+the local topocentric coordinate system Up--East--North to the Cartesian
+terrestrial coordinate system as well as the transformation matrix from
+the local topocentric coordinate system Radial--East--North to the Cartesian
+terrestrial coordinate system. In the first case the geodetic latitude is
+used in expression \ref{e:e40} and the second case the geocentric latitude.
+Time independent vectors $ \vec{X}^{rc}_j(m,\phi), \vec{X}^{rs}_j(m,\phi),
+\vec{X}^{ic}_j(m,\phi), \vec{X}^{is}_j(m,\phi), X^{3c}_j(m,\phi),
+X^{3s}_j(m,\phi) $ which are used for computation of displacement caused
+by the solid Earth tides, expressions \ref{e:a05}, \ref{e:a16}, are computed
+and stored at this step.
+
+  The station motion is determined with several models. Contribution from each
+model is summed up.
+
+  Station linear motion is determined by velocities in the apriori file
+specified in the the keyword {\sf STATION\_VELOCITIES}. These a~priori velocities
+are either adjusted in the VLBI solution or computed on the basis of
+apriori models, f.e. NUVEL if no observation at that station was made.
+
+  For each station the B-spline model of 0-th degree is defined in the file
+specified by the keyword {\sf STATION\_ECCENTRICITIES}. These are either
+motions of the antenna reference point with respect to the ground marker or
+displacements due to human activity, for instance, rail repairing, measured
+with a high accuracy local survey. For many stations this model is zero.
+
+  The type of antenna mounting, the length of the antenna axis offset
+$|\vc{fb}|$ and the code of the tectonic plate where the station resides
+are defined in the file specified by the keyword {\sf STATION\_DESCRIPTION}.
+
+  Traditionally, time tags of VLBI formatters are shifted to show
+pseudo--UTC. The UTC is a non-differentiable function of time. It can be
+represented in a form of expansion over the basis of B-splines of zeroth
+degree. The table with epochs and amounts of jumps is specified by the
+keyword {\sf LEAP\_SECOND}. {\bf NB:} formatter tag keeps the so-called
+pseudo-UTC. If the jump of UTC(t) function took place in the middle of
+an experiment, this jump is not applied till the end of an experiment.
+Therefore, in order to get a TAI instance of time that corresponds to UTC(t),
+one should substitute as an argument of [UTC-TAI](UTC) not the time tag at
+the moment of an observation, but the time tag at the moment of a nominal
+session start.
+
+  Position of big planets, the Sun, the Earth and the Moon are computed
+in accordance with numerical ephemerides using Chebyshev polynomials.
+Ephemerides DE403 and DE405 are supported. The file name is specified by
+the keyword {\sf DE\_EPHEMERIDES}. The argument for the numerical ephemerides
+is TDB. The difference $TDB - TAI(t)$ is
+\beq
+    TDB(t) = TAI + \dss\int\limits_{t_0}^t \biggl( \Frac{1}{2c^2} v^2 +
+                 \Frac{U}{c^2} - L_B \biggr)  \; dt  + 32.184
+\eeq{e:im1}
+  This differs from \ref{e:e3} only by term $L_B$ under the integral. With
+accuracy $10^{-5}$ s we can get the simplified expression for TDB:
+%
+\beq
+     TDB(t) = t \: + \: 32.184 \: + \:
+              A_1 \, \sin ( \phi_{SA} + \omega_{SA} T_J ) +
+              A_2 \, \sin ( 2(\phi_{SA} + \omega_{SA} T_J) )
+e\eeq{e:im2}
+%
+   where $\omega_{SA} = \flo{1.990968752920}{-7}$  rad s${}^{-1}$ is the
+annual frequency, $\phi_{SA} = 6.240076$ rad, $A_1 =  0.001658$ s, and
+$A_2 =  \flo{1.4}{-5}$ s
+
+\subsection{Computation of the rotation matrix from the terrestrial coordinate
+            system to the celestial coordinate system}
+
+  There are several options to compute the rotation matrix which accounts
+for the Earth's rotation. All these options involves a sum of the secular
+model and coefficients of the empirical expansion. The secular model is
+either analytical, or semi-analytical or empirical. It is valid for
+a long period of time (more than 10 years). The empirical expansion is valid
+for a short period of time (0.5--5.0 days). The accuracy of the resulting
+rotation matrix depends on accuracy of the a~priori empirical expansion.
+There is no ``good'' or ``bad'' a~priori model to the rotation matrix,
+but the model can be consistent or inconsistent,
+However, the empirical expansion was made on the basis of a certain secular
+model. Therefore, they both should be applied as a consistent pair.
+An inconsistent pair of model may potentially have very large errors.
+Library VTD similar to other modern astronomical reduction programs supports
+a wide range of options. Care should be taken to set options which are
+consistent.
+
+\subsubsection{IERS time series approach}
+
+   In accordance to that approach parameters $\zeta_0, \theta_0, z_0,
+\epsilon_0$ are computed using an expansion over low degree polynomials,
+$\delta\psi, \delta\epsilon$ are computed using expansion over the
+quasi-harmonic basis, UT1, $X_p$, $Y_p$ are computed by interpolating time
+series. One of the modifications of the IERS time series approach suggests
+using time series of expansion of empirical corrections to $\delta\psi,
+\delta\epsilon$. Library VTD does not implement such a modification.
+
+  The file with time series for UT1, $X_p$, $Y_p$ is specified by keyword
+{\sf EOP\_SERIES}. {\tt EOP-MOD Ver 2.0} format of input EOP files is
+supported. The keyword {\sf EOP\_TIME\_SCALE} specified by name if the argument
+used in that file: {\tt TAI}, or some function of time: {\tt TDB}, {\tt TDT},
+{\tt UTC}, {\tt UT1}. Coefficients of interpolating spline of the 3rd degree
+are computed for UT1, $X_p$, $Y_p$. An option to subtract harmonic model
+of variations in UT1 caused by zonal model is supported. The name of the
+model is specified by keyword {\sf UZT\_MODEL}. The following values are
+supported: {\tt DICKMAN1993}, {\tt DICKMAN1993\_SHORT}, and 
+{\tt DICKMAN1993\_PRINCIPLE} for \cite{r:dickman1993} model. 
+Value {\tt DICKMAN1993} means that all term of that model are used. 
+Value {\tt DICKMAN1993\_SHORT} means that terms with periods less than 
+60 days are used. Value {\tt DICKMAN1993\_PRINCIPLE} means that 14 terms 
+of the expansion are used, the contribution of omitted terms to UT1 rate being
+less than $10^{-14}$ rad~s${^{-1}}$. The value of the keyword {\sf UZT\_USE}
+specifies how to apply contribution to UT1 caused by zonal tides. Value
+{\tt ADD} means that the contribution to UT1 will be added to function UT1
+computed on the moment of observation; value {\tt SUBTRACT} means that the
+contribution to UT1 will be subtracted from function UT1 computed on the
+moment of observation; value {\tt INTERPOLATE} means that the contribution
+to UT1 will be subtracted from tabulated values of UT1 before computing
+coefficients of the interpolating and added back to function UT1 computed
+on the moment of observation.
+
+  Precession expansion is defined by keyword {\sf PRECESSION\_EXPRESSION}.
+It can have values either {\tt LIESKE\_1977} for \cite{r:lieske1977}
+semi-empirical low degree polynomial expansion or {\tt CAPITAINE\_2003}
+for low degree polynomial expansion \cite{r:Cap03a}.
+
+  Nutation expansion is defined by keyword {\sf NUTATION\_EXPANSION}.
+It can have the following values:
+\begin{itemize}
+   \item {\tt WAHR1980}        --- for Wahr 1980 expansion;
+   \item {\tt IERS1996}        --- for IERS1996 expansion;
+   \item {\tt REN2000}         --- for REN2000 expansion;
+   \item {\tt MHB2000}         --- for MHB2000 expansion;
+   \item {\tt MHB2000\_TRANSF} --- for the transfer function from the MHB2000
+                                   expansion applied to the REN2000 expansion
+                                   without so-called add-on ad hoc terms;
+   \item {\tt PETA}            --- for the shortened version of the REN2000
+                                   expansion which comprises only of three
+                                   largest terms.
+\end{itemize}
+
+  Including geodesic nutation in $\Delta\psi, \Delta\epsilon$ computation
+is optional and is controlled by the keyword {\sf GEODESIC\_NUTATION}.
+Value {\tt YES} forces to add contribution of the geodesic nutation
+to nutation angles.
+
+  Computation of the rotation matrix maybe slightly altered of keyword
+{\sf EROT\_COMPAT} has value {\tt CALC10}. In that case
+a)~additional spurious terms are added to parameter $S$:
+1)~\mbox{\flo{7.07827}{-8}} --- residual in the LLR solution of Chapront;
+2)~\mbox{\flo{-4.557249}{-10}} --- accumulated difference of using UT1
+instead of TAI in expression for $S$ in the past
+3)~\mbox{\flo{4.462899}{-20}} \, $T_J$ \mbox{rad s${}^{-1}$} unknown term;
+\mbox{\flo{-7.220525}{-20}} \, $T_j$ \mbox{rad s${}^{-1}$} --- spurious term
+introduced by N.~Capitaine in order to have a symmetry in her formulae;
+b)~terms $\delta\Psi_0$ and $E_{p0}$ are subtracted from $\delta\Psi$ and
+$\delta\epsilon$, and the rotation transformation matrix is multiplied from
+the left by
+$ \mat{R}_1(-\Delta\Psi_0\sin\epsilon_0) \cdot \mat{R}_2(E_{p0}) \cdot
+  \mat{R}_3(\flo{7.07827}{-8})$. This change is done for comparison
+tests with Calc10.
+
+  The keyword {\sf HARMONIC\_EOP\_FILE} specified the file with empirical
+harmonic variations in the Earth rotation with respect to some apriori
+model. It compensates errors in the nutation model and omitted terms which
+are not forced nutations, for example, terms excited by the oceanic
+response and the free core nutation.
+
+\subsubsection{Earth rotation model approach}
+
+  In that case instead of specifying the file with time series of $X_p$,
+$Y_p$, UT1, code of precession, nutation, the file with 30 coefficients 
+of the a~priori Earth rotation model is specified. The apriori model 
+of expansion of the vector of of small perturbational rotation $\vc{q}$(t) 
+over the B-spline basis and Fourier basis can optionally be specified in
+keywords {\tt ERM\_FILE} and {\tt HARMONIC\_EOP\_FILE}.
+
+  Typical setup when the IERS time series approach is selected
+
+\begin{verbatim}
+AEM_FILE:                NONE
+ERM_FILE:                NONE
+HARMONIC_EOP_FILE:       NONE
+#
+EOP_SERIES:              {file_name}
+EOP_TIME_SCALE:          TDB
+UZT_MODEL:               NONE
+UZT_USE:                 NONE
+PRECESSION_EXPRESSION:   CAPITAINE_2003
+NUTATION_EXPANSION:      MHB2000
+GEODESIC_NUTATION:       NONE
+EROT_COMPAT:             NONE
+\end{verbatim}
+
+  Typical setup when the ERM approach is selected
+
+\begin{verbatim}
+AEM_FILE:                {file_name}
+ERM_FILE:                {file_name}
+HARMONIC_EOP_FILE:       {file_name}
+#
+EOP_SERIES:              NONE
+EOP_TIME_SCALE:          NONE
+UZT_MODEL:               NONE
+UZT_USE:                 NONE
+PRECESSION_EXPRESSION:   NONE
+NUTATION_EXPANSION:      NONE
+GEODESIC_NUTATION:       NONE
+EROT_COMPAT:             NONE
+\end{verbatim}
+
+\subsection{Site displacement models}
+
+   Computation of displacements caused by solid Earth tides is controlled
+by several keywords. The keyword {\sf SOLID\_EARTH\_TIDES\_2ND\_DEGREE}
+specifies the name of the model for the dependence of the generalized Love
+numbers on frequency for the solid Earth tides of the 2nd degree, except
+the constituent with zero frequency. The models differ in parameters of
+the resonance close to the nearly diurnal free wobble and effect
+of anelasticity on Love numbers at low frequencies.
+
+\begin{itemize}
+   \item  {\tt MDG97EL} --- The elasticity variant of \cite{r:mdg97} model;
+   \item  {\tt MDG97AN} --- The anelasticity variant of \cite{r:mdg97} model;
+   \item  {\tt DDW99EH} --- The equilibrium variant of \cite{r:ddw98} model;
+   \item  {\tt DDW99IN} --- The non-equilibrium variant of \cite{r:ddw98} model;
+   \item  {\tt LOVE}    --- Love numbers are considered to be
+                            frequency independent: $h = 0.609, l = 0.0852$;
+   \item  {\tt MATHEWS\_2000} --- The variant of Mathews model as it was presented
+                                  in IERS Conventions 2003;
+   \item  {\tt MATHEWS\_2001} --- The variant of \cite{r:mat01} model'
+   \item  {\tt NONE}          --- Displacements caused by solid tides are
+                                  considered to be zero.
+\end{itemize}
+
+  The expansion of the tide-generating potential contains terms of zero
+frequency. This constituents in the expansion induce the permanent displacement
+which is included in estimates of site position. The keyword
+{\sf SOLID\_EARTH\_TIDES\_ZERO\_FREQ} specifies the Love number which is
+to be used for computing displacement due to zero-th frequency in the
+tide-generating potential, i.e. the permanent tide.
+%
+\begin{itemize}
+   \item  {\tt MDG97AN} --- The anelastisity variant of \cite{r:mdg97} model;
+%
+   \item  {\tt FLUID}   --- The Love numbers of the fluid limit:
+                            $ h_2(\omega\!\!=\!\!0) = 0.94, \quad
+                              \ell_2(\omega\!\!=\!\!0) = 0$;
+%
+   \item  {\tt ZERO}    --- $h_2(\omega\!\!=\!\!0) = 0.0, \quad
+                             \ell_2(\omega\!\!=\!\!0) = 0.0$,
+                            i.e. the displacement vector will have only
+                            periodic terms and the zero mean.
+\end{itemize}
+
+  Displacements caused by pole tide are computed using the Love numbers
+model specified by the keyword {\sf MPL\_FILE}. The supported values of
+this keyword are the same as for the keyword
+{\sf SOLID\_EARTH\_TIDES\_2ND\_DEGREE}. Parameters for the linear
+model of components 1,2 of the perturbing vector of the Earth rotation
+$\vc{q}$ are defined in an external file. The name of this external file
+is specified in the keyword {\sf MPL\_FILE}. Value {\tt NONE} means that
+parameters $E_1, E_2, E_{12}, E_{22}$  are zero.
+
+   Computation of displacements caused by solid Earth tides of the 3rd
+degree is control be keyword {\sf SOLID\_EARTH\_TIDES\_3RD\_DEGREE}.
+Two values are supported: {\tt NONE} and {\tt MDG97}. Value {\tt NONE}
+means that no displacements caused by tides of the 3rd degree should be
+computed. Value {\tt MDG97} means that the Love numbers of the 3rd
+degree according to \cite{r:mdg97} should be used.
+
+  The keyword {\sf AXIS\_OFFSET\_MODEL} specifies whether the contribution
+to delay caused by motion of the receiver's phase center with respect to
+the antenna's reference point should be taken into account (value {\tt YES}),
+or not (value {\tt NONE}).
+
+  Displacements caused by various loading are computed by stand-alone programs.
+Displacements at a specific station caused by ocean loading are computed by
+evaluating the convolution integral \ref{e:b2} of the ocean tides model with
+appropriate Green's functions. The ocean tides model presents the complex
+amplitude of sea level change at a latitude/longitude grid for each harmonic
+constituent. The ocean tides model typically consists of 8--18 constituents.
+As a results of evaluating the convolution integral, complex amplitude
+for three components of the position vector in local topocentric coordinates
+system Up--East--North are computed.
+
+  Displacements at a specific station caused by the atmospheric pressure
+loading are computed by evaluating the convolution integral \ref{e:b2} and
+the surface atmospheric pressure field from global numerical weather models.
+First, the diurnal and semi-diurnal variations in surface pressure of the
+global atmospheric field are removed, since the atmospheric pressure variations
+at these frequencies in numerical weather models are corrupted, because their
+frequencies are close to the Nyquist frequency of the sampling input
+meteorological data. The semi-diurnal pressure variations are transformed to
+a standing wave, and the diurnal variations are folded with the ter-diurnal.
+Amplitudes of the diurnal and semi-diurnal signal present in the data are
+computed by LSQ fitting over a long time interval and subtracted from the
+initial pressure field fro the numerical weather mode. The convolution integral
+is computed separately over the land and over the sea. The actual surface
+pressure is used for computing the contribution to the convolution integral
+over the land. However under the ocean surface is deformed due to atmospheric
+pressure changes which should be taken into account. Currently, no reliable
+methods for evaluation of the oceanic response were proposed. Two extreme
+cases are modeled: so-called inverted barometer hypothesis which assumes
+that local atmospheric pressure variations are fully compensated by sea
+height variations, and pressure variation at the sea floor are zero,
+and the non-inverted barometer hypothesis which neglects sea height
+variations. However the inverted barometer hypothesis violates sea mass
+conservation. Therefore, it is modified by adding a term
+%
+\beq
+   \Delta \bar{P}_o =
+          \Frac{\dint\limits_{\hbb\hbb\: ocean} \Delta P(\vec{r}\,',t)
+               \cos \phi' d \lambda' d \phi'}
+               {\dint\limits_{\hbb\hbb\: ocean} \cos \phi' d \lambda' d \phi'}
+\eeq{e:mass}
+%
+   which is applied uniformly at the sea floor. This pressure term, which
+depends only on time but does not depend on spatial coordinates, is used
+for computation of the contribution to the convolution integral over the
+ocean.
+
+  Since the global pressure field used for computing convolution integrals
+is taken from the time series of numerical weather models, the resulting
+displacements for stations of our interest are computed in the form of time
+series with the time interval of numerical weather models.
+
+  The contribution to the atmospheric pressure loading displacement
+caused by atmospheric tides is computed on the basis of the global model of
+atmospheric tides at the diurnal and semi-diurnal frequency. The complex
+amplitude is convolved with Green's function invoking the non-inverted
+barometer hypothesis in a way similar to computing displacement caused by
+ocean tides.
+
+  The hydrology loading is computed in a similar way as the ocean loading:
+the global model of the pressure caused by stored water in land is convolved
+with Green's function. The resulting displacements for stations of our
+interest are computed in the form of time series with the time interval of
+hydrology models.
+
+  In addition to various mass loading, stations may have irregular
+displacements. These irregular displacements are estimated from analysis
+of VLBI observations. They are presented in the most general form: in the
+form of expansion over B-spline basis of an arbitrary order with
+non-equidistant nodes which may be multiple.
+
+  Various models of site displacements computed externally can be applied
+for computation of time delay. More than one external model can be used.
+Including these contributions to the model is controlled by the following
+keywords:
+
+\begin{itemize}
+    \item {\sf POSVAR\_FIL}. This keyword specifies the file name with
+               coefficients of external displacement supplied in the second
+               value. The first value specifies the model index. The model
+               index should be 1 for the first model, 2 for the second model,
+               etc.
+    \item {\sf POSVAR\_MOD}. This keyword specifies the type of displacement
+               model in the second value. The first value specifies the model
+               index. The following second values are allowed:
+%
+               \begin{itemize}
+                  \item  {\tt TIME\_SERIES} --- the displacement model is in
+                         the form of time series which are stored in files
+                         in BINDISP format;
+                  \item  {\tt HARMONIC\_MODEL} --- the displacement model is in
+                         the form of coefficients of the harmonic expansion.
+                         The model is stored in a file in HARPOS format.
+                  \item  {\tt B\_SPLINE} --- the displacement model is in
+                         the form of coefficients of B-spline.
+                         The model is stored in a file in BSP format.
+               \end{itemize}
+%
+    \item {\sf POSVAR\_INT} --- This keyword specifies the type of
+               interpolation between nodes of displacement time series.
+               The first value specifies the model index. The following second
+               values are recognized:
+%
+               \begin{itemize}
+		   \item {\tt CLOSE\_POINT}
+		   \item {\tt LINEAR}
+		   \item {\tt SPLINE}
+               \end{itemize}
+%
+    \item {\sf POSVAR\_USE} --- This keyword specifies the action which is
+               be performed in the case if no coefficients were found for
+               a station of a baseline in the process of applying the
+               displacement model. The first value specifies the model
+	       If the second valued is {\tt REQUIRED}, then this situation
+               is considered as a fatal error, and the process of computation
+               will be terminated. If the second valued is {\tt USE},
+               then a warning will be printed, but the process of computation
+               will continue.
+\end{itemize}
+%POSVAR_FIL:  3  /vlbi/solve/apriori_files/aplo_bds/
+%POSVAR_MOD:  3  TIME_SERIES
+%POSVAR_INT:  3  LINEAR
+%POSVAR_USE:  3  IF_AVAILABLE
+
+\subsection{Computation of delay caused by propagation media. 
+            Rigorous approach.}
+
+  Rigorous computation of the path delay in neutral atmosphere requires 
+knowledge of distribution of aid temperature, atmospheric pressure and air 
+humidity. It was shown by L. Petrov (2010, manuscript in preparation)
+that the atmosphere path delay can be computed with accuracies of 1--3~cm 
+at elevation angles of 20--{$90^\circ$} from the output of modern numerical
+weather models. Rigorous computation of the atmosphere path delay requires 
+voluminous input data (1Tb per year or more) and requires significant 
+computing resources. It is not practical to include these computations in VTD. 
+
+  Slanted path delay is computed for each station in a form of a uniform
+3D series. The last dimension of the grid is time. The time step 
+corresponds to the time step of numerical weather model (3 or 6 hours). 
+The second dimension is azimuth and the first dimension is a function of
+elevation $m_i(e)$. function $m_i(e)$ is the so-called ``mapping function''
+for the ISO atmosphere: $\frac{t_{na}(e)}{t_{na}(\pi/2)}$ --- the ratio of 
+the atmosphere path delay at a given direction to the atmosphere path delay
+in zenith direction computed for the reference model of the atmosphere ISO
+ISA at geoid at the latitude $45^\circ$. Function $m_i(e)$ is computed by
+numerical integration of equations of wave propagation, and is represented 
+in the form of $m_i(e) = \sum C_k T_k((\Frac{1}{\sin{e+\alpha}}-a)/b)$ 
+where $T_k(x)$ is the Chebyshev polynomial of the $k$-th degree, $a$, $b$,
+$\alpha$, $C_k$ are some coefficients. The function reciprocal to $m(e)$,
+$m^{-1}(r)$, is represented as 
+$m^{-1}(r) = -\alpha + \arcsin(1/\sum D_k T((r-c)/d) )$.
+
+  Interpolation of the slated path delay $\tau_{na}(e,A,t)$ is performed 
+by the following way. First, for the range of epochs within observing 
+session (3 epochs before the experiment start and 3 epochs after the experiment, 
+each station the 3D array of slanted path delay for dimensions 
+$r,A,t ( r=m_i(e) $ is extracted. Then the 3D array of B-spline coefficients 
+that represents the slanted path delay is computed on place and replaces 
+the array of 3D path delay.
+
+  Finally, the slanted path delay at elevation $e$, azimuth $A$ at time 
+epoch $t$ is computed using these interpolation B-spline coefficients as
+a function $(r,A,t)$. Coordinate $r = m_i(e)$. The partial derivative of
+the slanted path delay with respect to the path delay in zenith direction
+$\Frac{\tau_{na}(e)}{\tau_{na}(\pi/2)}$ is computed as 
+$\Frac{\tau_{na,nh}(e)}{\tau_{na,nh}(\pi/2)}$, where $\tau_{na,nh}(e)$ is the
+contribution of the non-hydrostatic constituent of the atmosphere on path delay.
+
+\subsubsection{Computation of path delay through the neutral atmosphere using
+               the output of numerical weather models.}
+
+  Numerical whether models produces the 4D field of the atmospheric pressure,
+air temperature, specific humidity, and other parameters on a non-regular, global
+4D grid. For computing path delay, the non-regular grid is replaced with the
+regular grid through re-gridding and the use of curvilinear coordinate.
+The curvilinear coordinates $H,L,P,T$ are related to the Cartesian, crust-fixed
+coordinates $x,y,z,t$ through the matrix of transformation $\mat{H}$, such
+that $\vec{R(H,L,P,T)} = \mat{H}\vec{r(x,y,z,t)}$. The coefficients of the 
+transformation $\mat{H}$ are global and do not depend on coordinates.
+
+  For a given station, local Cartesian coordinates $\xi,\eta,\zeta$ with the 
+original ant the station reference point are introduced, such that the direction 
+of axis $\xi$ is along the direction to the emitter, as it were in the absence
+of the atmosphere, $\eta$ is the perpendicular to $\xi$ an lies in the plane 
+of $\xi$ and the Earth pole, and $\zeta = \xi \times \zeta$. It was shown by
+L. Petrov 2010, paper in preparation, that exploiting the Fermat principle and 
+solving the variational problem for finding the trajectory through the 
+heterogeneous atmosphere, the differential equations of wave propagation 
+can be written in this form:
+
+\beq
+    \begin{array}{lcl}
+       \Frac{d^2\eta}{d\xi^2} \: + \: \Frac{n_\xi}{n} \Frac{d\eta}{d\xi}   &  = &  
+                     \Frac{n_\eta}{n} 
+                     + U(n,n_\xi, n_\eta, n_\zeta, \Frac{d\eta}{d\xi},
+                        \Frac{d\zeta}{d\xi}, \Frac{d^2\zeta}{d\xi^2} )
+       \vex \\
+       \Frac{d^2\zeta}{d\xi^2} \: + \: \Frac{n_\xi}{n} \Frac{d\zeta}{d\xi} &  = &  
+                      \Frac{n_\zeta}{n}    
+                      + V(n,n_\xi, n_\eta, n_\zeta, \Frac{d\eta}{d\xi},
+                         \Frac{d\zeta}{d\xi}, \Frac{d^2\zeta}{d\xi^2} )
+    \end{array}
+\eeq{e:n5}
+%
+   where $U$ and $V$ gather non-linear terms that can be omitted if elevations 
+are greater than $3^\circ$ and the accuracy of computation 1~ps is considered
+sufficient. Here $n$ is the refractivity coefficient that is computed on the
+basis of the atmospheric pressure, air temperature and specific humidity as
+
+\beq
+   n = 1 + k_{1d} \Frac{P_d}{T} Z_d^{-1} \: + \:
+           \lp k_{1w} \Frac{P_w}{T} + k_{2w} \Frac{P_w}{T^2} \rp \, Z_w^{-1} ,
+\eeq{e:r1}
+%
+
+After numerical solving differential equations \eref{e:n5}, functions $\eta(\xi), 
+\zeta(\xi), \eta'(\xi), \zeta'(\xi)$ become known. Then the slanted path delay 
+is found by integration of the refractivity index along the curvilinear 
+trajectory $\eta(\xi),\zeta(\xi)$:
+
+\beq
+     \tau_{na} = \strut 
+                 \Frac{1}{c} \int_0^\infty \lp n \lp \xi,\eta,\zeta \rp 
+                  \sqrt{1 + \lp \Frac{d\eta}{d\xi}  \rp^2 +
+                            \lp \Frac{d\zeta}{d\xi} \rp^2}  - 1 \rp d\xi .
+\eeq{e:r2}
+
+
+  Computation of the path delay through the neutral atmosphere is a 
+computationally intensive process are requires voluminous dataset 
+(1Tb per year). Therefore, for practical reasons, the slanted path delay
+is computed outside of VTD. The slanted path delay is computed for each 
+site, each time epoch of the numerical weather model by first solving 
+differential equations \ref{e:r1} and then integrating the refractivity
+index along the trajectory at a 2D grid: azimuth and elevation. In order
+to exploit efficient interpolation, the grid should be equidistant.
+Since the dependence of path delay on elevation is strongly non-linear,
+equidistant grid over azimuth and elevation is the not the optimal: in order
+to get interpolation errors below 1~ps, too many nodes over elevation are
+needed. The efficiency of interpolation is significantly improved if to
+perform a non-linear transformation of the grid, i.e. to present the 
+slanted path delay on a regular grid of arguments others than azimuth 
+and elevation. The optimal choice is a function that represents the 
+average path delay. Numerical experiments show that a satisfactory 
+approximation is achieved when when we transform
+arguments $(A,E) \longrightarrow (A,M_{\mbox{iso}}(P(E)))$, where $A$ stands
+for azimuth, $E$ for elevation, and $M_{\mbox{st}}(P(E))$ is the mapping 
+function computed for the refractivity index distribution determined by the 
+ISO International Standard Atmosphere \cite{r:iso_isa}. This function
+itself is represented not as a function of elevation but as a function of
+another, more simple, approximation of the mapping function, namely
+%
+\beq
+    P(E) = \Frac{1}{E \, (1 + \frac{2}{\pi}\, E_0) - E_0} \quad, 
+\eeq{e:r3}
+%
+where $E_0$ is $-0.052$ radians is selected in such a way that to avoid 
+singularity even for the ray grazing the horizon and remain normalized to
+1 in zenith direction. Series of expansion $M_{\mbox{st}}(P(E))$ are 
+converging much faster than series $M_{\mbox{st}}(P(E))$. Function 
+$M_{\mbox{st}}(P(E))$ was first computed by numerical integration 
+at the range of elevations $[-0.052, \frac{\pi}{2}]$ at a regular elevation
+grid of size 1024. Then the series of $M_{\mbox{st}}(P(E))$ were expanded
+over Chebyshev polynomial of the 12th degree:
+%
+\beq
+  \begin{array}{lcl}
+     M_{\mbox{st}}(P(E)) & = & \dss\sum_{n=0}^{n=12}
+        c_n \; T_n\lp \Frac{P(E) - P_b}{P_e - P_b} \rp
+     \\
+     M^{-1}_{\mbox{st}}(M) & = &
+         \Frac{1}{1 + \frac{2}{\pi}\, E_0} \,
+         \arcsin \Frac{1}{\lp \dss\sum_{n=0}^{n=12}
+                d_n \; T_n\lp \Frac{M - M_b}{M_e - M_b} \rp \rp } , 
+   \end{array}
+\eeq{e:r4}
+%
+  where $P_b = -0.052$, $P_e = \Frac{\pi}{2}$ and $M_b = 1.0$, 
+$M_e = 46.815214\;$. The inverse $M^{-1}_{\mbox{st}}(M)$ returns
+elevation angle as a function of mapping function.
+
+  Numerical values of Chebyshev polynomial coefficients of 
+$M_{\mbox{st}}(P(E))$ and its inverse $M^{-1}_{\mbox{st}}(M)$ are presented 
+in table~\ref{t:misa}.
+
+
+\begin{table}[h]
+   \caption{The second column presents the coefficients of expansion 
+   of mapping function for the International Standard Atmosphere 
+   as a function of P(E) over Chebyshev polynomials at the range of
+   elevations $[-0.052, \frac{\pi}{2}]$. The third column presents
+   the coefficients of expansion of its inverse $M^{-1}_{\mbox{st}}(M)$
+   over Chebyshev polynomials at the range $[1.0, 46.815214]$. 
+   The argument of the inverse is the mapping function, and the value
+   is elevation. The maximal error of interpolation is $8 \cdot 10^{-6}$. }
+   \label{t:misa}
+\beq
+   \begin{array}{r@{\qquad} r @{\qquad}r}
+       \hline
+       \mbox{Deg} & M_{\mbox{st}}(P(E)) & M^{-1}_{\mbox{st}}(M) 
+            \vphantom{\biggr[\biggr]} \\
+       \hline \vnex \\
+        0 &   \flo{2.3496276}{+01} &   \flo{1.433399}{+01} \\
+        1 &   \flo{2.3756641}{+01} &   \flo{1.255039}{+01} \\
+        2 &   \flo{2.8960727}{-01} &  -\flo{1.159927}{-01} \\
+        3 &  -\flo{8.8489567}{-01} &   \flo{4.812282}{-01} \\
+        4 &   \flo{1.4212949}{-01} &  -\flo{1.142513}{-01} \\
+        5 &   \flo{3.4080806}{-02} &   \flo{4.717299}{-02} \\
+        6 &  -\flo{2.1776292}{-02} &  -\flo{1.584444}{-02} \\
+        7 &   \flo{2.6966697}{-03} &   \flo{5.871918}{-03} \\
+        8 &   \flo{1.3182015}{-03} &  -\flo{1.949435}{-03} \\
+        9 &  -\flo{9.2308499}{-04} &   \flo{7.900266}{-04} \\
+       10 &   \flo{6.8354478}{-05} &  -\flo{2.467537}{-04} \\
+       11 &   \flo{1.3502649}{-05} &   \flo{9.892615}{-05} \\
+       12 &  -\flo{1.7105554}{-05} &  -\flo{1.280538}{-04} \\
+       \hline
+   \end{array}
+\eeqn
+\end{table}
+
+  Numerical experiments showed that the interpolation errors are below
+1~ps at elevations $[3^\circ, 90^\circ]$ when the slanted path delay 
+at a given station is expanded over B-spline basis at a regular grid 
+$A, M_{\mbox{st}}(P(E))$ with 12 steps over azimuth in the range 
+of $[0, 2\pi]$ and 16 steps over $M_{\mbox{st}}(P(E))$ in the range of 
+[1.0,  14.65859].
+
+  In order to interpolate slanted path delay at $A,E,T$ ($T$ is time),
+the triplet of arguments should be transformed to $A,M,T$ using
+expression \ref{e:r4}. The 3D field of slanted path delay at a given 
+station is expanded over B-spline series of the $m$-th degree:
+%
+\beq
+  \begin{array}{l}
+      \tau_{\mss{na}}(A,M,T) = 
+       \mst \dss \sum_{l=1\!-m}^{l=d_T} \sum_{k=1\!-m}^{k=d_M} 
+                 \sum_{j=1\!-m}^{j=d_A} \!\! f_{ijk} \, 
+                   B_i^m(A) \, B_j^m(M) \, B_k^m(T) \quad .
+  \end{array}
+\eeq{e:r5}
+
+   Interpolation of slanted path delay and applying it to the total
+path delay in VTD is controlled by keywords 
+{\sf SLANTED\_PATH\_DELAY\_MODEL}, 
+{\sf SLANTED\_PATH\_DELAY\_BIAS\_FILE}, {\sf EXTERNAL\_DELAY\_DIR},
+{\sf EXTERNAL\_DELAY\_DIR\_2ND}, {\sf EXTERNAL\_DELAY\_DIR\_3RD},
+and {\sf EXTERNAL\_DELAY\_DIR\_4TH}.
+
+  The first keyword is either {\sf NONE} or {SPD\_3D}. The latter
+values indicates that the 3D slanted path delay should be read 
+from external files and interpolated. The files with path delay
+are located up to 4 directories, one file per station. VTD will
+look first directory {\sf EXTERNAL\_DELAY\_DIR}, then
+{\sf EXTERNAL\_DELAY\_DIR\_2ND}, then {\sf EXTERNAL\_DELAY\_DIR\_3RD},
+and at last{\sf EXTERNAL\_DELAY\_DIR\_4TH}. If more than one file for 
+a given station is provided, the file from the first directory will
+be picked up.
+
+  Slanted path delay can be corrected for station-dependent empirical 
+additive offset $a$ and multiplicative bias $b$:
+%
+\beq
+   \tau_{\mss{na}} = \tau_{\mss{na}-\mss{orig}} + a_{\mss{offset}}
+               + b\, \tau_{\mss{nhy}-\mss{orig}} \quad,
+\eeq{e:r6}
+%
+  where $\tau_{\mss{nhy}-\mss{orig}}$ is original non-hydrostatic
+component of the path delay through the neutral atmosphere. Keyword
+{\sf SLANTED\_PATH\_DELAY\_BIAS\_FILE} specifies the name of that
+file. If it {\sf NONE}, no empirical correction is made.
+
+
+\subsubsection{Computation of path delay through the neutral atmosphere.
+               Regression approach.}
+
+
+  In the absence of rigorous computations, the path delay can be evaluated as
+%
+\beq
+  \tau_{atm} = \tau_{hz} \, m_h(e + \eta \cos(A) + \epsilon \sin(A)) + 
+               \tau_{nz} \, m_n(e + \eta \cos(A) + \epsilon \sin(A))
+\eeq{e:trop}
+%
+  where $\tau_{hz}$ --- is the hydrostatic constituent of the path delay
+in the neutral atmosphere in zenith direction, $\tau_{nz}$ --- is the
+the non-hydrostatic constituent of the path delay the neutral atmosphere 
+in zenith direction, $m_h(e)$ and $m_n(e)$ are the so-called mapping 
+functions that describe the dependence of the atmosphere path delay on
+the angle between the source and the symmetry axis of the atmosphere.
+$e$ are $A$ the elevation angle and the azimuth in vacuum, $\eta$ and
+$\epsilon$ are inclination angles of the symmetry axis in the north and
+east directions.
+
+  Hydrostatic constituent of the path delay in zenith direction can be 
+computed using the atmospheric pressure at the level of the reference
+point with accuracy 2--5~ps. Other parameters of \ref{e:trop} cannot be
+predicted without detail knowledge of the atmospheric parameters profile.
+Therefore, a regression expression is used. The most precise regression
+expression was computed using the output of the numerical weather model
+GEOS--5. Regression coefficients were computed for all 205 VLBI stations.
+
+  Computation of the hydrostatic path delay in the source direction is
+controlled by two options: {\sf HYDROSTATIC\_ZENITH\_DELAY} and
+{\sf HYDROSTATIC\_MAPPING\_FUNCTION}. The
+keyword {\sf HYDROSTATIC\_ZENITH\_DELAY} support values {\tt NONE}, 
+{\tt SAASTAMOINEN} for the model of \cite{r:saa72a,r:saa72b}, or MMF for the 
+Mean Mapping Function Model (L. Petrov (2009), manuscript in preparation).
+Saastamoinien model is the best model. No hydrostatic path delay is computed
+when keyword {\sf HYDROSTATIC\_ZENITH\_DELAY} has value {\tt NONE}.
+The zenith path delay is to be multiplied by the mapping function which 
+is defined in the keyword {\st HYDROSTATIC\_MAPPING\_FUNCTION}.  
+The alternatives are {\tt NMFH} for the Niell hydrostatic mapping function 
+and MMF for the Mean Mapping Function. 
+
+  Computation of the non-hydrostatic, wet path delay in the source direction
+is controlled by two options: {\sf WET\_ZENITH\_DELAY} and
+{\sf WE\_MAPPING\_FUNCTION}. The keyword {\sf WET\_ZENITH\_DELAY} support 
+values MMF for the Mean Mapping Function Model, and {\tt NONE}. In the latter 
+case no wet path delay is computed. The MMF is the best model. The zenith 
+path delay is to be multiplied by the mapping function which is defined in 
+the keyword {\st WET\_MAPPING\_FUNCTION}. Alternatives are {\tt NMFW} for 
+the Niell non-hydrostatic mapping function and MMF for the Mean Mapping 
+Function. 
+
+  Computation of path delay depends on surface meteorological parameters.
+In the absence of measured meteorological parameters, default values are
+computed on the basis of the model specified by the keyword {\sf METEO\_DEF}.
+If the value of pressure are out of range [500\,00, 110\,000] Pa, all
+meteorological parameters, air pressure, air temperature and relative
+humidity are considered missing. Three values are supported {\tt IMA},
+{\tt CALC} and {\tt NONE}. The value {\tt IMA} means if the surface \
+meteorological parameters are missing they are computed according to the 
+model of the International Meteorological Association. The value {\tt CALC} 
+means that the surface meteorological parameters are computed in the mode 
+of compatibility with Calc: $ P = 101325.0D0 \cdot (1 - \flo{6.5}{-3} 
+\cdot h_{ort}/293.15)^{5.26}$. The origin of the model that Calc uses 
+is obscure. The value {\tt NONE} means that any value of pressure, 
+temperature and relatives are considered present, regardless whether 
+they are out of range or not.
+
+\subsubsection{Computation of delay ionosphere path delay.}
+
+
+  Keyword {\sf IONOSPHERIC\_MODEL} specifies whether ionosphere path 
+delay is to be computed. Supported values: {\sf NONE} or {\sf GNSS\_TEC\_MAP}.
+Value {\sf GNSS\_TEC\_MAP} means that ionosphere path delay will be computed
+using gridded time series of TEC from analysis of global navigation satellite
+systems, such as GPS or GLONASS. The files with the TEC values in VIONO 
+format are specified by keywords
+{\sf IONOSPHERE\_DATA\_FILE}, {\sf IONOSPHERE\_DATA\_FILE\_2ND}
+{\sf IONOSPHERE\_DATA\_FILE\_3RD}, {\sf IONOSPHERE\_DATA\_FILE\_4TH}.
+Why more than one file? The data file is supposed to present TEC at a regular
+grid with the same step, without gaps. The TEC model may have different grid
+size and may have gaps. In that case the dataset is split into several 
+files, each of them presents the TEC model at a regular grid without gaps.
+If more than one TEC model outputs are specified in keywords
+{\sf IONOSPHERE\_DATA\_FILE}, {\sf IONOSPHERE\_DATA\_FILE\_2ND}
+{\sf IONOSPHERE\_DATA\_FILE\_3RD}, {\sf IONOSPHERE\_DATA\_FILE\_4TH},
+then it is assumed that each file covers different time span.
+
+
+\subsection{Partial derivatives and coupling effects.}
+
+  Partial derivatives of time delay and delay rate with respect to parameters
+of the product of the tilt of the symmetry axis of the atmosphere in the 
+local topocentric coordinate system and the zenith path delay are computed 
+in accordance with the expression specified by the keyword 
+{\sf ATMOSPHERE\_TILT\_PARTIALS}. The following values are supported:
+
+\begin{itemize}
+   \item {\tt MACMILLAN\_1995} --- Expression according to  \cite{r:mm95}:
+%
+\beq
+     \Der{\tau}{\tau_{grad,North}} = R_{zd} \Frac{\cos{A}}{\tan{E}} \\
+     \Der{\tau}{\tau_{grad,East}}  = R_{zd} \Frac{\sin{A}}{\tan{E}}
+\eeq{e:im3}
+%
+   \item {\tt TILT\_NMFH}      --- Expression according to \cite{r:cc97}:
+%
+\beq
+     \Der{\tau}{\tau_{grad,North}} = R_{zd} \Frac{\cos{A}}{\tan{E}\sin{E} + C} \\
+     \Der{\tau}{\tau_{grad,East}}  = R_{zd} \Frac{\sin{A}}{\tan{E}\sin{E} + C}
+\eeq{e:im4}
+%
+   \item {\tt TILT\_NMFW}      --- Expression according to \cite{r:cc97}:
+%
+\beq
+     \der{\tau}{\tau_{grad,North}} = R_{zw} \Frac{\cos{A}}{\tan{E}\sin{E} + C} \\
+     \der{\tau}{\tau_{grad,East}}  = R_{zw }\Frac{\sin{A}}{\tan{E}\sin{E} + C}
+\eeq{e:im5}
+   \item {\tt NONE}      --- No partial derivative with respect to parameters
+of the tilt to perform.
+\end{itemize}
+where $C = 0.0031$.
+
+   Computation of the coupling term between the tropospheric path delay and
+axis offset is controlled by the keyword {\sf TROP\_AXOF\_COUPLING}, which
+supports two values: {\tt YES} and {\tt NONE}. Computation of the coupling
+term between the tropospheric path delay and the geometric delay is controlled
+by the keyword {\sf TROP\_GEOMETRIC\_COUPLING}, which supports two
+values: {\tt YES} and {\tt NONE}.
+
+   Computation of delay rate using an analytical expression can be
+turned on or turned off in accordance with the value of the keyword
+{\sf DELAY\_RATE}: {\tt YES} or {\tt NONE}.
+
+  Keywords {\sf GEOM\_EXPR\_FAR\_ZONE},
+{\sf GEOM\_EXPR\_FAR\_ZONE}, and {\sf SOURCE\_STRUCTURE} are reserved
+for future. Currently, they should have the following values:
+%
+\begin{itemize}
+   \item {\sf GEOM\_EXPR\_FAR\_ZONE} {\tt PK2001}
+   \item {\sf GEOM\_EXPR\_FAR\_ZONE} {\tt LIGHT\_TIME}
+   \item {\sf SOURCE\_STRUCTURE}   {\tt NONE}
+\end{itemize}
+
+   The keyword {\sf GRS\_METRIC} specifies the scaling parameter in the
+metric tensor for the geocentric coordinate system. The following values
+are supported:
+%
+\begin{itemize}
+   \item {\tt ITRF2000} --- The ITRF2000 metric (the same as IERS1992):
+                            $L_g =  \Frac{f M\earth}{\bar{R}\earth \, c^2} =
+                                    \flo{6.969290134}{-10}$;
+%
+   \item {\tt IAU2000}  --- The IAU2000  metric: $L_g = 0$;
+%
+   \item {\tt IERS1996} --- The IERS1996 metric:
+                            $L_g =  -\Frac{f M\earth}{\bar{R}\earth \, c^2} =
+                                    -\flo{6.969290134}{-10}$;
+\end{itemize}
+
+\subsection{Computation of path delay when one of the station is on orbit}
+
+   Theory of computation of path delay when one of the station is on the
+orbit is given in section \ref{s:orbit}. The orbit ephemerise should be read
+with routine {\sf VTD\_READ\_NZO} and then loaded with 
+routine {\sf VTD\_LOAD\_NZO}. The satellite ephemeris should conform 
+to Orbit Data Messsages CSSDS 502.0-B-2%
+\footnote{http://public.ccsds.org/publications/archive/502x0b2c1.pdf} 
+standard issued by the Consultative Committee for Space Data Systems.
+Computation of path delay is done with the same routine as for computation 
+of path delay between ground stations: {\sf VTD\_DELAY}. Effects of tides, 
+antenna axis offsets, loadings, delay in the ionosphere and troposphere 
+are not computed for the orbiting station. NB: {\sf VTD} cannot compute 
+path delay if the orbit is not available.
+
+   In the case of a satellite that does not have a sample counter, like
+Radioastron, clock synchronization is done implicitly at the moment of 
+receiving the first sample of a scan. The light time between the orbiting 
+station and the control downlink station (which is usually {\it different} 
+than the ground observing station) should be computed and added to the path
+delay returned by {\sf VTD\_DELAY}. Routine {\sf VTD\_LT\_ORB} makes this
+computation. The effective clock function of the orbiting station 
+that should be used in data reduction is a sum of three terms: the clock 
+function of the orbiting station that accounts for Hydrogen maser frequency 
+variations, the clock station of the downlink station, and the light time
+between the orbiting and downlink station. The first (unknown) term affects all 
+the samples. The second and third term affect only the first sample of a scan.
+The second term is computed from time comparison between the Hydrogen
+maser at the downlink station and the GPS clock and it is approximated by a
+polynomial of the first degree. 
+
+  The term that describes time dilation (expression \ref{e:e16d})
+is computed by routine {\sf VTD\_REL\_ORB}. It has {\bf two time arguments}:
+time synchronization epoch and observation epoch. NB: both time arguments
+should be given at a retarded moment of time, $t_s$. 
+The difference $t_d - t_s$ is given by routine {\sf VTD\_LT\_ORB}.
+This difference should be {\it subtracted } from time of observation.
+The result of {\sf VTD\_REL\_ORB}, $\Delta t$, is {\it added} if the 
+orbiting station is a reference station \#1 or {\it subtracted} 
+if the orbiting station is a remote station \#2.
+
+   Reduction for clock for the ground station is made by computing
+a~priori clock function from Hydrogen maser comparison and the GPS clock
+and applying this function to {\it every} sample. For reduction for time
+dilation with a continuous on-board sample counter, the first time epoch 
+for routine {\sf VTD\_REL\_ORB} is time of clock synchronization which 
+usually takes place prior the observing session. For reduction for time 
+dilation without a continuous on-board sample counter, the first epoch
+of {\sf VTD\_REL\_ORB} is a time coordinate at the orbiting station 
+at the moment {\it first sample of a given scan}, which is time of 
+a downlink station minus light time $t_d - t_s$ given by routine 
+{\sf VTD\_LT\_ORB}.
+
+  The fundamental distinction of a case when an orbiting station
+without a continuous on-board sample counter from other cases that
+time delay and delay rate is a {\bf function of two time arguments:}
+nominal scan start determined by a downlink clock and time of observation.
+If the orbiting station has a continuous on-board sample counter, then
+the first argument is time of clock synchronization at the beginning
+of the experiment. Its precise value with accuracy significantly better 
+then the window of fringe search is irrelevant, since it will be solved
+for during parameter estimation anyway.
+
+  Thus, time delay for an orbiting station is a sum of three terms:
+delay returned by {\sf VTD\_DELAY}, light time returned by {\sf VTD\_LT\_ORB},
+and clock dilation returned by {\sf VTD\_REL\_ORB} with an appropriate sign.
+
+\begin{thebibliography}{21}
+
+  \bibitem[Bowring, 1985]{r:bowring85}
+      Bowring,~B.R., 1985, The Accuracy of Geodetic Latitude and Height
+      Equations", Survey Review, vol.~28, pp. 202--206.
+
+  \bibitem[Capitaine et~al.(2003a)]{r:Cap03a}
+      Capitaine,~N., Chapront,~J., Lambert,~S., \& Wallace,~P.~T.,
+        ``Expressions for the Celestial Intermediate Pole and Celestial
+          Ephemeris Origin consistent with the IAU 2000A precession-nutation
+          model'', {\it Astronomy and Astrophysics}, vol.~400, p.~1145, 2003
+
+  \bibitem[Chen and Herring (1997)]{r:cc97}
+      Chen~G., Herring~T.~A. ``Effects of atmospheric azumithal assymetry on
+        the analysis of space geodetic data'', {\it Journal of Geophys. Res.},
+        1997, vol.~102(B9), pp. 20,489--20,502.
+
+  \bibitem[Davis (1985)]{r:davis85}
+     Davis, J.L., et al., "Geodesy by radio interferometry:
+          Effects of atmospheric modeling errors on estimates of
+          baseline length", Radio Science, 20, 1593-1607, 1985.
+
+  \bibitem[Dehant et~al., 1998]{r:ddw98}
+     Dehant~V., Defraigne~P. and Wahr~J.~M, ``Tides for a convective Earth'',
+       {\it Journal of Geophys. Res.}, 1998, vol.~104(B1), pp. 1035-1058.
+
+  \bibitem[Dickman, 1993]{r:dickman1993}
+      Dickman, S.R, ``Dynamic ocean-tide effects on Earth's rotation'',
+         {\it Geophys. J. Int.}, vol. 112, pp. 448-470, 1993.
+
+  \bibitem[Goff \& Gratch, 1946]{r:goff}
+      Goff J.A., S.~Gratch.
+         Low-pressure properties of water from {$-160^\circ$ to $212^\circ F$},
+          {\em American society of heating and ventilating engeneers.
+           Transactions}, {\bf 52}, pp. 95--129, 1946.
+
+  \bibitem[Hartmann and Wenzel(1995)]{r:hw95}
+      Hartmann, T. and H.-G.~Wenzel, The HW95 tidal potential catalogue,
+        {\it Geophys. Res. Let.}, {\it 22}, 3353--3356, 1995.
+
+  \bibitem[Hrgian, 1975]{r:hrgian}
+      Hrgian, A.H, ed., International meteorological tables, Ser.~1--2,
+          Transactions of the Soviet meteorological association, vol. 94,
+          Obninsk, 1975.
+
+  \bibitem[Kopeikin and  Shaeffer, 1999]{r:ks1999}
+      Kopeikin,~S.~M. and Shaeffer~G., Physical Review, D, vol. 50, 124002, 1999.
+
+  \bibitem[Lieske et~al., 1976]{r:lieske1977}
+      Lieske, J.H. and Lederle, T. and Fricke, W. \& Morando, B.,
+       ``Expressions for the precession quantaties based upon the {IAU} (1976)
+         system of astronomical constants'', {\it Astronomy \& Astrophysics},
+         vol.~58, N1, pp.~1--17, 1977.
+
+  \bibitem[{\it Mathews et al.}(1995)]{r:mat95}
+      Mathews, P.M., B.A.~Buffett, and I.I.~Shapiro, Love numbers for a
+        rotating spheroidal Earth: New definitions and numerical values,
+        {\it Geophys. Res. Let.}, {\it 22}(5), 579--582, 1995.
+
+  \bibitem[Mathews et~al., 1997]{r:mdg97}
+     Mathews~P.M., Dehant~V. and Gipson~J.~M. ``Tidal Station Displacements'',
+       {\it Journal of Geophys. Res.}, 1997, vol.~102(B9), pp.~20469--20478
+
+  \bibitem[{\it Mathews }(2001)]{r:mat01}
+      Mathews, P.M., Love numbers and gravimetric factor for diurnal tides,
+        {\it Journal of the Geodetic Society of Japan}, {\it 47}(1),
+         231--236, 2001.
+
+  \bibitem[McMillan and Ma (1997)]{r:mm95}
+      McMaillan~D.S. and Ma~C. ``Atmospheric gradients and the VLBI
+        terrestrical and celestial reference frames'', {\it Geophys. Res.
+        Let.}, vol.~24, pp.~453--456, 1997.
+
+  \bibitem[Matveenko et~al.(1965)]{r:mat65}
+      Matveenko,~L.~I., Karadashev,~A.~C., Sholomitskij,~G.~B.
+      1965, Izvestia VUZov. Radiofizika, 8, 651 (in Russian).
+
+  \bibitem[Niell (1996)]{r:nmf}
+      Niell, A.E., (1996). Global mapping functions for the atmosphere delay
+        at radio wavelengths, {\it J. Geophys. Res.}, 101, No. B2,
+        p.~3227--3246.
+
+  \bibitem[Saastamoinen(1972a)]{r:saa72a}
+     Saastamoinen~J (1972a) Contributions to the theory of 
+       atmospheric refraction, Bull Geod, 105:279--298
+
+  \bibitem[Saastamoinen(1972b)]{r:saa72b}
+     Saastamoinen~J (1972b) Introduction to practical computation of 
+       astronomical refraction. Part II Bull Geod, 106:383--397
+
+  \bibitem[{\it Simon et al.}(1994)]{r:simon}
+     Simon, J.L, P.~Bretagnon, J.~Chapront, M.~Chapront-Touze, G.,~Francou,
+       and J.~Laskar, Numerical expressions for precession formulae and
+       mean elements for the Moon and the planets, {\it Astronomy and
+       Astrophysics}, {\it 282}, 663--684, 1994.
+
+  \bibitem[Sovers et al.(1998)]{r:masterfit}
+      Sovers,~O.J, J.L. Fanselow, and C.S. Jacobs, 1998, Review of Modern Physics,
+      70, 1393
+
+  \bibitem[ISO (1975)]{r:iso_isa}
+      International Organization for Standardization, Standard Atmosphere,  
+        ISO 2533:1975, 1975
+        {\tt http://en.wikipedia.org/wiki/International\_Standard\_Atmosphere}
+
+\end{thebibliography}
+
+\end{document}

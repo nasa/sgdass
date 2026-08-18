@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  FD-VLBA   FD
+LAST_UPDATE: FD-VLBA   2018.01.27
+COORD:       FD-VLBA   meters     -1324009.129    -5332181.970     3231962.472   
+MOUNT:       FD-VLBA   char       ALTAZ
+SLEW_AZ:     FD-VLBA   deg/sec    1.40500
+SLEW_EL:     FD-VLBA   deg/sec    0.50833
+ACCL_AZ:     FD-VLBA   deg/sec^2  0.75
+ACCL_EL:     FD-VLBA   deg/sec^2  0.25
+TSETTLE_AZ:  FD-VLBA   sec        6.0
+TSETTLE_EL:  FD-VLBA   sec        6.0
+EL_MIN:      FD-VLBA   deg        2.0
+EL_MAX:      FD-VLBA   deg       90.0
+AZ_RANGE:    FD-VLBA   deg      -90.0 90.0 270.0 450.0
+RECORDER:    FD-VLBA   char      mark5c
+PREOB:       FD-VLBA   sec        0.0
+POSTOB:      FD-VLBA   sec        2.0

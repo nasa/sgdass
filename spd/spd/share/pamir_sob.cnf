@@ -1,0 +1,30 @@
+SPD_3D_CONF   Format version of 2015.01.06
+#
+#  Last updated 2020.05.22_16:30:03
+#
+REFR_EXPR:   Radio_Aparicio_2011
+SPD_ALG:     y_nonloc
+FIL_STA:     /progs/spd_20161117/spd/share/pamir.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      geosfpit_height_above_geoid.heb
+FIL_LEAPSEC: /apr/eop/leapsec.dat
+FIL_DESC:    /progs/spd_20161117/spd/share/spd_desc.txt
+FIL_FMT:     /opt64/spd/doc/spd_3d_format.txt
+TIM_INTRV:   10800.0D0
+N_EL:        1
+N_AZ:        1
+SOB_ALG:     rte_bent
+N_FRQ:       13
+FREQ:        18196000000.00
+FREQ:        22235000000.00
+FREQ:        23694000000.00
+FREQ:        27294000000.00
+FREQ:        32000000000.00
+FREQ:        36392000000.00
+FREQ:        43122000000.00
+FREQ:        45490000000.00
+FREQ:        86243000000.00
+FREQ:       129363000000.00
+FREQ:       183310000000.00
+FREQ:       230538000000.00
+FREQ:       345796000000.00

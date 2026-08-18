@@ -1,0 +1,23 @@
+These are the files that need to be looked at, and what may need
+to be addressed on each file:
+
+ 1. anc_scav.f
+   a. It currently takes over 3 times as long to compute the scan
+      averages for the PCAL block, as it does for the TSYS and TPI
+      blocks combined; This is/was not the case when we did these
+      computations through bnc_scav.f
+   b. For the TPI block, since TSYS is a function of TPI, we
+      expect the two blocks to have the same scans, however TPI
+      doesn't account for the last scan, why?
+   c. TPI only prints scan results from the 20th and 40th scans,
+      but also attributes them scan 1, scan 2 time arrays. 
+
+ 2. anc_compute_tatm_opa.f
+    a. When updating the provenance block, please include the phrase,
+       'PROVENANCE: 3 ' into each line. The writing routine uses this
+       information to write and parse the provenance block
+       apropriately.
+    b. you can also take updating of C_PRV to the main routine, that
+       way, you have the command line.
+
+

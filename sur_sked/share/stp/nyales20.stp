@@ -1,0 +1,57 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2020.11.19 nh  Created
+# 2022.04.03 pet Added peculiar clock offset
+# 2023.06.27 pet Updated horzon mask
+# 2023.07.15 pet Updated slewing parameters
+# 
+SHORT_NAME:    NYALES20  char       Ny
+LAST_UPDATE:   NYALES20  char       2023.07.15
+COORD:         NYALES20  meters         1202462.754     252734.395    6237766.038
+MOUNT:         NYALES20  char       ALTAZ   
+SLEW_AZ:       NYALES20  deg/sec       2.1
+SLEW_EL:       NYALES20  deg/sec       2.0
+ACCL_AZ:       NYALES20  deg/sec^2     0.5
+ACCL_EL:       NYALES20  deg/sec^2     0.5
+TSETTLE_AZ:    NYALES20  sec           3.5
+TSETTLE_EL:    NYALES20  sec           4.4
+EL_MIN:        NYALES20  deg           2.0
+EL_MAX:        NYALES20  deg          89.7
+AZ_RANGE:      NYALES20  deg         -89.0  89.0 271.0 271.0
+RECORDER:      NYALES20  char       mark5_recorder
+BACKEND:       NYALES20  char       mark5b
+SETMODE:       NYALES20  sec 	       4.0
+PREOB:         NYALES20  sec           6.0
+POSTOB:        NYALES20  sec           5.0
+HOR_AZIM:      NYALES20  deg           0.00  10.00  60.00  65.00 120.00 128.00 150.00 152.00 162.00 176.00 190.00 226.00 230.00 250.00 256.00 266.00 270.00 290.00 310.00 360.00  
+HOR_ELEV:      NYALES20  deg           2.00   4.00   4.00   2.00   2.00   5.00   5.00   7.00   9.00  12.00   5.00   8.00   6.00   6.00   7.00  12.00  12.00   4.00   2.00   2.00  
+STOW_AZIM:     NYALES20  deg          90.0
+STOW_ELEV:     NYALES20  deg          50.0
+#
+CLOCK_DATES:   NYALES20  sec        2018.06.24   2049.12.31
+#CLOCK_OFFSET:  NYALES20  sec        2.308E-6
+CLOCK_OFFSET:  NYALES20  sec        -86.0112E-6
+# 
+TSYS_DATES:    NYALES20  char       2016.07.06  2020.07.08
+TSYS_ELEVS:    NYALES20  deg           3.0   5.0  10.0  20.0  30.0  40.0  80.0  90.0
+TSYS_FREQS:    NYALES20  GHz           2.1   2.4
+TSYS_POLVALS:  NYALES20  K     R      75.910  75.255  73.430  69.138  68.981  68.378  69.237  68.552
+TSYS_FREQS:    NYALES20  GHz           7.9   9.1
+TSYS_POLVALS:  NYALES20  K     R      88.969  87.719  84.389  77.661  76.106  75.922  77.382  76.688
+#
+BPSS_DATES:    NYALES20  char       2000.01.01   2020.07.01
+BPSS_BWIDTH:   NYALES20  MHz          16
+BPSS_BETA:     NYALES20  d/l        1.00
+BPSS_BWIDTH:   NYALES20  MHz          32
+BPSS_BETA:     NYALES20  d/l        1.00
+#
+GAIN_DATES:    NYALES20  char       2004.12.31 2025.01.01
+GAIN_FREQS:    NYALES20  GHz           2.1   2.4
+GAIN_ELEVS:    NYALES20  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  NYALES20  K/Jy  R     0.075 0.075 0.075 0.075 0.075 0.075 0.075
+GAIN_POLVALS:  NYALES20  K/Jy  L     0.075 0.075 0.075 0.075 0.075 0.075 0.075
+GAIN_DATES:    NYALES20  char       2004.12.31 2025.01.01
+GAIN_FREQS:    NYALES20  GHz           7.9   9.1
+GAIN_ELEVS:    NYALES20  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  NYALES20  K/Jy  R     0.060 0.060 0.060 0.060 0.060 0.060 0.060
+GAIN_POLVALS:  NYALES20  K/Jy  L     0.060 0.060 0.060 0.060 0.060 0.060 0.060

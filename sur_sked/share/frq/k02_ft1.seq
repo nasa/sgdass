@@ -1,0 +1,42 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+#  Frequency sequence used for Kokee/Fortleza fringe test
+#
+#  Astronomical convention is used for band definition
+#  For instance notation 2004.1 32.0 means the band
+#  that covers range [2004.1, 2036.1] MHz
+#
+#  Last updated by L. Petrov on 2026.07.24_10:03:06
+#
+HDS_NAME  ft1
+MOD_NAME  k02
+#
+STATION FORTLEZA  FT  ft_02
+#
+# Band Low_frq bandwidh Sub
+#
+BAND 2  2225.99  8.0   dir
+BAND 2  2245.99  8.0   dir
+BAND 2  2265.99  8.0   dir
+BAND 2  2295.99  8.0   dir
+BAND 2  2345.99  8.0   dir
+BAND 2  2365.99  8.0   dir
+#
+BAND 1  8204.99  8.0   dir
+BAND 1  8212.99  8.0   dir
+BAND 1  8252.99  8.0   dir
+BAND 1  8352.99  8.0   dir
+BAND 1  8512.99  8.0   dir
+#
+BAND 3  8732.99  8.0   dir
+BAND 3  8852.99  8.0   dir
+BAND 3  8912.99  8.0   dir
+BAND 3  8924.99  8.0   dir
+BAND 3  8932.99  8.0   dir
+#
+#    bnd  lo    low_freq high_freq
+#
+RANGE 3 6600.0  6600.0   7600.0
+RANGE 3 6600.0  6600.0   7600.0
+RANGE 1 7600.0  8100.0   8600.0
+RANGE 2 8100.0  8600.0   9100.0

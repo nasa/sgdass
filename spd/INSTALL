@@ -1,0 +1,50 @@
+Installation instruction for the SPD (Slanted Path Delay) software.
+-------------------------------------------------------------------
+
+SPD was tested under Linux and MAC OS (Darwin) operating systems.
+
+SPD is written in Fortran90. It was tested with Intel Fortran 
+compiler version 13.0.1 and with GNU gfortran version 4.8.2.
+
+Dependencies:
+
+-- petools   -- a toolkit that has many useful routines for
+                scientific computations. Available at
+                http://astrogeo.org/petools
+
+-- malo      -- MAss LOading software. Available at
+                http://astrogeo.org/malo
+
+-- blas      -- A library of Basic Linear Algebra routines. This library
+                is tuned highly optimized for the specific processor.
+                SPD uses the BLAS library that was configured with
+                petools. Currently, petools supports two BLAS 
+                implementations: ATLAS and Intel MKL. When you configure
+                petools, you have to select one of the implementations.
+
+-- lapack    -- A linear algebra library. If you configure petools with
+                Intel MKL, you do not need an additional lapack library,
+                since Intel MKL contains both BLAS and lapack. However,
+                if you configured petools with ATLAS, you need to compile
+                lapack library. Please refer to installation instructions
+                below.
+
+-- netcdf    -- Multi-platform database handler version 4.0 or newer.
+                Available at http://www.unidata.ucar.edu/software/netcdf
+
+-- hdf4      -- Another multi-platform database handler 
+                Available at http://hdf.ncsa.uiuc.edu/products/hdf4
+
+-- z         -- zlib. Usually, it is a part of the Operating System
+                Available at http://www.zlib.net/
+                NB: SPD requires 32-bit version of zlib
+
+-- jpeg      -- jpeg6b library. Usually, it is a part of the Operating System
+                Available at http://www.ijg.org/
+                NB: SPD requires 64-bit version of jpeg
+
+
+   INSTALLATION INSTRUCTIONS FOR DEPENDENCIES:
+   ===========================================
+
+

@@ -1,0 +1,1170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov 16-MAR-2000 10:00:20 !-->
+<HTML>
+<HEAD>
+<!-- <META HTTP-EQUIV="refresh" CONTENT="2; URL=http://ivscc.gsfc.nasa.gov" > -->
+<!--     <META NAMES="robots" CONTENTS="NOINDEX, NOFOLLOW"> -->
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+    <META NAME="Generator"          CONTENT="manually" >
+    <META NAME="Author"             CONTENT="Leonid Petrov" >
+
+    <TITLE> User's guide of program Phase Doctor </TITLE>
+    <BASEFONT SIZE="3">
+</HEAD>
+    <CENTER><B><BIG> User's guide of program Phase Doctor </BIG></B></CENTER><BR>
+
+<HR SIZE="2">
+<CENTER><EM> Contents: </EM></CENTER>
+<UL>
+          <LI> <A HREF="#overview">    Overview                       </A> </LI>
+          <LI> <A HREF="#loading">     Loading experiment file        </A> </LI>
+          <LI> <A HREF="#interface">   Graphic interface              </A> </LI>
+          <LI> <A HREF="#temperature"> Analysis of system temperature </A> </LI>
+          <LI> <A HREF="#ph-cal">      Analysis of phase-cal          </A> </LI>
+          <LI> <A HREF="#procfile">    Format of a procedure file     </A> </LI>
+          <LI> <A HREF="#customization">  Customization               </A> </LI>
+          <LI> <A HREF="#names">       Names of input and output files</A> </LI>
+          <LI> <A HREF="#referneces">  References                     </A> </LI>
+</UL>
+
+<A NAME="overview"> 
+<H2> Overview </H2>
+
+  Program Phase_Doctor is an interactive graphical tool for investigation and 
+calibration of instrumental delays in a given geo-VLBI experiment. 
+<P>
+
+  Input information for Phase_Doctor is 
+<OL>
+    <LI> a pair of X- and S-band databases which are assumed to be in the 
+         SOLVE databases catalogue system;
+         </LI>
+    <LI> log-files of all stations.
+         </LI>
+</OL>
+<P>
+  Phase_Doctor is for
+
+<UL TYPE=A> 
+   <LI> Examination of auxiliary quantities of VLBI observations:
+       <OL>
+           <LI> system temperatures; </LI>
+           <LI> phase and amplitudes of phase calibration signals; </LI>
+           <LI> residual phases fringe phase; </LI>
+           <LI> cable calibration. </LI>
+       </OL>
+       </LI><P>
+
+   <LI> Displaying various plots associated with these quantities; 
+        </LI><P>
+
+   <LI> Fitting parameters of the model of some functions of these quantities;
+        </LI><P>
+
+   <LI> Computation of corrections to group and phase delays for instrumental 
+        errors:
+       <UL>
+            <LI> correction for presence of spurious signals in phase 
+                 calibration signal. </LI>
+       </UL>
+       <BR>
+
+       putting these corrections to a calibration file which can be applied by
+       SOLVE in a user calibration mode.
+       </LI><P>
+
+   <LI> Estimation of station performance and quality of
+       <OL>
+            <LI> system temperature; </LI>
+            <LI> phase calibration; </LI>
+            <LI> residual fringe phases. </LI>
+       </OL>
+       </LI>
+</UL>
+
+
+<A NAME="loading">
+<H2> Loading the experiment </H2>
+
+<LISTING>
+Usage: phase_doctor [-h] [-f &lt;input_file&gt;]      [-d &lt;experiment_id&gt;]
+                         [-v &lt;verbosity_level&gt;] [-w &lt;web_dir&gt;]
+</LISTING>
+
+Options
+<UL >
+    <LI> <B>-h</B>  -- to show a short help message. </LI>
+          </LI>
+    <LI> <B>-f</B>  -- specifies an input file with definitions of files 
+                       with data for Phase_Doctor
+          </LI>
+    <LI> <B>-d</B>  -- an experiment identifier
+          </LI>
+    <LI> <B>-v</B>  -- verbosity level
+         <UL TYPE=SQUARE>
+            <LI> <B>0</B>   -- silent mode
+                 </LI>
+            <LI> <B>1</B>   -- normal verbosity [default]
+                 </LI>
+            <LI> <B>2</B>   -- eloquent mode
+                 </LI>
+            <LI> <B>3,4</B> -- debugging modes
+                 </LI>
+                 </LI>
+         </UL>
+     <LI> <B>-w</B>  -- directory name where hard-copies of plots and tables 
+                        will be put. Trailing symbol / should present in the 
+                        name if it is a name of a directory.
+</UL>
+
+  Phase_doctor requires log-files for all stations and a pair of databases
+for X- and S-band which are assumed to be already in the SOLVE catalogue 
+system. Input files are to be specified in the so-called definitions file
+which is passed to a Phase_Doctor.
+<P>
+
+  Format of a definitions file:
+<P>
+<LL>&lt;Keyword&gt; &lt;value_1&gt; [&lt;value_2&gt;]</TT>
+
+Keyword is one of
+<UL>
+    <LI> <B>DATABASE:</B> -- value_1 is a database name. 
+                             Dollar sign may be omitted.
+         </LI>
+
+    <LI> <B>MK3:</B>      -- value_1 is directory name with MK3 correlator 
+                             output.
+             <TT>**not implemented**</TT>
+         </LI>
+    <LI> <B>MK4:</B>      -- value_1 is directory name with MK4 correlator 
+                             output.
+             <TT>**not implemented**</TT>
+         </LI>
+    <LI> <B>MON:</B>      -- value_1 file name of VLBI monitor file.
+             <TT>**not implemented**</TT>
+         </LI>
+    <LI> <B>LOG:</B>      -- value_1 is a station name using exactly the same 
+                             syntax as in SOLVE, however blanks in station 
+                             name should replaced with ~ (decimal code 126); 
+                             value_2 is a log file name.
+         </LI>
+    <LI> <B>*</B>         -- comment.
+         </LI>
+    <LI> <B>#</B>         -- comment.
+         </LI>
+</UL>
+
+  Example of a definitions file:
+
+<LISTING>
+DATABASE:  $99MAY18XA
+*
+LOG:       ALGOPARK   /diskB5/logs/ca062_log_algo
+LOG:       GILCREEK   /diskB5/logs/ca062_log_gilc
+LOG:       MATERA     /diskB5/logs/ca062_log_mate
+LOG:       MEDICINA   /diskB5/logs/ca062_log_medi
+LOG:       HARTRAO    /diskB5/logs/ca062_log_hart
+LOG:       NRAO85~3   /diskB5/logs/nrao85_3_log_hart
+LOG:       WESTFORD   /diskB5/logs/ca062_log_west
+</LISTING>
+
+   If log file for some stations(s) is not available you can omit the line
+in the definitions file for that station but then Phase_Doctor will not "see"
+that station as if it didn't participate in the experiment.
+
+   An experiment file is created after processing the input definitions file. 
+An experiment identifier is a main part of the definition file name (without
+path and extension). For example, if a definitions file has name 
+/geo/vlbi/phase/99MAY18XA.def then the experiment identifier would be 99MAY18XA
+<P>
+
+   Phase_Doctor parses definitions file, then reads both databases, then
+read and parses all log-files. The program writes down an intermediary file in
+the directory with names specified in the variable PHD_DIR defined in the 
+../src/solve/gsfcb.i file. The name of the intermediary file has the same main
+part as the definitions file but extension phd. Then Phase_Doctor displays the 
+first user menu.
+<P>
+
+   The next call of Phase_Doctor for this experiment may be done either by
+specifying a definitions file or by specifying an experiment identifier, f.e. 
+
+<LISTING>
+    phase_doctor -f /geo/vlbi/phase/99MAY18XA.def 
+</LISTING>
+
+or
+
+<LISTING>
+    phase_doctor -d 99MAY18XA
+</LISTING>
+
+or
+
+<LISTING>
+    phase_doctor -d 99MAY18XA.phd
+</LISTING>
+
+The latter variant is executed much faster.
+
+
+<A NAME="interface">
+<H2> Graphic interface </H2>
+
+   Phase_Doctor uses graphic <A HREF="#referneces"> Multi_DiaGI </A> 
+interface. Two kind of menus appear at the screen: purely command menus
+and command-graphic menus. The menus of the first sort contain a set of
+command yellow-brown boxes. The menu of the second type contains both a set
+of command yellow-brown boxes in the right part of the screen and a set of
+grey boxes with plots in the left part of the screen.
+<P>
+ 
+   A yellow-brown command box contains a brown letter code in the right upper
+corner of the box and the text of the command. A user can execute a command 
+either by hitting a key with the letter code using keyboard or by positioning 
+the cursor to the command box and hitting either the left or the middle mouse 
+button. All DiaGI commands can be applied to the expanded graphic box, 
+f.e. changing boundary box, printing and etc.
+<P>
+
+   A grey graphic box can be expanded to the entire screen if user position
+the cursor on the box and hit either the left or the middle mouse button.
+<P>
+
+   Right/mouse and a keyboard key X always means exit the current menu level
+and return to the previous level of menu.
+<P>
+
+   Many plots have argument Time in hours. Time tag 0 corresponds to the nominal
+start of the session (first value of lcode INTERVAL recorded in the database).
+<P>
+
+   Many plots admits to have two types of bounding boxes for plots: global
+and local. Global bounding box is a bounding box between minimal and maximal
+values of parameters and arguments among all displayed plots. Local bounding
+box is a bounding box between minimal and maximal values of parameters and 
+arguments for each plot individually.
+<P>
+
+   A hard copy of graphic boxes can be obtained. Refer to the 
+<A HREF="/solve_root/help/diagi_3.hlp" > Multi_DiaGI </A> manual.
+
+
+<A NAME="temperature">  
+<H2> Analysis of system temperature </H2>
+
+   Normally each station measures system temperature before each scan and 
+records it in log-file. Phase_doctor parses log files: find a correspondence 
+between the index of the tsys arrays and a channels sequence, put the system 
+temperature to the correct slot and filters out false readings: it discards 
+system temperature values below 10K and higher than 900K as well as "values" 
+of system temperature $$$$$$$.
+<P>
+
+  Option <B>(T) Plots of system temperatures</B> is invoked from the <I>main 
+Phase_Doctor menu</I>: the menu which has a title Phase_Doctor, its version and 
+the identifier of the database. No plots will be shown if the station didn't
+record system temperature in log-file or some channels were dropped in fringing.
+<P>
+
+  <I>Plots of system temperature </I>menu allows to build plots of
+<UL>
+      <LI> <B>(R) Raw system temperature</B>  versus time -- recorded values of
+           system temperature without any transformations except filtering out 
+           values where <TT>T<SUB>sys</SUB></TT> were below 10K or higher 900K 
+           or were in overflow. These plots are useful for checking presence 
+           of RFI (radio interference).
+           </LI><P>
+
+      <LI> <B>(Z) Zenith system temperature</B>  versus time. Recorded system 
+           temperature is decomposed on 
+           <TT>T<SUB>sys</SUB> = T<SUB>o</SUB> * A(t) * B(e) </TT> where
+           <TT>T<SUB>o</SUB></TT> is a constant for this session and this 
+           station, <TT>A(t)</TT> is a function of time modeled by linear 
+           spline, <TT>B(e)</TT> is a function of elevation modeled by linear 
+           spline. Decomposition is performed by non-linear LSQ fitting.
+           Outliers (but not more than 20%) are rejected.
+           <P>
+
+           Plots of dependence of zenith system temperature on time are shown 
+           for the elevation when system temperature is minimal. The blue 
+           points are <TT>T<SUB>sys</SUB>/( T<SUB>o</SUB> * B(e) )</TT> and the 
+           red line is a model: <TT> = T<SUB>o</SUB> * A(t) </TT> 
+           <P>
+
+           Simultaneously the table of statistics of system temperature of
+           this station for each channel is generated. It is written in 
+           the current Web_dir under name 
+           <TT> sts_&lt;station_name&gt;.txt </TT>.
+           </LI><P>
+
+      <LI> <B>(E) Dependence of system temperature on elevation angle </B> is
+           computed by the same algorithm as dependence of zenith system 
+           temperature versus time. 
+           <P>
+
+           Plots of dependence of zenith system temperature on elevation
+           angle are shown for the moment of time  when system temperature is 
+           minimal. The blue points are 
+           <TT>T<SUB>sys</SUB>/( T<SUB>o</SUB> * A(t) )</TT> and the 
+           red line is a model: <TT> = T<SUB>o</SUB> * B(e) </TT> 
+           <P>
+
+           Simultaneously the table of statistics of system temperature of
+           this station for each channel is generated. It is written in 
+           the current Web_dir under name 
+           <TT> sts_&lt;station_name&gt;.txt </TT>.
+           </LI><P>
+
+      <LI> <B>(S) Change station</B> menu allows to change the current station 
+           and to build the plot for another station.
+</UL>
+
+<A NAME="ph-cal">      
+<H2> Analysis of phase-cal </H2>
+
+  Normally each station has a phase calibrating system. Phase-cal phases
+and amplitudes for each channel for each scan are computed by a correlator and
+are written into the database. However, if manual phase calibration was applied 
+during fringing then no information about measured phase-cal phase and phase-cal
+amplitudes remains in the database for this station. If some channel(s) was 
+dropped during the final fringing then no information about phase-cal at that
+channel at that station remains in the database. Boxes for phase-cal plots
+for these channels will be empty. 
+<P>
+
+  Option <B>(P) Plots of phase cal</B> is invoked from the <I>main 
+Phase_Doctor menu</I> (the menu which has a title Phase_Doctor, its version and 
+the identifier of the database). 
+<P>
+
+  <I>Plots of phase cal</I>menu allows to build plots of
+<UL>
+      <LI> <B>(1) Plots of raw phase-cal amplitude versus time</B>
+                  shows phase-cal amplitude for each channels without any 
+                  transformations. Units are dimensionless. Amplitude of 
+                  phase-cal is a square root of a share of recorded power of 
+                  phase-cal signal to the total power of system noise. 
+           </LI><P> 
+ 
+      <LI> <B>(2) Plots of raw phase-cal phase versus time</B> shows phase-cal
+                  phase for each channels without any transformations. Units
+                  are radians. Usually jumps in phase-cal phases ambiguities 
+                  are the dominating feature at these plots.
+           </LI><P>
+
+      <LI> <B>(3) Plots of raw phase-cal phase versus time with ambiguities
+                  fixed</B> -- a special rather sophisticated algorithm of 
+                  resolving ambiguities in phase-cal phases is used. Variations
+                  of phases due to changes in LO phases is usually 
+                  a dominating feature at these plots.
+           </LI><P>
+
+      <LI> <B>(4) Plots of raw phase-cal amplitude versus phase-cal phase</B>.
+                  Phase-cal amplitude is not normalized here and is changing
+                  in dependence on both system temperature and spurious 
+                  signals.
+           </LI><P>
+
+      <LI> <B>(5) Plots of normalized phase-cal amplitude versus phase-cal phase
+                  with ambiguities fixed</B>. Phase-cal amplitude is normalized
+                  for variations of system temperature and is referred to the
+                  average system temperature in the channel. Ambiguities in 
+                  phase-cal phases have been resolved. This kind of plots is
+                  used for detection of spurious signals since spurious signals 
+                  in phase-cal result in harmonic variations. 
+           </LI><P>
+
+      <LI> <B>(6) Plots of residual phase-cal phases versus time</B>.
+                  Phase-cal phases are modeled in according with the model
+                  specified in the <A HREF="#procfile" > procedure file</A>. 
+		  Model includes 
+                  <UL>
+                        <LI> Phase offsets at epoch of the first observation 
+                             at all channels.
+                             </LI>
+
+                        <LI> Phase offsets at epochs of the phase breaks in
+                             according with procedure file. <B>NB:</B>
+                             phase break is allowed for no more than N_CHA-2
+                             channels at the same moment, where N_CHA -- the
+                             number of channels in the band.
+                             </LI>
+
+                        <LI> Phase delay in phase-cal over all channels of the
+                             band for each scan.
+                             </LI>
+
+                        <LI> Group delay in phase-cal over all channels of the
+                             band for each scan.
+                             </LI>
+                  </UL>
+
+                  Parameters of the model are obtained by LSQ fitting for each
+                  channel independently and residual phases are obtained.
+                  Then the amplitudes and phases of spurious signals are 
+                  computed by another LSQ fitting using residual phases.
+                  The model of spurious signals is specified in the procedure
+                  file. Contributions of spurious signals are subtracted from 
+                  the residual phases. Residual phases after applying this 
+                  model are presented at this kind of plots.
+		  <P>
+                  Listing of the solutions is written in the current Web_dir
+                  under name <TT> sts_&lt;station_name&gt;.txt </TT>.
+           </LI><P>
+
+      <LI> <B>(7) Plots of phase and group delays of phase-cal over the 
+                  band</B>. Phase-cal phases are modeled in according with the 
+                  model specified in the <A HREF="#procfile" > procedure 
+                  file</A>. Group delay and phase delay over phase-cal signals 
+                  for each band are computed in this model and they are shown 
+                  as a function of time. Cable calibration delay is shown at 
+                  the 3-rd column for comparison. It doesn't depend on 
+                  frequency and therefore is exactly the same at upper and 
+                  lower row.
+           </LI><P> 
+
+      <LI> <B>(8) Plots of residual phase-cal phases versus full phase-cal 
+                  phases</B>. The values of the plot are the same as
+                  <TT>(6) Plots of residual phase-cal phases versus time</TT>,
+                  but argument is full phase of phase-cal.
+           </LI><P>
+
+      <LI> <B>(S) Change station</B> menu allows to change the current station 
+           and to build the plot for another station.
+           </LI><P>
+</UL>
+
+<H3> Phase clinic </H3>
+
+  Option <B>(C) Phase clinic</B> is invoked from the <I>main 
+Phase_Doctor menu</I>. It allows to run some procedures for evaluation of 
+phase and amplitude of spurious signals. Routines of computation of amplitudes
+and phases of spurious signals at the specific station run under the control 
+of a so-called procedure file. Phase_doctor expects to find the procedure file 
+in the $PHD_DIR directory. The name of the procedure file is 
+<TT> &lt;experiment_name&gt;.prc </TT>, f.e. <TT> 00JAN10XH.prc </TT>.
+Syntax of procedure file is described <A HREF="#procfile"> below</A>.
+<P>
+
+  The main <I>Phase clinic</I> menu supports commands:
+<UL>
+      <LI> <B>(E) Edit procedure file</B>. If the procedure file 
+           $PHD_DIR/&lt;experiment_name&gt;.prc doesn't exist a template
+           file is created. Then a text editor is called, and it allows to edit
+           the procedure file related to the experiment. The name of the
+           system-wide default editor is defined in the variable SOLVE_EDITOR 
+           in <TT> ../src/solve/include/glbc4.i </TT>. User can override a
+           system wide default by setting an environment variable SOLVE_EDIT.
+           Refer to <A HREF="/solve_root/help/solve_env_template.txt" >
+           solve_env.template </A> for details.
+           <P>
+
+           You can edit existing procedure file by calling an editor outside
+           Phase_Doctor, moreover, it is more convenient. However, it is
+           recommended to use a command "Edit procedure file" when 
+           the experiment is analyzed the first time in order to create 
+           a correct template file. See <A HREF="#procfile"> below </A> 
+            a description of syntax of the procedure file.
+           </LI><P>
+
+      <LI> <B>(V) Evaluate spurious signals in phase-cal</B>. Amplitudes and
+           phases of the spurious signals at the current station which have 
+           been defined in the procedure file are evaluated by using LSQ. 
+           First, the model of system temperature is computed, then bad values 
+           of system temperature are filtered out on the basis of that model. 
+           Amplitude of phase-cal is calibrated for variations of system 
+           temperature. Then amplitudes and phases of phase-cal are computed
+           by iterative LSQ. Finally, the table of the solution listing is put
+           in the current Web-directory under the name 
+           spt_&lt;station_name&gt;.txt and the plots of phase-cal amplitude
+           versus phase-cal phase and the plots the model of phase-cal amplitude
+           dependence on its phase-cal phase due to spurious signals for
+           each channel are shown.
+           <P>
+           
+           <B>NB:</B> Channels without system temperature are ignored and
+           and empty grey boxes will be shown in plots. If station didn't 
+           record system temperature at all then the command evaluation of 
+           spurious signals in phase-cal will do nothing.
+           <P>
+     
+           Points of measured phase-cal amplitude are shown by green color. 
+           A red line represents modeled phase-cal amplitudes.
+           <P>
+
+           This menus supports the following commands:       
+           <UL>
+                 <LI><B>(E) Edit procedure file </B></LI> -- allows to invoke 
+                         an editor and edit the procedure file.
+                     </LI><P>
+
+                 <LI><B>(V) Evaluate spurious signals </B></LI> -- reads 
+                         procedure file and evaluate spurious signals once 
+                         more. If user made changes in procedure file he/she
+                         can wish to re-compute amplitudes and phases of 
+                         spurious signals.
+                     </LI><P>
+
+                 <LI>Toggle <B>(R) Plot residual amplitudes </B> / 
+                            <B>(F) Plot full adjustments </B>. If to hit 
+                            <B>(R)</B> then residuals after estimation will
+                            be shown. Hitting <B>(V)</B> returns to a normal 
+                            mode which shows measured normalized phase-cal 
+                            amplitudes and a modeled phase-cal amplitudes.
+                     </LI><P>
+
+                 <LI><B>(L) Look at results </B></LI> -- prints content of
+                         the listing of the solution in <I>text window</I>. 
+                         Graphic window is iconized. Hit <B>(Q)</B> in 
+                         <I>text window</I> in order to return to Phase_Doctor.
+                     </LI><P>
+
+                 <LI><B>(S) Change station </B></LI> -- invokes a menu where
+                         user is able to select the next station. Then it
+                         returns to the main menu of Phase Clinic.
+                     </LI><P>
+           </UL>
+           </LI>
+
+      <LI> <B>(W) Change web directory</B> -- allows to change the 
+           <I>prefix</I> which is prepended before the output files: tables and
+           plots which are created by a make-hardcopy function of DiaGI.
+           You can change the default prefix. <B>NB:</B> If you are going to
+           specify a directory name, you should use a trailing / symbol,
+           otherwise the file will not be put in the desired directory.
+           </LI><P>
+
+      <LI> <B>(S) Change station</B> -- invokes a menu where user is able 
+           to select the station which becomes the new current station.
+           </LI><P>
+</UL>
+
+<A NAME="procfile"> 
+<H3> Format of a procedure file.</H3>
+
+   Procedure file describes operations to be performed under phases and
+amplitudes at the channels at all stations. 
+<P>
+
+Procedure file consists of records of variable length. Each record consist of
+one or more words separated by one or more blanks. The first word is considered 
+as a keyword, other words are considered as values of the that keyword. 
+The order of records is fixed and cannot be changed. Empty lines and lines 
+which start from symbols  * are considered as comments and ignored.
+<P>
+
+Procedure file consist of a preamble, a session section and station sections.
+Each station section consists of channel subsections.
+<P>
+
+Preamble is the first line of the file, and it indicates that this file is
+a valid Phase_Doctor procedure file. The first symbols of the preamble should 
+be a string "Phase_Doctor proc file".
+<P>
+
+Session section should precede any station sections.
+Supported keywords of the session section:
+<UL>
+     <LI> <B>Offset_estimation: </B> Sets the flag of the estimation of fringe
+          phase offsets for all channels at all stations except the station 
+          taken as a reference one. A value after the keyword 
+          Offset_estimation is expected: the name of the reference station.
+          Phase offset estimation (if specified) is done when contributions
+          if spurious signals in phase and group delays are computed.
+          If a keyword Offset_estimation in the session sections omitted
+          no fringe phase offsets are computed.
+	  </LI><P>
+</UL>
+
+A station section defines modes of treatment of each station participated in the
+experiment. Phase_Doctor expects to find the station section for each station.
+Supported keywords of the station section:
+<UL>
+     <LI> Station name keyword. The last symbol of the keyword should be ) .
+          Preceding symbols are the number of the station in the list.
+          Examples: <TT>1)</TT>  or <TT>12)</TT>. The first value is a string
+          <TT>station:</TT> , the second value is a 8-symbols station name 
+          in according with IVS specification. It has in exactly the same
+          form as it specified in the database.
+	  <P>
+
+          Example: <TT>1) station: CRIMEA</TT>
+          <P>
+
+          A station name keyword should be the first keyword of the station
+          section.
+	  </LI><P>
+
+     <LI> <B>ENABLE_SPURS</B> -- enables estimation and applying the model 
+          of spurious signals for this station. This is a default action. 
+          If the keyword ENABLE_SPURS is omitted and there is no a keyword 
+          DISABLE_SPURS then amplitudes and phases of spurious signal will be 
+          computed in according with specification in channel subsections.
+	  </LI><P>
+
+     <LI> <B>NO_DISABLE_SPURS</B> -- the same as ENABLE_SPURS.
+	  </LI><P>
+
+     <LI> <B>DISABLE_SPURS</B> -- disables the model of estimation and applying
+          spurious signals. It means that amplitudes and phases of spurious 
+          signals will not be computed for this station despite of the other 
+          flags in channel subsections and therefore contribution of the spurs
+          to phases and amplitudes of phase-cal, to the residual phases, 
+          group and phase delay will not be calculated.
+	  </LI><P>
+
+     <LI> <B>OUTLIER:</B> -- specifies the observation which will be excluded
+           in computation of residual phases of phase-cal. 
+	  </LI><P>
+</UL>
+
+A channel subsection should follow a station name keyword. It defines actions
+appropriate for the specific channel at this station. Phase_Doctor expects
+to find the channel subsection for each station section for each channel.
+Supported keywords of the channel subsection:
+
+<UL>
+     <LI> Channel name keyword. the first symbol of the keyword should be #
+          the next symbols defines the consecutive number of the channel in 
+          the channels table. Channels table is sorted first in increasing 
+          frequencies at X-band then in increasing frequencies at S-band.
+          The first value is a central frequency of the channel in MHz in
+          format F7.2. The second value is a string MHz. Values from the 3-rd
+          till the 7-th defines Spurs_codes and action_codes.
+	  <P>
+
+          Spurs_code is an identifier of the type of spurious signal and is 
+         one of
+         <P>
+         <UL>
+               <LI><B>A:</B> -- (A-spur) -- Additive spur. The spurious signal
+                 generated by an electronic of a data acquisition system and 
+                 is not related to the signal.
+                   </LI><P>
+
+               <LI><B>B:</B> -- (B-spur) -- Image spur. It occurs due
+                 to an admixture of the signal at the imaginary band of 
+                 the intermediary frequency.
+                   </LI><P>
+
+               <LI><B>C:</B> -- (C-spur) -- Cross-band spur. It occurs due to
+                   an admixture of the signal from the opposite band.
+                   </LI><P>
+
+               <LI><B>D:</B> -- (D-spur) -- Image cross-band spur. It occurs due
+                   to an admixture of the signal at the imaginary band of 
+                   the intermediary frequency of the opposite band.
+                   </LI><P>
+
+               <LI><B>L:</B> -- (L-spur) -- Linear spur: dependence of 
+                   phase and amplitude of spurious signal on total phase of
+                   phase-cal is linear. The origin is unclear.
+                   </LI><P>
+          </UL>
+          <P>
+
+          An action_code consist of 0, 1 or 2 letters: <B>e,a</B>. Action_code
+          is attached to the spur_code without delimiters. If the action code 
+          is empty then amplitude and phase of spurious signal will not be 
+          computed and only the averaged amplitude will be calculated. 
+          If the action code contains a letter <B>e</B> then the amplitude and 
+          phase of spurious signal is computed. If the action code contains 
+          a letter <B>a</B> then the amplitude and phase of spurious 
+          signal is computed and <B>applied</B> if the contribution of 
+          spurious signals of phase-cal in group and phase delay is computed.
+	  </LI><P>
+
+     <LI> <B>BREAK:</B> -- Specifies the time epoch for break in phase of the
+           current channel. Time epoch is expressed in hours from the nominal
+           start of the session. The current channel is the channel defined
+           before the keyword BREAK.
+	  </LI><P>
+</UL>
+
+<A HREF="/solve_root/help/phase_doctor_03.txt" > Example </A>
+of the valid procedure file.
+
+<H3> Baseline clinic </H3>
+
+  Option <B>(B) Baseline clinic</B> is invoked from the <I>main 
+Phase_Doctor menu</I>. It allows to display plots of residual fringe phases
+before and after applying a model of spurious signals, plots of contribution 
+of spurious signals in phase and group delay.
+
+<P>
+
+  The main <I>Phase clinic</I> menu supports commands:
+<UL>
+      <LI> <B>(B) Set S-band</B> or <BR>
+           <B>(B) Set X-band</B>  -- swaps the band
+           which is considered as the current band.
+           </LI><P>
+
+      <LI> <B>(P) Plot of raw phase residuals</B> or <BR>
+           <B>(P) Plot of phase residuals with applied model </B> --
+           displays plots of residual fringe phases (in rad) for all channels 
+           of the current band as a function of time. Residual phase at each 
+           channel is coded by the specific color. Each plot contains residual
+           phases for one baseline, one band. Up to 25 plots can be displayed
+           at one page simultaneously.
+	   <P>
+
+           This menus supports the following commands:       
+           <UL>
+                <LI> <B>(B) Set S-band</B> or <BR>
+                     <B>(B) Set X-band</B>  -- swaps the band
+                      which is considered as the current band.
+                     </LI><P>
+
+                <LI> <B>(Q) Set new QLIM</B> -- Phase_Doctor does not show
+                     residual fringe phases for the observations with quality
+                     code less then QLIM. You can change the current QLIM.
+                     A prompt to enter the new value of QLIM in the <I>
+                     text window</I> appears upon calling this command.
+                     QLIM should be in the range [1, 9].
+                     </LI><P>
+
+                <LI> <B>(W) Change web directory</B> -- allows to change the 
+                     <I>prefix</I> which is prepended before the output files: 
+                     tables and plots which are created by a make-hardcopy 
+                     function of DiaGI. You can change the default prefix. 
+                     <B>NB:</B> If you are going to specify a directory name, 
+                     you should use a trailing / symbol.
+                     </LI><P>
+
+                <LI> <B>(F) Show frequency table</B> -- displays the table
+                     with frequencies of the individual channels in the 
+                     current band and colors which correspond to those channels.
+                     </LI><P>
+
+                <LI> <B>(N) Next page </B> -- moves to the next page to show
+                     the baselines which were not shown in the current page.
+                     </LI><P>
+
+                <LI> <B>(N) Previous page </B> -- moves to the previous page 
+                     in order to show the baselines which were not shown in 
+                     the current page.
+                     </LI><P>
+           </UL>
+           </LI>
+
+      <LI> <B>(A) Apply model of spurious signals</B> or <BR>
+           <B>(N) Not apply model of spurious signals</B>
+           This command switches the mode: "apply/not apply" the model of
+           spurious signals. This command-button appears only after computation
+           of contribution of spurs model to group or phase delay (commands
+           <B>(P)</B> or <B>(G)</B>). Mode "no apply model" affects on 
+           computation of residual phases: raw residual fringe phase are 
+           displayed. If a mode "apply model" is chosen then fringe phases
+           are corrected for the presence of spurious signals which have been
+           computed previously in according with the model.
+           </LI><P>
+
+      <LI> <B>(G) Plot of contributions of spurs model to GROUP DELAYS</B> --
+           displays the contribution to group delay due to the spurious signals
+           with phases and amplitudes obtained by LSQ adjustment of the model.
+           Fringed phases are re-computed for using new phase-cal phases freed
+           from the presence of spurious signal calculated in according with
+           the model. Residual fringe phase offsets for all channels for all
+           stations except the reference one are evaluated by using LSQ
+           for each band independently. The estimates of phase offsets are
+           printed in the output file with name 
+           <TT>{web_dir}residual_phase_offsets.txt</TT>. Then group and phase 
+           delays are re-computed and the difference between the new group 
+           delay and old group delay at the current band is displayed for all 
+           baselines. Units are picosecond, argument is time in hours.
+           </LI><P>
+
+      <LI> <B>(P) Plot of contributions of spurs model to PHASE DELAYS</B> --
+           displays the contribution to phase delay due to the spurious signals
+           with phases and amplitudes obtained by LSQ adjustment of the model.
+           Fringed phases are re-computed for using new phase-cal phases freed
+           from the presence of spurious signal calculated in according with
+           the model. Residual fringe phase offsets for all channels for all
+           stations except the reference one are evaluated by using LSQ
+           for each band independently. The estimates of phase offsets are
+           printed in the output file with name 
+           <TT>{web_dir}residual_phase_offsets.txt</TT>. Then group and phase 
+           delays are re-computed and the difference between the new phase 
+           delay and old phase delay at the current band is displayed for all 
+           baselines. Units are picosecond, argument is time in hours.
+           </LI><P>
+
+      <LI> <B>(W) Change web directory</B> -- allows to change the 
+           <I>prefix</I> which is prepended before the output files: tables and
+           plots which are created by a make-hardcopy function of DiaGI.
+           You can change the default prefix. <B>NB:</B> If you are going to
+           specify a directory name, you should use a trailing / symbol,
+           otherwise the file will not be put in the desired directory!
+           </LI><P>
+
+</UL>
+
+<H3> Save delays update </H3>
+
+  Option <B>(S) Save contributions to delay</B> is invoked from the <I>main 
+Phase_Doctor menu</I>. It allows to write down the contributions to delay
+which has been computed previously by Phase_Doctor in order to apply it 
+solution. 
+<P>
+
+  It recognizes the following commands:
+<UL>
+      <LI><B>(M) Save as MODE CALIBRATION</B> writes down a file with 
+             6 quantities for each observation: 
+	     <UL>
+                 <LI> contribution to group delay at X-band (sec);     </LI>
+                 <LI> contribution to phase delay at X-band (sec);     </LI>
+                 <LI> contribution to delay rate  at X-band (sec/sec); </LI>
+                 <LI> contribution to group delay at S-band (sec);     </LI>
+                 <LI> contribution to phase delay at S-band (sec);     </LI>
+                 <LI> contribution to delay rate  at S-band (sec/sec). </LI>
+             </UL>
+
+             The filename of the binary output file is 
+             <TT> $PHD_DIR/&lt;experiment_name&gt;.umc </TT>. The output file 
+             contains records with 6 REAL*8 numbers. The number of records
+             is the nominal number of observations in the X-band database.
+             <P>
+
+             <H4> Interface with SOLVE. </H4>
+
+             It is assumed that the output of Phase_Doctor will be imported to
+             SOLVE by using a "user_calibration" gate. F-SOLVE released after
+             01-JAN-2000 supports so called mode-calibration. There is 
+             USERMCAL program (source code is in  
+             <TT> ../src/solve/util/usermcal.f </TT>) which provides 
+             a convenient user interface. It will find 
+             <TT> $PHD_DIR/&lt;experiment_name&gt;.umc </TT> file if environment
+             variable UMC_DIR is set to $PHD_DIR. Refer to comments to 
+             usermcal.f program for details.
+             </LI><P>
+
+      <LI><B>(D) Save as a DATABASE UPDATE</B> -- currently not implemented.
+          </LI><P>
+</UL>
+
+
+<A NAME="customization"> 
+<H2> Customization </H2>
+
+    Phase_Doctor uses a
+<A HREF="http://astro.caltech.edu/~tjp/pgplot/"> PGPLOT </A> library 
+of graphic utilities which in turn invokes 
+<A HREF="http://astro.caltech.edu/~tjp/pgplot/xwdriv.html"> XSERV
+or pgxwin driver</A>. It requires a proper setting X-resources. 
+You should add the following lines to the file ~/.Xdefaults
+          if you use a big screen: 340x280mm
+          <LISTING>
+pgxwin.Win.geometry:	1260x800+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+          </LISTING>
+
+          or
+
+          <LISTING>
+pgxwin.Win.geometry:	1000x680+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+          </LISTING>
+
+          if you use a small screen: 300x230mm. 
+          <P>
+
+          Then you have to activate the settings defined in ~/.Xdefaults by
+          the command 
+<LISTING>
+          xrdb -merge ~/.Xdefaults 
+</LISTING>
+          (<B>NB</B>: Environment variable DISPLAY should be set up properly 
+          before using xrdb). This operation should be done each time when you 
+          start a terminal session, therefore it is reasonable to put the call 
+          of <TT> xrdb </TT> in your customization file, namely ~/.vueprofile 
+<P>
+
+1260x800+0+90 means that the window will have 1260 pixels width, 800 in height,
+0 -- shift to the right respectively to the left edge of the screen, 90 pixels
+shift down respectively to the top edge of the screen. Parameters window width
+and window heights are ignored. Line "pgxwin.Win.iconize:     True" means that 
+PGPLOT window will be iconize and go out from the screen after termination 
+of DiaGI. This resource is <B>MANDATORY</B>, otherwise <A HREF="#referneces"> 
+DiaGI </A> will require confirmation from the text screen when it terminates.
+<P>
+
+The following command should be run before the first call of pgxwin_server:
+<P>
+
+<LISTING>
+xrdb -merge ~/.Xdefaults
+</LISTING>
+
+<B>NB:</B> if pgxwin_server is running xrdb will be ignored! pgxwin_server 
+should be stopped before execution <TT> xrdb </TT> command and then launched 
+again.
+
+  The following environment variable should be set up:
+
+<UL>
+    <LI><B> DISPLAY </B>     -- name of the screen. 
+                             Refer to X11 user documentation for details;
+        </LI>
+    <LI><B> PGPLOT_DIR </B>       -- directory where files pgwin_server and 
+                                     libpgplot.sl are kept;
+        </LI>
+    <LI><B> HELP_DIR </B>         -- directory name where help files are kept;
+        </LI>
+    <LI><B> DIAGI_PRICOM </B>     -- contains the command for printing 
+                                     PostScript file. Example:
+                  "lp -onb -dlaser2" for printer which has built-in PostScript
+                  interpreter (don't use it if printer doesn't have such a
+                  capacity!)
+        </LI>
+</UL>
+
+  Optionally environment the following environment variables can be set up:
+
+<UL>
+    <LI><B> PHD_DIR </B>     -- Phase_Doctor writes down files with experiment 
+                             to a specific directory. Default name of this 
+                             directory is defined by the variable PHD_DIR 
+                             defined in the ../solve/gsfcb.i file.
+                             Environment variable PH_DIR overrides the name 
+                             directory. Typical size of experiment files 
+                             is several megabytes. 
+        </LI>
+</UL>
+
+<P>
+
+<A NAME="names">
+<H2> Names of input and output files. </H2>
+
+<I>Notation:</I>
+
+<UL>
+    <LI> $PHD_DIR  -- directory where scratch files for phase_doctor are 
+         located. System-wide default name for that directory is defined in 
+         <TT>../srdc/solve/gsfcb.i</TT>. User can override it by specifying an 
+         environment variable PHD_DIR.
+         </LI><P>
+
+    <LI> Current Web_dir -- the prefix which is added before all names of the 
+         output files unless otherwise is specified. Current Web_dir is defined
+         in the command string for launching Phase_Doctor. If the argument 
+         -w is omitted than <TT> /tmp/ </TT> is used as a current Web 
+         directory. <B>NB:</B> if it is intended to use web_dir as 
+         a directory name, then a trailing / <B>must</B> be specified.
+	 </LI><P>
+</UL>
+
+<H4> Input files </H4>
+
+Input files are listed here. Some files may not be used. Some files are
+can be used as output files also.
+<P>
+
+<UL>
+      <LI> Database file for X- and for S-band. Name of the database, not 
+           the database files is supplied.
+           </LI><P>
+
+      <LI> Log-file. Name is arbitrary. It is assumed that the name contains
+           a full path. Examples:
+<LISTING>
+/diskB5/logs/is146gc.log
+/diskB5/logs/euro53mc.log
+</LISTING>
+           </LI><P>
+
+      <LI> Definitions file. Contains filenames used to load data to the 
+           Phase_Doctor when it is called the first time.
+           Filename is <TT>$PHD_DIR/&lt;database_name&gt;.def</TT> Examples:
+<LISTING>
+/diskB5/ph_dir/00JAN27XA.def
+/geo/vlbi/phase/99DEC13XA.def
+</LISTING>
+           </LI><P>
+      <LI> Experiment file. Contains results of reading the databases and 
+           log files. It is used when Phase_Doctor is used not the first
+           time for this experiment. File name is
+           <TT>$PHD_DIR/&lt;database_name&gt;.phd</TT> Examples:
+<LISTING>
+/diskB5/ph_dir/00JAN27XA.phd
+/geo/vlbi/phase/99DEC13XA.phd
+</LISTING>
+
+</UL>
+
+<H4> Output files </H4>
+
+Output files are listed here. Files with extension .gif are binary files
+in GIF format, files with extension .ps are ASCII files in Postscript format,
+files with extension .txt are text ASCII files.
+<P>
+
+<UL>
+      <LI> Experiment file. Contains results of reading the databases and 
+           log files. It is written when Phase_Doctor is used with flag -f.
+           File name is
+           <TT>$PHD_DIR/&lt;database_name&gt;.phd</TT> Examples:
+           <LISTING>
+              /diskB5/ph_dir/00JAN27XA.phd
+              /geo/vlbi/phase/99DEC13XA.phd
+           </LISTING>
+	   </LI><P>
+
+      <LI> File of mode calibrations: contributions of phase-cal to group
+           and phase delay.
+           <TT>$PHD_DIR/&lt;database_name&gt;.umc</TT> Examples:
+           <LISTING>
+              /diskB5/ph_dir/00JAN27XA.umc
+              /geo/vlbi/phase/99DEC13XA.umc
+           </LISTING>
+	   </LI><P>
+
+      <LI> Table of statistics of system temperature. 
+           Filename: <TT>{web_dir}sts_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Table of listing of estimation of amplitude and phase of spurious
+           signal.
+           Filename: <TT>{web_dir}spr_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Table of residual fringe phase offsets.
+           Filename: <TT>{web_dir}residual_phase_offsets.txt</TT>
+           </LI><P>
+
+      <LI> Table of listing of estimation of residual phases in phase-cal
+           signal.
+           Filename: <TT>{web_dir}spr_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of raw system temperature. 
+           Filename: <TT>{web_dir}rst_tim_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of system temperature in zenith direction versus time.
+           Filename: <TT>{web_dir}zst_tim_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of system temperature versus elevation angle.
+           Filename: <TT>{web_dir}zst_ele_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of raw phase-cal amplitude versus time.
+           Filename: <TT>{web_dir}rca_tim_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of phase-cal phase with ambiguities fixed versus time.
+           Filename: <TT>{web_dir}acp_tim_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of raw phase-cal amplitude versus raw phase-cal phases.
+           Filename: <TT>{web_dir}rca_rcp_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of normalized phase-cal amplitude versus phase-cal phase 
+           with ambiguities fixed.
+           Filename: <TT>{web_dir}nca_acp_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of normalized phase-cal amplitude versus phase-cal phase 
+           with ambiguities fixed PLUS mode of phase_cal amplitude.
+           Filename: <TT>{web_dir}pcs_adj_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of residuals of normalized phase-cal amplitude versus  
+           phase-cal phase with ambiguities fixed after LSQ estimation.
+           Filename: <TT>{web_dir}pcs_res_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of residuals phases in phase-cal versus time.
+           Filename: <TT>{web_dir}pcr_tim_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of residuals phases in phase-cal versus full phase.
+           Filename: <TT>{web_dir}pcr_phs_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of group delays, phase delay in phase-cal phases and cable
+           delay.
+           Filename: <TT>{web_dir}pcf_phs_{station_name}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of raw residual fringe phases at X-band
+           delay. Filename: 
+           <TT>{web_dir}rsx_phs_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of raw residual fringe phases at S-band
+           delay. Filename: 
+           <TT>{web_dir}rss_phs_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of residual fringe phases at X-band after applying 
+           spurious signals model. Filename: 
+           <TT>{web_dir}rcx_phs_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of residual fringe phases at S-band after applying 
+           spurious signals model. Filename: 
+           <TT>{web_dir}rcs_phs_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of contribution of spurious signals in phase-cal to group 
+           delay at X-band. Filename: 
+           <TT>{web_dir}gdx_spr_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of contribution of spurious signals in phase-cal to group 
+           delay at S-band. Filename: 
+           <TT>{web_dir}gds_spr_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of contribution of spurious signals in phase-cal to phase
+           delay at X-band. Filename: 
+           <TT>{web_dir}pdx_spr_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+      <LI> Plot of contribution of spurious signals in phase-cal to phase 
+           delay at S-band. Filename: 
+           <TT>{web_dir}pds_spr_{station_name1}_{station_name2}.gif</TT>
+           </LI><P>
+
+</UL>
+
+
+<A NAME="referneces">  
+<H2> References </H2>
+
+Dialogue Graphic Interface. DiaGI.
+<OL>
+      <LI> <A HREF="/solve_root/help/diagi_1.hlp" >
+            DiaGI. User guide.                  </A> </LI>
+      <LI> <A HREF="/solve_root/help/diagi_0.hlp" >
+            DiaGI. Brief   description of DiaGI commands. </A> </LI>
+      <LI> <A HREF="/solve_root/help/diagi_2.hlp" >
+            DiaGI. Verbose description of DiaGI commands. </A> </LI>
+      <LI> <A HREF="/solve_root/help/diagi_3.hlp" >
+            Multi_DiaGI. Description of Multi_DiaGI commands.</A> </LI>
+      <LI> <A HREF="/solve_root/help/phase_doctor_03.txt" > Example </A>
+           of the procedure file. </LI>
+</OL> 
+
+Phase_Doctor was developed by Leonid Petrov.
+
+<HR SIZE="2">
+<EM>
+     This document was prepared by
+     <A HREF="mailto:sgdass@lists.nasa.gov" > Leonid Petrov </A> 
+     <BR>
+
+     Last update: 24-MAR-2000 17:01:25
+</EM>
+
+</BODY>
+</HTML>

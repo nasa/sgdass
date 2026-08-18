@@ -1,0 +1,1936 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov 26-JAN-2000 12:40:02  !-->
+<!-- Modified by M. Bietenholz 19-JAN-2016 -->
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+    <META NAME="Generator"          CONTENT="manually" >
+    <META NAME="Author"             CONTENT="Leonid Petrov" >
+
+    <TITLE> User's guide of interactive VTD/Post-Solve </TITLE>
+</HEAD>
+<BODY>
+
+<H1><CENTER> User's guide to interactive VTD/Post-Solve </CENTER></H1>
+<P>
+<CENTER><BIG><I> L. Petrov </I></BIG></CENTER></P>
+
+<HR SIZE="2">
+<CENTER><EM> Contents: </CENTER></EM>
+
+<UL>
+  <LI> <A HREF="#introduction">  Introduction      </A> </LI>
+  <LI> <A HREF="#customization"> Customization     </A> </LI>
+  <LI> <A HREF="#interactive">   Interactive Solve </A> </LI>
+       <UL>
+          <LI> <A HREF="#overview.in">  Overview                    </A> </LI>
+          <LI> <A HREF="#load">         Database loading            </A> </LI>
+          <LI> <A HREF="#initial">      Initial solution            </A> </LI>
+          <LI> <A HREF="#intermediary"> Intermediary solution       </A> </LI>
+          <LI> <A HREF="#final">        Final solution              </A> </LI>
+          <LI> <A HREF="#update">       Database update             </A> </LI>
+          <LI> <A HREF="#samb">         Resolving sub-ambiguties    </A> </LI>
+          <LI> <A HREF="#references">   References                  </A> </LI>
+       </UL >
+</UL>
+
+<CENTER><EM> Abstract </CENTER>
+<BR>
+
+   This manual describes using the program pSolve for analyzing geodetic VLBI 
+observations in interactive mode. It contains some recipes for using this
+program.
+<P>
+
+</EM>
+
+<HR SIZE="2">
+
+<A NAME="introduction"> 
+<H2> Introduction </H2>
+
+    The current pSolve has roots to the code developed in the 1970s at Haystack 
+Observatory and then heavily modified at the Goddard Space Flight Center in 
+1970s and then development through joint efforts of NASA/GSFC, the U.S. Naval 
+Observatory, University of Bonn, and Astrogeo Center. Although pSolve shares
+a number features in design with the old Calc/Solve, its current codebase 
+and functionality diverted so significantly, that we consider pSolve as a sepate 
+softawre package.
+<P>
+
+pSolve is a tool for
+<UL>
+    <LI> Editing the data; </LI>
+    <LI> Resolving group and phase delay ambiguities; </LI>
+    <LI> Parameter adjustment using observations of one or several experiments; 
+         </LI>
+    <LI> Visualization of observables and residuals; </LI>
+</UL>
+<P>
+    There are several clones of Solve. In mid 80s a clone supported by 
+a group in Muzusawa Observatorey diverted. That clone is called mSolve. It 
+supports import and export data in FITS Database format (that is *not* 
+compatible with FITS-IDI or FITS-image format). In 2008 a clone supported 
+by NVI Inc diverted. It is called now cSolve. pSolve is currently supported by 
+NASA Goddard Space Flight Center. The main difference are 1) a complete 
+support of databases in the GVF (Geodetic VLBI Format), 2) replacement
+of obsolete Calc program with a modern VTD (VLBI Time Delay) library that
+computes a priori path delay, and 3) revision of the way how flags are handled
+for different observables. These new feature significantly simplify interactive
+analysis. In 2017 pSolve was converted from Intel compiler to gfortran, from
+32-bit to 64 bits, and the maximum number of estimated parameters was raised
+to 100,000. In 2022 a new installation utility was deveoped, and pSolve was 
+became a part of SGDASS (Space Geodesy Data Analysis Software Suite).
+
+<P>
+  <I>The present document explains the use of VTD/pSolve</I>
+<P>
+
+  pSolve supports both interactive and 
+<A HREF="/solve_root/help/solve_guide_02.txt"> batch [1]</A> modes. 
+pSolve can be used in the following modes:
+
+<UL>
+     <LI> <I> First analysis.</I> -- analysis of the session which was just
+              correlated. 
+          </LI>
+     <LI> <I> Analysis of an individual session.</I> Re-analyzing the session.
+          </LI>
+     <LI> <I> Analysis of a set of sessions independently.</I>
+          </LI>
+     <LI> <I> Analysis of a set of sessions combined.</I>
+          </LI>
+     <LI> <I> Special analysis of observations with user-programs.</I>
+          </LI>
+</UL>
+   
+<A NAME="customization"> 
+<H2> Customization </H2>
+
+Before starting to use pSolve the first time you have to customize your 
+environment. <FONT COLOR="C00000"><B> Don't try to use pSolve without 
+proper customization!</B></FONT> You will waste your time. 
+
+<OL>
+     <LI> <B>Shell</B>. <TT> tcsh </TT> is recommended. Although pSolve is 
+          able to run under either tcsh or bash shells, this manual doesn't 
+          cover the topics of how to use pSolve under other shells.
+          <P>
+
+     <LI> Check your <TT>path</TT> variable. It should contain directories 
+          where system executables and pSolve executables are located. Consult 
+          your system administrator.
+	  </LI><P>
+
+     <LI> <B>Environment variables</B>. pSolve has a plenty of configuration 
+            parameters. There are three levels of configuration:
+            <UL>
+	          <LI> Pre-compiled system-wide default. </LI>
+	          <LI> User defaults specified by environment variables. </LI>
+	          <LI> Current settings. </LI>
+            </UL>
+	    
+            Definition of user defautlts are gathered in a special file. If you
+            don't have it you should copy the file solve_env.template from
+            $PSOLVE_ROOT/example/ to your home directory, rename it, read and edit. 
+            Then add execution of this file in your startup shell file ~/.tcshrc :
+            <BR>
+            <TT> source {file_name}</TT>
+	    <P>
+           
+            Environment variable DISPLAY should be set up properly. Refer to
+            X11 user guide.
+	  </LI><P>
+
+     <LI> <B>X-resources</B>. Some pSolve programs use a 
+          <A HREF="http://astro.caltech.edu/~tjp/pgplot/"> PGPLOT </A> library 
+          of graphic utilities which in turn invokes 
+          <A HREF="http://astro.caltech.edu/~tjp/pgplot/xwdriv.html"> XW
+          driver</A>. It requires proper setting X-resources. You 
+          should add the following lines to the file ~/.Xdefaults 
+          if you use a big screen: 340x280mm
+          <LISTING>
+pgxwin.Win.geometry:	1260x800+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+          </LISTING>
+
+          or if you use a small screen: 300x230mm:
+
+          <LISTING>
+pgxwin.Win.geometry:	1000x680+0+90
+pgxwin.Win.maxColors:   69
+pgxwin.Win.iconize:     True
+          </LISTING>
+          <P>
+
+          Then you have to activate the settings defined in ~/.Xdefaults by
+          the command 
+<LISTING>
+          xrdb -merge ~/.Xdefaults 
+</LISTING>
+          <B>NB</B>: Environment variable DISPLAY should be set up properly 
+          before using xrdb). This operation should be done each time you 
+          start a terminal session, therefore you have to put the call of xrdb 
+          in your customization file, for instance, in $HOME/.tcshrc
+	  </LI><P>
+
+     <LI> <B>pSolve initials</B>. pSolve creates a number of scratch files. 
+          In order to allow more than one user to work simultaneously 
+          a two-letter code called "pSolve initials" is granted to each 
+          pSolve user. A given user may have more than one initials and is 
+          able to run more than one instance of pSolve. pSolve initials are 
+          defined in the file <TT>$SAVE_DIR/letok </TT>. Add  a record for your 
+          initials if you don't have it.
+	  </LI><P>
+
+     <LI> <B>Creation of scratch files</B>. pSolve keeps intermediary results
+          in so-called scratch files. In order to prevent abnormal termination
+          when no free disk space left, pSolve reserves space for scratch files
+          from the very beginning and doesn't remove these files after 
+          termination. Size of these file is determined by a) maximum number of
+          observations in the sessions to be analyzed; b) maximum number of
+          parameters to be solved for.
+          <P>
+
+          Run a program <TT>psolve_reset</TT> if you don't have pSolve scratch
+          files. <B>NB: Scratch files should also be re-created after each 
+          pSolve upgrade!</B> You should also be sure that your environment 
+          variable WORK_DIR has been set before running 
+          <TT>solve_reset</TT>: <TT>echo $WORK_DIR</TT> .
+
+          Usage of <TT>solve_reset</TT>: 
+<LISTING>
+Usage:  psolve_reset xx max_obs max_parms
+
+   Where        xx = user's initials
+           max_obs = maximum number of observations
+         max_parms = maximum number of parameters
+</LISTING>
+          Parameter <TT>max_obs</TT> should be set to <B>twice</B> maximum
+          number of observations in one session if the first analysis is 
+          intended to be performed. Suggested parameters: max_obs: 40000, 
+          max_params: 24000.
+	  </LI><P>
+
+     <LI> <B>C-shell program <TT>sol</TT></B>. Script <TT>sol</TT> facilitates 
+          using pSolve. It expects to find your pSolve environment variable 
+          definition file in your home directory under the name 
+          <TT>{solve_initials}.solve_env</TT> where <TT>{solve_initials}</TT> 
+          consists of lower case symbols, e.g., <TT>px.solve_env</TT> if 
+          pSolve initials PX are in use. Script <TT>sol></TT> can be found 
+          in $PSOLVE_ROOT/example directory
+	  </LI><P>
+
+</OL>
+
+  pSolve processes the VLBI data collected in databases in GVF format.
+A database contains the data from a specific experiment. That includes
+group delays, phase delay rates, single band delays for all bands and all 
+observations, their uncertainties, their flags, a number of auxiliary 
+parameters, and setup of previous analysis if available. An observation
+in this manual is an estimate of group delay at a given baseline for 
+a given scan. A database in GVF format is generated either 1) by PIMA 
+using visibility data and results of fringe fitting or 2) or converted
+from VGOSDA format, 3) converted from MARK3 DBH format by program 
+mark3_to_gvh. The data in VGOSDA format are produced eigher from data 
+in GVF format or from data in VGOSDB format.
+<P>
+
+NB: The word database is used for describing parameters related to 
+a given VLBI experiment, which are stored on 4-6 files. It has nothing 
+related to a popular SQL program.
+<P>
+
+  The file vcat.conf located in pSolve SAVE_DIR directory defines directories
+where all databases are located: 
+
+<PRE>
+GVF_REP_NAMES:  <repo1> <repo2> ... <repon>
+GVF_DB_DIR:     <repo1> directory
+GVF_ENV_DIR:    <repo1> directory
+...
+GVF_DB_DIR:     <repon> directory
+GVF_ENV_DIR:    <repon> directory
+VTD_CONF_FILE: file name
+</PRE>
+
+  The keyword GVF_REP_NAMES defines the list of so-called reposiatory
+names. The repository name is in upper case and is limited to 4 characters.
+
+The keyword GVF_DB_DIR defines the directory where binary sections of
+databases of a given repository are located. The keyword GVF_ENV_DIR defines 
+the directory where ascii files with database envelops of a given repository
+are located. The keyword VTD_CONF_FILE defines the control file for the VTD 
+(VLBI Time Delay) library. pSolve computes theoretical path delays and 
+partial derivatives when a database is loaded and every time when the 
+function "update of theoretical delays"
+<B>(~)</B> is invoked. Keep in mind that the VTD control file usually 
+contains parameters that are supposed to be periodically (f.e. once
+a day or once a week) updated. Among them, there are a priori Earth 
+Orientation Parameters, displacements caused by mass loadings, slant path delay
+in neutral atmosphere, and path delay in the ionosphere. A user is supposed
+to launch a process to update these parameters (vtd_apriori_update.py from
+VTD library). If some parameters are not updated, pSolve will stop during 
+process of loading a database ans issue an error message that explains 
+the reason.
+<P>
+
+  If pSolve stops during an attempt to load a database, you need to update
+the a priori parameters. All stations and sources used in the experiment being
+analyzed must be defined in the a priori station and source catalogues.
+
+<A NAME="interactive"> 
+<H2> Interactive pSolve </H2>
+
+<A NAME="overview.in"> 
+<H3> Overview </H3>
+
+  Interactive pSolve communicates with a the user by means of a set of menus. The 
+majority of programs display menus in a text window and prompt you to enter 
+a command. Each command has a one-letter code and an active field on the 
+screen. A user has two ways to activate a command: either to position a cursor 
+on the active field and then hit the space bar (space key) or to hit a command code 
+letter. Commands codes are enclosed in parentheses and emphasized in 
+<B>bold</B> in 
+this manual. Parentheses themselves are not a part of a command code. Many 
+programs have sub-menus which operate the same way.
+<P>
+
+   pSolve requires terminal window with size not less than 80x24 characters.
+NB: if you want to change terminal window size, you need to first quit
+pSolve, then change the terminal size, then start pSolve. Otherwise, the program
+will crash.
+<P>
+
+   pSolve consists of a set of programs which call each other. In order to 
+launch interactive pSolve, enter a command
+<LISTING>
+    solve <solve_initials>
+</LISTING>
+for example,
+<LISTING>
+    solve PE 
+</LISTING>
+
+   The first program of the interactive pSolve is OPTIN. When the program OPTIN starts, 
+it displays the main pSolve menu and prompts for 
+user input. You can terminate pSolve by hitting the key <B>(T)</B> from the main 
+menu, or by hitting the key <B>(CNTRL/C)</B> when pSolve is waiting for user input.
+The menu settings remain untouched and you can resume analyzing the experiment
+after the interruption. <B>NB:</B> be cautious with using <B>(CNTRL/C)</B> while
+pSolve is working: if you interrupt pSolve during disk writing
+you may not be able to resume analysis.
+
+   pSolve expects to find VLBI observations and other intermediary data in the
+scratch files located in your working directory $WORK_DIR. Each scratch file
+has a suffix with pSolve user initials; this is what allows pSolve to distinguish 
+scratch files that belong to different users.
+<P>
+
+   pSolve scratch files contain information about one or more sessions. To learn
+the status of scratch files hit the key <B>(X)</B> from the main pSolve menu. 
+pSolve reports the database name, version number, total number of observations 
+(including non-detections), band and status.
+<P>
+
+    Interactive pSolve allows the user to perform the following operations:
+<UL>
+      <LI> Load the database in GVH format to the scratch files;
+           </LI><P>
+
+      <LI> Query  the status of flags which affect solution setup and re-set 
+           these flags;
+           </LI><P>
+
+      <LI> Run least square solution, compute statistics and generate 
+           a listing;
+           </LI><P>
+
+      <LI> Run additional programs like reweighting, outlier elimination,
+           ambiguity resolution;
+           </LI><P>
+
+      <LI> Plot estimates of some parameters and post-fit residuals;
+           </LI><P>
+
+      <LI> Update databases for including information added during solution:
+           suppression setup, ambiguities, parameterization;
+           </LI><P>
+
+</UL>
+
+<A NAME="load"> 
+<H3> Data loading </H3>
+
+   pSolve is able to read the data in GVF format. Although post-pSolve still
+supports two other obsolete formats: MARK-3 DBH and superfile format, the use of 
+data in these formats is not explained in the document. Support of Mark-3 DBH
+and superfile formats will be removed in the near future.
+<P>
+
+  The first operation in the data analysis is to read the experiment and to 
+load it into the scratch files. Only one database can be loaded at any one time.
+
+   Option <B>(G)</B> or <B>(CNTRL/G)</B> in the OPTIN menu invokes program 
+GETDB, which loads the experiment in the scratch area. On launch, GETDB shows 
+the list of all databases in your database repository. OPTIN shows the current
+repostory ioni the 6th line. You can change repostitory by hittin <B>(R)</B>
+You can scroll the list using <B>(ArrowUp)</B>, <B>(Arrow Down)</B>, 
+<B>(PageUp)</B>, and <B>(PageDown)</B> keys. When you find the database that 
+you want to load, position the cursor on that database and hit key 
+<B>(space)</B>.  However, if you have many databases in your  database 
+directory, this method is inconvenient. As an alternative, hit key <B>(T)</B> 
+and pSolve will prompt you to enter the database name. If you enter complete 
+database name, including the version, pSolve will load the  database 
+immediately. If you enter a partial database name, pSolve will show you the 
+list of databases with names that start with the substring that you have 
+entered.
+
+Option <B>(X)</B> inquires about the current status of the scratch area.
+
+<A NAME="initial"> 
+<H3> Initial solution </H3>
+
+   The initial solution is carried out when the experiment is analyzed the 
+first time. The purposes of the initial solution are:
+<UL>
+     <LI> Set the a priori clock model if it is necessary;
+          </LI><P>
+
+     <LI> Resolve group delay ambiguities and X- and S-bands.
+          </LI><P>
+
+     <LI> Detect all clock breaks (or get evidence that there are no clock
+          breaks)
+          </LI><P>
+
+     <LI> Deselect bad stations if needed.
+          </LI><P>
+
+     <LI> Remove large outliers which may make the solution useless.
+          </LI><P>
+
+</UL>
+
+   <BIG><I>The sequence of operations:</I></BIG>
+<P>
+
+  <H4> Initial settings </H4>
+
+Hit <B>(L)</B> key. You should see at the bottom "Last page   Parms used 
+/ Max parms available:". Select solution type and suppression method.
+If you have a database generated by PIMA, you will find that the suppression
+method is set to SUPMET__META. If your database was just converted from 
+Mark-3 DBH, and you loaded it to VTD/pSolve for the first time, it
+may have a different suppression method. Then you need to change the 
+suppression method to SUPMET__META. Hit key <B>(')</B> and change suppression
+method to SUPMET__META.
+<P>
+
+  The next step is to select the observable. In a case of single band
+data you can select "Group delay X-band", "Phase delay X-band", or
+"Single band X-band". It is suggested that beginners should use "Group
+delay X-band". NB: for pSolve "X-band" means the upper band and
+"S-band" means the lower band. For instance, in K/C observations,
+pSolve will refer to the K-band data as "X-band" and the C-band data as
+"S-band". This may sound confusing.
+<P>
+
+  In a case of dual-band data you have more choices: 
+<P>
+
+<LISTING>
+"Group delay X-band",
+"Phase delay X-band",
+"Single band X-band",
+"Group delay S-band"
+"Phase delay S-band",
+"Single band S-band",
+"G-Gxs combination"
+</LISTING>
+
+  It is recommended to start with the low band.
+<P>
+
+(Exception: there are a number of databases created in 1985--1993
+where the S-band data are lost, but where the ionosphere calibration
+is present. For these experiments, do not change solution type and
+suppression method)
+<P>
+
+  After you change the data type, re-compute theoretical path delays.
+The ionosphere contribution depends on the solution type. This is a 
+general rule: every time if you change solution type, you need to re-compute
+theoretical path delays. Failure to do so may bring you erroneous results.
+
+
+<H4> Setting initial parameterization </H4>
+
+  Go to the SETFL last page menu by hitting <B>(L)</B> in the OPTIN menu. Turn the
+estimation of site coordinates off by hitting <B>(#)</B>, set all EOP 
+flags to 0 (off), set the nutation estimation flag to zero by hitting <B>(.)</B>. 
+Then set the clock parameters for all stations except the station 
+taken as a clock reference. Hit the key <B>(E)</B>, then you'll see the "site 
+menu" of the SETFL program. It is irrelevant which station is taken as 
+a clock reference station at this step except the cases: a) when there are too few 
+good observations (say, less than 8) at that station; b) when the network is split into 
+two independent subnetworks. Set the clock polynomial flags to 1 for the first 
+three terms (clock shift, clock drift, frequency drift), f.e,
+<LISTING>
+ Clock polynomials
+ 93/07/21 19:59                1 1 1 0 0 * * *
+</LISTING>
+
+Be sure that all others parameters related to that station are disabled: 
+atmosphere path delay, atmosphere gradients, axis offset. Keys <B>(N)</B> and 
+<B>(P)</B> allow you to move to the next and the previous station. 
+<P>
+
+  Check your parameterization once more. Only clock polynomials of the 0,1,2
+order should be set up. All other parameters should not be activated. Then run 
+LSQ solution by hitting <B>(Q)</B>. Look at the listing of the solution. Check 
+once more that only clock polynomials are in the solution.
+<P>
+
+  Check wrms. It should not exceed 1 microsecond. If the wrms exceeds that 
+value it means that you have trouble, e.g., there are several very strong 
+outliers.
+<P>
+
+  Check the clock offsets and rates (CL 0) and (CL 1). If there are stations with
+clock offsets greater by modulo than 10<SUP>-4</SUP> sec -- 100 000 nsec and/or 
+the stations with clock rate greater by modulo than 
+10<SUP>-9</SUP> -- 100 000 D-14, you should apply an a priori clock model for 
+those stations. The number of digits in a float number presentation is not enough 
+to handle the case when adjustments to clock parameters are too large. Rounding 
+errors may corrupt results. To overcome this problem, an a priori clock model 
+is added to the theoretical delays and delay rates. If you notice that clock 
+offsets and clock rates exceed the limit for all stations, it means that the 
+clock-reference station itself has anomalous clock offset or rate. Change the 
+clock-reference station in that case. You can find preliminary values for a 
+clock model from the correlation report if it is available.
+
+  <H4> Setting a priori clock values. </H4>
+  
+  If all clock offsets and rates are below the limit you can skip this step.
+<P>
+
+  Find all stations with anomalous clock offsets and/or rates. Write down the 
+values of clock and rate for these stations. pSolve supports an a priori clock
+model for up to 4 stations. Go back to OPTIN menu. Then go to the last page 
+of SETFL. Then hit <B>(&lt;)</B>. You will see the menu of SET_ACM program.
+Follow the <A HREF="/psolve/doc/setacm.hlp"> SET_ACM
+manual [2]</A>.
+
+  Make one more LSQ solutions after applying a priori clock model. Clock 
+parameters for the stations with applied clock models should be about zero.
+
+  <H3> Group delay ambiguity resolution.</H3>
+
+  The next step is to check whether you have to resolve group delay ambiguities 
+at both bands. If your database was generated by PIMA, you rarely have 
+ambiguities in group delays. If your database was generated by Fourfit and then 
+converted to GVF format with program mark3_to_gvf you may have group delay 
+ambiguities. Group delay ambiguities is an artifact of Fourfit algorithm.
+The way how Fourfit works, group delays are not determine in a unique way
+buy as &tau; + N * S, where S is the so-called ambiguity spacing and N
+is an <I>arbitrary</I> integer number. The group delay ambiguity spacing is 
+the quantity that is reciprocal to the minimal frequency separation between
+intermediate frequencies if the delay is determined with Fourfit, and
+the quantity that is reciprocal to the resolution of visibility spectrum
+if the delay is determined with PIMA. Fourfit and PIMA set up the 
+initial value for N in order to keep the residual group delay, i.e. the 
+difference between the estimated group delay and theoretical group delay
+below 1/2 of the group delay spacing. But accuracy of theoretical model
+used by Fourfit is often not sufficient and as a result initial value is 
+often wrong and the for a subset of observation it needs to be changed. 
+This process is called group delay ambiguity resolution. Since spectral
+resolution is much lower than the minimal frequency separation between
+intermediate frequencies, group delay ambiguity spacing for delays determined
+with PIMA are much greater, typically 1&ndash;10 microseconds, which is usually
+significantly greater than errors in a~priori model.
+<P>
+
+  If there is more than 3&ndash;5 observations with group delay ambiguities
+determined incorrectly, these errors corrupt least square solution to that
+extent that the residuals after subtraction the contribution of adjusted
+parameters to the initial group delay are so severely distorted than it
+becomes close to impossible to determine which observations caused solution
+distortion by inspecting residuals. Therefore, a more sophisticated algorithm
+is required.
+
+<P>
+   When group delay ambiguities are resolved, the residuals that correspond
+to observations affected by wrong ambiguities are aligned along lines
+above or below the zero line on the plots of residuals versus time. The deviation
+from the zero line is  close to the N * S.
+
+<P>
+   There is another factor that can lead to appearance of a significant number 
+of observations with residuals that are aligned in plots versus time 
+<U><I>after</I></U> the affected observations are identified and eliminated 
+from the solution: errors in fringe fitting algorithm that resulted in picking
+up a sidelobe in the delay resolution function, or using another language,
+a secondary maximum of the Fourier transform of the visibility spectrum.
+If phase bandpass was not determined correctly or there were instrumental
+factors that distorted fringe phases at some intermediate frequencies and
+observations had relatively low SNR, the noise in the data may change 
+the amplitude of maximum of delay resolution function. The maximum that is
+secondary for the undisturbed data may have greater amplitude than the 
+original main maximum. High level of sidelobes, narrow bandwidth of intermediate
+frequencies, and low SNR increases a chance of an error in the fringe fitting 
+algorithm. Observations affected by this problem have errors in delay at
+1&ndash;2 main sidelobes. After suppressing these points from the least square
+solution, the residuals have a pattern that resembles errors in group delay 
+ambiguities. The main difference in plots is the that residuals affected by
+group delay ambiguities have fixed spacings N*S, but observations affected 
+by errors in pickling the maximum have residuals that are not commensurate
+to S. These phenomena called sub-ambiguities. Group delay ambiguities can
+be resolved by pSolve. Sub-ambiguities cannot be resolved by pSolve only.
+pSolve only marks them as outliers. The sub-ambiguities usually can be resolved
+by re-running PIMA with a narrow fringe search window. This procedure is called
+re-fringing. See section <A HREF="#samb">resolving sub-ambiguties</A> for
+details. To make things complicated, observations can be affected by
+both group delay ambiguities and sub-ambiguities.
+<P>
+
+There are two ways to resolve group delay ambiguities: manual procedure and 
+automatic procedure GAMB. The automatic procedure should be used, except 
+rare cases which it currently doesn't support.
+
+If you have dataset produced by Fourfit, read the <A HREF="solve_guide_04.html">
+guideline for resolving group delay ambiguities</A>, otherwise follow
+this document.
+
+<H4> Manual elimination of observations affected by sub-ambiguities. </H4>
+
+  Manual group delay ambiguity resolution is an alternative technique. 
+
+<P>
+<B><I> Steps of manual sub-ambiguities resolution: </I></B>
+
+<UL>
+    <LI> Toggle the flag [Use normally (W)eighted delays] to [Down-(W)eighted
+         delays by 1.D9] by hitting <B>(W)</B> in the last SETFL page. This 
+         option reduces the weights of the delays by 1.D9 and forces the least 
+         squares fit to get its deterministic only from the delay rates which 
+         are not affected by the group delay ambiguities. However, the 
+         residuals for the group delays are still calculated.
+         </LI><P>
+
+    <LI> By typing <B>(B)</B> we now enter the Baseline page where we select 
+         the baselines of which data will be used in the least squares fit. 
+         All baselines marked by the symbol 'X' will be used. You should 
+         include only the independent baselines which are formed with the 
+         reference station selected on the Site pages (for example, 
+         WETTZELL-MATERA, WETTZELL/MEDICINA, WETTZELL/MATERA ...). All other 
+         baselines should be excluded. This can be achieved by first deselecting
+         all the baselines, then hitting the station code. All baselines with
+         that station will be selected.
+         <B>NB:</B> There should be a good number of observations on each of 
+         these baselines. If there are no observations (e.g. at the baseline 
+         KOKEE/HARTRAO with length 98% of Earth's diameter) or only very few
+         on a baseline, you have to select another baseline which connects 
+         the remote station to the reference station independently.
+         </LI> <P>
+
+    <LI> Select a simple parameterization: set estimation of 2nd degree 
+         polynomial for all the stations, except the reference one</B>. 
+         </LI> <P>
+
+    <LI> Make solution by hitting <B>(Q)</B>. 
+         </LI> <P>
+
+    <LI> When the adjustment is finished, we can analyze and edit the residuals 
+         by typing <B>(P)</B> on the OPTIN menu. Program REPA (Residual Editing,
+         Plotting and Analysis) is invoked. 
+         <P>
+         Start first examining the baselines which contains the reference 
+         station. Position the cursor in the small box with residuals at a given
+         baseline and click the left or central mouse button. When the plot of 
+         residuals appears, we may see several horizontal lines where the
+         residuals concentrate. 
+
+         Residual plot supports four modes of editing. The current mode is 
+         highlighted in the top of the plot. A number of new keys is defined
+         in the graphic application for residual analysis with respect to
+         standard DiaGI.
+
+         <UL>
+            <LI> <B>(LeftMouse)</B> 
+                 depends on mode: <B>(ESC)</B>, <B>(F1)</B>, 
+                 <B>(F2)</B>, <B>(F3)</B>. See below.
+                 </LI><P>
+
+            <LI> <B>(CentralMouse)</B> 
+                 depends on mode: <B>(ESC)</B>, <B>(F1)</B>, 
+                 <B>(F2)</B>, <B>(F3)</B>. See below.
+                 </LI><P>
+
+            <LI> <B>(RightMouse)</B> 
+                 depends on mode: <B>(ESC)</B>, <B>(F1)</B>, 
+                 <B>(F2)</B>, <B>(F3)</B>. See below.
+                 </LI><P>
+
+            <LI> <B>(Cntrl/M)</B>
+                 adjust the bounding box to include all the good (green)
+                 points.
+                 </LI><P>
+ 
+            <LI> <B>(Shft/M)</B>
+                 adjust the bounding box to include all the good (green) 
+                 and deselected (red) points.
+                 </LI><P>
+ 
+            <LI> <B>(Shft/LeftMouse)</B>
+                 Inquire the status of the <I>point</I> of the current
+                 color closest to the cursor. Returned information: X: time 
+                 tag of the point in hours
+                 with respect to the nominal session start, Y: value of the 
+                 residual in ns, E: reweighted uncertainty of the group delay
+                 in ns. NB: if you need to inquire point of other color, you
+                 need to change color by hitting key <B>(C)</B>.
+                 </LI><P>
+
+            <LI> <B>(Ctrl/LeftMouse)</B>
+                 Inquire the status of the <I>observation</I> closest to the cursor. 
+                 Returned information: status (G or B), baseline, source
+                 name, TAI fringe reference time, residual value and its uncertainty,
+                 quality code for the upper and lower band (upper band is shown
+                 first), SNR for both bands.
+                 </LI><P>
+                                    
+            <LI> <B>(Alt/LeftMouse)</B> 
+                  shows fringe plot versus frequency on the current
+                  band if pSolve can find it it. pSolve will look for 
+                  the fringe plot in GIF format created by PIMA in 
+                  directory XXX/EXP_uvf/  where XXX is 
+                  and EXP is the experiment name.
+                  These plots will be created by PIMA when
+                  FRIB.1D_RESFRQ_PLOT: GIF. NB: each PIMA run
+                  overwrites this plot. Thus, you see the fringe
+                  plot of the latest processing this observation.
+                 </LI><P>
+ 
+            <LI> <B>(Alt/CentralMouse)</B> 
+                 shows fringe plot versus time on the current
+                 band if pSolve can find it it. pSolve will look for 
+                 the fringe plot in GIF format created by PIMA in 
+                 directory XXX/EXP_uvf/  where XXX is 
+                 and EXP is the experiment name.
+                 These plots will be created by PIMA when
+                 FRIB.1D_RESTIM_PLOT: GIF. NB: each PIMA run
+                 overwrites this plot. Thus, you see the fringe
+                 plot of the latest processing this observation.
+                 </LI><P>
+
+            <LI> <B>(Alt/RightMouse)</B> 
+                 shows a plot of delay resolution function on 
+                 the current band if pSolve can find it it. pSolve 
+                 will look for the fringe plot in GIF format 
+                 created by PIMA in directory XXX/EXP_uvf/  where 
+                 XXX is and EXP is the experiment name.
+                 These plots will be created by PIMA when
+                 FRIB.1D_RESDRF_PLOT: GIF. NB: each PIMA run
+                 overwrites this plot. Thus, you see the fringe
+                 plot of the latest processing this observation.
+                 </LI><P>
+         
+            <LI> <B>(Shift/Alt/LeftMouse)</B> 
+                  shows fringe plot versus frequency on the opposite
+                  band if pSolve can find it it.
+                 </LI><P>
+         
+            <LI> <B>(Shift/Alt/CentralMouse)</B> 
+                  shows fringe plot versus time on the opposite
+                  band if pSolve can find it it.
+                 </LI><P>
+         
+            <LI> <B>(Shift/Alt/LeftMouse)</B> 
+                  shows delay resolution function on the opposite
+                  band if pSolve can find it it.
+                 </LI><P>
+         </UL>
+
+         REPA supports four modes: ESC, F1, F2, F3. The current mode is 
+         highlighted in the top of the plot window. Keys <B>(ESC)</B>, 
+         <B>(F1)</B>, <B>(F2)</B>, <B>(F3)</B> switch the mode. Operations
+         bound on mouse keys <B>(LeftMouse)</B>, <B>(CenralMouse)</B>, 
+         <B>(RightMouse)</B> depend on mode. In all modes key 
+         <B>(Backspace)</B> undoes the previous operation for point
+         suppression status toggle and ambiguity resolution. All operations
+         in the current mode are stored in the stack and can be undone.
+         Change the mode clears the stack. 
+
+         <UL>
+            <LI> <B>(ESC)</B>  
+                 mode does not not allow to edit the plot. All keys work 
+                 as in the usual DiaGi mode. <B>(Shft/LeftMouse)</B> inquires 
+                 the value of
+                 the residual and uncertainty associated with it. The inquiry
+                 printed in the bottom of the PGPLOT window the argument of the
+                 point as time in hours elapsed from the nominal session start,
+                 the value and the formal uncertainty. Key <B>(CNTRL/M)</B> 
+                 changes the bounding box to include only good (green) points.
+                 </LI><P>
+
+            <LI><B>(F1)</B> Single Point Ambiguity 
+                 mode allows to change suppression status and shift the group 
+                 delay by one ambiguity spacing either up or down. Additional
+                 keys with respect to normal DiaGI mode are supported:
+               
+                <UL>
+                   <LI> <B>(LeftMouse)</B> 
+                        shifts the point near the cursor down by one ambiguity 
+                        spacing.
+                        It subtracts that value to the group delay.
+                        Light gray  disk will be put on the place where 
+                        the point was originally. The updated group delay 
+                        will be used when the least square solution is made
+                        next time.
+                        </LI><P>
+
+                   <LI> <B>(CentralMouse)</B> 
+                        toggles suppression status of the point close to the 
+                        cursor. Good  (green) point becomes deselected (red) 
+                        point. Deselected (red) point becomes good (green) point.
+                        </LI><P>
+
+                   <LI> <B>(RightMouse)</B> 
+                        shifts the point near the cursor up by one 
+                        ambiguity spacing. It adds that value to the group delay.
+                        Light gray  disk will be put on the place where 
+                        the point was originally. The updated group delay 
+                        will be used when the least square solution is made
+                        next time.
+                        </LI><P>
+
+                  <LI> <B>(Backspace)</B> undoes the last operation for toggling
+                        the suppression status and ambiguity shift. Repeated
+                        hitting this key will undo previous operations.
+                        </LI><P>  
+
+                   <LI> <B>(Alt/LeftMouse)</B> 
+                         shows fringe plot versus frequency on the current
+                         band if pSolve can find it it. pSolve will look for 
+                         the fringe plot in GIF format created by PIMA in 
+                         directory XXX/EXP_uvf/  where XXX is 
+                         and EXP is the experiment name.
+                         These plots will be created by PIMA when
+                         FRIB.1D_RESFRQ_PLOT: GIF. NB: each PIMA run
+                         overwrites this plot. Thus, you see the fringe
+                         plot of the latest processing this observation.
+                         </LI><P>
+ 
+                   <LI> <B>(Alt/CentralMouse)</B> 
+                        shows fringe plot versus time on the current
+                        band if pSolve can find it it. pSolve will look for 
+                        the fringe plot in GIF format created by PIMA in 
+                        directory XXX/EXP_uvf/  where XXX is 
+                        and EXP is the experiment name.
+                        These plots will be created by PIMA when
+                        FRIB.1D_RESTIM_PLOT: GIF. NB: each PIMA run
+                        overwrites this plot. Thus, you see the fringe
+                        plot of the latest processing this observation.
+                        </LI><P>
+
+                   <LI> <B>(Alt/RightMouse)</B> 
+                        shows a plot of delay resolution function on 
+                        the current band if pSolve can find it it. pSolve 
+                        will look for the fringe plot in GIF format 
+                        created by PIMA in directory XXX/EXP_uvf/  where 
+                        XXX is and EXP is the experiment name.
+                        These plots will be created by PIMA when
+                        FRIB.1D_RESDRF_PLOT: GIF. NB: each PIMA run
+                        overwrites this plot. Thus, you see the fringe
+                        plot of the latest processing this observation.
+                        </LI><P>
+           
+                   <LI> <B>(Shift/Alt/LeftMouse)</B> 
+                         shows fringe plot versus frequency on the opposite
+                         band if pSolve can find it.
+                        </LI><P>
+           
+                   <LI> <B>(Shift/Alt/CentralMouse)</B> 
+                         shows fringe plot versus time on the opposite
+                         band if pSolve can find it.
+                        </LI><P>
+           
+                   <LI> <B>(Shift/Alt/LeftMouse)</B> 
+                         shows delay resolution function on the opposite
+                         band if pSolve can find it.
+                        </LI><P>
+                </UL>
+                </LI><P>
+
+            <LI><B>(F2)</B> Group Ambiguity Resolution 
+                 mode allows to change ambiguities of all the points of
+                 the current baseline.
+                 <P>
+                 <UL> 
+
+                    <LI> <B>(CentralMouse)</B> 
+                         Resolves ambiguities of all points of the baseline
+                         with respect to the current cursor position P.
+                         Ambiguities of all the points are adjusted in
+                         such a way that all residuals will be within 
+                         [P -1/2S, P + 1/2S], where P is the group delay that
+                         corresponds to the current cursor position and S is 
+                         the ambiguity spacing.
+                         </LI><P>
+
+                    <LI> <B>(Backspace)</B> undoes the last operation for 
+                          the ambiguity shift. Repeated hitting this key will 
+                          undo previous operations.
+                          </LI><P>
+                 </UL>  
+                 </LI><P>
+
+            <LI><B>(F3)</B> Group Suppression Status Toggle 
+                 mode allows to change suppression status for a group of
+                 points.
+                 <P>
+                 <UL> 
+
+                    <LI> <B>(LeftMouse)</B> 
+                         Suppresses all the points of the current baseline with 
+                         residuals by module exceeding the group delay where
+                         the cursor points. Suppressed points become bad (red).
+                         </LI><P>
+
+                    <LI> <B>(RightMouse)</B> 
+                         Restores all the points of the current baseline with 
+                         residuals by module less than the group delay where
+                         the cursor points. Restored points become good (green).
+                         </LI><P>
+
+                    <LI> <B>(Backspace)</B> undoes the last operation for 
+                          the toggling suppression status. Repeated hitting this 
+                          key will undo previous operations.
+                          </LI><P>
+                 </UL>  
+                 </LI><P>
+
+         Repeat the ambiguity shifting for all baselines with the reference 
+         station and run the solution again. 
+         </LI> <P>
+
+    <LI> When all ambiguities and large outliers at all independent baselines are
+         fixed, you can fix ambiguities at remaining non-independent baselines.
+         Hit <B>(W)</B> at the SETFL page. 'Down-(W)eighted delays by 1.D9'
+         should be toggle to 'Down-(W)eighted delays by 1.D9'. Run least
+         square solution. Clean the solution for outliers exceeding 1/10 of the
+         ambiguity spacing at all baselines in the solution. Then enable all
+         baselines by hitting <B>(B)</B> (and you get to SLVEB program) and
+         then hit <B>(W)</B>. This will select all baseline. Then compute
+         residuals with respect to the solution with independent baselines
+         only by hitting <B>(O)</B> and then <B>(@)</B>. This is important. 
+         Non-independent baselines  are still contaminated by ambiguities and
+         the unresolved ambiguities spoils solution to that degree, the residuals
+         become unusable.
+         <P>
+         Then display the residual plot by hitting <B>(P)</B>. List all baselines
+         sequentially and resolve remaining ambiguities using F2 mode (Group
+         ambiguity shift). Just position the cursor close to zero delay and
+         hit <B>(CentralMouse)</B>. Keys <B>(PgUp)</B> and <B>(PgDn)</B> change
+         the current baseline in a forward or backward direction respectively.
+         </LI><P>
+
+    <LI> If you think you have eliminated all ambiguities press <B>(Q)</B> 
+         again to check. Look at the RMS delay residuals which should be below 
+         2 ns at X-band and below about 8 ns at S-band. Repeat the plots and 
+         check carefully. The next step is to go to the SETFL last page by
+         hitting <B>(L)</B> from the main OPTIN menu and switching to 
+         'Normally weighted delays' by hitting <B>(W)</B>. Repeat the least 
+         squares fit and look at the residuals again. They should be much 
+         smaller (&lt; 2&ndash;3 nsec) now and any drifts in the residuals should 
+         have vanished.
+         </LI><P>
+
+    <LI> If your database contains data for two bands, repeat the operation
+         with the next band. Go to the last page by hitting <B>(L)</B> and
+         then hit <B>(+)</B>. Select the opposite band and repeat the
+         the operation. 
+
+    <LI> In a case of dual-band data, after you resolve ambiguities at 
+         both bands, you select solution type G_GXS, i.e. ionosphere-free
+         combination of group delays at both bands. Go to the last page by 
+         hitting <B>(L)</B>, then hit <B>(+)</B> and then select G_GXS.
+         After selecting the solution type, hit <B>(~)</B> in order to update
+         theoretical path delays.
+
+    <LI> There is an alternative technique to resolve group delay ambiguities.
+         You can use solution type <I>Single Band X-band</I> or 
+         <I>Single Band S-band</I>. Single band  delay is the group
+         delay within an IF incoherently averaged over all IFs.
+         These observables have spacing reciprocal to spectral resolution
+         of visibility spectra. You first run least squares solution using
+         single band delays, clean it for outliers. When you are satisfied
+         with the solution, you compute group delay residuals with respect to
+         the single-band solution: hit <B>(@)</B> and <B>(P)</B>. Then you 
+         can resolve ambiguities to have residual close to zero. 
+</UL>
+
+  <BIG><I> Group delay ambiguities are resolved. </I></BIG>
+<P>
+
+  The next step is to inspect residuals. Set estimation of baseline-dependent 
+clocks: hit <B>(C)</B> from the menu of the last SETFL page. Menu of the 
+program BCLOK will be displayed. First set all baselines by hitting <B>(W)</B>,
+then deselect a clock reference station by hitting the station code.
+<P>
+
+  Make a solution by hitting <B>(Q)</B>. Look at the listing. Normally the 
+total wrms should be in the range [500, 1500] psec. If it exceeds 2000 psec, 
+it means that probably either ambiguity resolution was not successful or 
+there are clock breaks at one or more stations.
+<P>
+  
+  You should check estimates of baseline-dependent clocks. If the estimates 
+exceed 1 nsec, it is an indication of remaining permanent ambiguities at
+that baseline, i.e there are no jumps in ambiguities among observations at
+all baselines but all observations at some baselines have incorrect 
+ambiguities what causes triangle misclosures to be a multiple of the ambiguity 
+spacing. You have to get rid of permanent ambiguities.
+<P>
+
+<A NAME="redistribution">
+<H5> Manual re-distribution of permanent group delay ambiguities </H5>
+
+  First you have to decide which band is affected by permanent ambiguities.
+If baseline-dependent clocks has an adjustment by a multiple of the group delay 
+ambiguity spacing at X-band -- then X-band. A permanent ambiguity at S-band
+will contribute by <TT>f<SUB>X</SUB>/f<SUB>S</SUB> = 12 </TT> times less.
+Thus, if you see baseline-dependent clock estimates less than one group delay
+ambiguity spacing but still larger than 1 nsec, it is an indication that
+there are S-band permanent ambiguities.
+<P>
+
+  Set solution type <TT><B>X-band Group Delay</B></TT> or 
+<TT><B>S-band Group Delay</B></TT> on the last SETFL page in accordance with 
+the band affected by permanent  ambiguities. Then hit key <P>(B)</B> and 
+enter program BASFE for selecting the baselines. Deselect the baselines
+affected by permanent ambiguities by positioning the cursor on the line with
+baseline name and hit <B>(space)</B> key. The reset baseline-dependent clock:
+hit <B>(O)</B>, <B>(L)</B>, <B>(C)</B>. You will enter BCLOCK program. Set 
+estimation of all baseline clocks by hitting <B>(M)</B> or deselect estimation
+of baseline clock by hitting <B>(Z)</B>. Usually deselecting all baseline
+clock is desirable at this step. Then run least square solution by hitting
+<B>(Q)</B>. First, check that your solution is good. If the solution is
+good, then restore deselected baseline by hitting <B>(O)</B>, <B>(B)</B>
+<B>(W)</B>. Then compute residuals with respect to the previous solution
+by hitting <B>(O)</B> and <B>@</B>. Then go to REPA by hitting <B>(P)</B>
+and examine residuals. Find the baseline with residuals with the mean that
+deviates from zero at a number that is multiple of the ambiguity spacing.
+Enter the mode F2 by hitting key <B>(F2)</B>. Position the cursor near 0
+group delay and hit the <B>(CentralMouse)</B>. If the plot bounding box does
+not include zero group delay, you need to enter DiaGi mode by hitting
+<B>(Esc)</B>, then using <B>(CentralMouse)</B> adjust the bounding box,
+end then enter F2 mode by hitting <B>(F2)</B>.
+<P>
+
+  You may have observations with ambiguities less than the group delay 
+ambiguity spacing. These are sub-ambiguities and they are caused by a wrong 
+choice of maximum in the delay resolution function.  There is no way to resolve 
+sub-ambiguities in Solve. In order to resolve sub-ambiguities, i.e. fix
+error of fringe fitting procedure, you need to re-run fringe fitting procedure.
+A necessary, but not sufficient step is to suppress all the points with 
+sub-ambiguities. Look for section "Resolving section sub-ambiguities in
+this document"
+<P>
+
+<H5> Inspection of residuals </H5>
+
+  Now you have to inspect residuals baseline by baseline. The purpose is
+to check quality of data, check whether the ambiguities were resolved correctly
+and check whether clock breaks have to be inserted. Call program REPA
+by hitting <B>(P)</B> from the OPTIN menu. (<B>NB:</B> REPA conflicts with 
+some X-applications which grabs colors, like Netscape. You should close such
+applications before running REPA.)
+<P>
+
+  If you find a jump in the plot of residuals you may try to insert a clock
+break. Be sure that it is not a jump in ambiguities at X- or S-band. In order
+to insert a clock break hit <B>(E)</B> in the main OPTIN menu, then 
+list station's pages by hitting <B>(N)</B> or <B>(P)</B> till you find the 
+station where you are going to insert clock breaks. Then hit <B>(*)</B> several 
+times until you see a line <TT>insert</TT>. Then hit <B>(C)</B> and enter 
+the time tag of the clock break. Then a new epoch for clock polynomial appears 
+at the SETFL page for that station. Set the first three flags to 1 for the new 
+clock break. Then make a new solution and check the listing and residual plots.
+Keep in mind that there should be enough observations between the start of 
+the session, clock break(s) and the end of the session. There should be no less 
+than 4 observations, otherwise your solution will be unstable or singular. 
+If it seems to you that the session has many clock breaks, it may indicate 
+another serious problems unrelated to clock behavior.
+<P>
+
+  If you have a station with too few good observations (less than 5 at each
+baseline), or you have a station with postfit residual scatter larger than 
+5 nsec you can deselect it. But it is a last resort. In general you should try
+to keep as many stations/baselines as possible in the initial and intermediary
+solutions, and to leave the final decision to the time of the final solution.
+An analyst is able to select/deselect station/baseline in any time during 
+further solutions including batch runs, however the data should be edited 
+properly, otherwise selecting the baselines which have been suppressed during
+the initial solution might degrade the solution due to the presence of 
+outliers.
+
+<A NAME="intermediary">
+<H3> Intermediary solution </H3>
+
+   Intermediary solution is carried out upon completion of the initial solution 
+when the experiment is analyzed the first time. The purpose of the intermediary 
+solution is to remove strong outliers at the earlier steps. The intermediary 
+solution has incomplete parameterization. Such a parameterization facilitates 
+suppression of outliers or observations which look like as outliers.
+<P>
+
+<B><I> Settings for intermediary solution: </I></B>
+<P>
+
+<UL>
+     <LI> Set <B>solution type</B>. In a case of dual-band data, you run
+          solution three times: with solution type <B>Group delay S-band</B>,
+          <B>Group delay X-band</B>, and then <B>G-Gxs combination</B>.
+          In order to set solution type hit <B>(+)</B> on the last page of SETFL
+          menu, then select solution type. Important: you should always
+          recompute  theoretical path delays after changing solution type.
+          Hit <B>(~)</B> in order to do this.
+          </LI><P>
+
+     <LI> Set <B>suppression strategy:</B> SUPMET__META. In order to set 
+          suppression hit <B>(')</B> on the last page of SETFL menu, then
+          hit <B>(3)</B>. Refer description of 
+          <A HREF="/solve_root/help/elim_05.hlp" > suppression 
+          strategy [7] </A> for details. You should always use SUPMET__META
+          for all the databases created after 2004. Other suppression strategies
+          are mainly for compatibility with old datasets.
+          </LI><P>
+
+     <LI> Set <B>Use normally (W)eighted delays</B> by hitting <B>(W)</B>
+          at the last SETFL menu page.
+          </LI><P>
+
+     <LI> Set <B>Singularity check</B> by hitting <B>(-)</B>
+          on the last SETFL page. Set mode Reparameterize. Recommended values
+          for singularity detection criterion: 
+          <TT>min_obs for one source:   2</TT>,
+          <TT>min_obs for one station:  5</TT>, 
+          <TT>min_obs for one baseline: 4</TT>
+          </LI><P>
+
+     <LI> Set flag "Pick parameters: Sites  ON" by hitting <B>(!)</B> on the
+          last page of SETFL menu (this means to estimate positions of all 
+          stations except one).
+          </LI><P>
+
+     <LI> Set <B> estimation of clock parameters </B> modeled by a sum of the 
+          polynomials of the second order and linear spline with length of 
+          segments 300 minutes. Hit <B>(E)</B> on the last page of SETFL menu. 
+          Hit <B>(*)</B> repeatedly on the SETFL menu until you set 
+          <TT>Automatic mode</TT>. Then hit <B>(C)</B>. SETFL will request you 
+          to set <TT>Interval between epochs (in minutes) </TT> (Answer: 300)
+          and <TT> Maximum degree of global clock polynomials </TT> 
+          (Answer: 2). Then it asks you <TT> (B)atch mode or (T)his station 
+          only   ?</TT>. Hit <B>(B)</B>. Then SETFL asks you to enter the code 
+          of a clock reference station. Enter a code of the clock reference 
+          station -- you an use the same station as in the initial solution.
+          (In some exceptional cases when the session consists of two (or more)
+           completely independent subnetworks you might need to enter more 
+           than one clock reference station). 
+          </LI><P>
+
+     <LI> Set <B> estimation of atmosphere parameters </B> modeled by the 
+          linear spline with length of segments 300 minutes. To do this 
+          effect hit <B>(E)</B> from the last page of SETFL menu. Hit a key 
+          <B>(*)</B> repeatedly at the SETFL menu until you set 
+          <TT>Automatic mode</TT>. Then hit <B>(A)</B>. SETFL will
+          ask you to enter <TT> interval between epochs (in minutes) </TT>. 
+          Enter 300. Then it asks you <TT>(B)atch mode or (T)his station only ?
+          </TT>. Hit <B>(B)</B>.
+          </LI><P>
+
+     <LI> Set <B> constraints on rate of clocks and atmosphere path delay</B>. 
+          Go the last page of SETFL menu and then hit <B>(")</B>. You will see 
+          a new SETFL menu. Position cursor on the values and then hit a space
+          bar. Recommended values of constraints are 40 psec/hr for atmosphere
+          path delay and 2*10<SUP>-14</SUP> for clocks.
+          </LI><P>
+
+     <LI> Set <B> estimation of baseline-dependent clocks</B>. Go to the last
+          SETFL menu and then hit <B>(C)</B>. You will see the BCLOK menu.
+          Hit <B>(M)</B> to have a so-called maximum baseline-dependent clocks 
+          setup: maximum number of baseline-dependent clocks which still doesn't
+          make the normal matrix singular.
+          </LI><P>
+
+     <LI> Set <B> fast mode switch to B3D </B>. Go the main OPTIN page and
+          then hit <B>(|)</B>. 
+          </LI>
+</UL>
+
+  Now make a solution by hitting <B>(Q)</B>. Look at the listing. Check 
+parameterization: you should estimate a) station positions (except the 
+reference station), b) clocks; c) atmosphere path delay; d) baseline-dependent 
+clocks and nothing more.
+<P>
+
+  Now the time came to start outlier elimination/restoration. Go to the main 
+OPTIN page and then hit <B>(\)</B>. You will see the menu of program ELIM/MILE
+for outliers elimination/restoration. There is extensive user documentation
+about ELIM/MILE:
+  <OL>
+       <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_01.hlp" > 
+                 Description of menu items.    </A> 
+            </LI><P>
+       <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_02.pdf" > Outlier 
+             elimination algorithm. Full text. </A>
+            </LI><P>
+       <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_03.hlp" >
+                 ELIM/MILE. Release note.      </A>
+            </LI><P>
+       <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_04.hlp" >
+                 Hints of using ELIM.          </A> 
+            </LI><P>
+       <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_05.hlp" >
+                 Description of observations suppression strategy. </A> 
+            </LI><P>
+   </OL> 
+<P>
+
+Set the following menu items for outliers elimination in the intermediary
+solution:
+
+<LISTING>
+(X) Maximum uncertainty: not specified     (A) Acceleration factor: 1
+
+(U) Upper threshold for outlier detection: not specified  (E) EQM speed-up: Yes
+
+(C) Cutoff limit for outlier detection:    5.0 sigma      (Y) Type: baseline
+
+(Q) Quality code limit: 5                  (D) Update residuals
+
+(-) Singularity check                      (') Change suppression method
+
+(V) Verbosity level:    1                  (N) Confirm each action: no
+
+(S) Return to Optin and save results       (O) Return to Optin without saving
+
+(P) Proceed for outliers elimination       (T) Toggle elimination/restoration
+
+(W) Weights update                         (H) On-line help
+</LISTING>
+<P>
+
+Set the first line to <TT><B> elimination </B></TT> by hitting <B>(T)</B>.
+Eventually hit <B>(P)</B> for going ahead. ELIM will suppress outliers.
+In order to quit ELIM with saving results hit <B>(S)</B>.
+<P>
+
+  The main parameter that controls outlier elimination procedure is 
+(C) Cutoff limit for outlier detection. There is not a strict number that 
+fits all the cases. Usually 5 &sigma; is sufficient for beginning. 
+ 
+  You can control how well ELIM eliminated outliers by examining residuals
+with program REPA. Ater outlier elimination, you need to update weights. 
+You can do it inside ELIM by hitting <B>(W)</B>, <B>(I)</B>, <B>(O)</B>. 
+After weight update you can re-run ELIM. 
+<P>
+  ELIM can run in the revere mode: resurrection previously suppressed
+observations. When you hit <B>(T)</B> in ELIM, you enter MILE program
+with the same menu. For intermediate solution, you select the Cutoff limit 
+for outlier detection 2 &sigma.
+
+  
+  Check your solution. 
+<UL>
+    <LI> Intermediary solution is considered good if the total wrms is in 
+         the range [15, 120] psec  at 8 GHz and higher ([500,2000] psec 
+         at 2 GHz) and more than 80% recoverable observations are used
+         in the solution. 
+         </LI>
+
+    <LI> The solution is considered poor if the wrms is in the range [100, 250] 
+         psec at X-band or the number of observations used in solution is 
+         in the range [50%, 80%]. 
+         </LI>
+
+    <LI> The solution is considered unsatisfactory if wrms is more than 250 
+         psec at X-band and/or the number of recoverable observations used 
+         in the solution is less than 50%. 
+         </LI>
+</UL>
+<P>
+
+  If you have a poor or bad solution you have to find the reason. First, check
+a) calibration; b) parameterization; c) clock breaks. Then examine the 
+residuals. Check clock breaks and the resolution of group delay ambiguities. 
+If you are sure that residuals at baselines with a certain station are much
+greater than the residuals at other baselines, you may deselect this station.
+<P>
+
+  If you find that your intermediary solution is good, or at least you find the 
+reason why it is poor, you can move to the final solution.
+ 
+ 
+<A NAME="final">
+<H3> Final solution </H3>
+
+   Final solution is carried out either during the first analysis of the
+experiment or during re-analysis of the data. It is assumed that initial and 
+intermediary solutions have already been made. The final solution may be done 
+for different purposes. One of the objectives is to obtain a so-called quick 
+solution. The purpose of a quick solution:
+<UL>
+     <LI> To make a judgment about the quality of the data and to reveal 
+          possible problems which are to be reported to the station(s).
+          </LI><P>
+
+     <LI> To suppress all outliers and resurrect good observations suppressed 
+          during the previous steps of data analysis.
+          </LI><P>
+
+     <LI> To find additive weight corrections.
+          </LI><P>
+
+     <LI> To select the best clock reference station.
+          </LI><P>
+
+     <LI> To set the optimal values of constraints imposed on the rate of 
+          clocks and atmosphere path delay in the zenith direction modeled by
+          linear spline.
+          </LI><P>
+
+     <LI> To find all baselines which require estimation of baseline-dependent 
+          clock parameters.
+          </LI><P>
+
+     <LI> To find all sources for which position adjustments exceed 3 sigma 
+          level. Set flag "estimate source coordinates" for such sources.
+          </LI><P>
+
+     <LI> To find those stations which have bad cable calibration. Deselect
+          cable calibration for such stations.
+          </LI><P>
+
+     <LI> To prepare plots for Web analysis report.
+          </LI><P>
+
+</UL>
+
+<OL>
+  <LI> <B><I> Initial settings for the final solution: </I></B>
+  <P> 
+
+<UL>
+     <LI> Set <B>solution type:</B> G-Gxs combination. In order to set 
+          solution type hit <B>(+)</B> on the last page of SETFL menu, then 
+          hit <B>(7)</B>.
+          </LI><P>
+
+     <LI> Set <B>suppression strategy:</B> SUPMET__META. In order to set 
+          suppression hit <B>(')</B> in the last page of SETFL menu, then
+          hit <B>(3)</B>. Refer to description of 
+          <A HREF="/solve_root/help/elim_05.hlp" > suppression 
+          strategy [7]</A> for details. At the moment, a usual choice
+          is SUPMET__META. Other suppression strategies are supported only
+          for old databases for compatibility.
+          </LI><P>
+
+     <LI> Set <B>use normally (W)eighted delays</B> by hitting <B>(W)</B>
+          on the last SETFL page.
+          </LI><P>
+
+     <LI> Set <B>Singularity check</B> by hitting <B>(-)</B>
+          on the last SETFL page. Set mode Reparameterize. Recommended values
+          for singularity detection criterion: 
+              <BR> 
+          <TT>min_obs for one source:   2</TT>
+             <BR> 
+          <TT>min_obs for one station:  5</TT>
+             <BR> 
+          <TT>min_obs for one baseline: 4</TT>
+          </LI><P>
+
+     <LI> Set flag "Pick parameters: Sites  ON" by hitting <B>(!)</B> on the
+          last page of SETFL menu (this means to estimate positions of all 
+          stations except the one taken as a reference).
+          </LI><P>
+
+     <LI> Set <B> estimation of clock parameters </B> modeled by a sum of the 
+          polynomials of the second order and linear spline with length of 
+          segments 60 minutes. Hit <B>(E)</B> on the last page of SETFL menu. 
+          Hit <B>(*)</B> repeatedly on the SETFL menu until you set 
+          <TT>Automatic mode</TT>. Then hit <B>(C)</B>. SETFL will
+          ask you <TT>Interval between epochs (in minutes) </TT> (Recommended
+          value: 60) and <TT> Maximum degree of global clock polynomials </TT>. 
+          (recommended value: 2). Then it asks you <TT> (B)atch mode or (T)his 
+          station only   ?</TT>. Hit <B>(B)</B>. Then SETFL asks you to enter 
+          the code of the clock reference station. (In some exceptional cases 
+          when the session consists of two (or more) completely independent 
+          subnetworks you might need to enter more than one clock reference 
+          station). 
+          </LI><P>
+
+     <LI> Set <B> estimation of atmosphere parameters </B> in zenith direction
+          modeled by the linear spline with length of segments 60 minutes. 
+          If you have a dense schedule with 500 and more observations per 
+          station (20 observations per hour) like VLBA you can reduce the 
+          length of the linear spline to 30 minutes. Hit <B>(E)</B> on the last 
+          page of SETFL menu. Then hit <B>(*)</B> repeatedly on the SETFL 
+          menu of any station until you set <TT>Automatic mode</TT>. Then hit 
+          <B>(A)</B>. SETFL will ask you <TT> Interval between epochs 
+          (in minutes)</TT>. (Answer: 60 or 30). Then it asks you 
+          <TT> (B)atch mode or (T)his station only   ?</TT>. Hit <B>(B)</B>. 
+          </LI><P>
+
+     <LI> Set <B> constraints on rate of clocks and atmosphere path delay</B>. 
+          Hit <B>(")</B> on the last page of SETFL menu. You will see a new 
+          Constraints SETFL menu. Position the cursor on the values and then 
+          hit a space bar key. Recommended values of constraints are 40 psec/hr 
+          for atmosphere path delay and 2*10<SUP>-14</SUP> for clocks.
+          </LI><P>
+
+     <LI> Set <B> estimation of baseline-dependent clocks</B>. Go the last
+          SETFL menu and then hit <B>(C)</B>. You will see BCLOK menu.
+          Hit <B>(M)</B> to have a so-called maximum baseline-dependent clocks 
+          setup: maximum number of baseline-dependent clocks which still doesn't
+          make the normal matrix singular.
+          </LI><P>
+
+     <LI> Set <B> estimation of UT1 rate</B>. Go the last page of the SETFL 
+          menu and then hit key <B>(~)</B>. <TT>UT1  Coefficients   0 1 0 0</TT>
+          should be displayed on the SETFL last page.
+          </LI><P>
+
+     <LI> Set <B> estimation of nutation angles</B>. Go the last page of SETFL
+          menu and then hit <B>(.)</B> key. A line 
+          <TT> Nutation(.): Dpsi, Deps  1 1</TT> in the SETFL menu means to 
+          estimate daily nutation angles delta psi and delta epsilon.
+          </LI><P>
+
+     <LI> Set <B> initial correction to weights</B>. First set flag for using
+          delay rate for the least squares solution. Hit <B>(R)</B> at the last 
+          menu page SETFL to set use rate <B><TT>YES</TT></B>.
+          Go to the main OPTIN menu and then hit <B>(H)</B>. You will see the 
+          REWAY menu. Hit <B>(C)</B> "Good choice": 10 psec variance will be 
+          added in quadrature to the formal uncertainty of each observation.
+          </LI><P>
+
+     <LI> Set <B>use rate:</B> <TT>NO</TT>. Hit <B>(R)</B> at the last SETFL 
+          menu page. (yes, you need to enable using delay rate for resetting 
+          weights and after wights reset to disable using delay rate).
+          </LI><P>
+
+     <LI> Set <B> fast mode switch to B3D</B>. Go the main OPTIN page and
+          then hit <B>(|)</B>. <TT> (|) Fast mode switch <B>B3D</B></TT> should
+          be displayed in the main OPTIN menu.
+          </LI><P>
+
+  </UL>
+
+  <LI> Make solution and look at the listing. Check whether the parameterization
+       which you would have liked to have has actually been applied. 
+       </LI><P>
+
+  <LI> Make the first outliers elimination. Go to the main OPTIN menu and hit
+       <B>(\)</B>. Set <TT> maximal uncertainty 1000 psec</TT>; <TT>upper 
+       threshold for outlier detection <B>not specified</B></TT> (you should 
+       hit <B>(U)</B> and then enter zero); set <TT> cutoff limit for outlier 
+       detection: <B> 3.5 sigma</B></TT>. Normally, parameter <TT>Acceleration
+       factor</TT> should be 1. 
+       <P>
+
+       Then update weights upon ELIM completion. Hit <B>(W)</B> on the 
+       ELIM menu. You will see UPWEI menu. Set floor to 10.0 psec by hitting 
+       <B>(L)</B> and then hit <B>(I)</B>. Then go back ELIM by hitting 
+       <B>(O)</B> in UPWEI menu and execute outliers elimination once more.
+       If you notice that &chi;<sup>2</sup>/ndf (ndf stands for the number of
+       degrees of freedom) went noticeably away from 1.0 (e.g. below 
+       0.95), update weights once more and then again execute outliers
+       elimination.
+       </LI><P>
+
+  <LI> Now after removing the main portion of outliers it is time to examine
+       solution more carefully. 
+       <P>
+       <UL>
+            <LI> Check whether you made the <B> optimal choice of a clock 
+                 reference station</B>.
+		 <P>
+
+                 Look at the <TT> Clock Constraint Statistics </TT> at the 
+                 bottom part of the listing. Look at the station which produces
+                 minimal RMS. If this station is not a station a) with clock
+                 break orb) which observed less than 75% of total time, you
+                 can take it is a new clock reference station. <B>NB:</B> if  
+                 you changed the clock reference station you have to reset 
+                 flags for estimation of baseline dependent clocks anew. Make 
+                 a new solution and look at the results. If NRMS becomes smaller
+                 for many stations you made a better choice. You may repeat 
+                 this procedure several times. In general the choice of clock 
+                 reference station influences results only marginally except 
+                 the case when the station with anomalous clock behavior was 
+                 taken as a clock reference station.
+		 </LI><P>
+
+            <LI> Check whether you made the <B> optimal choice of constraints 
+                 on clock rate.</B>.
+		 <P>
+
+                 Look at the <TT>  Clock Constraint Statistics </TT> at the 
+                 bottom part of the listing. If NRMS has the share more than 
+                 1.30 for some station(s), it is necessary to investigate 
+                 the reason.
+		 <P>
+
+                 Look at the plot of segmented parameters. Call program MDLPL 
+                 by hitting <B>(/)</B> on the main OPTIN menu. Information
+                 about usage of MDLPL you can find in the 
+                 <A HREF="/solve_root/help/mdlpl_plus_01.hlp" > 
+                 manual of MDLPL_PLUS [8]</A>.
+                 <P>
+		 
+                 Look at the estimates of clock function modeled by linear
+                 spline. Clock function describes behavior of the H-maser 
+                 <I>and</I> 
+                 instrumental noise. If you see a smooth curve with 
+                 a quasi-diurnal or a quasi-semidiurnal period you should not 
+                 worry. A noisy, saw-like curve is an indication of strong
+                 instrumental errors.
+                 <P>
+ 
+                 You can raise the value of sigma of the constraints imposed
+                 on the clock of an individual station (to make constraint
+                 less strong): go to the last page of the SETFL menu, then
+                 hit <B>(")</B> key. Key <B>(*)</B> toggles modes: site
+                 dependent constraints versus session dependent constraints 
+                 (common for all stations). Set <TT> site dependent 
+                 constraints</TT>, position the cursor on the value of the
+                 constraint for the station of interest, then hit the space bar.
+                 SETFL will ask you to enter the value.
+                 <P>
+                  
+                 If you have a smooth curve of clock function you can set 
+                 a sigma of constraint which results in NRMS of the clock 
+                 function with share of about 1.00 (constraint sigma is about 
+                 the same as the RMS of clock the function). If you have 
+                 a saw-teeth-like, noisy clock function, then a stiffer
+                 constraint (less sigma of constraint) should be imposed: 
+                 a constraint which results in the NRMS of clock function with 
+                 share in the range [1.5, 2.0].
+		 </LI><P>
+                 
+            <LI> Check whether <B> baseline-dependent clocks should be
+                 estimated </B>.
+		 <P>
+
+                 As a rule of thumb baseline-dependent clocks should remain 
+                 only for the baselines which produce adjustments exceeding 
+                 3 formal uncertainties. Significant baseline-dependent 
+                 clocks may occur when some channels at station(s) were dropped
+                 in final fringing. Estimates of baseline-dependent clocks
+                 which exceed 1 nsec indicate incorrectly resolved group
+                 delay ambiguities or sub-ambiguities. Reset the flags of 
+                 estimation of baseline-dependent clocks by invoking BCLOK 
+                 from the last page of the SETFL menu by hitting <B>(C)</B>.
+		 </LI><P>
+
+            <LI> Check whether <B> there are sources whose coordinates should
+                 be estimated </B>.
+		 <P>
+
+                 Invoke ELIM by hitting <B>(\)</B> from the main OPTIN menu.
+                 Hit <B>(W)</B> in the ELIM menu in order to invoke UPWEI.
+                 Then hit <B>(D)</B> (Display current weights). A list of
+                 UPWEI statistics will be displayed on your screen. You can 
+                 navigate this list by using <B>(ArrowUp)</B>, 
+                 <B>(ArrowDown)</B>, <B>(PageUp)</B> and <B>(PageDown)</B>
+                 keys. Hitting <B>(Q)</B> allows you to leave the mode of 
+                 displaying statistics and return to the UPWEI menu.
+                 <P>
+
+                 Examine &chi;<sup>2</sup>/ndf column in the source section. 
+                 &chi;<sup>2</sup>/ndf is the ratio of the sum of the squares 
+                 of the weighted residuals over the used observations of the 
+                 specific source to its mathematical expectation. Values of 
+                 &chi;<sup>2</sup>/ndf which are significantly greater than 
+                 1.0 indicate that the scatter of residuals for observations
+                 of that source is greater than average. This may be due to 
+                 wrong a priori position of the source, significant contribution 
+                 of source structure, pointing errors and so on. These sources 
+                 are good candidates for coordinate adjustments. 
+                 &chi;<sup>2</sup>/ndf statistics is not representative if 
+                 the source had less than 3-5 good observations and we should 
+                 not try to adjust positions of such sources unless we have
+                 another evidence that a priori coordinates of this source were
+                 poor or the source has a noticeable apparent proper motion.
+                 We should try to estimate positions of the sources with 
+                 &chi;<sup>2</sup>/ndf > 1.5 under condition that the number of 
+                 observations is higher than 5.
+                 <P>
+             
+                 Write down the names of the sources with large 
+                 &chi;<sup>2</sup>/ndf. Leave 
+                 UPWEI <TT> display statistic mode </TT> by hitting <B>(Q)</B>, 
+                 then leave UPWEI by hitting <B>(O)</B> and hit <B>(O)</B> 
+                 once more to leave ELIM. 
+                 <P>
+
+                 Then hit <B>(S)</B> in the main OPTIN menu and you will see 
+                 an another SETFL menu for setting source coordinates 
+                 estimation flags. List the menu by hitting keys <B>(B)</B>
+                 and <B>(P)</B>, find the sources with positions which you 
+                 decided to adjust. Set to 1 in the field <TT>Right 
+                 ascension</TT> and 1 in the field <TT>declination</TT>, e.g.
+<LISTING>
+1958-179 RA, Dec   0 0   1  B      28( 29)
+2007+777 RA, Dec   1 1   1  C      29( 29)
+</LISTING>
+                 means that right ascension and declination of the source
+                 2007+777 will be estimated, but positions of the source
+                 1958-179 will not be estimated.
+                 <P>
+                 
+                 Run a solution. Look at the bottom of the listing. Leave 
+                 estimation flag set for the sources with estimates greater 
+                 than 3 sigmas in declination or in right ascension. If you 
+                 have sources which produced adjustments which are less than 
+                 2.5-3.0 sigmas -- unset the flag for coordinate estimation for
+                 those sources.
+		 </LI><P>
+
+            <LI> Check whether <B> the clock breaks are set correctly. </B>
+		 <P>
+
+                 Call MDLPL program by hitting <B>(/)</B> from the main 
+                 OPTIN menu. Then hit <B>(R)</B> in the main MDLPL_PLUS menu.
+                 Examine the plot <TT>residuals + clock function</TT>. If you 
+                 don't see a break in the plot of residuals where you have 
+                 inserted clocks breaks and you find in the listing that 
+                 adjustments to clock breaks are insignificant, remove clock 
+                 break(s). On contrary, if you see a noticeable jump in the 
+                 plot of a <TT>postfit residuals + clock function</TT> you 
+                 should try to insert a new clock break at the epoch of the
+                 jump.
+		 </LI><P>
+
+       </UL></LI>
+
+
+  <LI> Final outliers elimination/restoration.
+       Go to the main OPTIN menu and then hit <B>(\)</B> in order to invoke
+       ELIM. Set maximum uncertainty to 1000 psec; set upper threshold for 
+       outlier detection to zero (you will see <TT><B> not specified </B></TT>
+       in the menu), set cutoff limit for outlier detection to 3.0 and set 
+       acceleration factor to 1. Hit <B>(P)</B> to initiate the process.
+       <P>
+
+       Update weights after ELIM completion. Hit <B>(W)</B> at the ELIM
+       menu. You will see UPWEI menu. Set floor to 10.0 psec by hitting 
+       <B>(L)</B> and then hit <B>(I)</B>. Then go back to ELIM by hitting
+       <B>(O)</B>.
+       <P>
+
+       Now hit <B>(T)</B> to set restoration mode. Set cutoff the limit of 
+       outlier detection to 4.0 sigma (or 3.5 sigma if the session has more than
+       5000 observations) and then proceed with restoration of the observations
+       which were previously suppressed by hitting the key <B>(P)</B>.
+       <P>
+
+       Then set elimination mode, set the cutoff limit to 3.5 sigma and 
+       eliminate outliers once more. After outliers elimination update weights
+       and proceed with outliers elimination once more.
+
+       </LI><P>
+
+  <LI> It may occur that you need to get adjustments of positions of some 
+       source(s) regardless of how bad they are. Of course, you are able to do 
+       it only if you have at least two observations. If ELIM suppressed these 
+       observations it may not restore them since their residuals are too 
+       large. In that case invoke program REPA by hitting <B>(P)</B> from 
+       the main OPTIN menu. Hit <B>(M)</B> (Mark source) in the right menu.
+       Find the source that you are interested in and select it by hitting
+       <B>(LeftMouse)</B>. It may happen that you have too many sources 
+       that do not fit one page. You may move to another page by hitting
+       <B>(PgDn)</B> and <B>(PgUp)</B> keys. Alternatively, you can move
+       the cursor below the black bar at the bottom of the page, unless it 
+       is the last page, and hit <B>(LeftMouse)</B>. You can  move
+       the cursor above the black bar at the top of the page, unless it 
+       is the first page, and hit <B>(LeftMouse)</B>. Hit <B>(RightMouse)</B>
+       to leave the source mark page. When you hit the page with residuals
+       for a given baseline, the marked sources will be circled. Find the
+       marked source and restore it (Set F1 mode and hit <B>(CentralMouse)</B>). 
+       NB: an outlier may appear beyond the plot bounding plot. You can 
+       set the bounding box around all points, good and bad, by hitting
+       <B>(M)</B> and around only good points by hitting <B>(CNTRL/M)</B>.
+       When you reset suppression status for a given source at a given
+       baseline, you need to do that for observations at other baselines.
+       You can select the next baseline by hitting <B>(PgDn)</B> or the
+       previous baseline by hitting <B>(PgUp)</B>.
+
+       <P>
+       Then set the flag for
+       estimation of coordinates of those sources and make a new solution. 
+       Then you may wish to eliminate outliers among these observations. One 
+       of the options is to do it manually in REPA, another way is to do it 
+       semi-automatically in ELIM. You can set the flag <TT>Confirm each 
+       action</TT> by hitting <B>(N)</B> in ELIM menu. ELIM will ask for 
+       confirmation before suppression of each observation in this mode.
+       <P>
+       
+       If there are large outliers among the observations, their presence
+       in the solution distorts parameter estimates and the residuals.
+       If you have few observations of that source (say, less than 10), 
+       automatic outlier elimination procedure may not correctly identify
+       bad observation. Therefore, be careful when you restore observations
+       of the source with positions being estimated. Estimation of source
+       position makes solution less robust and more sensitive to outliers. 
+
+       </LI><P>
+
+  <LI> The last thing remaining to do is to play with cable calibration.
+       Go to "Database calibrations status" menu by hitting <B>(%)</B> from the
+       main OPTIN menu. Deselect cable calibration for all stations: hit
+       repeatedly <B>(/)</B> to get <TT>Don't apply to any station</TT> status
+       and then hit a station code.
+       <P>
+
+       Set user partial program CABLE_PART: hit <B>(&lt;)</B> on the main 
+       OPTIN menu and then enter the name of the program: CABLE_PART. Run 
+       a solution. Cable cal admittance will be computed for all stations in
+       this mode. Admittance about 1.0 means that the cable cal is OK, 
+       admittance -1.0 means that the cable cal is OK but its sign is wrong. 
+       Values around zero indicates that cable cal is probably wrong. If you 
+       find that estimation of cable cal admittance improves fit by more than 
+       2-3% (wrms is less, &chi;<sup>2</sup>/ndf becomes less) you can decide 
+       to set the flag "not calibrate for cable cal" for some stations 
+       permanently. However as a rule of thumb you should leave cable 
+       calibration unless you have clear evidence that cable calibration 
+       at certain stations degrades fit.
+       <P>
+
+       Don't forget to deactivate CABLE_PART program and to set the flag 
+       <TT>cable cal</TT> for all stations except the ones which it degrades 
+       fit. In order to deactivate user partial program CABLE_PART hit 
+       <B>(&lt;)</B> from the main OPTIN menu again and them hit <B>(Return)</B> 
+       key in reply on <TT>Enter name of user partial program 
+       (Return if none):</TT>.
+
+       </LI><P>
+
+  <LI> Before the end of analysis look at the plots of segmented parameters
+       once more. Call MDLPL_PLUS by hitting <B>(/)</B> from the main OPTIN
+       menu. Look at all plots. You may wish to print them or to save as 
+       graphic gif-files for preparation of a Web analysis report. Printout is 
+       delivered in the directory /tmp/ as a default. You may change the prefix 
+       of the file name by hitting <B>(C)</B> in the internal menu. <B>NB:</B>
+       MDLPL_PLUS merely prepends the the contents of the line <TT>Web 
+       directory</TT> before the file name. Therefore the prefix should contain 
+       a trailing "/" if it is used as a directory name.
+       
+       </LI><P>
+  
+</UL>
+
+
+<A NAME="update">
+<H3> Database update </H3>
+
+  Some parameters related to the solution, such as group and phase delay 
+ambiguities, suppression status, clock and atmosphere parameterization, 
+baseline-dependent clock status, reweighting parameters can be saved in the 
+database. Database update is the final step of analysis. Hit <B>(U)</B> or
+<B>(CNTRL/U)</B>. You have a choice either update the current version of 
+the database (option 1) or create a new database with the updated version 
+counter (option 2). Usually, option 2 is used when the experiment is 
+analyzed the first time. This allows to start analysis anew if an error 
+in analysis is found. It is rarely needed to have version counter greater 
+than 2. 
+
+<A NAME="samb">
+<H2> Resolving sub-ambiguties </H2>
+
+  In a case if the fringe fitting procedure picked a maximum in the Fourier
+transform of visibilities that is not the global maximum, the estimate of the
+group delay is wrong. The placement of secondary maximum depends on the frequency
+sequence. A good frequency sequence has the amplitude of the secondary maximum
+in a range of 0.5&ndash;0.8 <I>provided there is no systematic phase offsets
+between intermediary frequencies</I>. The probability to pick up a wrong maximum
+is low even at marginal SNR=6. However, in the presence of systematic phase
+offsets and/or losses of IFs, the secondary maximum may become close or even
+exceed the amplitude of the main maximum in a case of a lack of phase offsets.  
+If the excessive phase distortion is persistent over the experiment, the points
+that correspond to observations where fringe fitting picked up secondary maximum
+are aligned along horizontal lines on plots of residual group delays. This
+points are called sub-ambiguities. 
+<P>
+
+ Resolving sub-ambiguities is done differently for two cases when the 
+amplitude of the secondary maximum in delay resolution function is less than
+0.96 or greater than 0.96. Below we consider a case when the secondary maximum
+are less than 0.96 when the experiment is processed with PIMA.
+<P>
+
+  We first suppress all outliers. When we are satisfied with solution, we 
+store residuals. First hit <B>(L)</B>, then hit <B>(A)</B> to set 
+<TT>Print residu(A)ls: ON</TT>. The hit <B>(O)</B>, and <B>;</B> to rewind
+the spool file and then hit key <B>(C)</B> in order to set 
+<TT>(C)hange Spooling current: on</TT>. Check that the spool file was 
+rewound, spooling is on and print residuals in ON. Hit <B>(Q)</B> to run
+least square solution. Hit <B>(space)</B> twice in order to get listing,
+then hit <B>(O)</B> and hit <B>CNTRL/U</B> in order to save the database.
+You need to save database with version &gt; 1.
+After that terminate pSolve by hitting <B>(T)</B>. Examine the spool file.
+You will see residual section. Check that you have listing for only one
+run. Copy the spool file into /vlbi/$exp/$exp_$band_init.spl file.
+Here $exp is the low case experiment name and $band is low case band.
+For instance /vlbi/bp192b0/bp192b0_c_init.spl . Check that 1) the PIMA
+control file is /vlbi/$exp/$exp_$band_pima.cnt; 2) Keyword Band is the same
+as $band, but in upper case. 3) EXP_NAME and EXP_CODE in file 
+/vlbi/$exp/$exp.desc is $exp in low case; 4) DB_NAME in /vlbi/$exp/$exp.desc
+is the 10 character long GVF database name that pSolve just processed.
+<P>
+   Run script pima_samb.csh: 
+<LISTING>
+pima_samb.csh  {exp} {band} {snr} [db/no_db] [min_res] [no_staging] 
+</LISTING>
+  where <TT>exp</TT> is the experiment name (lower case); <TT>band</TT> 
+is the lower case band; <TT>db</TT> means to create the output database
+(default), <TT>no_db</TT> means to skip database creation, <TT>min_res</TT>
+is the minimum by modulo group delay residual for an observation to be 
+eligible for sub ambiguity resolution procedure, <TT>no_staging</TT> prohibits
+using staging directory for PIMA even if it is defined in the PIMA control
+file. Since the search window is narrower, you can reduce the SNR detection
+limit. 4.8 value is usually adequate. If you have one band, you need to use 
+the fourth argument db, i.e. to create the database. After pima_samb.csh 
+finishes, you load the database, the last version, run least square solution 
+and examine residuals. pima_samb.csh rarely resolve <I>all</I>sub-ambiguities, 
+but almost always resolves <I>some</I> subambiguities. Run ELIM to remove 
+possible outliers and then MILE to restore points, including those that were 
+marked as outliers before running pima_samb.csh.
+<P>
+
+  If your experiment has two bands, you create files residuals for each 
+band separately. Then you first run pima_samb.csh for the lower band
+(i.e. S-band for X/S observations) and specify <TT>no_db</TT> as the 
+fourth argument. Then you run pima_samb.csh for the higher band and
+specify <TT>db</TT> as the third argument. The load the database
+and run ELIM and MILE first with the lower band, then the with 
+higher band, then with the ionosphere-free linear combinations of 
+two bands.
+<P>
+  
+  What occurs behind the hood? 
+<P>
+
+  pima_samb.csh calls program samb. Program samb reads the residual file
+and computes the narrow search window over group delay for consecutive
+fringe search. The center of the search window corresponds to the 
+predicted group delay on the base of least square solution. Accuracy
+of path delay prediction is within 2&ndash;3 wrms of positfit residual,
+typically 100&ndash;300 ps. The fourth argument of pima_samb.csh defines
+the semi-width of fringe search window. If the fourth argument is omitted,
+a meaningful default is used.
+<P>
+
+  pima_samb.csh generates a control file for PIMA with the narrow fringe
+search window for each observation marked as an outlier in the residual
+file. i.e. &lt; or R in the 8th column. Then it runs that control file.
+This forces PIMA to pick up the maximum in the delay resolution function
+within the the specified window. Upon completion, pima_samb.csh runs 
+PIMA task mkdb and creates version 1 of the database file in GVF format.
+Finally, pima_samb.csh runs program gvf_supr_promote . Since you lowered
+the SNR detection limit during re-fringing, you need to carry the flag
+of detection into the latest database version.  Program gvf_supr_promote 
+does it.
+
+<A NAME="references">
+<H2> References </H2>
+
+ Some user documentation related to pSolve.
+
+<UL>
+   <LI> <A HREF="http://astrogeo.org/psolve/doc/solve_guide_02.html"> User guide to 
+        batch pSolve</A>. 
+        </LI>
+   <LI> <A HREF="http://astrogeo.org/psolve/doc/solve_guide_03.html"> Description of 
+        the keywords of BATCH control language</A>. 
+        </LI>
+   <LI> Group delay ambiguity resolution program GAMB.
+        <OL TYPE="a">
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/gamb_01.hlp" >
+                 Description of menu items.            </A> </LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/gamb_04.hlp" >
+                 GAMB version 1.9. Release note.        </A> </LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/gamb_03_hlp.pdf"> 
+                 description of algorithms used y GAMB. </A></LI>
+        </OL> </LI>
+
+   <LI> Program for outliers elimination ELIM.
+        <OL TYPE="a">
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_01.hlp" >
+                 Description of menu items.            </A> </LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_02.pdf" >
+                 Description of menu items.            </A> </LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_03.hlp" >
+                 ELIM/MILE version 2.11. Release note.  </A> </LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_04.hlp" >
+                 Hints of using ELIM.                  </A> </LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/elim_05.hlp" >
+                 Description of observations suppression strategy. </A> </LI>
+        </OL> </LI>
+
+   <LI> Utility for observations reweighting UPWEI.
+        <OL TYPE="a" >
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/upwei_01.hlp" >
+                 Description of menu items.            </A> </LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/upwei_03.hlp" >
+                 UPWEI version 1.0. Release note.  </A> </LI>
+        </OL> </LI>
+
+   <LI> MDLPL program (plotting values of estimates of
+        atmosphere, clock and Earth orientation parameters).
+        <OL TYPE="a">
+            <LI> [8] <A HREF="http://astrogeo.org/psolve/doc/mdlpl_plus_01.hlp"
+                    >MDLPL_PLUS</A></LI>
+            <LI> <A HREF="http://astrogeo.org/psolve/doc/mdlpl_ext.hlp" >MDLPL_EXT</A>
+                 </LI>
+        </OL> </LI>
+
+   <LI> Dialogue Graphic Interface. DiaGI.
+        <OL TYPE="a">
+             <LI> <A HREF="http://astrogeo.org/psolve/doc/diagi_1.hlp" >
+                     DiaGI. User guide.                  </A> </LI>
+             <LI> <A HREF="http://astrogeo.org/psolve/doc/diagi_0.hlp" >
+                     DiaGI. Brief   description of DiaGI commands. </A> </LI>
+             <LI> <A HREF="http://astrogeo.org/psolve/doc/diagi_2.hlp" >
+                     DiaGI. Verbose description of DiaGI commands. </A> </LI>
+             <LI> <A HREF="http://astrogeo.org/psolve/doc/diagi_3.hlp" >
+                     Multi_DiaGI. Description of Multi_DiaGI commands.</A> </LI>
+        </OL> </LI>
+
+   <LI> <A HREF="http://astrogeo.org/psolve/doc/cres.hlp" >
+        Options for program CRES </A> (calculation of residuals) and REPA
+        (making residuals plot) </LI>
+
+   <LI> <A HREF="http://astrogeo.org/psolve/doc/sngchk.hlp" >
+        Explanation of singularity check options. </A> </LI>
+
+   <LI> <A HREF="http://astrogeo.org/psolve/doc/setacm.hlp" > Set a priori clock
+        model. </A></LI>
+</UL>
+
+<HR SIZE="2">
+<EM>
+     This document was prepared by
+     Leonid Petrov </A> 
+    <P>
+
+     Last update: 2024.01.30_20:16:00
+</EM>
+
+</BODY>
+</HTML>

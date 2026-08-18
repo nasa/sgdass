@@ -1,0 +1,92 @@
+I. What VTD is for?
+-------------------
+
+  VTD is a library of routines that compute very long baseline 
+interferometry (VLBI) time delay or Doppler frequency shift with 
+the highest accuracy. The accuracy of time delay is limited by 
+accuracy of a priori data. Had the a priori data been known 
+perfectly, the errors of path delay were at a level of 10^{-13}.
+Realistic errors of VLBI time delay prediction are at a
+level of 40--400 picoseconds of observations at frequencies 
+higher than 8 GHz, and the errors may reach tens nanoseconds 
+for observations at frequencies at or below 1.6 GHz due to 
+uncertainties in the a priori ionosphere path delay.
+
+  VTD is not an executable, but a library. This design provides 
+you a maximal flexibility in developing your application that
+uses library VTD.
+
+
+II. Linking.
+------------
+
+  VTD depends on a) library petools ; b) library BLAS (basic 
+linear algebra subroutines) and some extra system library;
+c) [optionally] cfitsio library. For your convenience, definitions 
+of environment libraries are gathered in ${prefix}/bin/vtd_vars 
+(csh and tcsh) and ${prefix}/bin/vtd_vars.sh (bash and sh shells).
+
+  When you sourced ${prefix}/bin/vtd_vars (i.e. execute it under
+C-shell as "source ${prefix}/bin/vtd_vars") or ${prefix}/bin/vtd_vars.sh
+the definitions of environment variables used by VTD become available. 
+Include files related to vtd are in $VTD_INC directory, vtd library can 
+be found in $VTD_LIB/libvtd.a or $VTD_LIB/libvtd.so, data files are in 
+$VTD_DATA. When you compile  your application against vtd, you should 
+specify these libraries in the makefile:
+
+LIBS 	=				\
+          (... your libraries ...)      \
+	-L $(MY_LIBS) -lvtd  -lfitslib -lcfitsio \
+        -L $(PETOOLS_ROOT) -lpetools    \
+        $(SOLVE_LIB_VEC)		\
+	$(SOLVE_LIB_BLAS) 		\
+	$(SOLVE_EXTRA_LIB) 
+
+  If you compiled VTD without support of cfitsio, the lines 
+-lfitslib -lcfitsio should be dropped.
+
+  NB: some compilers by default insert trailing underscores to global
+variables. VTD is compiled **without trailing underscores**. You should
+disable inserting trailing underscores when you compile routines that
+call VTD.
+
+  Recommended lines in makefiles for compilation of VTD-compatible 
+applications:
+
+.f.o:
+	$(MK5_F95) -I$(VTD_INC) -c -o $*.o $*.f  
+or
+	$(MK5_F95_OPT) -I$(VTD_INC) -c -o $*.o $*.f  
+.c.o:
+	$(MK5_C) -Wstrict-prototypes -I$(VTD_ROOT)/include -c -o $*.o $*.c  
+
+  The environment variables above are defined in file 
+${prefix}/bin/vtd_vars (or ${prefix}/bin/vtd_vars.sh) where ${prefix} 
+is the name of the directory where VTD is installed.
+
+Refer to example/makefile
+
+
+III. C-bindings:
+----------------
+
+
+  Although VTD is written in Fortran, nothing prevents its using from C.
+Several tips for C-programmers:
+a) All arguments are passed to VTD routines by reference.
+b) Strings in Fortran may or may not have trailing zeros.
+c) When a string is passed as an argument to Fortran routine,
+   then it should by accompanied by a hidden argument string length
+   that follows the last actual argument. String length is of type
+   int and it is passed by value. If more than one string is passed
+   to a Fortran routine, than hidden arguments follow the last
+   actual argument in the order of string arguments.
+
+The header file vtd.h is for compiling applications that call VTD routines.
+Refer to example/vtd_testware_05.c . That example is re-write of 
+example/vtd_testware_01.f in C. The give identical results. 
+
+
+IV. Routine description
+
+    See user guide in doc/vtd_01.txt

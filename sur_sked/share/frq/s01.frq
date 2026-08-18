@@ -1,0 +1,28 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+MOD_NAME  s01
+HDS_NAME  h1
+#
+STATION GGAO12M   Gs  udc_01
+STATION KOKEE12M  K2  udc_01
+STATION MACGO12M  Mg  udc_01
+#
+#  Bnd Low_frq bandwidh  IF Order (dir/inv)
+#
+BAND A   2080      32.0  Inv
+BAND A   2112      32.0  Inv
+BAND A   2144      32.0  Inv
+BAND A   2176      32.0  Inv
+BAND A   2208      32.0  Inv
+BAND A   2240      32.0  Inv
+BAND A   2272      32.0  Inv
+BAND A   2304      32.0  Inv
+BAND A   2336      32.0  Inv
+BAND A   2368      32.0  Inv
+BAND A   2400      32.0  Inv
+BAND A   2432      32.0  Inv
+BAND A   2464      32.0  Inv
+BAND A   2496      32.0  Inv
+BAND A   2528      32.0  Inv
+BAND A   2560      32.0  Inv
+#

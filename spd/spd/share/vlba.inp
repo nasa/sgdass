@@ -1,0 +1,69 @@
+SITLIST Format  Version 2003.07.31
+#
+#  The list contains positions of 202 VLBI stations.
+#
+#  Created:      2004.02.20_19:56:29
+#
+#  Last update:  2014.05.13_11:42:48
+#
+#  Revisions:
+#
+#  2005.01.20  METSHOVI  end date was changed to "end"
+#  2005.01.20  MIYAZAKI  activity ranges was changed to 1986.10.04 1993.12.20
+#  2005.05.11  added METSAHOV, TORUN,   WSTRBOR7, WSTRBORK, JODRELL2, JODRELL1,
+#                    CAMBRIDG, ARECIBO  
+#  2005.05.11  added ATCA_014, CEDUNA, DARNHALL, MOPRA, PICOVEL
+#  2005.05.13  added VERAIRIK, VERAISGK, VERAOGSW -- e-mail from Jike-san
+#                    of 13 May 2005 21:37:02 +0900. Changed X coordiante
+#                    of stations VERAIRIK from -3857241.8449 to -3521719.400  
+#                    from http://ivs.nict.go.jp/mirror/publications/gm2002/tamura/
+#  2005.12.29  added BADARY and ZELENCHK. Private communicatio nfrom S. Kurdubov, 2005.12.20
+#  2008.04.30  Replaced ATCA_014 with ATCA-104; updated coordinates of 
+#                       ATCA_014, CEDUNA, MOPRA
+#  2010.09.03  Added  ASKAP, TAMNA, ULSAN, WARKWORT, YONSEI
+#  2011.11.09  Added  KATH12M, KUNMING, UCHINOUR, YARRA12M
+#  2014.05.13  Added  TIANMA65, MIYUN, SEJONG
+#
+#  Format description:
+#  1) File consists of records fixed length.
+#     Records can be one of three types:
+#     a) File format identification: the first record;
+#     b) Comment: the record which starts from # character;
+#     c) Data records.
+#
+#  2) Format of the data record:
+#     Field  1:8  -- Station name.
+#     Field 10:21 -- X coordinate of the site in meter.
+#     Field 23:34 -- X coordinate of the site in meter.
+#     Field 36:47 -- Z coordinate of the site in meter.
+#     Field 49:58 -- Date when the site produced first observation worth
+#                    analyzing in format YYYY.MM.DD
+#     Field 60:69 -- Date when the site produced last observation worth
+#                    analyzing in format YYYY.MM.DD or end for sites which
+#                    are deemed as active.
+#     Field 71:71 -- Technique code: 
+#                    R for VLBI, 
+#                    S for SLR,
+#                    G for GPS,
+#                    D for DORIS,
+#                    Technique code means that the site coordinate 
+#                    are related to coordinates of the reference point 
+#                    of the station of that technique.
+#     Field 73:81 -- Alternative station name.
+#     Field 83:92 -- Comment
+#     Field 95:98 -- CDP number of the station which defines coordinates
+#                    of the site.
+#
+# Name   X-coordinate Y-coordinate Z-coordinate Date_beg   Date_end   T Alt. name Comment     CDP
+#                                                                                                 
+BR-VLBA  -2112064.978 -3705356.520  4726813.798 1993.04.21 end        R 40473S001             7614
+FD-VLBA  -1324009.129 -5332181.970  3231962.472 1991.04.16 end        R 40442S017             7613
+GBT-VLBA   882589.654 -4924872.404  3943729.419 2001.11.15 end        R 40441S008             7200
+HN-VLBA   1446375.114 -4447939.660  4322306.122 1992.08.28 end        R 40471S001             7618
+KP-VLBA  -1995678.630 -5037317.718  3357328.129 1992.08.28 end        R 40466S001             7610
+LA-VLBA  -1449752.361 -4975298.593  3709123.926 1991.05.21 end        R 40463S001             7611
+MK-VLBA  -5464074.965 -2495249.118  2148296.845 1993.07.19 end        R 40477S001             7617
+NL-VLBA   -130872.256 -4762317.122  4226851.039 1992.08.28 end        R 40465S001             7612
+OV-VLBA  -2409150.114 -4478573.232  3838617.397 1992.08.28 end        R 40439S006             7616
+PIETOWN  -1640953.713 -5014816.027  3575411.878 1988.09.08 end        R 40456S001             7234
+SC-VLBA   2607848.521 -5488069.690  1932739.537 1993.06.25 end        R 43201S001             7615

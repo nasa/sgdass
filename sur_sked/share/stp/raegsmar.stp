@@ -1,0 +1,32 @@
+# VLBI station parameters Format 2022.04.03 #
+#
+# 2022.11.21   L. Petrov Created
+# 2022.11.23   L. Petrov Updated azimuth range
+# 2022.11.24   L. Petrov Updated horizon mask
+# 2023.03.07   L. Petrov Updated azimuth limit according to Abel's email of  Mar 2023 17:24:32 +0000 (UTC)
+#
+SHORT_NAME:    RAEGSMAR  char       Sa
+LAST_UPDATE:   RAEGSMAR  char       2022.11.23
+COORD:         RAEGSMAR  meters      4618524.357  -2166020.988   3816270.156
+MOUNT:         RAEGSMAR  char       ALTAZ  
+SLEW_AZ:       RAEGSMAR  deg/sec      12.0
+SLEW_EL:       RAEGSMAR  deg/sec       6.0
+ACCL_AZ:       RAEGSMAR  deg/sec^2     1.0
+ACCL_EL:       RAEGSMAR  deg/sec^2     1.0
+TSETTLE_AZ:    RAEGSMAR  sec           3.0
+TSETTLE_EL:    RAEGSMAR  sec           3.0
+EL_MIN:        RAEGSMAR  deg           2.0
+EL_MAX:        RAEGSMAR  deg          89.0
+AZ_RANGE:      RAEGSMAR   deg         0.0   60.0  300.0  420.0
+BACKEND:       RAEGSMAR  char        dbbc3
+RECORDER:      RAEGSMAR  char        mark6
+SETMODE:       RAEGSMAR  sec           4.0
+PREOB:         RAEGSMAR  sec           3.0
+POSTOB:        RAEGSMAR  sec           2.0
+HOR_AZIM:      RAEGSMAR  deg           0   360
+HOR_ELEV:      RAEGSMAR  deg           6     6
+STOW_AZIM:     RAEGSMAR  deg          225.0
+STOW_ELEV:     RAEGSMAR  deg           90.0
+#
+CLOCK_DATES:   RAEGSMAR  sec        2020.11.22   2049.12.31
+CLOCK_OFFSET:  RAEGSMAR  sec        0.0E-6

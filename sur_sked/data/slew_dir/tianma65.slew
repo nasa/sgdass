@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  TIANMA65  T6
+LAST_UPDATE: TIANMA65  2018.01.20
+COORD:       TIANMA65  meters    -2826708.224  4679237.251  3274667.669
+MOUNT:       TIANMA65  char       ALTAZ
+SLEW_AZ:     TIANMA65  deg/sec    0.50
+SLEW_EL:     TIANMA65  deg/sec    0.25
+ACCL_AZ:     TIANMA65  deg/sec^2  0.25
+ACCL_EL:     TIANMA65  deg/sec^2  0.15
+TSETTLE_AZ:  TIANMA65  sec        2.0
+TSETTLE_EL:  TIANMA65  sec        2.0
+EL_MIN:      TIANMA65  deg        5.0
+EL_MAX:      TIANMA65  deg       88.0
+AZ_RANGE:    TIANMA65  deg      -80.0 80.0 280.0 440.0
+RECORDER:    TIANMA65  char      mark5
+PREOB:       TIANMA65  sec       10.0
+POSTOB:      TIANMA65  sec        2.0

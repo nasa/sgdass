@@ -1,0 +1,768 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov 05-AUG-99 21:06:43  -->
+<HTML>
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1" >
+    <META NAME="GENERATOR" CONTENT="manually" >
+    <META NAME="Author" CONTENT="Leonid Petrov" >
+
+    <STYLE TYPE="text/css">
+    .val{
+         color: 0B550B;
+           font-generic-family: "fantasy";
+           font-style: normal;
+           font-weight: bold;
+    } 
+    .pre{
+         color: 350b55;
+           font-generic-family: sans-serif;
+           font-style: normal;
+           font-weight: bold;
+    } 
+    .cla{
+         color: 550B0B;
+           font-generic-family: sans-serif;
+           font-style: normal;
+           font-weight: bold;
+    } 
+    </STYLE>
+    <TITLE> 
+            Description of the ascii geo-VLBI data format VGOSDA 
+    </TITLE>
+
+</HEAD>
+<BODY>
+<H1> Description of the ascii geo-VLBI data format VGOSDA</H1>
+
+<H2> Introduction </H2>
+
+   Ascii geo-VLBI data format VGOSDA, of for short VDA, is designed for 
+support of transferring VLBI Level-2 data between software packages and 
+their editing. Since VDA is in plain ascii, development of a handler 
+for reading/writing is a trivial 
+task and does not require specialized skills of installation of specialized 
+software. The VDA was derived from Mark-3 DBH format used in 1976&ndash;2018. 
+A handler for VDA format was implemented in 2006 under name AGVF and 
+incorporated into Solve software package. The library gvh that implements 
+the handler is distributed also as a standalone package.
+<P>
+
+  Since VDA format is ascii, its parsing incurs certain overheads. It is
+not recommended for adoption as am internal format for data analysis software
+packages. The main use case of VDA format is a distribution of Level-2 data
+and results of data analysis of a specific VLBI experiment for geodesy and
+absolute astrometry between various data analysis software packages. Software
+analysis packages are supposed to be able to transform from the VDA format
+to their internal format and vice versus without loss of information.
+<P>
+
+  Level 2 VLBI data in the context of this document means results of fringe
+fitting program in a form of total group delay, total phase delay rate, 
+and the total phase. The datafile in VDA format contains also other
+variables that describes the VLBI experiment and results of its analysis.
+
+  In the context of this document a dataset that originates from processing
+of indepndently scheduled  observations is called <B>experiment</B>. 
+Experiment duration varies from 30 minutes to 15 days, althoug durations 
+less than 1 hour and longer than 24 hours are unusual. During an experiment 
+N stations observe M sources. Duration of time when an array or its part 
+observes a given source before slewing to another source is called 
+<B>scan</B>. Data collectated by a pair or stations during a scan is 
+called <B>observation</B>.
+
+<H1> Structure of an VDA file</H1>
+
+  VDA file consists of records of variable length. Records consists
+of ascii symbols with codes 32 though 255 (decimal). Characters with codes
+128 to 255 are allowed but discouraged. A record consists of words separated
+by one or more blanks. Records have a prefix in a form of a 4-character
+long section ID followed by character <EM class="val">.</EM> (dot) followed 
+by the chunk index.
+<P>
+
+A valid VDA file consists of the format label and one or more chunks.
+Each chunk consists of 5 mandatory sections in the following order:
+
+<UL>
+    <LI> <B>FILE</B> section
+         </LI><P>
+
+    <LI> <B>PREA</B> (preamble) section
+         </LI><P>
+
+    <LI> <B>TOCS</B> (table of contents) section
+         </LI><P>
+
+    <LI> <B>DATA</B> section
+         </LI><P>
+
+    <LI> <B>HEAP</B> heap section. Always empty. Reserved for future use.
+         </LI><P>
+</UL>
+<P>
+
+   Sections <B>FILE</B>, <B>PREA</B>, and <B>TOCS</B> describe the data,
+Section <B>DATA</B> presents the data. The data are considered as
+a set of four-dimensional arrays of one of the types: CHARACTER*1, 
+INTEGER*2,INTEGER*4, INTEGER*8, REAL*4, REAL*8 and of one of 
+the classes: 
+<EM class="cla">SES</EM>, <EM class="cla">SCA</EM>, 
+<EM class="cla">STA</EM>, <EM class="cla">BAS</EM>. Fortran notation is 
+used for describing arrays: a) dimensions starts from 1; b) the index 
+over first dimension runs first, i.e. elements order is a(i,j), 
+a(i+1,j), a(i+2,j) etc. The dimensions 3 and 4 depend on the class 
+of the data.
+<P>
+
+   Throughout this document the strings that should be present in the 
+VDA file are <EM class="val">highlighted</EM>. Examples that are 
+not a part of definitions are also <EM class="pre">highlighted</EM>.
+<P>
+  
+  For historical reasons an individual array of data is called LCODE.
+An LCODE defines a 8-character long name, a string or arbitrary length 
+with its description, class, type, and four dimensions. A class 
+determines the scope of the LCODE and dimensions of the high level. 
+Supported classes:
+<P>
+
+<UL>
+    <LI> <EM class="cla">SES</EM> The scope of the LCODE is the 
+                    entire experiment, f.e. instance the experiment 
+                    name. The dimensions 3 and 4 are 1, 1.
+		    </LI><P>
+
+    <LI> <EM class="cla">SCA</EM> The scope of the LCODE is a given 
+                    scan. The third dimension is the number of scans, 
+                    the fourth dimension is 1.
+		    </LI><P>
+
+    <LI> <EM class="cla">STA</EM> The scope of the LCODE is a given 
+                    station, for instance apriori clock delay used for 
+                    correlation. The third dimension is the number of 
+                    observations at a given station, the fourth dimension 
+                    is the station index.
+		    </LI><P>
+
+    <LI> <EM class="cla">BAS</EM> The scope of the LCODE is a given 
+                    observation, f.e. group delay. The third dimension is 
+                    the total number of observations, the fourth dimension 
+                    is 1.
+		    </LI><P>
+</UL>
+<P>
+
+  An LCODE can be defined only once. There are five mandatory LCODEs 
+that should be defined at the beginning of the first chunk. The VDA
+format does not regulate which other LCODEs should be present, in
+which order, and in which chunk. The order of codes and their allocation
+in the chunk is selected by the generating software.
+
+<H3> VDA label</H3>
+
+The VDA label a string of 64 characters long that identifies the format
+and its revision. The VDA label is the first record of a valid 
+VDA file.
+<P>
+
+Example:
+
+<PRE class="pre">
+VGOSDA Format of 2019.09.09
+</PRE>
+
+<H2> File section (FILE)</H2>
+
+A record in the file section has two words. The first word is the 
+record prefix <EM class="val">FILE</EM> and the chunk index separated by 
+dot. Chunks are numbered starting from 1 consecutively. The second 
+word is the the full path file name that contributed to the chunk. 
+<P>
+
+  Example:
+
+<PRE class="pre">
+FILE.1 /vlbi/gvf/db/20170117_pr1775_fr1_v001.bgv
+</PRE>
+
+
+<H2> Preamble section (PREA)</H2>
+
+  Preamble section contains auxiliary information. A record of the
+preamble sections has format Prefix Keyword Value Unit separated a blank.
+Prefix has format: <EM class="val">PREA</EM> and the chunk index separated 
+by dot. Unit can be empty. A preamble section of the first chunk has 
+three mandatory keywords:
+
+<UL>
+    <LI> <EM class="val">@section_length:</EM> defines the number of 
+         records in the preamble section except this one. This record 
+         should be the first record of the section. The first word of 
+         the Value is the number of records, the second is unit: keyword.
+         </LI><P>
+
+    <LI> <EM class="val">GENERATOR:</EM> defines name and version of the 
+         program that generated this section. Version number should be 
+         defined in such a way that sorting it alphabetically corresponds 
+         to sorting it chronologically.
+         </LI><P>
+
+    <LI> <EM class="val">CREATED_AT:</EM> defines the creation date 
+         in format YYYY.MM.DD-hh:mm:ss
+         </LI><P>
+</UL>
+<P>
+
+Example: 
+
+<PRE class="pre">
+PREA.1 @section_length:     15 keywords
+</PRE>
+
+<P>
+
+  A preamble section of chunks others than the first has only one mandatory
+keyword: @section_length. An empty preamble section must have value 0 
+of this keyword.
+
+<H2> Text section (TEXT)</H2>
+
+   Text section consists of auxiliary information, for instance, 
+correlation report, schedule file, etc. Non-ascii text, such as 
+a document in pdf-format can be put in the text section after 
+<A HREF="https://tools.ietf.org/html/rfc4648.html">base64</A>
+encoding. Text section consists of one or more chapters. A chapter
+is a portion of text. A record of the text sections has format Prefix 
+Keyword Value. A keyword is allowed to be empty. 
+<P>
+
+  The first record of the text section defines the number of chapters.
+This is a mandatory record. Format: Prefix Keyword Value Unit.
+
+<UL>
+    <LI> <B>Prefix</B> &mdash; <EM class="val">TEXT</EM> and the 
+         chunk index separated by dot.
+         </LI><P>
+    <LI> <B>Keyword</B> &mdash; <EM class="val">@section_length:</EM> 
+         </LI><P>
+    <LI> <B>Value</B> &mdash; the number of chapters in the section
+            as an integer number.
+         </LI><P>
+    <LI> <B>Unit</B> &mdash; <EM class="val">chapters</EM>.
+         </LI><P>
+</UL>
+<P>
+
+Example:
+
+<PRE class="pre">
+TEXT.1 @section_length:      1 chapters
+</PRE>
+
+
+  The first record of a chapter has 8 mandatory fields followed 
+by the chapter title. Chapter title can be empty. Format:
+Prefix Keyword1 Value1 Value2 Unit1 Keyword2 Value3 Unit2 [Title]
+
+<UL>
+    <LI> <B>Prefix</B> &mdash; <EM class="val">TEXT</EM> and the 
+         chunk index separated by dot.
+         </LI><P>
+    <LI> <B>Keyword1</B> &mdash; <EM class="val">@@chapter</EM>
+         </LI><P>
+    <LI> <B>Value1</B> &mdash; the chapter index as an integer number.
+          The first chapter has index 1.
+         </LI><P>
+    <LI> <B>Value2</B> &mdash; the number of records in this chapter as 
+          an integer number. the number of records is zero for 
+          an empty chapter
+         </LI><P>
+    <LI> <B>Unit1</B> &mdash; <EM class="val">records</EM>
+         </LI><P>
+    <LI> <B>Keyword1</B> &mdash; <EM class="val">max_len:</EM>
+         </LI><P>
+    <LI> <B>Value2</B> &mdash; the maximum number of characters in any 
+         record of this chapter.
+         </LI><P>
+    <LI> <B>Unit1</B> &mdash; <EM class="val">characters</Em>.
+         </LI><P>
+</UL>
+<P>
+
+Example:
+
+<PRE class="pre">
+@@chapter 1      1  records, max_len:      16
+</PRE>
+
+   The following n records have format: <EM class="val">TEXT</EM> and chunk 
+index separated by dot, one blank and the character string.
+
+<H2> Table of contents section (TOCS)</H2>
+
+The table of contents section defines LCODE names, their class, type, 
+dimension and provides a brief LCODE description. The first record of 
+the TOCS section defines the number of LCODEs defined in this chunk. 
+Format of the first record: Prefix Keyword Value Unit.
+
+<UL>
+    <LI> <B>Prefix</B> &mdash; <EM class="val">TOCS</EM> and the chunk 
+         index separated by dot.
+         </LI><P>
+    <LI> <B>Keyword</B> &mdash; <EM class="val">@section_length:</EM> 
+         </LI><P>
+    <LI> <B>Value</B> &mdash; the number of chapters in the section
+            as an integer number.
+         </LI><P>
+    <LI> <B>Unit</B> &mdash; <EM class="val">lcodes</EM>.
+         </LI><P>
+</UL>
+<P>
+
+Example:
+
+<PRE class="pre">
+TOCS.1 @section_length:     53 lcodes
+</PRE>
+
+  The following records have format: Prefix LCODE Class Type Dim1 Dim2 Description
+
+<UL>
+    <LI> <B>Prefix</B> &mdash; <EM class="val">TOCS</EM> and the chunk index 
+         separated by dot.
+         </LI><P>
+    <LI> <B>Keyword</B> &mdash; LCODE -- a 8-characters long string with LCODE name.
+         LCODE name should not contain blanks inside.
+         </LI><P>
+    <LI> <B>Class</B> &mdash; class of the LCODE. One of <P> 
+         <UL>
+             <LI> <EM class="cla">SES</EM> &mdash; session class with the scope of 
+                  entire experiment; 
+                  </LI><P>
+             <LI> <EM class="cla">SCA</EM> &mdash; scan class with the scope of 
+                  a given scan;
+                  </LI><P>
+             <LI> <EM class="cla">STA</EM> &mdash; station class with the scope of 
+                  a given station;
+                  </LI><P>
+             <LI> <EM class="cla">BAS</EM> &mdash; baseline class with the scope of 
+                  a given observation.
+                  </LI><P>
+         </UL>
+         </LI><P>
+
+    <LI> <B>Type</B> &mdash; type of the data. One of <P>
+         <UL>
+             <LI> <EM class="val">C1</EM> &mdash; Character*1 data. Each element is one byte;
+                  </LI><P>
+             <LI> <EM class="val">I2</EM> &mdash; Integer*2, or 16-bit singed number;
+                  </LI><P>
+             <LI> <EM class="val">I4</EM> &mdash; Integer*4, or 32-bit singed number;
+                  </LI><P>
+             <LI> <EM class="val">I8</EM> &mdash; Integer*8, or 64-bit singed number;
+                  </LI><P>
+             <LI> <EM class="val">R4</EM> &mdash; Real*4, or 32-bit real number;
+                  </LI><P>
+             <LI> <EM class="val">R8</EM> &mdash; Real*8, or double precision, or 64-bit real number.
+                  </LI><P>
+         </UL><P>
+
+    <LI> <B>Dim1</B> &mdash; the first dimension of the data.
+         1 for scalar data.
+         </LI><P>
+
+    <LI> <B>Dim2</B> &mdash; the second dimension of the data.
+         1 for scalar or one-dimensional data.
+         </LI><P>
+
+    <LI> <B>Description</B> &mdash; a brief text that describes the LCODE.
+</UL>
+<P>
+
+Example:
+
+<PRE class="pre">
+TOCS.1 SITNAMES   SES  C1   8  10  IVS site names
+</PRE>
+
+In this example LCODE <EM class="pre">SITNAMES</EM> is of session type (i.e. with the 
+scope of entire experiment). It has character type and has dimensions 8, 10, 1, 1.
+The first  dimension <EM class="pre">8</EM> defines the length of a string. 
+The second dimension <EM class="pre">10</EM> defines the number of strings.
+<P>
+
+There are 5 mandatory keywords that must be defined at the beginning of the 
+first chunk. They all have session class and integer*4 type. 
+
+<OL>
+     <LI> <EM class="val">NUMB_OBS</EM> &mdash; the total number of observations;
+          </LI><P>
+
+     <LI> <EM class="val">NUMB_STA</EM> &mdash; the total number of stations;
+          </LI><P>
+
+     <LI> <EM class="val">NUMB_SCA</EM> &mdash; the total number of scans;
+          </LI><P>
+
+     <LI> <EM class="val">NOBS_STA</EM> &mdash; a one-dimension array
+          sized as NUMB_STA. Contains the number of observations 
+          per stations;
+          </LI><P>
+
+     <LI> <EM class="val">OBS_TAB </EM> &mdash; a two dimensional array sized
+          as (3,NUMB_OBS). The first row of the array is the number of scans,
+          the second row is the index of the first station at a baseline for 
+          this observation; and the third row is the index of the second 
+          station at a baseline for this observation.
+          </LI><P>
+</OL>
+
+
+<H2> Data section (DATA)</H2>
+
+   One record of the data section keeps one element of the LCODE array.
+<BR>
+
+  The first record of DATA section defines the number of Data records 
+present in this chunk. Format of the first record: Prefix Keyword Value Unit.
+
+<UL>
+    <LI> <B>Prefix</B> &mdash; <EM class="val">DATA</EM> and the chunk 
+         index separated by dot.
+         </LI><P>
+    <LI> <B>Keyword</B> &mdash; <EM class="val">@section_length:</EM> 
+         </LI><P>
+    <LI> <B>Value</B> &mdash; the number of chapters in the section
+            as an integer number.
+         </LI><P>
+    <LI> <B>Unit</B> &mdash; <EM class="val">records</EM>.
+         </LI><P>
+</UL>
+<P>
+
+Example:
+
+<PRE class="pre">
+DATA.5 @section_length:     650859 records
+</PRE>
+
+  The following records have format: Prefix LCODE Dim3 Dim4 Dim1 Dim2 Value
+<P>
+<UL>
+    <LI> <B>Prefix</B> &mdash; <EM class="val">DATA</EM> and the chunk 
+         index separated by dot.
+         </LI><P>
+
+    <LI> <B>Lcode</B> &mdash; LCODE name.
+         </LI><P>
+
+    <LI> <B>Dim3</B> &mdash; the third dimension of the LCODE. The third 
+            dimension can be <EM class="val">0</EM> or <EM class="val">1</EM> 
+            for data of <EM class="cla">SES</EM> class.
+         </LI><P>
+
+    <LI> <B>Dim4</B> &mdash; the fourth dimension of the LCODE. The fourth 
+            dimension can be <EM class="val">0</EM> or 
+           <EM class="val">1</EM> for data of <EM class="cla">STA</EM> or 
+           <EM class="cla">SES</EM> class.
+         </LI><P>
+
+    <LI> <B>Dim1</B> &mdash; the first dimension of the LCODE. 
+         </LI><P>
+
+    <LI> <B>Dim2</B> &mdash; the second dimension of the LCODE. 
+         </LI><P>
+
+    <LI> <B>Value</B> &mdash; the value of the array element. Recommended format
+         for float numbers: 1PE15.7 for Real*4 data and for 1PD22.15 Real*8 data.
+
+         Blanks are not allowed in this field. Blanks should be converted 
+         to other symbols, f.e. underscores, before writing. 
+         </LI><P>
+</UL>
+<P>
+
+Example:
+<P>
+<PRE class="pre">
+DATA.1 GR_DELAY 4466 0  1  1 7.267257847095946D-03
+DATA.1 GR_DELAY 4466 0  2  1 7.267232471203255D-03
+DATA.1 QUALCODE 4488 0  1  1 _8
+</PRE>
+
+  In this example group delay for observation with index 4466
+is shown. The group delay was defined as array with dimensions
+2,1,4538,1 in the table of contents. The first dimension runs
+over bands. The first value group delay corresponds to the 1st 
+band and the second to 2nd band. The frequency of bands are 
+determined in another LCODE (REF_FREQ in this case). The VDA
+itself does not specity the unit of LCODE. Units are supposed 
+to be defined in the LCODE description or in an external
+document.
+
+  In the last exanoke original value of lcode "blank eight" was
+conveerted to "underscore eight" by writing routine. A reading
+routine is supposed to understand _8 and determine that it is
+equivalent to "blank eight".
+
+<H2> HEAP section (HEAP)</H2>
+
+  Reserved for future use.
+
+<H2> CHUN record </H2>
+
+  The last record of a data chunk contains the number of records in the chunk,
+excluding this record. The first line with the VDA formal label is counted.
+
+Format of the CHUN record: Prefix Keyword Value Unit:
+<P>
+
+<UL>
+    <LI> <B>Prefix</B> &mdash; <EM class="val">CHUN</EM> and the chunk index 
+         separated by dot.
+         </LI><P>
+    <LI> <B>Keyword</B> &mdash; <EM class="val">@chunk_length:</EM> 
+         </LI><P>
+    <LI> <B>Value</B> &mdash; the number records in the chunk, excluding
+         this record and counting the VDA format label if this is the 
+         first chunk.
+         </LI><P>
+    <LI> <B>Unit</B> &mdash; <EM class="val">records</EM>.
+         </LI><P>
+</UL>
+<P>
+<P>
+
+Example:
+
+<PRE class="pre">
+CHUN.4 @chunk_size: 72856 records
+</PRE>
+
+<H2> Comments on using the VDA format</H2> 
+
+  The VDA format provides sufficient flexibility to carry results
+of fringe fitting, such as estimates of group delay, delay rate,
+their formal uncertainties, etc (Level-2A) and results of geodetic 
+preprocessing, such as flags, solution parameterization, correction
+to weights, etc (Level-2B). VDA is not suitable to carry Level-1
+data (raw results of correlation).
+<P>
+
+  Splitting an VDA file into chunks is for facilitating an interface
+with other formats for Level-2 geodetic VLBI results. A valid VDA
+file is supposed to have at least one chunk. Splitting data in 
+chunks is determined by the generator process.
+<P>
+
+  Some data are station dependent, for instance cable calibration,
+some are observation-dependent, for instance group delays. They
+are stored differently. Array <TT>OBS_TAB</TT> stored at the LCODE 
+with the same name determines relationship between observation index 
+and the indices of station-dependent parameters. For an observation
+with index <B>k</B> station-dependent LCODEs will have indices
+<TT>OBS_TAB(2,k)</TT> for the 1st (i.e. reference) station of a baseline
+and <TT>OBS_TAB(3,k)</TT> for the 2nd (i.e. remote) station of a baseline.
+<P>
+  
+  History of LCODE naming is traced in 70s. Renaming LCODEs is 
+discouraged because of a risk of breaking compatibility. Addition
+of new LCODEs carries a low risk.
+
+<H2> Appendix </H2> 
+
+  As an example, LCODEs for the experiment r1775 processed by PIMA are shown 
+below. Only first five LCODEs are mandatory since are used by the handler
+for processing other LCODEs. LCODEs are grouped into two categories: common
+that originate from post-correlator analysis software or log-file parsing 
+software that generates a Level-2A dataset and the data analysis specific
+LCODEs. The LCODEs in the latter category is mainly from geodetic/astrometry 
+data analysis software packages that processes a Level-2A dataset and generates
+a Level-2B dataset (edited, reweighted, with parameterization stored).
+
+<H3>Common LCODES</H3>
+
+<TT><PRE class="pre">
+TOCS.1 NUMB_OBS   SES  I4   1   1  Number of observations in the session
+TOCS.1 NUMB_SCA   SES  I4   1   1  Number of scans in the session
+TOCS.1 NUMB_STA   SES  I4   1   1  Number of sites
+TOCS.1 NOBS_STA   SES  I4  10   1  Number of observations per site
+TOCS.1 OBS_TAB    SES  I4   3 4538  Observation tables: scan index, indices of the first and the second station
+TOCS.1 SITNAMES   SES  C1   8  10  IVS site names
+TOCS.1 BAND_NAM   SES  C1   2   1  Band names
+TOCS.1 CORPLACE   SES  C1  32   1  Correlator place name
+TOCS.1 COR_TYPE   SES  C1   8   1  Correlator type: MK3 MK4 K4 S2 VLBA MITAKA-1
+TOCS.1 COR_VERS   SES  C1   8   1  Correlator software and/or hardware version
+TOCS.1 DEL_RATE   BAS  R8   2   1  Phase delay rates per band (d/l)
+TOCS.1 EXP_CODE   SES  C1  32   1  Experiment code
+TOCS.1 EXP_DESC   SES  C1  80   1  Experiment description
+TOCS.1 EXP_NAME   SES  C1  80   1  Experiment program name
+TOCS.1 GDAMBSP    BAS  R8   2   1  Group delay ambiguity spacings per band (sec)
+TOCS.1 GRDELERR   BAS  R8   2   1  Group delay errors per band (sec)
+TOCS.1 GRRATERR   BAS  R8   2   1  Group delay rate errors per band (d/l)
+TOCS.1 GR_DELAY   BAS  R8   2   1  Group delays per band (sec)
+TOCS.1 GR_RATE    BAS  R8   2   1  Group delays rate per band (d/l)
+TOCS.1 ION_GDEL   BAS  R8   1   1  Ionospheric contribution to group delay at the first band (sec)
+TOCS.1 ION_GERR   BAS  R8   1   1  Uncertainty of ionospheric contribution to group delay at the first band (sec)
+TOCS.1 ION_PRAT   BAS  R8   1   1  Ionospheric contribution to phase delay rate at the first band (sec)
+TOCS.1 ION_RERR   BAS  R8   1   1  Uncertainty of ionospheric contribution to phase delay rate at the 1st band (d/l
+TOCS.1 MJD_OBS    SCA  I4   1   1  MJD of fringe reference time at pseudo-UTC timecale for the scan (days)
+TOCS.1 NUMB_SOU   SES  I4   1   1  Number of observed sources
+TOCS.1 NUM_BAND   SES  I4   1   1  Number of frequency bands observed in the experiment
+TOCS.1 NUM_CHAN   SES  I4   1   1  Number of frequency channels at all bands
+TOCS.1 NUM_CHBN   SES  I4   1   2  Number of frequency channels per band
+TOCS.1 N_AVBAND   SES  I4   1   1  Number of frequency bands for which information is availble
+TOCS.1 PHDELERR   BAS  R8   2   1  Phase delay error (rad)
+TOCS.1 PHRATERR   BAS  R8   2   1  Phase delay rate delay errors per band (d/l)
+TOCS.1 PI_NAME    SES  C1  80   1  Name of the principal investigator
+TOCS.1 QUALCODE   BAS  C1   2   2  Quality code as char*2 value: 5-9 is good, 0 -- non-detection, letter -- failure
+TOCS.1 REC_MODE   SES  C1  80   1  Recording mode
+TOCS.1 REF_FREQ   BAS  R8   2   1  Reference frequency for phase delay per band (Hz)
+TOCS.1 SBDELERR   BAS  R8   2   1  Single-band delay errors per band (sec)
+TOCS.1 SB_DELAY   BAS  R8   2   1  Single-band delays per band (sec)
+TOCS.1 SCANNAME   SCA  C1  16   1  Scan name
+TOCS.1 SCANPIMA   SCA  C1  10   1  Pima internal scan name
+TOCS.1 SIT_COOR   SES  R8   3  10  Site coordinates in a crust-fixed terrestrial reference system: X, Y, Z (meters)
+TOCS.1 SKYFRQCH   SES  R8  16   1  Sky frequency of channels in Hz
+TOCS.1 SNRATIO    BAS  R8   2   1  Fringe amplitude signal to noise ratio (d/l)
+TOCS.1 SOU_COOR   SES  R8   2  68  Source coordinates in a baricenteric reference system: right asc. decl. (rad)
+TOCS.1 SOU_IND    SCA  I4   1   1  Source name index
+TOCS.1 SRCNAMES   SES  C1   8  68  Source names
+TOCS.1 STA_IND    BAS  I4   2   1  Station names indexes
+TOCS.1 TOTPHASE   BAS  R8   2   1  Total fringe phases at time of arrival singal at station 1 per band (rad)
+TOCS.1 UTC_MTAI   SES  R8   1   1  Difference UTC minus TAI at first time tag of the database (sec)
+TOCS.1 UTC_OBS    SCA  R8   1   1  Pseudo-UTC time tag of fringe reference time for the scan (sec)
+TOCS.2 ANT_GAIN   STA  R4   2   1  Antenna gain per band K/Jy
+TOCS.2 APRCLOOF   STA  R8   1   1  Apriori clock offset used for correlation
+TOCS.2 APRCLORT   STA  R8   1   1  Apriori clock rate used for correlation
+TOCS.2 APR_DEL    BAS  R8   2   1  Apriori delay (sec)
+TOCS.2 APR_PHAS   BAS  R8   2   1  Apriori fringe phase (rad)
+TOCS.2 APR_PHGC   BAS  R8   2   2  Apriori fringe phase per station at the geocenter (rad)
+TOCS.2 APR_RATE   BAS  R8   2   1  Apriori delay rate (d/l)
+TOCS.2 BITSAMPL   SES  I2   1   1  Number of bits per sample
+TOCS.2 CHAN_SDB   SES  I2  16   1  Index of lower (-1) or upper (1) sideband per channel
+TOCS.2 CHAN_WDT   SES  R8  16   1  Frequency channel width in Hz per channel
+TOCS.2 DELW_CEN   BAS  R8   2   1  Delay window center used for fringe search (sec)
+TOCS.2 DELW_WDT   BAS  R8   2   1  Delay window width used for fringe search (sec)
+TOCS.2 FRN_AMPL   BAS  R8   2   1  Normalzied fringe amplitude in range [0, 1]
+TOCS.2 FRT_OFFS   SCA  R8   2   1  Fringe refrenence time offset relative to the scan start (sec)
+TOCS.2 GCRESPHS   BAS  R8   2   1  Residual fringe phase at time of arrival singal at geocenter (rad)
+TOCS.2 GC_PHASE   BAS  R8   2   1  Fringe phase at time of arrival singal at the conventionalgeocenter (rad)
+TOCS.2 IND_CHN1   BAS  I2  10   1  Indexes of channels used in bandwidth synthesis in band 1
+TOCS.2 IND_CHN2   BAS  I2   6   1  Indexes of channels used in bandwidth synthesis in band 2
+TOCS.2 NOISERMS   BAS  R4   2   1  RMS of the fringe amplitude noise (d/l)
+TOCS.2 NUM_AP1    BAS  I2  10   2  Number of accumulation periods used in band 1 per channel per sideband
+TOCS.2 NUM_AP2    BAS  I2   6   2  Number of accumulation periods used in band 2 per channel per sideband
+TOCS.2 NUM_SAM1   BAS  R8  10   1  Number of samples used in bandwidth synth. in band 1 per freq. chan and sideband
+TOCS.2 NUM_SAM2   BAS  R8   6   2  Number of samples used in bandwidth synth. in band 2 per freq. chan and sideband
+TOCS.2 NUSEDCHN   BAS  I2   2   1  Number of channels used in bandwidth synthesis per band
+TOCS.2 PCAL_CM1   STA  R4   2  10  Complex phase cal (real/image) per channel at the 1st band
+TOCS.2 PCAL_CM2   STA  R4   2   6  Complex phase cal (real/image) per channel at the 2nd band
+TOCS.2 PCAL_FR1   STA  R8   1  10  Phase cal frequency per channel at the 1st band
+TOCS.2 PCAL_FR2   STA  R8   1   6  Phase cal frequency per channel at the 2nd band
+TOCS.2 POLARIZ    BAS  C1   2   2  Polarization label: RR, RL, LR, or LL
+TOCS.2 RATE_CEN   BAS  R8   2   1  Rate window center used for fringe search (d/l)
+TOCS.2 RATE_WDT   BAS  R8   2   1  Rate window width used for fringe search (d/l)
+TOCS.2 RESGRRAT   BAS  R8   2   1  Residual group delay rate (d/l)
+TOCS.2 RESMBDEL   BAS  R8   2   1  Residual multiband group delay (sec)
+TOCS.2 RESPHAS    BAS  R8   2   1  Residual fringe phase
+TOCS.2 RESPHRAT   BAS  R8   2   1  Residual phase delay rate (d/l)
+TOCS.2 RESSBDEL   BAS  R8   2   1  Residual singleband group delay (sec)
+TOCS.2 RES_GRDL   BAS  R8   2   1  Residual group delay reported by the post-correlator software (sec)
+TOCS.2 RES_PHGC   BAS  R8   2   1  Resodual fringe phase per station at the geocenter (rad)
+TOCS.2 RES_RATE   BAS  R8   2   1  Apriori phase delay rate reported by the post-correlator software (d/l)
+TOCS.2 SAMPLRAT   SES  R8   1   1  Sample rate in Hz
+TOCS.2 SCAN_DUR   BAS  R8   2   1  Scan duration per band (sec)
+TOCS.2 SPCH_WDT   SES  R8  16   1  Spectral channel width in Hz per channel
+TOCS.2 TSYS1      STA  R4   1  10  System temperature per channel at the 1st band (K)
+TOCS.2 TSYS2      STA  R4   1   6  System temperature per channel at the 2nd band (K)
+TOCS.2 UVSTAORD   BAS  I2   1   1  Original station order in the baseline: 1 (ascending) or -1 (descending)
+TOCS.2 UV_CHN1    BAS  R4   2  10  UV data: real and image part per channel at the 1st band (d/l)
+TOCS.2 UV_CHN2    BAS  R4   2   6  UV data: real and image part per channel at the 2nd band (d/l)
+TOCS.3 AIR_TEMP   STA  R8   1   1  Air temperature at the station (K)
+TOCS.3 ATM_PRES   STA  R8   1   1  Atmospheric pressure at the station (Pa)
+TOCS.3 CABL_DEL   STA  R8   1   1  Cable delay (sec)
+TOCS.3 CABL_SGN   SES  I2  10   1  Cable sign: +1 or -1
+TOCS.3 CAL_INFO   SES  I4   4   1  Information about class and type of available calibrations
+TOCS.3 CAL_NAME   SES  C1   8   1  Name of available calibrations
+TOCS.3 MEANCABL   SES  R8  10   1  Mean cable delay (sec)
+TOCS.3 N_CALIB    SES  I2   1   1  Number of available calibrations
+TOCS.3 REL_HUMD   STA  R8   1   1  Relative humidity at the station (0-1)
+</PRE>
+
+<H3> Specific LCODEs</H3>
+The following LCODES hold information specific for a given data analysis software:
+
+<PRE class="pre">
+TOCS.1 EXPSERNO   SES  I2   1   1  Experiment serial number at correlator
+TOCS.1 MK3_DBNM   SES  C1  10   1  Mark-3 DBH database name
+TOCS.1 PIMA_CNT   SES  C1 128   1  Full path name of pima control file
+TOCS.1 PIMA_VER   SES  C1  24   1  Version of PIMA software
+TOCS.2 PIND_OBS   BAS  I4   1   1  Internal index of observation used by PIMA
+TOCS.2 SRT_OFFS   SCA  R8   1   1  Scan refrenence time offset relative to the scan start (sec)
+TOCS.4 ATM_CNS    SES  R8  10  32  Reciprocal weights of constraints on atm. path delay rate per station, soltype
+TOCS.4 ATM_INTR   SES  R8  32   1  Lenght of time span between spline nodes for atm. path delay per soltyp (sec)
+TOCS.4 AUTO_SUP   BAS  I4   1   1  Bit field of automatic suppression status for combination of observables
+TOCS.4 BAND_2ND   BAS  I2   1   1  Bit field with status of information about the second band observations
+TOCS.4 BAS_USE    SES  I4  45   1  Bit field of baseline selection status
+TOCS.4 BSCL_CNS   SES  R8  45  32  Reciprocal weights of constraints on basdep. clock, per baseline, per soltype
+TOCS.4 BSCL_EST   SES  I4  45   1  Estimation status for baseline depedent clock, per baseline
+TOCS.4 CAL_STS    SES  I4  10   1  Bit field of using available calibrations per station, per calibration
+TOCS.4 CLO_CNS    SES  R8  10  32  Reciprocal weights of constraints on clock rate per station, per solution type
+TOCS.4 CLO_INTR   SES  R8  32   1  Lenght of time span between spline nodes for clock function per soltyp (sec)
+TOCS.4 DATYP      SES  I2   1   1  Type of the observable or a combination of observables used in the solution
+TOCS.4 DGCL_EST   SES  I2  10  32  Degree of global clock function polynomial per station, per solution type
+TOCS.4 EDIT_STS   SES  I4   1   1  Bit field of database editing status for different types of solutions
+TOCS.4 EFF_FREQ   BAS  R8   3   2  Effective ionospheric frequencies for gr.del, ph.del, ph.rate per band (Hz)
+TOCS.4 EOP_CNS    SES  R8  11  32  Reciprocal weights of constraints on EOP related parameters
+TOCS.4 EOP_EST    SES  I4  11   1  Estimation status for EOP-related parameters
+TOCS.4 NUM_CLBR   SES  I4   1   1  Number of clock breaks in the experiment
+TOCS.4 NUM_CLRF   SES  I4   1   1  Number of clock reference stations
+TOCS.4 N_GRAMB    BAS  I4   2   1  Number of group delay ambiguities to be added to measured group delays per band
+TOCS.4 N_PHAMB    BAS  I4   2   1  Number of phase delay ambiguities to be added to measured phase delays per band
+TOCS.4 RWBASNAM   SES  C1  16  45  Baseline names for additive baseline-dependent reweighting parameters
+TOCS.4 RWDELVAL   SES  R8  32  45  Additive baseline-dependent reweighting parameters for delays (sec)
+TOCS.4 RWRATVAL   SES  R8  32  45  Additive baseline-dependent reweighting parameters for delay rates (d/l)
+TOCS.4 SOCO_CNS   SES  R8  68  32  Reciprocal weights of constraints on source coordinates per object, per soltype
+TOCS.4 SOCO_EST   SES  I4   2  68  Estimation status for source coordinats per component, per object
+TOCS.4 SOU_USE    SES  I4  68   1  Bit field of source selection status
+TOCS.4 STA_CLRF   SES  C1   8   1  Names of clock reference stations
+TOCS.4 STA_USE    SES  I4  10   1  Bit field of station selection status
+TOCS.4 STPS_CNS   SES  R8  10  32  Reciprocal weights of constraints on site positions per site, per solution type
+TOCS.4 STPS_EST   SES  I4   3  10  Estimation status for station positions per component, per station
+TOCS.4 SUPMET     SES  I2   1   1  Code of the suppression method used in the solution
+TOCS.4 TEC_STS    SES  I4  10   1  Flag of availability/usage of the external ionosphere calibration
+TOCS.4 TIL_INTR   SES  R8  32   1  Lenght of time span between spline nodes for atmospphere tilt per soltyp (sec)
+TOCS.4 TLOF_CNS   SES  R8  10  32  Reciprocal weights of constraints on atm. tilt offset per station, per soltype
+TOCS.4 TLRT_CNS   SES  R8  10  32  Reciprocal weights of constraints on atm. tilt rate per station, per soltype
+TOCS.4 USER_REC   BAS  I4   1   1  Bit field of analyst defined recovery status for combination of observables
+TOCS.4 USER_SUP   BAS  I4   1   1  Bit field of analyst defined suppression status for combination of observables
+TOCS.5 APR_EOP    BAS  R8   3   2  Aprori EOP array as Euler angles and its derivatives (rad)
+TOCS.5 AZIMUTH    STA  R8   1   1  Apparent source azimuth at both stations of the baseline (rad)
+TOCS.5 DER_DEL    BAS  R8  64   1  Array of partial derivatives of theoretical path delay wrt parameters of the mod
+TOCS.5 DER_RAT    BAS  R8  64   1  Array of partial derivatives of theoretical delay rate wrt parameters of the mod
+TOCS.5 ELEV       STA  R8   1   1  Apparent source elevation at both stations of the baseline (rad)
+TOCS.5 EOP_TAB    SES  R8  15   3  Table of aprori EOP as Euler angles with frequencies > 2 cpd filtered out
+TOCS.5 MJD_EOP    SES  I4   1   1  Modified Julian date of the first epoch for the table of apriori EOP
+TOCS.5 NUT_DER    BAS  R8   2   1  Partial derivatives wth nutation deaily offset parameters (sec)
+TOCS.5 N_APREOP   SES  I4   1   1  Number of nodes with apriori EOP
+TOCS.5 STEP_EOP   SES  I4   1   1  Step of the EOP table of apriori EOP (sec)
+TOCS.5 TAI_EOP    SES  I4   1   1  TAI time tag of first epoch of the table of apriori EOP (sec)
+TOCS.5 THGR_DEL   BAS  R8   1   1  Theoretical group delay (sec)
+TOCS.5 THPH_DEL   BAS  R8   1   1  Theoretical phase delay (sec)
+TOCS.5 THPH_RAT   BAS  R8   1   1  Theoretical phase delay date (d/l)
+TOCS.5 TH_PROG    SES  C1  64   1  Name and version of the program which computed theoretical path delays
+TOCS.5 TH_RUDAT   SES  C1  24   1  Date and time of theoretical delay compuation
+TOCS.5 UV_COOR    BAS  R8   2   1  UV coordinates of the baseline vector projectioncalibration
+</TT></PRE>
+
+<P>
+<HR size="1">
+<EM>
+    This document was prepared by Leonid Petrov <BR>
+    First version:      2007.04.02_16:12.44 <BR>
+    Last update: &nbsp; 2019.11.03_18:35:09 <BR>
+</EM>
+</BODY>
+</HTML>

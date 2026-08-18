@@ -1,0 +1,40 @@
+      SUBROUTINE CLRMT(X,N)
+      IMPLICIT NONE
+!
+! 1.  CLRMT PROGRAM SPECIFICATION
+!
+! 1.1 Zero out first N elements of vector X
+!
+! 1.2 REFERENCES:
+!
+! 2.  CLRMT INTERFACE
+!
+! 2.1 Parameter File
+!
+! 2.2 INPUT Variables:
+!
+      INTEGER*4 N
+      INTEGER*4 I4P0, I4P1
+      DATA  I4P0, I4P1 / 0, 1 /
+      REAL*8 X(*)
+!
+! 2.3 OUTPUT Variables: None
+!
+! 2.4 COMMON BLOCKS USED
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES:
+!       CALLED SUBROUTINES: dcopy
+!
+! 3.  LOCAL VARIABLES
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!
+! 5.  CLRMT PROGRAM STRUCTURE
+!
+      CALL DCOPY(N,0.0D0,I4P0,X,I4P1)
+!
+      RETURN
+      END

@@ -1,0 +1,29 @@
+# VLBI station parameters Format 2022.04.03
+#
+# NOT REAL NUMBERS: Can be used for simulations only!!!
+#
+SHORT_NAME:   GLT       char      Gl
+LAST_UPDATE:  GLT       char      2026.07.16_20:32:26
+COORD:        GLT       meters    541547.000    -1387978.600     6180982.000
+MOUNT:        GLT       char       ALTAZ
+SLEW_AZ:      GLT       deg/sec    1.0
+SLEW_EL:      GLT       deg/sec    1.0
+ACCL_AZ:      GLT       deg/sec^2  0.25
+ACCL_EL:      GLT       deg/sec^2  0.25
+TSETTLE_AZ:   GLT       sec        2.0
+TSETTLE_EL:   GLT       sec        2.0
+EL_MIN:       GLT       deg        5.0
+EL_MAX:       GLT       deg       90.0
+AZ_RANGE:     GLT       deg      -55.0   55.0  305.0  415.0
+RECORDER:     GLT       char      mark6
+BACKEND:      GLT       char      dbbc3
+SETMODE:      GLT       sec         4.0
+PREOB:        GLT       sec       10.0
+POSTOB:       GLT       sec        2.0
+HOR_AZIM:     GLT       deg       0   360 
+HOR_ELEV:     GLT       deg       9     9
+STOW_AZIM:    GLT       deg       80.0
+STOW_ELEV:    GLT       deg       80.0
+#
+CLOCK_DATES:  GLT       sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: GLT       sec        0.0E06

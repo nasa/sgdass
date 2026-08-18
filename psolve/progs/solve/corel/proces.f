@@ -1,0 +1,56 @@
+      SUBROUTINE PROCES(kref)
+      IMPLICIT NONE
+!
+      INCLUDE 'corpar.i'
+      INCLUDE 'corema.i'
+      INCLUDE 'corcom.i'
+!
+      CHARACTER*64 ROWNAM,COLNAM
+      INTEGER*2 ROWS,COLS,IARCR,IARCC,IPROC,ROWNUM,COLNUM
+      LOGICAL*2 KEND,FNDARC,KFC,KFR,kref
+      REAL*8 SIGS(MAX_PER),ADJ(MAX_PER),tot(MAX_PER)
+!
+      IPROC=0
+      KEND=.FALSE.
+      REWIND(LUIN)
+      CALL GETHED(KEND,ROWNAM,COLNAM,ROWS,COLS,ROWNUM,COLNUM)
+      DO WHILE(.NOT.KEND)
+        IF(ROWNUM.EQ.COLNUM) THEN
+          CALL GETPAR(KEND,PARNAM,SIGS,ADJ,ROWS,tot,kref)
+          CALL GETTRI(KEND,MAT,ROWS)
+          IPROC=IPROC+1
+          IF(FNDARC(ROWNUM,ARCNUM,ARCS,IARCR)) THEN
+            CALL REDTRI(MAT,PARSIG(ARCPOS(IARCR)),ROWS)
+            CALL PUTHED(ROWNAM,COLNAM,ROWS,COLS,ROWNUM,COLNUM)
+            CALL PUTPAR(PARNAM,PARSIG(ARCPOS(IARCR)),ADJ,ROWS,tot,kref)
+            CALL PUTTRI(MAT,ROWS)
+          ELSE
+            WRITE(LUOP,99) ROWNAM
+99          FORMAT(' Consistency error, looking up ',A,' diagonal.')
+          ENDIF
+        ELSE
+          CALL GETREC(KEND,MAT,ROWS,COLS)
+          KFR=FNDARC(ROWNUM,ARCNUM,ARCS,IARCR)
+          KFC=FNDARC(COLNUM,ARCNUM,ARCS,IARCC)
+          IF(KFR.AND.KFC) THEN
+            CALL REDREC(MAT,PARSIG(ARCPOS(IARCR)),PARSIG(ARCPOS(IARCC)), &
+     &                  ROWS,COLS)
+            CALL PUTHED(ROWNAM,COLNAM,ROWS,COLS,ROWNUM,COLNUM)
+            CALL PUTREC(MAT,ROWS,COLS)
+          ELSE
+            WRITE(LUOP,198)
+198         FORMAT('Couldn''t find diagonal for:')
+            IF(.NOT.KFR) WRITE(LUOP,199) ROWNAM
+199         FORMAT(A)
+            IF((.NOT.KFR).AND.(.NOT.KFC)) WRITE(LUOP,201)
+201         FORMAT(' and ')
+            IF(.NOT.KFC) WRITE(LUOP,199) COLNAM
+            WRITE(LUOP,209)
+209         FORMAT(' Mush on!')
+          ENDIF
+        ENDIF
+        CALL GETHED(KEND,ROWNAM,COLNAM,ROWS,COLS,ROWNUM,COLNUM)
+      ENDDO
+!
+      RETURN
+      END

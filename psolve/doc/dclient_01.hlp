@@ -1,0 +1,61 @@
+   Program  DCLIENT is a program which communicates with        
+   the program dserver which is assumed to run on one of the IVS Data 
+   Centers and it transfers data from from the current host to        
+   a host of the IVS Data Center.                                     
+                                                                      
+   Usage: dclient FLAGS -t <data_type> -c <config_file>               
+                        -f [<database_name> or <eops_file>]           
+                                                                      
+   FLAGS:                                                             
+   -q  -- quiet mode. Request for confirmation of the operation is 
+          not issued.                                              
+   -qq -- the quietest mode. No request for confirmation of the    
+          operation no information about the progress is printed on
+          the screen.                                              
+   -h  -- help information is printed in stdout.                      
+                                                                      
+   <data_type>   -- Currently only DBH Data type is supported:        
+                    database(s) transfer.                             
+   <config_file> -- file which contains configuration of dclient.     
+   <database_name> -- one of the three modes:                         
+                      a) If the first symbol is "/" then this         
+                         is interpreted as a database file name       
+                         with absolute path.                          
+                      b) If the argument contains a pattern "_V" then 
+                         it is interpreted as a database filename     
+                         with specific version. File path will be     
+                         find in geo-VLBI catalogue system.           
+                      c) If the argument contains does not contain    
+                         a pattern "_V" then and starts from the      
+                         symbol other than "/" than it is interpreted 
+                         a request for transferring a pair of the     
+                         last versions of -X and -S databases. Two    
+                         databases will be transferred.               
+                                                                      
+   <eops_name> -- Earth Orientation file.                             
+                                                                      
+   dclient reads configure file, checks its syntax. Further work      
+   depends on a data type.                                            
+                                                                      
+   If the data_type is DBH then dclient                               
+      checks a database_name argument and determine its mode. In the  
+      case of modes "b" and "c" dclient asks catalogue and finds      
+      filename(s) of the database(s) with absolute path(s). Then it   
+      creates a temporary file with e-mail message to dserver. Then   
+      it creates a temporary file with C-Shell program which copies   
+      the database file(s) to a local ftp-directory and gzips them    
+      on the fly.                                                     
+                                                                      
+   If the data type is EOPS then dclient                              
+      checks EOP filename. Then it creates a temporary file with      
+      e-mail message to dserver. Then it creates a temporary file     
+      with C-Shell program which copies the EOP file to the local     
+      ftp-directory under specific name and gzips it on the fly.      
+                                                                      
+   Finally a e-mail message is sent to dserver which should initiate  
+   retrieving the databases from the host where dclient has been      
+   launched (Operating Center) to a a host where dserver is running   
+   (Data Center). E-mail messages from dserver with confirmation of   
+   a request (or denying) and successful termination of retrieving    
+   (or error) will be sent to user(s) in according to specifications  
+   in config_file.                                                    

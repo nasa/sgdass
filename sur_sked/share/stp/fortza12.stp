@@ -1,0 +1,34 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2025.11.19 pet Created. Most of the fields are unknown
+# 2025.11.24 pet Updated slewing paramaters using results of SDE fz0003
+# 2026.01.14 pet Updated azimiths ranges. Updated slewing parameters according to fz0009 results
+#
+SHORT_NAME:    FORTZA12  char       Fz
+LAST_UPDATE:   FORTZA12  char       2025.11.24
+COORD:         FORTZA12  meters     4985358.382    -3955046.891     -428402.190   
+MOUNT:         FORTZA12  char       ALTAZ   
+#
+SLEW_AZ:       FORTZA12  deg/sec    12.0
+SLEW_EL:       FORTZA12  deg/sec     6.17
+ACCL_AZ:       FORTZA12  deg/sec^2   2.5
+ACCL_EL:       FORTZA12  deg/sec^2   2.5
+TSETTLE_AZ:    FORTZA12  sec         3.3
+TSETTLE_EL:    FORTZA12  sec         3.5
+#
+EL_MIN:        FORTZA12  deg         5.0
+EL_MAX:        FORTZA12  deg        88.0
+AZ_RANGE:      FORTZA12  deg       -179.0   0.0  180.0  359.0
+RECORDER:      FORTZA12  char      mark6
+BACKEND:       FORTZA12  char      r2dbe
+SETMODE:       FORTZA12  sec         4.0
+PREOB:         FORTZA12  sec         0.2
+POSTOB:        FORTZA12  sec         0.0
+HOR_AZIM:      FORTZA12  deg         0.0  360.0
+HOR_ELEV:      FORTZA12  deg         5.0    5.0
+STOW_AZIM:     FORTZA12  deg         5.0
+STOW_ELEV:     FORTZA12  deg        90.0
+#
+CLOCK_DATES:   FORTZA12  sec        2025.11.19 2099.12.31
+CLOCK_OFFSET:  FORTZA12  sec        0.0
+#

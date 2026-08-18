@@ -1,0 +1,3 @@
+      SUBROUTINE GIM_WRI ()
+      RETURN
+      END  SUBROUTINE  GIM_WRI  !#!#

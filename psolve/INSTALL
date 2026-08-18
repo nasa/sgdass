@@ -1,0 +1,296 @@
+Installation of Post-Solve under 64-bit Linux or MAC OS
+=======================================================
+
+I. solve requires
+
+  1) tcsh       6.10      or newer     Should be symlinked to csh
+  2) gcc        4.7       or newer     https://gcc.gnu.org/
+  3) gfortran   4.7       or newer     https://gcc.gnu.org/
+  4) zlib       1.2       or newer     http://www.zlib.net/
+  5) ncurses    5.7       or newer     https://ftp.gnu.org/gnu/ncurses
+  6) curl       7.1       or newer     https://curl.haxx.se
+  7) readline   6.0       or newer     https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+  8) fftw       3.3.3     or newer  ** http://www.fftw.org
+  9) cfitsio    3.26      or newer  ** http://heasarc.gsfc.nasa.gov/fitsio/fitsio.html
+10a) openblas-0.3.3       or newer  ** https://sourceforge.net/projects/openblas/files/
+     or
+10b) atlas      3.10.0    or newer  ** http://math-atlas.sourceforge.net
+ 11) petools    20200501  or newer     http://astrogeo.org/petools
+ 12) spd_client 20200501  or newer     http://astrogeo.org/spd
+ 13) ners       20200501  or newer     http://earthrotation.net/ners
+ 14) vtd        20200501  or newer     http://astrogeo.org/vtd
+ 15) vex_parser 20201027  or newer     http://astrogeo.org/vex_parser
+ 16) gvh        20201103  or newer     http://astrogeo.org/gvh
+
+NB: 1) You need to build openblas (or atlas) and cfitsio even if you have
+       them in your system! Unfortunately, these programs are often
+       built with underscore appended to the the external names,
+       which prevents interoperability Fortran and C. Solve requires
+       them to be built without appending underscores.
+    2) the use of atlas is considered depricated
+
+II. Root permission.
+--------------------
+
+  In general, you do not need to have root permissions for installing
+post-Solve and its dependencies, except
+
+1) You need to root permission for installing tcsh if you do not
+   have it at your system.
+
+2) If you chose to use atlas as a BLAS (basic algebra software) implementation,
+   you may need disable CPU throttling. if your system has enabled it. 
+   If you chose openblas, you do not need this and you can skip to the next
+   section. 
+
+   CPU throttling will prevent installation and tuning package atlas, since 
+   altas relies in measurement of performance of zillions of code snippets 
+   and requires to have the CPU speed constant. You need to have 
+   root permission to disable it. See petools INSTALL file for details.
+
+3) You may need root permission if your OS installation removed header files
+   for third-party programs that Solve dependes on, for instance if it does
+   nove have X11 header files.
+
+  You need to determine in which directory you are installing post-solve
+and its dependencies. It is recommended to install post-Solve and all its
+dependencies in the directory tree with the same prefix. Let us 
+environment set variable PREFIX that points to that directory.
+
+Include $PREFIX/lib in LD_LIBRARY_PATH variable, f.e.
+setenv LD_LIBRARY_PATH  "${LD_LIBRARY_PATH}:${PREFIX}/lib"
+
+Alternatively, at Linux machine if you have root account you can include 
+that directory in /etc/ld.so.conf  and run command ldconfig after 
+installation of each library.
+
+Include $PREFIX/bin in PATH variable, f.e.
+setenv PATH "${PATH}:${PREFIX}/lib"
+
+III. Building dependencies.
+---------------------------
+
+ 1) tcsh
+    If you do not have tcsh at your system, download it.
+    Download the source-code from http://www.tcsh.org/Home
+ 
+    ./configure --prefix=/usr --bindir=/bin
+    make 
+    (as root) make install
+    (as root) add these two lines in /etc/shells if you do not have them:
+              /bin/tcsh
+              /bin/csh
+
+    Your system administrator may select installing tcsh using 
+    some package manager. This is fine.
+  
+    NB: there should be a symbolic link of csh to tcsh. Some very old 
+        systems may have 
+          There was an old
+        free-BSD version of csh
+
+ 2) openblas 0.3.3 or atlas-3.10 or newer. See petools installation 
+    instruction.
+
+ 3) readline 6.0 or newer. See petools installation instruction.
+ 
+ 4) cfitsio  3.26 or newer. See vtd installation instruction.
+
+ 5) petools 20230416 or newer.
+    Download and untar tarball from http://astrogeo.org/petools
+    Refer file INSTALL inside the tar-ball for installation instructions.
+
+ 6) ners_20210824 or newer
+    Download and untar tarball from http://earthrotation.net/ners
+    ./configure --prefix=$PREFIX            \
+                --with-petools=$PREFIX      \
+                --python-dir=$PREFIX/script 
+    make
+    make install
+    NB: You should configure ners with petools. Otherwise, pima will not build.
+
+ 7) spd_client_20220211 or newer
+    Download and untar from http://astrogeo.org/spd/
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --with-petools=$PREFIX \
+                --with-lapack="$SOLVE_LIB_BLAS" \
+                --with-ners=$PREFIX
+    make
+    make install
+
+    NB: You should configure spd_client with petools and lapack.
+    Otherwise, post_Solve will not build.
+
+ 8) vtd 20231223 or newer
+    Download and untar  from http://astrogeo.org/vtd
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --data=$PREFIX/share/vtd \
+                --with-petools=$PREFIX \
+                --with-cfitsio=$PREFIX \
+                --with-spd_client=$PREFIX  \
+                --with-ners=$PREFIX
+    make
+    make install
+
+
+ 9) gvh 20231222 or newer
+    Download and untar from http://astrogeo.org/gvh
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --with-petools=$PREFIX \
+                --with-vtd=$PREFIX \
+                --with-ners=$PREFIX
+    make
+    make install
+
+
+10) vex_parser 20210707 or newer
+    Download and untar from http://astrogeo.org/gex_parser
+
+    source $PREFIX/bin/petools_vars
+    ./configure --prefix=$PREFIX \
+                --with-petools=$PREFIX \
+    make
+    make install
+
+
+
+IV. Building post-Solve
+-----------------------
+
+Finally, configure post-solve:
+
+./configure --prefix=[dir name]               \
+            --with-petools=[dir name]         \
+            --with-cfitsio=[dir name]         \
+            --with-spd_client=[dir name]      \
+            --with-ners=[dir name]            \
+            --with-vtd=[dir name]             \
+            --with-gvh=[dir name]             \
+            --with-vex_parser=[dir name]      \
+	    --scratch-data=[scratch dir name] \
+	    --save_data=[share dir name]      \
+            --gvf_data=[gvh data dir name]    \
+            --center_abr=[3-letter center abbreviation] \
+            --center_name=[name of the analysis center] \
+            --ps_viewer=[executable file]               \
+            --gif_viewer=[executable file]
+
+where
+
+  --with-petools=[dir name]    specifies directory names where package petools
+                               is installed.
+
+  --with-cfitsio=[dir name]    specifies directory names where package cfitsio
+                               is installed.
+
+  --with-spd_client=[dir name] specifies directory names where package spd_client
+                               is installed. NB: spd_client should be configured
+                               to be installed with petools.
+
+  --with-ners=[dir name]       specifies directory names where package ners
+                               is installed. NB: ners should be configured
+                               to be installed with petools.
+
+  --with-vtd=[dir name]        specifies directory names where package vtd
+                               is installed. NB: ners should be configured
+                               to be installed with cfitsio.
+
+  --with-gvh=[dir name]        specifies directory names where package gvh
+                               is installed. 
+
+  --with-vex_parser=[dir name] specifies directory names where package vex_parser
+                               is installed. 
+
+  --scratch_data=[dir name]    specifies scratch directory. Solve will write there
+                               temporary files and listings. A fast disk storage
+                               (f.e. SSD) of 20-100 Gb is desired.
+                               Mandatory argument.
+
+  --save_data=[dir name]       specifies directory where various Solve 
+                               configuration files reside. During installation
+                               Solve checks whether a file with a given name
+                               already exists. If exists, it does not update 
+                               it. Mandatory argument.
+
+  --gvf_data=[dir name]        directory with VLBI databases in GVF format.
+                               Mandatory argument.
+
+  --center_abr=[name]          2-3 letter your scientific center abbreviation.
+                               Mandatory argument.
+
+  --center_name=[name]         your scientific center name.
+                               Mandatory argument.
+
+  --ps_viewer=[prog name]      name of the PostScript viewer program. The
+                               program should accept one argument: file name.
+
+  --gif_viewer=[prog name]     name of the gif image viewer program. The
+                               program should accept one argument: file name.
+
+  --noopt                      disable optimization. This reduces speed by
+                               a factor 2-3, but exposes debugging information.
+
+
+
+To compile and install run
+
+make 
+make install
+
+
+V. Post-installation configuration.
+-----------------------------------
+
+1) A priori files with data for vtd.
+
+   The file with Earth orientation parameters supplied with VTD
+   distribution has a limited validity. You will need to update it
+   regularly. Package VTD has vtd_apriori_update.py utility to make
+   updates automatically using cron.
+
+2) .Xdefaults
+
+   In order graphic to work properly, you need to add to your
+file $HOME/.Xdefaults the following line
+
+pgxwin.Win.iconize:     True
+
+and then add xrdb -merge $HOME/.Xdefaults in your shell startup
+file (or you have already that line in the start-up file).
+
+3) Environment variables that control graphics
+
+  In order to run PGPLOT you need to specify several environment 
+  variables. Here is an example under tcsh:
+
+  setenv PGPLOT_DIR  "${PREFIX}/bin"            # where to find pgplot executables
+  setenv PGPLOT_FONT "${PGPLOT_DIR}/grfont.dat" # where to find fonts
+  setenv PGPLOT_DEV  "/XW"                      # tells that default is to print 
+                                                # the graphics to the screen
+  setenv PGPLOT_XW_MARGIN "1.0"                 # sets display margins
+
+
+  Environment variable DIAGI_PRICOM defines a command for printing
+  postscript files at the preferred printer from DiaGI interface.
+
+  Example under tcsh: setenv DIAGI_PRICOM    "lp -dFine"
+
+  Environment variable DIAGI_SCREEN overrides a system-wide default
+  screen size. Four screen sizes are supported: 
+
+  vast  -- 485x306mm
+  huge  -- 395x280mm
+  big   -- 330x215mm
+  small -- 290x180mm   
+  tiny  -- 230x155mm   
+
+  Example under tcsh: setenv DIAGI_SCREEN "huge"
+
+  Run diagi_demo command to see which size is more comfortable.
+  

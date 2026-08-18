@@ -1,0 +1,7 @@
+!@This is the start of file &BELEV
+      REAL*8     ELDEF, ELC(MAX_STA), ELVAL_ARC(MAX_STA)
+      INTEGER*2  NEL, IELNM(4,MAX_STA), NEL_ARC
+      CHARACTER  ELNM_CHR(MAX_STA)*8, ELNM_ARC_CHR(MAX_STA)*8
+      EQUIVALENCE ( IELNM, ELNM_CHR )
+      COMMON   / BELEV / ELDEF, ELC, NEL, IELNM, &  
+                         NEL_ARC, ELNM_ARC_CHR, ELVAL_ARC

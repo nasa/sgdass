@@ -1,0 +1,173 @@
+!
+! >> include-block for frequency selection
+! >> L. Petrov  16-OCT-2003  v 1.12  2025.12.04_09:31:10
+!
+!
+	INTEGER*4 M_FSL, M_PWR, M_HEO, M_EPN, M_EPT, M_SEG, MRES_HEO
+	PARAMETER  ( M_FSL = 33      )
+	PARAMETER  ( M_PWR = 16      )
+	PARAMETER  ( M_HEO = 8192    )
+	PARAMETER  ( M_EPN = 32*1024 )
+	PARAMETER  ( M_EPT = 64*1024 )
+	PARAMETER  ( M_SEG = 64      )
+	PARAMETER  ( MRES_HEO = 12   )
+!
+	TYPE     FREDAT__STRU
+	     REAL*8     PHS
+	     REAL*8     FRQ
+	     REAL*8     ACCL
+	     REAL*8     PMC
+	     REAL*8     PMS
+	     REAL*8     PMC_EST
+	     REAL*8     PMS_EST
+	     REAL*8     TID_AMPL
+	     REAL*8     TID_MIN_FRQ
+	     REAL*8     AC_CHE(M_PWR)
+	     REAL*8     AS_CHE(M_PWR)
+	     REAL*8     PC_CHE(M_PWR)
+	     REAL*8     PS_CHE(M_PWR)
+	     REAL*8     AC_AVR
+	     REAL*8     AS_AVR
+	     REAL*8     PC_AVR
+	     REAL*8     PS_AVR
+	     INTEGER*4  IND
+	     INTEGER*4  TYP
+	     INTEGER*4  L_PWR
+	     CHARACTER  NAM*16
+	     INTEGER*4  IND_MAIN
+	     REAL*8     PMC_MAIN
+	     REAL*8     PMS_MAIN
+	     LOGICAL*4  USE_UT1
+	     LOGICAL*4  USE_PM
+	     CHARACTER  LAB*10
+        END TYPE FREDAT__STRU
+!
+	TYPE     FRESEL__STRU
+	     INTEGER*8  FIELD1
+!
+	     REAL*8     TIME_BEG
+	     REAL*8     TIME_REF
+	     REAL*8     TIME_END
+	     REAL*8     NUTAMP_MIN
+	     REAL*8     RFCN_FREQ_MIN
+	     REAL*8     RFCN_FREQ_MAX
+	     REAL*8     PFICN_FREQ_MIN
+	     REAL*8     PFICN_FREQ_MAX
+	     REAL*8     TIDAMP_MIN
+	     REAL*8     TIDZON_MIN
+!
+	     REAL*8     NUT_RMS
+	     REAL*8     NUT_MAX
+	     REAL*8     TID_RMS
+	     REAL*8     TID_MAX
+!
+             REAL*8     EOP_SEG
+             REAL*8     SIGMA_TIE
+             REAL*8     SIGMA_TRN
+             REAL*8     SIGMA_RAT
+             REAL*8     SIGMA_HRM
+	     REAL*8     NF_SCALE
+	     REAL*8     NF
+!
+	     INTEGER*4  N_FRQ
+	     INTEGER*4  N_PRC
+	     INTEGER*4  N_NUT
+	     INTEGER*4  N_TID
+	     INTEGER*4  N_ADH
+	     INTEGER*4  N_PAR
+!
+	     INTEGER*4  APRIORI_NUTATION
+	     INTEGER*4  APRIORI_SOLID_TIDES
+	     INTEGER*4  TIDES_ARR(8)
+!
+	     LOGICAL*4  UT1_EST_NUT
+	     LOGICAL*4  UT1_EST_TID
+	     LOGICAL*4  UT1_EST_ADH
+	     LOGICAL*4  PM_EST_NUT
+	     LOGICAL*4  PM_EST_TID
+	     LOGICAL*4  PM_EST_ADH
+	     LOGICAL*4  PRC_EST
+	     LOGICAL*4  SEG_EOP
+	     LOGICAL*4  IGNORE_SIDELOBES
+!
+	     CHARACTER  CONF_FILE*128
+	     CHARACTER  FILOUT*128
+	     CHARACTER  VTD_CONF*128
+	     CHARACTER  AMD_DIR*256
+	     CHARACTER  ALG*8
+	     CHARACTER  NUTEXP*16
+	     CHARACTER  DATE_BEG*10
+	     CHARACTER  DATE_REF*10
+	     CHARACTER  DATE_END*10
+	     CHARACTER  ADH_FILE*128
+!
+	     INTEGER*8  FIELD2
+!
+	     TYPE ( FREDAT__STRU ) :: DAT(M_HEO)
+        END TYPE FRESEL__STRU
+!
+	TYPE HEORES__STRU
+	     INTEGER*8  FIELD1
+!
+             CHARACTER  CONFIG_FILE*256
+             CHARACTER  OUTPUT_DIR*256
+	     CHARACTER  PRC_REF*256
+	     CHARACTER  PRC_STYLE*8
+	     CHARACTER  PRC_UNITS*8
+	     CHARACTER  NUT_REF*256
+	     CHARACTER  NUT_STYLE*8
+	     CHARACTER  NUT_UNITS*8
+	     CHARACTER  TID_REF*256
+	     CHARACTER  TID_UNITS*8
+	     CHARACTER  ADH_REF*256
+	     CHARACTER  ADH_UNITS*8
+	     REAL*8     NSIG_THR
+!
+	     INTEGER*8  FIELD2
+	END TYPE  HEORES__STRU
+!
+	INTEGER*4    IND__OFFS, IND__RFCN, IND__PFICN, IND__NUT, IND__PRC, &
+      &              IND__TID,  IND__ADH,  IND__DRF,   IND__SDL
+	CHARACTER*5  NAM__OFFS, NAM__RFCN, NAM__PFICN, NAM__NUT, NAM__PRC, &
+      &              NAM__TID,  NAM__ADH,  NAM__DRF,   NAM__SDL
+	PARAMETER  ( IND__OFFS  = -1 );  PARAMETER  ( NAM__OFFS  = 'OFFS ' )
+	PARAMETER  ( IND__RFCN  = -2 );  PARAMETER  ( NAM__RFCN  = 'RFCN ' )
+	PARAMETER  ( IND__PFICN = -3 );  PARAMETER  ( NAM__PFICN = 'PFICN' )
+	PARAMETER  ( IND__NUT   = -4 );  PARAMETER  ( NAM__NUT   = 'NUT  ' )
+	PARAMETER  ( IND__PRC   = -5 );  PARAMETER  ( NAM__PRC   = 'PRC  ' )
+	PARAMETER  ( IND__TID   = -6 );  PARAMETER  ( NAM__TID   = 'TID  ' )
+	PARAMETER  ( IND__ADH   = -7 );  PARAMETER  ( NAM__ADH   = 'ADH  ' )
+	PARAMETER  ( IND__DRF   = -8 );  PARAMETER  ( NAM__DRF   = 'DRF  ' )
+	PARAMETER  ( IND__SDL   = -9 );  PARAMETER  ( NAM__SDL   = 'SDL  ' )
+!
+	INTEGER*4    TID__UNDF, TID__CALC, TID__MTH
+	PARAMETER  ( TID__UNDF = 0  )
+	PARAMETER  ( TID__CALC = 91 )
+	PARAMETER  ( TID__MTH  = 99 )
+!
+	INTEGER*4  TYP__PMCP, TYP__PMSP, TYP__PMCM, TYP__PMSM, &
+      &            TYP__UT1C, TYP__UT1S, TYP__PRCC, TYP__PRCS, &
+      &            TYP__SPX,  TYP__SPY, TYP__SPU
+	PARAMETER  ( TYP__PMCP = 51 )
+	PARAMETER  ( TYP__PMSP = 52 )
+	PARAMETER  ( TYP__PMCM = 53 )
+	PARAMETER  ( TYP__PMSM = 54 )
+	PARAMETER  ( TYP__UT1C = 55 )
+	PARAMETER  ( TYP__UT1S = 56 )
+	PARAMETER  ( TYP__PRCC = 57 )
+	PARAMETER  ( TYP__PRCS = 58 )
+	PARAMETER  ( TYP__SPX  = 59 )
+	PARAMETER  ( TYP__SPY  = 60 )
+	PARAMETER  ( TYP__SPU  = 61 )
+!
+	INTEGER*4    NUT__CALC
+	PARAMETER  ( NUT__CALC = 5009 )
+!
+	REAL*8       FRQ_LOW
+	PARAMETER  ( FRQ_LOW = 3.D-5  ) !  low frequency for diurnal band
+!
+	REAL*8       FRQ_LOW_ZON
+	PARAMETER  ( FRQ_LOW_ZON = 1.0D-8 ) !  low frequency zonal band
+!
+! << end of include block fresel.i  for nutation estimation
+!

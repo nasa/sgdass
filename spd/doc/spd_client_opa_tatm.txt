@@ -1,0 +1,51 @@
+Computation of atmospheric opacity and brighntess temperature
+in microwave range 1 to 360 GHz using spd_client library.
+
+
+I Overview
+----------
+
+  Computation of atmospheric opacity and brighntess temperature
+for reduction of radioastronomy data is performed by three procedures. 
+The first procedure, data acquisition is performed by the designated 
+server. The server downloads the numerical weather model 
+GEOS-IT (Rienecker et al. 2008) developed and maintained by the Goddard 
+Modeling and Assimilation Office. The model has resolution 
+0.625 deg x 0.5 deg x 72 layers x 3 hours, runs from 2000.01.01 through 
+presents, updated 4 times a day and has latency 10-15 hours. The output of 
+the numerical weather model among other parameters contains thickness of 
+atmospheric layers, air temperature, and specific humidity at each grid 
+point. These parameters are used for computing refractivity in moist air
+in a range of 1 to 360 GHz. The refractivity accounts for both dry air 
+and water vapor. The data acquisition procedure stores for each epoch 
+3D refractivity field at a regular grid with the height range from -1000, 
+to 80000 km above the reference ellipsoid. The data acquisition procedure 
+runs every hour and check whether the new output from the GEOS-IT model 
+become available.
+
+  The second procedure computes opacity and slant path delay for a designated 
+set of stations. The path delay are computed on a regular, but non-uniform grid
+over azimuth and elevation. For each station, each epoch, each direction
+the trajectory of the wavefront is computed by solving a system of non-liner 
+differential equations of the 4th order that are the solution of the 
+variational problem of wave propagation in accordance with the Fermat 
+principle. Then the path delay is computed by integrating the refractivity
+along the trajectory from the receiver (i.e. observing station) to the 
+top of the atmosphere defined at the height of 80 km. In addition 
+opacitiy is computed for a set of frequencies for a set of heights. Then 
+brightness tempera\ture is cmpppputed by solving radiative transfer equaitons.
+
+   All slant path deay, atmosphere opacity and atmosphere brightness temperature
+for all directions, all stations for a given epochs are stored in 
+an output file. Path delays for designated "continuous" stations are computed
+immediately after completion of the data acquisition procedure.
+
+
+II. Routines:
+-------------
+
+  The package spd_client provides two routines that are supposed 
+to be called from a radioasronomy data reduction software. 
+The first routine, SPD_RES_INTRP,
+
+...  not completed ...

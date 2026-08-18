@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+#  2018.04.12  pet Changed AZ_RANGE
+#
+SHORT_NAME:  KATH12M   Ke
+LAST_UPDATE: KATH12M   2018.04.12
+COORD:       KATH12M   meters    -4147354.147  4581542.629 -1573303.903
+MOUNT:       KATH12M   char       ALTAZ
+SLEW_AZ:     KATH12M   deg/sec    5.0
+SLEW_EL:     KATH12M   deg/sec    1.0
+ACCL_AZ:     KATH12M   deg/sec^2  1.3
+ACCL_EL:     KATH12M   deg/sec^2  1.3
+TSETTLE_AZ:  KATH12M   sec        2.0
+TSETTLE_EL:  KATH12M   sec        2.0
+EL_MIN:      KATH12M   deg        5.0
+EL_MAX:      KATH12M   deg       88.0
+AZ_RANGE:    KATH12M   deg      -270.0 -90.0  90.0 270.0
+RECORDER:    KATH12M   char      mark5
+PREOB:       KATH12M   sec       10.0
+POSTOB:      KATH12M   sec        2.0

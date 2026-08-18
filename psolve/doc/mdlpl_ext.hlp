@@ -1,0 +1,56 @@
+                           MDLPL_EXT.
+                           같같같같같
+  MDLPL_EXT  displays at the graphic window plot of the estimates of 
+  the segmented parameters. You should select plot type and station.
+  Deselected stations are not displayed.
+
+  To select the station either enter the number (but not exceeding 9) or 
+position cursor at the station box and then click <Left/Mouse>. To move to 
+the next station hit N. Station name is ignored when EOP plot is displayed.
+
+  To select plot type either hit the plot type code (C, T, M, Z, Y, U) or 
+position cursor at the plot type box and then click <Left/Mouse>. 
+ 
+  To display the plot either hit P or position cursor at the light green box 
+and then click <Left/Mouse>. 
+
+  To abort MDLPL_EXT and come back to OPTIN either hit X or click <Right/Mouse>
+
+                Summary of commands usage:
+
+<Left/Mouse>    Select the box with station name or plot type
+<Middle/Mouse>  Select the box with station name or plot type
+<Right/Mouse>   Abort making further plots and to return to OPTIN
+             C  Set plot type "Piece-wise component of clock function"
+             M  Set plot type "Atmosphere piece-wise path delay"
+             N  Move to the next station.
+             P  Display plot at the graphic window
+             T  Set plot type "Total clock function"
+             U  Set plot type "Piece-wise UT1"
+             ?  Display help information.
+             X  Abort making further plots and to return to OPTIN
+             Y  Set plot type "Piece-wise Y pole coordinate"
+             Z  Set plot type "Piece-wise X pole coordinate"
+
+Comments:
+
+1) Box with clock reference station has red frame. It is useless to make 
+   plots of clock function for this station.
+
+2) Total clock function will not been displayed in the case when non uniform
+   clocks interval have been chosen.
+
+3) Box with EOP plot type will have red frame in the case when EOP was 
+   modeled by polynomial, but not as piece-wise linear function. It is
+   useless to make plot of EOP in that case.
+
+4) Black line depicted in the plot of EOP represents reference high-frequency
+   EOP model. The model identifier is declared in ../mdlpl/mdlcm.i : variable
+   HFEOP_CMP_DEF. Permanent shift is added to the model value to match the first
+   and the last points of the EOP estimates and model values. Blue line in 
+   the plot of EOP represents the high-frequency EOP model which has been used
+   as a priori model for calculation theoreticals. It will not been seen in the
+   case when it coincides with reference hf EOP model.
+
+5) Hints how to customize MDLPL_EXT graphic window may be found in 
+   $HELP_DIR/diagi_1.hlp

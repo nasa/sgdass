@@ -1,0 +1,28 @@
+\BOOKMARK [1][-]{section.1}{Contents of a VLBI L1A archive file in SWIN format}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Directory structure of a VLBI L1A SWIN archive}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{xxxxx\137meta.txt}{section.1}% 3
+\BOOKMARK [3][-]{subsubsection.1.2.1}{Fast extraction of the file with metadata}{subsection.1.2}% 4
+\BOOKMARK [2][-]{subsection.1.3}{yyyyyy\137N.vex}{section.1}% 5
+\BOOKMARK [2][-]{subsection.1.4}{yyyyyy\137N.v2d}{section.1}% 6
+\BOOKMARK [2][-]{subsection.1.5}{yyyyyy\137N.input}{section.1}% 7
+\BOOKMARK [3][-]{subsubsection.1.5.1}{Common settings table}{subsection.1.5}% 8
+\BOOKMARK [3][-]{subsubsection.1.5.2}{Configurations table}{subsection.1.5}% 9
+\BOOKMARK [3][-]{subsubsection.1.5.3}{Rule table}{subsection.1.5}% 10
+\BOOKMARK [3][-]{subsubsection.1.5.4}{Frequency table}{subsection.1.5}% 11
+\BOOKMARK [3][-]{subsubsection.1.5.5}{Telescope table}{subsection.1.5}% 12
+\BOOKMARK [3][-]{subsubsection.1.5.6}{Datastream table}{subsection.1.5}% 13
+\BOOKMARK [3][-]{subsubsection.1.5.7}{Baseline table}{subsection.1.5}% 14
+\BOOKMARK [3][-]{subsubsection.1.5.8}{Data Table}{subsection.1.5}% 15
+\BOOKMARK [2][-]{subsection.1.6}{yyyyyy\137N.difx/DIFX\137}{section.1}% 16
+\BOOKMARK [3][-]{subsubsection.1.6.1}{Visibility files}{subsection.1.6}% 17
+\BOOKMARK [3][-]{subsubsection.1.6.2}{yyyyyy\137N.difx/PCAL\137}{subsection.1.6}% 18
+\BOOKMARK [2][-]{subsection.1.7}{yyyyyy\137N.im}{section.1}% 19
+\BOOKMARK [2][-]{subsection.1.8}{yyyyyy\137N.calc}{section.1}% 20
+\BOOKMARK [2][-]{subsection.1.9}{yyyyyy\137N.difxlog}{section.1}% 21
+\BOOKMARK [2][-]{subsection.1.10}{yyyyyy\137N.filelist}{section.1}% 22
+\BOOKMARK [2][-]{subsection.1.11}{yyyyyy\137N.flag}{section.1}% 23
+\BOOKMARK [2][-]{subsection.1.12}{yyyyyy\137N.joblist}{section.1}% 24
+\BOOKMARK [2][-]{subsection.1.13}{yyyyyy\137N.machines}{section.1}% 25
+\BOOKMARK [2][-]{subsection.1.14}{yyyyyy\137N.threads}{section.1}% 26
+\BOOKMARK [1][-]{section.2}{Credit}{}% 27
+\BOOKMARK [1][-]{section.3}{References}{}% 28

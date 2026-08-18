@@ -1,0 +1,237 @@
+   Specifications of BSPPOS format version of 2007.10.30
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   BSPPOS format is for describing site displacements which can
+be represented as the sum of the polynomial of the first degree and 
+an expansion with the B-spline basis. The expansion is defined on a expanded 
+non-descending sequence of knots. The first and the last knot has 
+multiplicity 1-degree, other knots are represented as simple. The sequence 
+may have several consecutive knots with equal epochs, except the first and 
+the last. The number of knots with the same epochs should not exceed the 
+degree of the B-spline basis. The expanded sequence of knots has indexes 
+1-degree, 1-degree+1, ... 0, 1, 2, ... N, N+1, N+2, ... N+degree,
+i.e. in the expanded sequence the first and the last knot are split 
+into the set of knots with the number of elements equal to the degree.
+
+   BSPPOS file provides the number of knots, the degree of the B-spline 
+basis, apriori site position, time epochs of knots, estimates of 
+B-spline coefficients, global site position, and global site velocity.
+ 
+   A file in BSPPOS format consists of records of variable length in
+ASCII coding. The records are separated by a character with decimal
+code 13. The records of the following types are supported:
+ 
+ 1) Header record
+ 2) Solution identifier
+ 3) Solution date
+ 4) Record that specifies the total number of sites
+ 5) Site definition record
+ 6) Record that specifies the B-spline degree
+ 7) Record that specifies the number of knots for spline for this site
+ 8) Record that specifies the reference epoch for site positions
+ 9) Record that specifies position at reference epoch 
+10) Record that specifies site velocity 
+11) Record that specifies epoch of the spline 
+12) Record that specifies B-spline coefficients
+13) Record that specifies elements of the covarinace matrix of B-spline 
+    coefficients (optional)
+14) Trailer record
+ 
+   The records should be placed in this order. Records 5-10 are repeated 
+for each site, records 11-12 are repeated for each spline knot and each
+site.
+
+   Records which start from # character are considered as comments.
+ 
+ 
+ 1. Header record
+    A header record contains the string
+    "BSPPOS Format version of 2007.10.30"
+ 
+    The header record allows to distinguish the valid file in the
+    BSPPOS format from files in other formats.
+  
+ 2. Solution identifier
+
+    Field  1:7    A7   Field ID: SOL_ID:
+    Field  8:10   a3   Delimiter (blank)
+    Field  11:43  A32  Text identifying the solution
+   
+
+ 3. Solution date
+
+    Field  1:9    A9   Field ID: SOL_DATE:
+    Field  10:10  a1   Delimiter (blank)
+    Field  11:29  A19  Date of the solution in ISO format
+   
+ 4. Record that specifies the total number of sites
+
+    Field  1:6    A6   Field ID: N_STA:
+    Field  7:7    a1   Delimiter (blank)
+    Field  8:11   I4   The total number of sites
+
+ 5. Site definition record
+
+    Field  1:2    A2    Field ID: S:
+    Field  3:3    a3    Site ID: an arbitrary sequence of letters.
+                        NB: parsing software SHOULD NOT ATTEMPT to interpret
+    Field  8:11   I4    The total number of sites
+    Field 12:13   a2    Delimiter (blanks)
+    Field 14:26   F13.5 X-coordinate of the site in the crust fixed coordinate system
+    Field 27:27   a1    Delimiter (blank)
+    Field 28:40   F13.5 Y-coordinate of the site in the crust fixed coordinate system
+    Field 41:41   a1    Delimiter (blank)
+    Field 42:54   F13.5 Z-coordinate of the site in the crust fixed coordinate system
+    Field 12:13   a2    Delimiter (blanks)
+    Field 57:64   F8.4  Site geocentric latitude.
+    Field 65:65   a1    Delimiter (blank)
+    Field 66:73   F8.4  Site geocentric longitude positive to East in [0,360]
+    Field 74:74   a1    Delimiter (blank)
+    Field 75:80   F5.1  Site height above the reference ellipsoid
+   
+
+ 6. Record that specifies the B-spline degree
+
+    Field  1:6    A6    Field ID: L_DEG:
+    Field  7:7    a1    Delimiter (blank)
+    Field  8:11   I4    Spline degree
+    Field 12:18   a7    Delimiter  STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+
+ 7. Record that specifies the number of knots for spline for this site
+
+    Field  1:6    A6    Field ID: N_NOD:
+    Field  7:7    a1    Delimiter (blank)
+    Field  8:11   I4    The number of knots for this site
+    Field 12:18   a7    Delimiter  STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+
+ 8. Record that specifies the reference epoch for site positions
+
+    Field  1:6    A6    Field ID: R_EPC:
+    Field  7:18   a12   Delimiter        STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+    Field 33:34   a2    Delimiter (blanks)
+    Field 35:57   A23   Reference epoch for site positions in TAI in ISO format.
+
+ 9. Record that specifies position at reference epoch 
+
+    Field  1:6    A6    Field ID: P_EST:
+    Field  7:18   a12   Delimiter        STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+    Field 33:34   a2    Delimiter (blanks)
+    Field 35:48   F14.6 X component of site position at the reference epoch in meters
+    Field 49:49   a1    Delimiter (blanks)
+    Field 50:63   F14.6 Y component of site position at the reference epoch in meters
+    Field 64:64   a1    Delimiter (blanks)
+    Field 65:78   F14.6 Z component of site position at the reference epoch in meters
+
+10. Record that specifies site velocity 
+
+    Field  1:6    A6    Field ID: P_EST:
+    Field  7:18   a12   Delimiter        STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+    Field 33:34   a2    Delimiter (blanks)
+    Field 35:48   F14.6 X component of site velocity in m/s
+    Field 49:49   a1    Delimiter (blanks)
+    Field 50:63   F14.6 Y component of site velocity in m/s
+    Field 64:64   a1    Delimiter (blanks)
+    Field 65:78   F14.6 Z component of site velocity in m/s
+
+11. Record that specifies epoch of the spline 
+
+    Field  1:6    A6    Field ID: EPOCH:
+    Field  7:7    a1    Delimiter (blank)
+    Field  8:11   I4    The knot index starting from 1-L_DEG
+    Field 12:18   a7    Delimiter  STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+    Field 35:57   A23   Epoch of the knot in TAI in ISO fort mat.
+
+12. Record that specifies B-spline coefficients
+
+    Field  1:6    A6    Field ID: EPOCH:
+    Field  7:7    a1    Delimiter (blank)
+    Field  8:11   I4    The knot index starting from 1-L_DEG
+    Field 12:18   a7    Delimiter  STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+    Field 33:35   a3    Delimiter (blanks)
+    Field 36:48   F13.6 B-spline coefficient for X component of position of this site, this knot
+    Field 49:49   a1    Delimiter (blanks)
+    Field 50:62   F13.6 B-spline coefficient for Y component of position of this site, this knot
+    Field 63:63   a1    Delimiter (blanks)
+    Field 64:76   F13.6 B-spline coefficient for Z component of position of this site, this knot
+
+13. Record that specifies elements of the covariance matrix of B-spline 
+    coefficients (optional). Covariance matrix is a 4-dimensional array
+    in the crust-fixed terrestrial coordinate system. The first two 
+    dimensions run through the knot indexes + global position + global 
+    velocity. The second two dimensions, the 3rd and the 4th, run through
+    components of the coordinate vectors: X, Y, Z.
+
+    Field  1:6    A6    Field ID: EPOCH:
+    Field  7:18   a12   Delimiter (blank)
+    Field 12:18   a7    Delimiter  STA: 
+    Field 19:22   I4    Site index. The index of the site definition
+                        record for this site, counted from 1
+    Field 23:24   a2    Delimiter (blanks)
+    Field 25:32   A8    Site name specified in the preceding site definition
+                        record
+    Field 33:41   a9    Delimiters
+    Field 43:43   I1    The first component of the displacement vector in the 
+                        terrestrial coordinate system. Components runs as 
+                        X, Y, and Z.
+    Field 49:49   a1    Delimiter (blanks)
+    Field 50:52   a3    Delimiters
+    Field 53:56   I4    The first covariance element index. Index starts from 
+                        1-L_DEG and runs through N_NOD+L_DEG-1. The element 
+                        with index N_NOD+L_DEG+1 corresponds to the global 
+                        position, the element with index N_NOD+L_DEG corresponds 
+                        to the global velocity, other indexes correspond to knot
+                        index.
+    Field 57:65   a9    Delimiters
+    Field 66:66   I1    The second component of the displacement vector in the 
+                        terrestrial coordinate system. Components runs as 
+                        X, Y, and Z.
+    Field 67:75   a9    Delimiters
+    Field 76:79   I4    The second covariance element index. Index starts from 
+                        1-L_DEG and runs through N_NOD+L_DEG-1. The element 
+                        with index N_NOD+L_DEG+1 corresponds to the global 
+                        position, the element with index N_NOD+L_DEG corresponds 
+                        to the global velocity, other indexes correspond to knot
+                        index.
+    Field 80:86   a7    Delimiters
+    Field 87:99   D13.6 The element of the covariance matrix
+
+
+14. Trailer record
+
+    The same as the header record, string:
+    "BSPPOS Format version of 2007.10.30"

@@ -1,0 +1,101 @@
+The Library tle_YYYYMMDD process TLE files and converts the information 
+from there to [X, XDOT] at a given epoch
+
+src codes:
+geod_ecef       -- geod_2_ecef
+		   Converts geodetic coordinates to Earth-centered-Earth-Fixed
+                -- geod_2_enu
+		   Converts geodetic coordinates to local coordinates
+                -- geod_2_enu_B
+		   Converts geodetic coordinates to local coordinates, reference
+		   coordinates given in cartesian
+		-- enu_2_avd
+		   compute the look angles from local coordinates
+                
+k3p13r_2	-- eccentric_anomaly
+                   compute eccentric anomaly from the mean anomaly and eccentricity
+		-- kepler_b
+		   compute the state vector from keplerian elements
+
+read_tle_file   -- read contents of a tle file
+
+rot_sub		-- Define 3x3 rotational matrices and their derivatives wrt time
+
+tle_azel_comp   -- program to show how to compute look angles starting with a TLE
+
+tle_deep        -- routines for defining deep space parameters
+
+tle_driver      -- routine to compute [X, XDOT] given tle file and epoch
+
+tle_sdp4        -- compute the state vectors for deep space objects
+
+tle_sgp4        -- compute state vectors for near Earth objects
+
+tle_to_coo	-- compute the state vector at the epoch of the TLE
+
+example codes:
+
+tle_example_to_coo --
+
+
+
+
+
+------------------------------
+The following source codes are included, with their general functionality
+described:
+
+dpper            -- Through this routine, the current values of the orbital
+                    elements are passed to the deep-space subroutine which
+		    in turn adds the appropriate deep- space lunar and solar
+		    periodics to the orbital elements.
+
+dscom            -- Provides the deep space common variables used both by the
+                    secular and periodic subroutines
+
+dsinit
+
+dspace           -- provides any third body contributions to deep space objects
+
+getgravconst
+
+gstime
+
+initl
+
+newtonnu  
+
+rv2coe
+
+sgp4
+
+sgp4init
+
+tle_angle   
+
+tle_asinh
+
+tle_cross
+
+tle_days2mdhms   -- Converts tle days to month, day, hours, mins, and secs
+
+tle_dot
+
+tle_driver
+
+tle_invjday
+
+tle_jday
+
+tle_mag
+
+tle_parser
+
+tle_to_crs
+
+tle_to_trs
+
+tledate_to_mjdsec
+
+twoline2rvsgp4
+

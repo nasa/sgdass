@@ -1,0 +1,76 @@
+fclib - FORTRAN callable system interface
+
+ fclib provides a simple, but maybe not easy use, set of routines to
+allow access to system routines. This library is designed to be as portable
+as possible. In particular only the ptr_* should require
+modifications on other systems. If there are others, we want to fix the
+problems. This library is intended to cover
+all major system and subroutine calls, but are only be implemented on
+a need basis. The FORTRAN include file fclib.i contains a declaration for
+all the functions.
+
+There are four major classes of routines. They are grouped according
+to the form of their names: fc_*, fc_*_[gp], ptr_*, and others. The
+fc_* routines are interfaces to system calls named *. Their calling
+sequences and return values are identical to the corresponding
+system or subroutine call. Where the system calls requires a value,
+pass a value to the fc_* routine. When the system requires a
+pointer, pass the result of ptr_* routine or a pointer value
+returned by another fclib routine. If the routine returns a pointer,
+store the result in an integer*4. Routines that do not take arguments
+and return a result that is not an actual structure do not have an
+fc_* counterpart, fork() for example.
+
+The fc_*_[gp] routines get (g) and (p) values from and to c structures
+named *. The p routines have a calling sequence:
+
+      INTEGER*4 iret,iptr
+      iret=fc_*_p(iptr,'named of structure member',value)
+
+where is value is of the appropriate type for the named member. The
+name should be the lower case member name used in the standard header file.
+Members of sub-structures are called out 'main.sub'. It is important to
+check that the return value is zero to verify that the named member
+is supported by the routine. The value returned in iptr is a pointer
+to the static data structure inside the fc_*_p routine. This address
+can be passed to another fclib routine that expects a pointer to 
+such a structure.  The fc_*_g routines have the same calling sequence 
+except that the pointer iptr is input and the value parameter is the output.
+There is also a routine that fc_const_g that will get many of the standard
+symbolic constants.
+
+The ptr_* routines take one argument of type *. The result is a pointer
+that can be passed to a fclib routine. Currently, only types ch and nc
+(Non-Character) are supported.
+It is recommended that the argument not be an expression, even constant. The
+FORTRAN compiler may be courteous and keep such temporary results around, but
+strictly speaking there is no need to once the ptr_* routine returns.
+Its safest if the argument is a variable or array element.
+
+The other routines are documented in the corresponding source file. Currently,
+there are routines:
+
+iret=null_term(out,in)                      - null terminate a string
+iret=execute(cmd,argc,argv,status)          - execute cmd
+iret=execute_d(cmd,argc,argv,status,device) - execute() with xdb on device
+
+Future directions:
+
+If necessery the ptr_* routines may have to be expanded to include
+all types. This should only be necessery where the pointer to an object
+is different based on type. For, example if a pointer to an I*4 is
+two greater than the pointer to I*2.
+a pointer points to a location that depends
+first byte.
+
+Someday there will be an fc_* routine that would require an actual
+structure to be passed. This would probably be most cleanly handled by
+using a pointer and allowing the fc_* routine to fetch or store the
+structure.
+
+If a more than example of a struct needs to be maintained simultaneously,
+make an fc_*_1_[gp] routine.
+
+fc_errno_g to get the value of the global variable errno, since we cannot
+be sure that a FORTRAN common block named errno can correctly access the
+c variable.

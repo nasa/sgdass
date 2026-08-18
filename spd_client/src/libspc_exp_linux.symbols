@@ -1,0 +1,31 @@
+FOO {
+#
+#  Explicit list of symbols to be exported
+#  Last updated on 2026.01.11_16:55:32
+#
+  global: get_opa_tatm_spectrum;
+          get_opa_tatm_tipping;
+          spd_cli_get_2pd;
+          spd_cli_init;
+          spd_cli_quit;
+          spd_client_version; 
+          spd_del_init;
+          spd_del_quit;
+          spd_intrp_delay;
+          spd_load_bspd;
+          spd_res_intrp;
+#
+          get_opa_tatm_spectrum_;
+          get_opa_tatm_tipping_;
+          spd_cli_get_2pd_;
+          spd_cli_init_;
+          spd_cli_quit_;
+          spd_client_version_;
+          spd_del_init_;
+          spd_del_quit_;
+          spd_intrp_delay_;
+          spd_load_bspd_;
+          spd_res_intrp_;
+#
+  local: *;         # hide everything else
+};

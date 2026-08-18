@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  SARDINIA  Sr
+LAST_UPDATE: SARDINIA  2018.01.20
+COORD:       SARDINIA  meters     4865182.766   791922.689  4035137.174
+MOUNT:       SARDINIA  char       ALTAZ
+SLEW_AZ:     SARDINIA  deg/sec    0.85
+SLEW_EL:     SARDINIA  deg/sec    0.50
+ACCL_AZ:     SARDINIA  deg/sec^2  0.3
+ACCL_EL:     SARDINIA  deg/sec^2  0.18
+TSETTLE_AZ:  SARDINIA  sec        2.0
+TSETTLE_EL:  SARDINIA  sec        2.0
+EL_MIN:      SARDINIA  deg        3.0
+EL_MAX:      SARDINIA  deg       85.0
+AZ_RANGE:    SARDINIA  deg      -90.0 90.0 270.0 450.0 
+RECORDER:    SARDINIA  char      mark5
+PREOB:       SARDINIA  sec       10.0
+POSTOB:      SARDINIA  sec        2.0

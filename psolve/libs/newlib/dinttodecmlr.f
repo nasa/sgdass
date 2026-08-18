@@ -1,0 +1,16 @@
+      CHARACTER*(*) FUNCTION DINTTODECMLR(INT)
+      IMPLICIT NONE
+      INTEGER*4 INT
+!
+!  INTTODECIMALR: convert I*4 variable to ascii string right justified
+!
+      CHARACTER*11 STRING
+      INTEGER*2 ILR
+!
+      WRITE(STRING,'(I11)') INT
+      ILR=LEN(DINTTODECMLR)
+      DINTTODECMLR(MAX(1,ILR-10):ILR)=STRING(MAX(1,12-ILR):11)
+      IF(ILR.GT.11) DINTTODECMLR(1:ILR-11)=' '
+!
+      RETURN
+      END

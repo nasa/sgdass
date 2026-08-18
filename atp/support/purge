@@ -1,0 +1,44 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   Script  purge  delete garbage from the target directory.           *
+# *                                                                      *
+# *  ###  10-DEC-97     purge     v1.2  (c)  L. Petrov  22-NOV-2000 ###  *
+# *                                                                      *
+# ************************************************************************
+#setenv PROC_ROOT $0:h
+#if ( `expr substr $PROC_ROOT 1 1` == "/" ) then
+#   else
+#     setenv PROC_ROOT $PWD
+#endif
+if ($#argv == 0) then 
+    rm \#*   >& /dev/null
+    rm \.#*   >& /dev/null
+    rm .*~   >& /dev/null
+    rm .\#*  >& /dev/null
+    rm .\.#*  >& /dev/null
+    rm *~    >& /dev/null
+    rm core  >& /dev/null
+    echo "Directory $cwd purged"
+  else
+    if (-d $1) then
+       rm $1/.*~   >& /dev/null
+       rm $1/*~    >& /dev/null
+       rm $1/\#*   >& /dev/null
+       rm $1/.\#*   >& /dev/null
+       rm $1/.\#*  >& /dev/null
+       rm $1/core  >& /dev/null
+       echo "Directory $1:h purged"
+      else
+        if (-d $1:h) then
+           rm $1:h/.*~   >& /dev/null
+           rm $1:h/*~    >& /dev/null
+           rm $1:h/\#*   >& /dev/null
+           rm $1:h/.\#*  >& /dev/null
+           rm $1:h/core  >& /dev/null
+          echo "Directory $1:h purged"
+        endif
+     else
+       echo "$1:h is not a directory"
+    endif
+endif

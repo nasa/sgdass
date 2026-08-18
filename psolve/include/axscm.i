@@ -1,0 +1,5 @@
+!@This is the start of file &AXSCM
+      INTEGER*2     NUM_AXIS, IAXNM(4,MAX_STA)
+      CHARACTER     AXNM_CHR(MAX_STA)*8
+      EQUIVALENCE ( IAXNM, AXNM_CHR )
+      COMMON   / AXISOFFS / NUM_AXIS, IAXNM

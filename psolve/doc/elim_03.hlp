@@ -1,0 +1,332 @@
+ELIM/MILE                                                  ELIM  Ver. 2007.07.18
+                     |같같같같같같같같같같같같�|
+                     |      RELEASE NOTE       |
+                     |_________________________|
+ 
+       Procedure for automatic outliers elimination/restoration.
+
+      I. Release  ELIM/MILE 3.3  of 2007.07.18
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Program  ELIM/MILE  is a part of the SOLVE software for geodetic VLBI
+  data analysis. ELIM/MILE makes either elimination of outliers or 
+  restoration observations which were previously suppressed in automatic mode.
+
+    ELIM/MILE can work in both interactive and batch mode, but only weights
+  update function is applicable in batch mode. It is assumed that ELIM/MILE 
+  is called either from OPTIN in interactive mode or from BATCH in batch
+  mode. It is assumed that the database under consideration has proper 
+  parameterization for LSQ.
+
+    ELIM prints a menu screen form and inquires in interactive mode 
+  parameters of the work and a mode of its owrk: elimination and restoration. 
+  User can either start elimination/restoration process or update statistics 
+  of the solution and after that take a decision about further work. ELIM reads 
+  scratch file, puts some subset of the data from there into temporary data
+  structures, builds normal equations, solves them, calculates postfit 
+  residuals and their statistics.
+
+    ELIM scans all used observations in elimination mode and finds
+  the most substantial outlier. If postfit residual of that outlier
+  exceeds the specified limit then the "not-used" flag for this
+  observation is set up (what means that this observation will not
+  participate further in solution) and ELIM makes an update of the
+  estimates, their covariance matrix, all postfit residuals and their
+  statistics for elimination of that observation. In order to speed up the
+  computational process it is possible to force ELIM to update all 
+  residuals not after each operation elimination but after each N operations, 
+  although it may worsen the quality of the elimination process or even result 
+  in loss of convergence. Then the process is repeated until the last outlier 
+  will be eliminated or user terminate the process manually.
+
+    MILE scans all not used but potentially recoverable observations in 
+  restoration mode and finds the best candidate for restoration: 
+  observation with minimal (under some criteria) postfit residual. If 
+  the postfit residual of the candidate does not exceed the specified 
+  limit then the "not-used" flag for this observation is cleared (what 
+  means that this observation will participate further in solution) and MILE
+  makes update of the estimates, their covariance matrix, all postfit 
+  residuals and their statistics for including that previously suppressed 
+  observation in solution. In order to speed up the computational process 
+  it is possible to force MILE to update all residuals not after each 
+  operation restoration but after each N operations, although it may worsen
+  the quality of the restoration process. Then the process is repeated until 
+  the last candidate will be restored or user terminate the process manually.
+
+    ELIM/MILE supports different strategies for determination whether the 
+  observation is good and used in solution, good, but recoverable, or
+  unrecoverable and they may be dynamically changed. Circumstances of the 
+  observation (quality code, availability of ionosphere calibration and so on) 
+  are   firstly examined. Then user action for suppression is examined. 
+  Combination of these conditions is used for setting status of the 
+  observation.
+
+    ELIM/MILE makes singularity check before starting procedure and after
+  elimination of each observation. It supports reparameterization on the fly
+  what allows to avoid abnormal termination caused by normal matrix singularity 
+  which may give rise due to elimination too many observations.
+
+    ELIM/MILE provides work either in purely automatic mode or in semiautomatic 
+  mode when the program finds the observation for elimination/restoration 
+  and asks user for confirmation. User can reply Y, N, A, S in a response. 
+  "Y" means yes (to do elimination/restoration), "N" means not to do 
+  anything with this observation, "A" means yes and not to ask further 
+  confirmation for the next observations, "S" means to stop further 
+  elimination or restoration and coming to the main ELIM menu. 
+
+    ELIM/MILE shows the following information for each processed observation
+  BEFORE elimination/restoration:
+  1) baseline name; 2) source name; 3) calendar date and UTC time tag;
+  4) quality code; 5) "w=" -- applied weight (in psec); 6) "p=" --
+  residual (in psec); 7) "d=" -- normalized residual.
+    ELIM/MILE shows the following information for each processed observation
+  AFTER elimination/restoration:
+  1) Counter of eliminated/restored observation; 2) source name; 3) w.r.m.s.
+  after an operation and in brackets: before operations (in psec); 
+  4) "*p=" -- postfit residual after operation (in psec); 5) "*d=" -- 
+  normalized residual after operation.
+
+    All information printed at the screen is automatically printed in 
+  spool file.
+
+    Current not-used flags are in internal data structures and do not
+  influence other programs of SOLVE. After completion of the work ELIM 
+  updates not-used flags in scratch files unless user explicitly specifies
+  to put aside results elimination/restoration.
+
+
+      II. Restrictions:
+          ~~~~~~~~~~~~
+
+
+  1) ELIM will reject session with wrong order of observations;
+  2) ELIM will reject sessions which contain the same baseline but with
+     different order of stations. For example, is session contains
+     baseline "WESTFORD/WETTZELL" and "WETTZELL/WESTFORD" it will be
+     rejected.
+  3) If more than one database specified in database ELIM will work with 
+     the first database which marked as "in solution" and will not see any 
+     other databases.
+  4) ELIM/MILE works only in B3D mode.
+  5) ELIM/MILE doesn't support all possible parameters. In particlar, it will 
+     not work when user-defined parameters are estimated.
+  
+
+    Further information about ELIM may be found in
+
+  1) SOLVE_HELP_DIR directory, file elim_01.hlp "Description of menu items".
+
+  2) SOLVE_HELP_DIR directory, file elim_02_hlp.ps  Petrov, L. "Memo about 
+     outliers elimination" (Discussion about the optimal strategy for 
+     outliers elimination in LSQ for the case of full normal matrix and 
+     B_3D normal matrix. The algorithm implemented in SOLVE is described.)
+
+  3) SOLVE_HELP_DIR directory, file elim_04.hlp "Hints about using ELIM/MILE"
+     (Discussion about possible strategies of using ELIM/MILE).
+
+  4) SOLVE_HELP_DIR directory, file elim_05.hlp "Description of observation 
+     suppression strategy" (Discussion about the ways to determine is the 
+     observation used in solution, conditionally good, unrecoverable and etc.)
+
+  History:
+
+  15-SEP-97  pet  v 0.0  Beginning of developing.
+
+  08-OCT-97  pet  v 1.0  Release of the first version.
+
+  29-OCT-97  pet  v 1.1  Fixed bug: ELIM worked incorrectly when the last 
+                         observation in the database had bad ionosphere.
+
+  31-OCT-97  pet  v 2.0  Option " Acceleration factor" is added in menu. 
+                         Support of environment variable ELIM_UPD is added.
+                         Residuals updated not after each observation but
+                         only after each N observations, where N is 
+                         acceleration factor. Computational expenses are
+                         approximately reciprocal N. But deferring updates of
+                         the residuals may worsen results since not the best
+                         candidates in elimination/restoration will be taken.
+                         For this reason it is recommended to set N always 1,
+                         except the cases when low speed of 
+                         elimination/restoration process become intolerable.
+
+  12-DEC-97  pet  v 2.1  Logic of detection best candidate for elimination and 
+                         restoration is changed a bit for the case when both 
+                         upper threshold and cutoff criterion are applied.
+
+  30-JAN-98  pet  v 2.2  Added routine for weights update. Added recalculation 
+                         of chi-square and its mathematical expectation after 
+                         each step elimination/restoration.
+
+  02-FEB-98  pet  v 2.3  "Double-suppressed observation" bug fixed. Previous 
+                         version didn't work correctly when the observation 
+                         has quality codes less than 8 at both bands. 
+
+  28-FEB-98  pet  v 2.4  Support of phase-delay solution types was added.
+
+  23-MAR-98  pet  v 2.5  Support of mode "restoration with resolving
+                         ambiguities and update of ionosphere
+                         correction due to changes in ambiguities" 
+                         was added for solution type G_GXS or P_PXS.
+
+  24-MAR-98  pet  v 2.6  Changed the logic when both threshold and
+                         cutoff criterion are used in elimination:
+                         all observation are examined in the order
+                         of descending their normalized residual.
+                         The observation is eliminated if it has
+                         normalized residual exceeding cutoff
+                         criterion OR it has residual exceeding
+                         threshold criterion. Observations are
+                         examined in the order of ascending their
+                         normalized residuals in restoration mode.
+                         Observation is restored if it has normalized
+                         residual less than cutoff criterion OR it
+                         has residual less than threshold criterion.
+
+  01-MAY-98  pet  v 2.7  Added support of different suppression
+                         methods. Added new option in elim_menu:
+                         "Change suppression method". Fixed bug:
+                         suppression status of observations was not
+                         traced when quality code limit was changed.
+                         Changed title lines at the header of menu.
+                         Added new section in On-line help.
+
+  15-JUN-98  pet  v 2.71 Fixed a bug in io_obser.f: previous version
+                         didn't work correctly when axis offset was
+                         estimated.
+
+  12-JUL-98  pet  v 2.8  Changed logic of singularity check. Made it
+                         compatible with logic used in PROC, ARCPE,
+                         BATCH. Removed ELIM_MSR, ELIM_MBS global
+                         variables. Added parameterization test:
+                         a check: doesn't solution's set up contain
+                         parameters unsupported by ELIM.
+
+  02-AUG-98  pet  v 2.81 Added support of verbosity level 2. It may
+                         appeared useful for processing large
+                         sessions (more than 5000 observations).
+
+  03-AUG-98  pet  v 2.9  Changed logic to force ELIM to work faster
+                         and not to make unnecessary calculations
+                         when threshold criteria is in use. Eliminated 
+                         a bug connected with processing sessions with 
+                         a priori clock model.
+
+  03-NOV-98  pet v. 2.10 Changed the logic of support resolving
+                         ambiguities on the fly in restoration mode.
+                         New logic conserves misclosures excess. It
+                         is assumed that misclosure excess for
+                         observables doesn't excess one ambiguity
+                         jump.
+
+  22-NOV-98  pet v. 2.11 Added support of parameter ELIM_MSR -- 
+                         Maximal uncertainty. Observations with
+                         formal uncertainty exceeding ELIM_MSR
+                         are marked as outliers in ELIM mode and
+                         are not eligible for restoration in MILE
+                         mode. If ELIM_MSR < 1.D-12 sec then this 
+                         criteria is ignored.
+
+  29-JAN-99  pet v. 2.111 Corrected a bug: the previous version died
+                          when effective frequency of the
+                          observation had value NaN.
+
+  07-APR-99  pet v. 2.112 The previous version may die in weights
+                          updating when considerable number of
+                          baselines were deselected.
+
+  29-APR-99  pet v. 2.113 The previous version didn't work correctly when
+                          there were stations in the database without
+                          observations.
+
+  07-MAY-99  pet v. 2.114 Corrected a bug: the previous version
+                          didn't work in supression mode
+                          SUPMET_PRE98 when the last observation had
+                          ionosphere contribution zero.
+
+  12-OCT-99  pet v. 2.115 Set post OCT99 version control.
+
+  1999.11.19 pet v. 2.116 Updated for using Calc 9.1 (it supplies
+                          troposphere gradient derivative).
+
+  2000.01.30 pet v. 2.117 Fixed a bug: variable AMP_SP in RESID_ST
+                          was not always initialized and its check
+                          for "Not-A-Number" resulted sometimes to
+                          premature end of iterations.
+
+  2000.03.29 pet v. 3.0   a) Added support of EQUMEM_FLAG --          
+                             if EQUMEM_FLAG = .TRUE. then equations 
+                             of conditions are stored in memory what
+                             speeds up computation by 1.5 times.    
+                          b) Added support of batch mode for        
+                             updating weights. ELIM reads           
+                             pipe-buffer. If the first INTEGER*2    
+                             word is 0 then ELIM works in           
+                             interactive mode, if that word is 1    
+                             then ELIM updates weights in           
+                             non-interactive mode.                  
+                          c) added support of an environment        
+                             variable TERM_COLOR. If TERM_COLOR is  
+                             set NO, then no color escape sequences 
+                             are generated. (The window with SOLVE  
+                             may dissappear in attempt to change    
+                             colors if no free colors are avaialbe  
+                             due to bug in hpterm).                 
+
+  2000.04.04 pet v. 3.1   a) Moved definitions of chi/ndg tolerance
+                             factor and floor for batch UPWEI to   
+                             glbc4.i . Changed their numerical     
+                             values: tolerance 0.02 and floor for  
+                             group delay solutions to 8 psec.      
+                          b) Fixed a bug in UPWEI_INFO -- the      
+                             previous version of UPWEI(ELIM) tried 
+                             to compute statistics for deslected   
+                             baselines/sources incorrrectly what   
+                             sometimes resulted to abnormal        
+                             termination.                          
+
+  2000.04.18 pet v. 3.11     Prevented an attempt to resolve group
+                             delay ambiguities on the fly if
+                             ambiguities exceed by modulo 32766
+                             since SOLVE internally keeps number of
+                             ambiguities as INTEGER*2.
+
+  2000.07.18 pet v. 3.12     Fixed a bug: the previous version
+                             didn't work when Solve started from
+                             detached terminal in Batch mode.
+
+  2001.04.16 pet v. 3.13     Fixed a bug: the previous version
+                             didn't make checks for deviding by zero.
+
+  2001.05.30 pet v. 3.2      Added logic for resolving contradictions of 
+                             ionosphere supression flags. If ELIM finds
+                             contradictory flags when it reads scratch 
+                             files, it sets "manual suppression" flag and
+                             resets ionosphere flags.
+
+  2007.07.18 pet v. 3.3      Added support of negative values of the threshold
+                             elimination/restoration criteria. When 
+                             postfit residuals are examined, they are compared
+                             with the absolute value of the threshld criterion.
+                             If threshold > 0 and the cutoff > 0, then 
+                             an observation is considered as a candidate for
+                             elminiation or restoration if EITHER criteria are
+                             satisfied. 
+                             If threshold < 0 and the cutoff > 0, then 
+                             an observation is considered as a candidate for
+                             elminiation or restoration if BOTH criteria are
+                             satisfied. 
+
+                             Added batch support to elim/mile through PARU
+                             interface.
+                             
+  2007.08.01  pet v. 3.31    Fixed two bugs: 
+                             1) ELIM incorrectly reset default CUTOFF test
+                                after singularity recovery;
+                             2) ELIM sometimes incorrectly aborted due to 
+                                normal matrix singularity after successful
+                                singularity recovery.
+
+  Bug reports and your comments please send to Leonid Petrov 
+  ( sgdass@lists.nasa.gov )
+
+2007.08.01_18:31:38

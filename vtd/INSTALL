@@ -1,0 +1,126 @@
+VTD can run under
+
+Darwin (MAC OS)
+Linux
+HP-UX 9, 10 and 11
+SunOS
+NB:   HP-UX and SunOS are not supported since 2012
+
+	I. Dependencies.
+        ----------------
+
+1) Fortran 90 compiler. 
+   Supported compilers:g fortran 4.3.0 or newer and
+                        Intel Fortran under Linux compiler 9.1 through 10.1.20
+                        HP-UX Fortran compiler 2.4 or newer
+                        Sun f90 compiler.
+
+   NB: Intel Fortran under Linux compilers 10.1.21 through 11.1.037 have 
+       a critical bug that generates code that produce WRONG RESULTS. 
+       According to Intel representatives, this bug was fixed in 11.1.038.
+       Although it has not been confirmed that this bug will affect any routine 
+       from the VTD library, it is strongly suggested not to use affected 
+       version of Fortran for Linux compiler.
+
+2) C compiler;
+
+3) petools. ( http://astrogeo.org/petools )
+
+4) ners. ( http://earthrotation.net/ners )
+
+5) BLAS. (Basic Linear Algebra Software). It can be either a vendor supplied 
+          library or ATLAS. ( http://math-atlas.sourceforge.net/ )
+   Refer to petools installation guide for details.
+
+6) cfitsio 3.30 or newer. 
+   You may install VTD without cfitsio. Then path delay caused by
+   source structure will not be computed. If you do not need
+   this feature, specify --without-cfitio in configuration.
+
+   How to install cfitsio:
+
+   1) Take source code from http://heasarc.gsfc.nasa.gov/docs/software/fitsio/fitsio.html
+   2) Take patch from http://astrogeo.org/pet_inc/cfitsio-3.26.patch
+   3) Define 
+        $DIST            -- directory where the package will be built
+        $cfitsio_version -- cfitsio version number
+        $cfitsio_prefix  -- directory where cfitsio will be installed
+
+      cd $DIST
+      tar -zxvf /tmp/cfitsio3370.tar.gz
+      mv cfitsio fitsio-${cfitso_version}
+      cd fitsio-${cfitsio_version}
+      patch -Np0 -i /tmp/cfitsio-3.26.patch
+      ./configure --prefix=${cfitsio_prefix}  \
+                  --enable-reentrant \
+                    CC=gcc \
+                    FC=gfortran \
+                    CFORTRANFLAGS="-fno-underscoring" \
+                    CFLAGS="-DNoUnderscoreAppend -DGNU -m64"
+      make
+      make shared
+      make install
+
+
+7) spd_client ( http://astrogeo.org/spd )
+
+   Take source code, untar
+
+   cd $DIST
+   tar -jxvf /tmp/spd_client-20151111.tar.bz2
+   tar -jxvf spd_client-20151111_example.tar.bz2
+   cd spd_client_20151111
+   ./configure --prefix=${spd_prefix}  --with-petools=${petools_prefix}
+   make
+   make install
+ 
+
+8) gmake
+
+	II. Compile and link.
+        ---------------------
+
+
+./configure
+gmake
+gmake install
+
+  By default binary files are put in $HOME/bin and data files needed for
+vtd are put in $HOME/share . Option --prefix= changes it. If configure 
+does not find petools library, you need to specify the name of the 
+library with full path explicitly using option --with-petools. 
+Distribution kit contains also data files needed for computation of
+path delay. By default these files are installed in $HOME/share/vtd
+You can override these default with option --data.
+
+Example:
+
+./configure --prefix=/opt --with-petools=/opt --data=/data/vtd
+            --with-cfitsio=/opt --with-spd_client=/opt --with-ners=/opt
+
+  Complete list of configure options can be printed by ./configure --help
+
+  The package VTD can be compiled with or without support of cfitsio
+library for reading files in FITS-format. If the library VTD is compiled
+without cfitsio support, it will not be able to compute and apply 
+contribution caused by source structure.
+
+
+	III. Post installation.
+        -----------------------
+
+
+  If you intend to use vtd you should apply definitions of environment
+variables listed in file vtd_vars which was put in ${prefix}/bin 
+directory, where ${prefix} is the name of the root directory which you have 
+specified with option --with-prefix, or $HOME if you did not use this option.
+Under tcsh or csh execute a command:
+
+source ${prefix}/bin/vtd_vars
+
+  It is a good idea to include this line in you shell startup command file.
+
+  Examine source code of examples in sub-directory example.
+
+  If you upgrade VTD, please first run make uninstall from the 
+distribution of the old installation, and then install new version.

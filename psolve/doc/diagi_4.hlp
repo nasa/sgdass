@@ -1,0 +1,22 @@
+                             Multi_DiaGI
+                             같같같같같�
+The following keys and mouse buttons are bound to Multi_DiaGI commands:
+
+<Left/Mouse>    If a cursor points to a command button then Multi_DiaGI is
+                terminated and the command code is passed to a main program.
+<Middle/Mouse>  the same as <Left/Mouse>
+
+<Right/Mouse>   Terminate execution DiaGI and come back to the calling program;
+            X   Terminate execution DiaGI and come back to the calling program;
+     <CNTRL/P>  Make a hardcopy of the plot;
+     <CNTRL/W>  The same as <CNTRL/P>  
+        <PgUp>  draw the next  plot of the MultiDiaGi set;
+        <PgDn>  draw the prior plot of the MultiDiaGi set;
+            ?   Display help information.
+        <LET>   Letter code of a command button. When hit, Multi_DiaGI is
+                terminated and the command code is passed to a main program.
+
+Enter          
+               1 -- to read DiaGI User guide; 
+               2 -- to read verbose descriptions of DiaGI command;
+any other symbol -- to return to the plot.

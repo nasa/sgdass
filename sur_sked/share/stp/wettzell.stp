@@ -1,0 +1,53 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2022.04.03 pet Added peculiar clock offset
+# 
+SHORT_NAME:    WETTZELL  char       Wz
+LAST_UPDATE:   WETTZELL  char       2020.10.13_13:36:11
+COORD:         WETTZELL  meters     4075539.883      931735.261     4801629.371   
+MOUNT:         WETTZELL  char       ALTAZ   
+SLEW_AZ:       WETTZELL  deg/sec       4.0
+SLEW_EL:       WETTZELL  deg/sec       1.0
+ACCL_AZ:       WETTZELL  deg/sec^2     1.0
+ACCL_EL:       WETTZELL  deg/sec^2     1.0
+TSETTLE_AZ:    WETTZELL  sec           0.0
+TSETTLE_EL:    WETTZELL  sec           0.0
+EL_MIN:        WETTZELL  deg           5.0
+EL_MAX:        WETTZELL  deg          89.0
+AZ_RANGE:      WETTZELL  deg        -108.5 111.0 251.5 251.5
+RECORDER:      WETTZELL  char       mark5   
+BACKEND:       WETTZELL  char       mark4
+SETMODE:       WETTZELL  sec         4.0
+PREOB:         WETTZELL  sec           0.2
+POSTOB:        WETTZELL  sec           0.0
+HOR_AZIM:      WETTZELL  deg           0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:      WETTZELL  deg           5.0  10.0  12.0  18.0  15.0   5.0   2.0   0.1   0.1   3.0   3.0  30.0  20.0
+STOW_AZIM:     WETTZELL  deg        80.0
+STOW_ELEV:     WETTZELL  deg        80.0
+#
+CLOCK_DATES:   WETTZELL  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET:  WETTZELL  sec        2.630E-6
+# 
+TSYS_DATES:    WETTZELL  char       2016.07.06  2020.07.08
+TSYS_ELEVS:    WETTZELL  deg           3.0   5.0  10.0  20.0  30.0  40.0  80.0  90.0
+TSYS_FREQS:    WETTZELL  GHz           2.1   2.4
+TSYS_POLVALS:  WETTZELL  K     R      91.075  88.929  83.965  71.703  63.380  59.072  57.703  56.731
+TSYS_FREQS:    WETTZELL  GHz           7.9   9.1
+TSYS_POLVALS:  WETTZELL  K     R      63.175  60.371  55.641  44.698  38.367  36.377  33.897  31.503
+#
+BPSS_DATES:    WETTZELL  char       2000.01.01   2020.07.01
+BPSS_BWIDTH:   WETTZELL  MHz          16
+BPSS_BETA:     WETTZELL  d/l        1.00
+BPSS_BWIDTH:   WETTZELL  MHz          32
+BPSS_BETA:     WETTZELL  d/l        1.00
+#
+GAIN_DATES:    WETTZELL  char       2004.12.31 2025.01.01
+GAIN_FREQS:    WETTZELL  GHz           2.1   2.4
+GAIN_ELEVS:    WETTZELL  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  WETTZELL  K/Jy  R     0.051 0.051 0.051 0.051 0.051 0.051 0.051
+GAIN_POLVALS:  WETTZELL  K/Jy  L     0.051 0.051 0.051 0.051 0.051 0.051 0.051
+GAIN_DATES:    WETTZELL  char       2004.12.31 2025.01.01
+GAIN_FREQS:    WETTZELL  GHz           7.9   9.1
+GAIN_ELEVS:    WETTZELL  deg           3.0  10.0  20.0  30.0  40.0  80.0  90.0
+GAIN_POLVALS:  WETTZELL  K/Jy  R     0.093 0.093 0.093 0.093 0.093 0.093 0.093
+GAIN_POLVALS:  WETTZELL  K/Jy  L     0.093 0.093 0.093 0.093 0.093 0.093 0.093

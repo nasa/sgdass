@@ -1,0 +1,226 @@
+   Specifications of EPHEDISP format version of 2005.06.30
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   EPHEDISP format is for describing time series of site position
+variations.
+ 
+   A file in EPHEDISP format consists of records of variable length
+in ASCII coding. The records are separated by a character with decimal
+code 13. The records are grouped into sections. Sections follow
+in this order:
+ 
+1) Header record -- the first record should have a signature:
+                    EPHEDISP  Format version of 2005.06.30
+ 
+                    The header record allows to distinguish a valid
+                    file in the EPHEDISP format from files in other
+                    formats.
+ 
+2) P-records section
+   P-record  has letter P in the first field. It defines the number
+             of records of each type, the number of epochs and
+             the number of sites.
+ 
+3) T-records section
+   T-record  has letter T in the first field. It defines a time epoch
+             of the beginning of the range, a time epoch of the end
+             of the range and duration of the sampling interval.
+             Time epochs and a sampling interval cannot be defined
+             more than once.
+ 
+4) A-records section
+   A-record  has letter a in the first field. In general, displacement
+             field depends on site coordinates, but within a small area
+             this dependence can be ignored. The A section specifies
+             the radius of the area around a site for which the 
+             displacements can be considered the same within errors of
+             computations.
+ 
+5) S-records section
+   S-record  has letter S in the first field. It defines a name
+             and coordinates of each site. A site cannot be defined
+             more than once.
+ 
+6) D-records section
+   D-record  has letter D in the first field. It defines three
+             components of the displacement vector for a given
+             site, for a given epoch. The site should be defined in
+             the preceding S-record. The time epoch should be within
+             the epochs range defined in the preceding T-records.
+             The displacement for a given site and a given epoch
+             cannot be defined more than once.
+ 
+7) Trailer record -- the last record is the same as the header record.
+ 
+Records which start from # character are considered as comments.
+ 
+Format of a P-record:
+---------------------
+Field  1:1   A1    -- Record ID: letter "P".
+field  2:2   a1       delimiter: blank.
+Field  3:3   A1    -- Field ID:  letter "T".
+field  4:4   a1       delimiter: blank.
+Filed  5:5   I1    -- The number of T-records (always 3).
+field  6:6   a1       delimiter: blank.
+Field  7:7   A1    -- Field ID:  letter "S".
+field  8:8   a1       delimiter: blank.
+Field  9:18  I10   -- The number of S-records -- the total number
+                      of sites.
+field 19:19  a1       delimiter: blank.
+Field 20:20  A1    -- Field ID:  letter "E".
+field 21:21  a1       delimiter: blank.
+Field 22:27  I6    -- The total number of epochs.
+field 28:28  a1       delimiter: blank.
+Field 29:29  A1    -- Field ID:  letter "D"
+field 30:30  a1       delimiter: blank.
+Field 31:40  I10   -- The total number of D-records.
+ 
+Format of a T-record:
+---------------------
+ 
+Field 1-8 A8 -- Record identifier. Three record identifiers are
+                supported: "T begin ", "T end   ", "T sample".
+                Therefore, there are three types of T-records.
+                A valid file in EPHEDISP format should have one
+                T-record of each type.
+ 
+If the record ID is "T begin ", then the record defines the first
+epoch of the interval. Format:
+ 
+   Field  1:8   A8     -- Record ID. Should be "T begin ".
+   field  9:10  a2        delimiter: blanks.
+   Field 11:15  I5     -- Integer modified Julian date at the midnight
+                          of the first epoch.
+   field 16:16  a1        delimiter: blanks.
+   Field 17:23  F7.1   -- Time elapsed from the midnight of the first
+                          epoch in TAI, in seconds.
+   field 24:25  a2        delimiter: blank.
+   Field 26:44  A19    -- Date and time in YYYY.MM.DD-hh:mm:ss format.
+                          This field is for information only.
+                          Parsing software MUST ignore it.
+ 
+If the record ID is "T end   ", then the record defines the last epoch
+of the range. Format:
+ 
+   Field  1:8   A8     -- Record ID. Should be "T end   ".
+   field  9:10  a2        delimiter: blanks.
+   field 11:15  I5     -- Integer modified Julian date at the midnight
+                          of the last epoch.
+   field 16:16  a1        delimiter: blanks.
+   field 17:23  F7.1   -- Time elapsed from the midnight of the last
+                          epoch in TAI, in seconds.
+   field 24:25  a2        delimiter: blank.
+   field 26:44  A19    -- Date and time in YYYY.MM.DD-hh:mm:ss format.
+                          This field is for information only.
+                          Parsing software MUST ignore it.
+ 
+If the record ID is "T sample ", then the record defines duration of
+the sampling interval: the interval between two consecutive time epochs.
+Format:
+ 
+   Field  1:8   A8     -- Record ID. Should be "T sample".
+   field  9:10  a2        delimiter: blanks.
+   field 11:26  F16.11 -- Sampling interval in days.
+ 
+ 
+Format of an A-record:
+----------------------
+ 
+Field  1:1   A1    -- Record ID. Should be letter A (decimal code 65).
+field  2:2   a1       delimiter: blanks.
+Field  3:16  F14.6 -- Maximum distance of displacements validity (in meters).
+                      Displacements are valid to any point within
+                      this distance from a site.
+ 
+ 
+Format of an S-record:
+----------------------
+ 
+Field  1:1   A1    -- Record ID. Should be letter S (decimal code 83).
+field  2:2   a1       delimiter: blanks.
+Field  4:11  A8    -- 8-letter long site identifier. May contain
+                      any characters with decimal codes 32-255, but
+                      blanks are allowed only at the end of the site
+                      identifier. This site identifier should be unique
+                      among S-records. This field should not
+                      necessarily have a special meaning. Parsing
+                      software should not try to interpret it.
+field 12:13  a2       delimiter: blanks.
+Field 14:26  F13.4 -- X site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 27:27  a1       delimiter: blank.
+Field 28:40  F13.4 -- Y site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 27:27  a1       delimiter: blank.
+Field 42:54  F13.4 -- Z site coordinate in a crust fixed reference
+                      frame. Units: meters.
+field 55:56  a2       delimiter: blanks.
+Field 57:64  F8.4  -- Site geocentric latitude, positive to north,
+                      in degrees. This field is for information only.
+                      Parsing software MUST ignore it.
+field 65:65  a1       delimiter: blank.
+Field 66:73  F8.4  -- Site longitude, positive towards east,
+                      in degrees. This field is for information only.
+                      Parsing software MUST ignore it.
+field 74:74  a1       delimiter: blank.
+Field 75:80  F6.1  -- Site height above the reference ellipsoid in
+                      meters. This field is for information only.
+                      Parsing software MUST ignore it.
+ 
+Format of a D-record:
+---------------------
+ 
+Field  1:1   A1    -- Record ID. Should be letter D (decimal code 68).
+field  2:2   a1       delimiter: blanks.
+Field  3:7   I5    -- Epoch index. Epoch index 1 corresponds to the
+                      beginning of the epochs range. Therefore, the
+                      epoch of a D-record is
+                      (MJD,TAI) + (K-1)*Sample_interval
+                      where MJD,TAI -- the epoch of the first epoch
+                      defined in the T-record and K is the epoch index.
+field  8:9   a2       delimiter: blanks.
+Field 10:14  I5    -- Integer modified Julian date at the midnight of
+                      the epoch. This field is for information only.
+                      Parsing software MUST ignore it.
+field 15:15  a1       delimiter: blank.
+Field 16:22  F7.1  -- Time elapsed from the midnight of the epoch
+                      in TAI, in seconds. This field is for
+                      information only. Parsing software MUST ignore it.
+field 23:24  a2       delimiter: blanks.
+Field 25:43  A19   -- Epoch date and time (TAI) in YYYY.MM.DD-hh:mm:ss
+                      format. This field is for information only.
+                      Parsing software MUST ignore it.
+field 44:45  a2       delimiter: blanks.
+Field 46:53  A8    -- Site identifier. It must be defined in the
+                      preceding S-record.
+field 54:54  a1       delimiter: blank.
+Field 55:62  F8.5  -- Radial displacement in up direction, in meters.
+field 63:63  a1       delimiter: blank.
+Field 64:71  F8.5  -- East displacement in meters.
+field 72:72  a1       delimiter: blank.
+Field 73:80  F8.5  -- North displacement in meters.
+ 
+Comments:
+---------
+ 
+  1. Site IDs in this files are ARBITRARY. They do not have any meaning
+     and are for internal labeling only. Parsing software SHOULD NOT 
+     try to use and match them against common station names. 
+     Site coordinates should be used for matching stations within the 
+     area of validity defined in record A.
+  2. Radial displacement in up direction is defined as a displacement
+     in the direction parallel to the direction from the geocenter to
+     the site with coordinates defined in the S-record.
+ 
+  3. A valid file may have less D-records than the product of the
+     number of site and the number of epochs. Thus, displacements
+     for some sites may not be defined for all epoch. A site defined
+     in the S-record may not have not have displacements defined in
+     D-records at all.
+ 
+  4. Gaps in time series of displacements for a given site are not
+     allowed. Displacements for all consecutive epochs within the
+     range (which may be different for different sites) should be
+     defined.
+ 
+  5. D-records must be sorted in the order of increasing time epochs.

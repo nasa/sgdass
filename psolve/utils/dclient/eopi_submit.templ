@@ -1,0 +1,48 @@
+#!/bin/csh
+# ************************************************************************
+# *                                                                      *
+# *   C-Shell program db_submit provides a short interface to dclient    *
+# *   for submitting EOP series of the NEOS Intensives experiments       *
+# *   to the IVS Data Center.                                            *
+# *                                                                      *
+# *   It uses customisation file for dclient. This file is sought in     *
+# *   the $MK5_ROOT/local directory under name eopi.lcl                  *
+# *   Environment variable EOPI_CONFIG overrides this name.              *
+# *                                                                      *
+# *   Usage: eopi_client <eopi_filename>                                 *
+# *                                                                      *
+# *  ###  20-NOV-2000  eopi_submit  v1.1 (c) L. Petrov  16-JUL-2003 ###  *
+# *                                                                      *
+# ************************************************************************
+if ($#argv == 0) then 
+    echo "Usage: eopi_submit <eopi_filename>"
+    exit -1
+endif
+#
+# --- Determine center code
+#
+if ( $?MK5_ROOT == 0 ) then
+    echo "---  eopi_sumbit:  environment variable MK5_ROOT was not defined  ---"
+    exit ( 1 )
+endif
+#
+# --- Setting site specific environment variables unless environment variable
+# --- EOPI_CONFIG has not been defined earlier
+#
+if ( $?EOPI_CONFIG == 0 ) then
+     set EOPI_CONFIG = ${MK5_ROOT}/local/eopi.lcl
+endif
+if (-r $EOPI_CONFIG ) then
+   else
+     echo "File $EOPI_CONFIG has not been found. You should have file "
+     echo "$EOPI_CONFIG which contains local customisation of dclient"
+     echo "for sending EOP series to the IVS data center. Refer to "
+     echo "CALC/SOLVE installation instruction for details"
+     exit ( -2 )
+endif
+#
+cd $MK5_ROOT/bin
+#
+# --- Call dclient for submitting database
+#
+${MK5_ROOT}/bin/dclient -t EOPI -c $EOPI_CONFIG -f $1

@@ -1,0 +1,136 @@
+      FUNCTION   GET_CDATE ( )
+! ************************************************************************
+! *                                                                      *
+! *   Routine  GET_CDATE learns the current system time and transforms   *
+! *   it to internal SOLVE format:                                       *
+! *   yyyy.mm.dd-hh:mm:ss  like                                          *
+! *   1999.09.02-20:54:45                                                *
+! *                                                                      *
+! *   The length of the line is 19 symbols.                              *
+! *                                                                      *
+! *   Copyright (c) 1975-2025 United States Government as represented by *
+! *   the Administrator of the National Aeronautics and Space            *
+! *   Administration. All Rights Reserved.                               *
+! *   License: NASA Open Source Software Agreement (NOSA).               *
+! *                                                                      *
+! * ###  06-SEP-1999   GET_CDATE   v2.0  (d) L. Petrov  21-JUL-2002 ###  *
+! *                                                                      *
+! ************************************************************************
+      IMPLICIT   NONE
+      CHARACTER  GET_CDATE*19
+      CHARACTER  STR*32
+      INTEGER*4  TIM_VAL(8)
+!
+      CALL DATE_AND_TIME ( VALUES=TIM_VAL )
+!
+      WRITE ( UNIT=GET_CDATE, FMT='(I4,".",I2,".",I2,"-",I2,":",I2,":",I2)' ) &
+     &        TIM_VAL(1), TIM_VAL(2), TIM_VAL(3), TIM_VAL(5), TIM_VAL(6), &
+     &        TIM_VAL(7)
+!
+      CALL BLANK_TO_ZERO ( GET_CDATE )
+!
+      RETURN
+      END  !#!  GET_CDATE  #!#
+!
+! ------------------------------------------------------------------------
+!
+      FUNCTION   GET_CDATE_MS ( )
+! ************************************************************************
+! *                                                                      *
+! *   Routine  GET_CDATE_MS learns the current system time and           *
+! *   transforms it to internal SOLVE format:                            *
+! *   yyyy.mm.dd-hh:mm:ss.ss  like                                       *
+! *   1999.09.02-20:54:27.86                                             *
+! *                                                                      *
+! *   The length of the line is 23 symbols.                              *
+! *                                                                      *
+! *   Copyright (c) 1975-2025 United States Government as represented by *
+! *   the Administrator of the National Aeronautics and Space            *
+! *   Administration. All Rights Reserved.                               *
+! *   License: NASA Open Source Software Agreement (NOSA).               *
+! *                                                                      *
+! * ###  06-SEP-1999  GET_CDATE_MS  v2.1 (d) L. Petrov  19-AUG-2003 ###  *
+! *                                                                      *
+! ************************************************************************
+      IMPLICIT   NONE
+      CHARACTER  GET_CDATE_MS*23
+      INTEGER*4  TIM_VAL(8)
+      CALL DATE_AND_TIME ( VALUES=TIM_VAL )
+!
+      WRITE ( UNIT=GET_CDATE_MS, &
+     &       FMT='(I4,".",I2,".",I2,"-",I2,":",I2,":",I2,".",I3)' ) &
+     &        TIM_VAL(1), TIM_VAL(2), TIM_VAL(3), TIM_VAL(5), TIM_VAL(6), &
+     &        TIM_VAL(7), TIM_VAL(8)
+      CALL BLANK_TO_ZERO ( GET_CDATE_MS )
+!
+      RETURN
+      END  !#!  GET_CDATE_MS  #!#
+!
+! ------------------------------------------------------------------------
+!
+      FUNCTION   GET_HR_CDATE ( )
+! ************************************************************************
+! *                                                                      *
+! *   Routine  GET_HR_CDATE learns the current system time with high     *
+! *   accuracy and transforms it in yyyy.mm.dd-hh:mm:ss.nnnnnnnnn        *
+! *                                                                      *
+! *   The length of the line is 29 symbols.                              *
+! *                                                                      *
+! *   Copyright (c) 1975-2025 United States Government as represented by *
+! *   the Administrator of the National Aeronautics and Space            *
+! *   Administration. All Rights Reserved.                               *
+! *   License: NASA Open Source Software Agreement (NOSA).               *
+! *                                                                      *
+! * ###  31-AUG-2014  GET_HR_CDATE  v2.0 (d) L. Petrov  31-AUG-2014 ###  *
+! *                                                                      *
+! ************************************************************************
+      IMPLICIT   NONE
+      CHARACTER  GET_HR_CDATE*29
+      CHARACTER  STR*29
+      INTEGER*4  TIM_VAL(7)
+!
+      CALL GET_HR_TIME ( TIM_VAL )
+!
+      WRITE ( UNIT=STR, FMT='(I4,".",I2,".",I2,"-",I2,":",I2,":",I2,".",I9)' ) &
+     &        TIM_VAL
+!
+      CALL BLANK_TO_ZERO ( STR )
+      GET_HR_CDATE = STR
+!
+      RETURN
+      END  FUNCTION  GET_HR_CDATE  !#!#
+!
+! ------------------------------------------------------------------------
+!
+      FUNCTION   GET_HR_UTC_CDATE ( )
+! ************************************************************************
+! *                                                                      *
+! *   Routine  GET_HR_UTC_CDATE learns the current system UTC function   *
+! *   with high accuracy and transforms it in                            *
+! *   yyyy.mm.dd-hh:mm:ss.nnnnnnnnn                                      *
+! *                                                                      *
+! *   The length of the line is 29 symbols.                              *
+! *                                                                      *
+! *   Copyright (c) 1975-2025 United States Government as represented by *
+! *   the Administrator of the National Aeronautics and Space            *
+! *   Administration. All Rights Reserved.                               *
+! *   License: NASA Open Source Software Agreement (NOSA).               *
+! *                                                                      *
+! * ### 11-AUG-2015 GET_HR_UTC_CDATE v1.0 (d) L. Petrov  31-AUG-2014 ### *
+! *                                                                      *
+! ************************************************************************
+      IMPLICIT   NONE
+      CHARACTER  GET_HR_UTC_CDATE*29
+      CHARACTER  STR*29
+      INTEGER*4  TIM_VAL(7)
+!
+      CALL GET_HR_UTC ( TIM_VAL )
+!
+      WRITE ( UNIT=STR, FMT='(I4,".",I2,".",I2,"-",I2,":",I2,":",I2,".",I9)' ) &
+     &        TIM_VAL
+!
+      CALL BLANK_TO_ZERO ( STR )
+      GET_HR_UTC_CDATE = STR
+!
+      RETURN
+      END  FUNCTION  GET_HR_UTC_CDATE !#!#

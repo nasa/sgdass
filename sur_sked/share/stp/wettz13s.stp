@@ -1,0 +1,33 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2021.11.30  Leonid Petrov created
+# 2022.01.28  Added BACKEND definition
+# 2022.04.03  pet Added peculiar clock offset
+# 
+SHORT_NAME:    WETTZ13S  char       Ws
+LAST_UPDATE:   WETTZ13S  char       2022.04.03
+COORD:         WETTZ13S  meters     4075659.177      931824.545     4801516.041
+MOUNT:         WETTZ13S  char        ALTAZ   
+SLEW_AZ:       WETTZ13S  deg/sec      80.0
+SLEW_EL:       WETTZ13S  deg/sec      80.0
+ACCL_AZ:       WETTZ13S  deg/sec^2    80.0
+ACCL_EL:       WETTZ13S  deg/sec^2    80.0
+TSETTLE_AZ:    WETTZ13S  sec           0.0
+TSETTLE_EL:    WETTZ13S  sec           0.0
+###
+EL_MIN:        WETTZ13S  deg           5.0
+EL_MAX:        WETTZ13S  deg          90.0
+AZ_RANGE:      WETTZ13S  deg         -90.0  90.0 270.0 450.0
+RECORDER:      WETTZ13S  char        mark6
+BACKEND:       WETTZ13S  char        dbbc3
+SETMODE:       WETTZ13S  sec           4.0
+PREOB:         WETTZ13S  sec           0.0
+POSTOB:        WETTZ13S  sec           0.0
+##
+HOR_AZIM:      WETTZ13S  deg           0.0  30.0  60.0  90.0 120.0 150.0 180.0 210.0 240.0 270.0 300.0 330.0 360.0
+HOR_ELEV:      WETTZ13S  deg           5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0   5.0
+STOW_AZIM:     WETTZ13S  deg          50.0
+STOW_ELEV:     WETTZ13S  deg          85.0
+# 
+CLOCK_DATES:   WETTZ13S  sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  WETTZ13S  sec        1.717E-6

@@ -1,0 +1,81 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   Program dclient_install make the final steps for installing        *
+# *   dclient: it creates files db_submit, eops_submit and eopi_submit   *
+# *   in according with the user preferences and make them executable.   *
+# *                                                                      *
+# * ### 14-JUL-2000  dclient_install v1.3 (c) L. Petrov 11-JUL-2003 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+set MK5_BIN   = ${MK5_ROOT}/bin
+set LOCAL_FIL = ${MK5_ROOT}/local/solve.lcl
+set DBS_FIL   = ${MK5_ROOT}/local/dbs.lcl
+set EOPS_FIL  = ${MK5_ROOT}/local/eops.lcl
+set EOPI_FIL  = ${MK5_ROOT}/local/eopi.lcl
+#
+if (-f $LOCAL_FIL) then
+#
+# --- Create db_submit
+#
+    ${MK5_BIN}/use_local db_submit.templ ${LOCAL_FIL} csh ${MK5_BIN}/db_submit
+    if ( $status != 0 ) then
+         echo "dclient_install: *** Error in ${LOCAL_FIL} was detected"
+         echo "                 Please correct this file"
+	 exit -2
+    endif
+#
+# --- Make it executable
+#
+    chmod +x ${MK5_BIN}/db_submit
+#
+# --- Create eops_submit
+#
+    ${MK5_BIN}/use_local eops_submit.templ ${LOCAL_FIL} csh ${MK5_BIN}/eops_submit
+    if ( $status != 0 ) then
+         echo "dclient_install: %%% Error in ${LOCAL_FIL} was detected"
+         echo "                 Please correct this file"
+	 exit -2
+    endif
+#
+# --- Make it executable
+#
+    chmod +x ${MK5_BIN}/eops_submit
+#
+# --- Create eopi_submit
+#
+    ${MK5_BIN}/use_local eopi_submit.templ ${LOCAL_FIL} csh ${MK5_BIN}/eopi_submit
+    if ( $status != 0 ) then
+         echo "dclient_install: %%% Error in ${LOCAL_FIL} was detected"
+         echo "                 Please correct this file"
+	 exit -3
+    endif
+#
+# --- Make it executable
+#
+    chmod +x ${MK5_BIN}/eopi_submit
+  else
+    echo "Error: *** $LOCAL_FIL file was not found. "
+    echo "           Installation of CALC/SOLVE is not possible"
+    exit -4
+endif
+#
+if (-f $DBS_FIL == 0 ) then
+    echo "Warning: %%% $DBS_FIL file was not found."
+    echo "         You will not be able to run db_submit for"
+    echo "         submitting databases to the IVS data center"
+endif
+#
+if (-f $EOPS_FIL == 0 ) then
+    echo "Warning: %%% $EOPS_FIL file was not found."
+    echo "         You will not be able to run eops_submit for"
+    echo "         submitting EOP sereis to the IVS data center"
+endif
+#
+if (-f $EOPI_FIL == 0 ) then
+    echo "Warning: %%% $EOPI_FIL file was not found."
+    echo "         You will not be able to run eopi_submit for"
+    echo "         submitting EOP sereis to the IVS data center"
+endif
+echo "dclient is successfully installed "

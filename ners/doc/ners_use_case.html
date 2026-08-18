@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov  2014.12.03_00:25:02 -->
+<HTML>
+<HEAD>
+    <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <META NAME="GENERATOR" CONTENT="manually" >
+    <META HTTP-EQUIV="Description" Content="geodesy, geosciences" >
+    <META NAME="Author" CONTENT="Leonid Petrov" >
+    <LINK REL="icon" HREF="/icons/ners_48.png" type="image/ong" />
+    <LINK REL="shortcut icon" HREF="/icons/ners_48.png" type="image/png" />
+    <LINK HREF="ners.css" REL="stylesheet" TYPE="text/css">
+
+    <TITLE> How to use the Network Earth Rotation Service </TITLE>
+
+</HEAD>
+<BODY>
+<!--#include virtual='/earthrotation/ners_header.html' -->
+
+<H2>How to use the Network Earth Rotation Service </H2>
+
+There are three levels of using the <EM class="ners">NERS</EM>:
+
+<H2> <A NAME="level1"> Level 1: using your browser</H2>
+
+<UL>
+    <LI> To get a desired Earth orientation parameter: 
+         <A HERF="eop_online.html">eop_online.html</A>
+         </LI><P>
+
+    <LI> To get a desired Earth orientation parameters for the 
+         current moment of time: 
+         <A HERF="eop_online_now.html">eop_online_now.html</A>
+         </LI><P>
+
+    <LI> To get a Earth orientation parameter time series 
+          <A HERF="eop_series.html">eop_series.html</A>
+         </LI><P>
+</UL>
+<P>&nbsp;<P>
+
+Advantage of using <EM class="ners">NERS</EM> with a browser: you see what 
+you get.
+<P>
+
+Disadvantage of using <EM class="ners">NERS</EM> client library: usually you 
+need the Earth orientation parameters for computations.
+
+<H2> <A NAME="level2"> Level 2: using at as Internet service</H2>
+
+  An Internet service is a request to a HTTP server with parameters.
+The server returns the answer upon receiving the request. 
+Although An Internet service works with any browser, normally it used
+with a non-interactive client such as 
+<A HREF="https://www.gnu.org">wget</A>.
+
+Here are supported services:
+<P>
+<TABLE border=1 cellpadding=8 >
+<TR><TD NOWRAP> UTC minus TAI: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=utcmtai'</CODE></TD>
+<TR><TD NOWRAP> UT1 minus TAI: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=ut1mtai'</CODE></TD>
+<TR><TD NOWRAP> X pole coordinate: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=xpol'</CODE></TD>
+<TR><TD NOWRAP> Y pole coordinate: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=ypol'</CODE></TD>
+<TR><TD NOWRAP> &Delta;&psi; nutation angle: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=dpsi'</CODE></TD>
+<TR><TD NOWRAP> &Delta;&epsilon; nutation angle: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=deps'</CODE></TD>
+<TR><TD NOWRAP> UT1 rate: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=ut1rat'</CODE></TD>
+<TR><TD NOWRAP> X pole rate: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=xpolr'</CODE></TD>
+<TR><TD NOWRAP> Y pole rate: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=ypolr'</CODE></TD>
+<TR><TD NOWRAP> Length of day: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=lod'</CODE></TD>
+<TR><TD NOWRAP> Euler angle axis 1: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=e1'</CODE></TD>
+<TR><TD NOWRAP> Euler angle axis 2: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=e2'</CODE></TD>
+<TR><TD NOWRAP> Euler angle axis 3: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=e3'</CODE></TD>
+<TR><TD NOWRAP> Rotation matrix: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=mat'</CODE></TD>
+<TR><TD NOWRAP> Rotation matrix rate: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=matr'</CODE></TD>
+<TR><TD NOWRAP> Rotation matrix accl: </TD>
+    <TD NOWRAP><CODE>wget -q -O - '<!--#exec cgi="/cgi-bin/ners_current_url.py"-->/cgi-bin/eop_online.py?req_date=now&amp;param=matrr'</CODE></TD>
+</TR>
+</TABLE>
+<P>
+
+Value of parameter req_date can be replaced to the date string that is 
+<A HREF="http://www.iso.org/iso/home/standards/iso8601.htm">ISO 8601</A> compatible,
+i.e. in format YYYY.mm.ddTHH:MM:SS.SSSSS, for instance 20110.04.19T08:19:15.545
+<P>
+
+Advantage of using <EM class="ners">NERS</EM> as an Internet Service: you can 
+include calls to internet service in your program
+<P>
+Disadvantage of using <EM class="ners">NERS</EM> as an Internet Service: 
+Internet service is rather slow.
+
+<H2> <A NAME="level3"> Level 3: using the client library <EM class="ners">NERS</EM></H2>
+
+Download and install <A HREF="/earthrotation/ners">NERS client library</A>.
+<P>
+
+You nerd insert three calls to your program
+<OL>
+   <LI> <CODE>ners_init       ( config_file, ners, time_tai_start, time_tai_stop, iuer )</CODE>
+        &mdash; initialization of the ners object using configuration parameters 
+               from the config file, start and stop time.
+        </LI><P>
+   <LI> <CODE>ners_get_eop    ( ners, time_tai, cpar, m_par, l_par, pars, iuer )</CODE>
+        &mdash; return an array of Earth orientation parameters cpar on the specified
+        time.
+        </LI><P>
+
+   <LI> <CODE>ners_quit       ( code, ners )</CODE>
+        &mdash; release dynamic memory allocated by ners.
+        </LI><P>
+</OL>
+
+</PRE>
+
+<P>
+Advantage of using <EM class="ners">NERS</EM> client library: it is very fast
+serve in your program.
+<P>
+Disadvantage of using <EM class="ners">NERS</EM> client library: you need to 
+know how to program.
+
+<P>
+<HR size="1">
+<A HREF="/earthrotation/index.html">Back to the Network Earth Rotation Service</A><BR>
+
+<!--#include virtual='/earthrotation/ners_footer.html' -->
+</BODY>
+</HTML>

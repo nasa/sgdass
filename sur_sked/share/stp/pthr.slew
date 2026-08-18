@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    PTHR      char       H8
+LAST_UPDATE:   PTHR      char       2025.03.23
+COORD:         PTHR      meters     -1640953.760    -5014816.026     3575411.851
+MOUNT:         PTHR      char       ALTAZ
+#
+SLEW_AZ:       PTHR      deg/sec    99.9
+SLEW_EL:       PTHR      deg/sec    99.9
+ACCL_AZ:       PTHR      deg/sec^2  99.9
+ACCL_EL:       PTHR      deg/sec^2  99.9
+TSETTLE_AZ:    PTHR      sec        0.0
+TSETTLE_EL:    PTHR      sec        0.0
+#
+EL_MIN:        PTHR      deg        2.0
+EL_MAX:        PTHR      deg       90.0
+AZ_RANGE:      PTHR      deg      -90.0 90.0 270.0 450.0
+RECORDER:      PTHR      char      hrtr
+BACKEND:       PTHR      char      hrtr
+SETMODE:       PTHR      sec        0.0
+PREOB:         PTHR      sec        0.0
+POSTOB:        PTHR      sec        0.0
+#
+HOR_AZIM:      PTHR      deg        0.0  360.0
+HOR_ELEV:      PTHR      deg        2.0   2.0
+STOW_AZIM:     PTHR      deg        0.0
+STOW_ELEV:     PTHR      deg       90.0
+#
+CLOCK_DATES:   PTHR      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  PTHR      sec        0.0

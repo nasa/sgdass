@@ -1,0 +1,355 @@
+BSPD Summary file.  Format version of 2024.11.24
+#
+Last_Update:      2026.01.10-16:35:14
+Min_epoch:        61048    37.0 2026.01.08-00:00:37.0
+Max_epoch:        61048 75637.0 2026.01.08-21:00:37.0
+Num_Epoch:            8
+Delay_offset:      1492
+Delay_record_len:  1556
+Num_Stations:       313
+Prefix:           opa_spd_geosit_
+Sample_Interval:  10800.0 sec,  0.125000 days
+Num_Refr:         2  total     water
+#
+#  Description of the algorithm:
+#
+@@  Slant path delays were computed using the algorithm of
+@@  L. Petrov (2015, in preparation) by intergration of differential
+@@  equations of wave propagation in the 3D continuous, heterogeneous
+@@  atmosphere.
+@@
+@@  Atmosphere refractivity was computed using atmospheric
+@@  pressure, air temperature, and specific humidity provided
+@@  by numeric models of the amtosphere.
+@@
+@@  Parameters of computation:
+@@
+@@  Expression for refractivity:       Radio_Aparicio_2011
+@@  Variant of equation integraion:    y_nonloc
+@@  Atmospheric optical thickness and brightness temperature were computed
+@@  using the atmospheric attenuation model according to recommendation ITU-R P.676-
+@@    https://www.itu.int/rec/R-REC-P.676/en
+@@  Model for atmospheric optical thickness and brightness temperature: rte_bent_1az
+#
+#  Description of numerical weather model:
+#
+%%  Name of the input atmospheric data:
+%%    GEOS-5.29.4 GEOS-IT
+%%  Institution that provided atmospheric data:
+%%    NASA Global Modeling and Assimilation Office
+%%  Reference to the source of atmospheric data:
+%%    http://gmao.gsfc.nasa.gov
+#
+Station_name: AGGO     Lat_gdt: -35.05464 Lon: 301.86020 Hei_ell:    37.30 Hei_geo:    21.20
+Station_name: AIRA     Lat_gdt:  31.99648 Lon: 130.59990 Hei_ell:   322.40 Hei_geo:   290.50
+Station_name: ALGOPARK Lat_gdt:  46.14779 Lon: 281.92730 Hei_ell:   224.00 Hei_geo:   260.10
+Station_name: ALMA     Lat_gdt: -23.16808 Lon: 292.24520 Hei_ell:  5074.10 Hei_geo:  5033.20
+Station_name: ALMAJ512 Lat_gdt: -23.16677 Lon: 292.24520 Hei_ell:  5072.60 Hei_geo:  5031.60
+Station_name: ALMAMAST Lat_gdt: -23.16155 Lon: 292.24560 Hei_ell:  5074.80 Hei_geo:  5033.90
+Station_name: ALMAP413 Lat_gdt: -23.13593 Lon: 292.23400 Hei_ell:  4837.60 Hei_geo:  4796.70
+Station_name: ALMAS309 Lat_gdt: -23.18546 Lon: 292.28400 Hei_ell:  4794.00 Hei_geo:  4752.80
+Station_name: ALMATF10 Lat_gdt: -23.21158 Lon: 292.02060 Hei_ell:  2975.00 Hei_geo:  2936.80
+Station_name: ALMAW210 Lat_gdt: -23.11945 Lon: 292.28160 Hei_ell:  5092.60 Hei_geo:  5051.40
+Station_name: AMT      Lat_gdt:  23.48032 Lon:  16.23000 Hei_ell:  2350.00 Hei_geo:  2321.40
+Station_name: APEX     Lat_gdt: -23.14457 Lon: 292.24090 Hei_ell:  5104.50 Hei_geo:  5063.50
+Station_name: ARECIBO  Lat_gdt:  18.45948 Lon: 293.24730 Hei_ell:   451.20 Hei_geo:   494.70
+Station_name: AROSMT   Lat_gdt:  32.87681 Lon: 250.10880 Hei_ell:  3158.70 Hei_geo:  3185.30
+Station_name: ARVI     Lat_gdt:  19.27038 Lon:  73.95740 Hei_ell:   100.10 Hei_geo:   169.20
+Station_name: ASKAP-07 Lat_gdt: -26.84485 Lon: 116.63710 Hei_ell:   341.50 Hei_geo:   358.60
+Station_name: ASKAP-29 Lat_gdt: -26.84495 Lon: 116.63720 Hei_ell:   355.50 Hei_geo:   372.60
+Station_name: ASKAP-32 Lat_gdt: -26.87457 Lon: 116.66180 Hei_ell:   360.10 Hei_geo:   377.30
+Station_name: ATCA-100 Lat_gdt: -30.48086 Lon: 149.56540 Hei_ell:   252.10 Hei_geo:   222.60
+Station_name: ATCA-104 Lat_gdt: -30.48086 Lon: 149.56480 Hei_ell:   252.00 Hei_geo:   222.50
+Station_name: ATCA-109 Lat_gdt: -30.48086 Lon: 149.56400 Hei_ell:   252.20 Hei_geo:   222.70
+Station_name: ATCA-128 Lat_gdt: -30.48086 Lon: 149.56090 Hei_ell:   251.80 Hei_geo:   222.30
+Station_name: AUSTINTX Lat_gdt:  30.50735 Lon: 262.30430 Hei_ell:   189.60 Hei_geo:   216.40
+Station_name: AZORES   Lat_gdt:  37.92734 Lon: 334.34240 Hei_ell:    58.60 Hei_geo:     1.60
+Station_name: BADARY   Lat_gdt:  51.95723 Lon: 102.23390 Hei_ell:   821.60 Hei_geo:   860.30
+Station_name: BADRT13V Lat_gdt:  51.95633 Lon: 102.23560 Hei_ell:   808.70 Hei_geo:   847.40
+Station_name: BEIJING  Lat_gdt:  40.74821 Lon: 116.97600 Hei_ell:   177.70 Hei_geo:   184.90
+Station_name: BERMUDA  Lat_gdt:  32.53545 Lon: 295.33050 Hei_ell:   -30.70 Hei_geo:     1.60
+Station_name: BLKBUTTE Lat_gdt:  33.84148 Lon: 244.28020 Hei_ell:   489.40 Hei_geo:   522.10
+Station_name: BLOOMIND Lat_gdt:  39.36789 Lon: 273.50160 Hei_ell:   217.90 Hei_geo:   251.70
+Station_name: BOSSCHA  Lat_gdt:  -6.87046 Lon: 107.61760 Hei_ell:  1329.70 Hei_geo:  1307.90
+Station_name: BR-VLBA  Lat_gdt:  48.32240 Lon: 240.31670 Hei_ell:   250.50 Hei_geo:   268.90
+Station_name: BREST    Lat_gdt:  48.59889 Lon: 355.49620 Hei_ell:   104.50 Hei_geo:    52.90
+Station_name: CAMBRIDG Lat_gdt:  52.35328 Lon:   0.03720 Hei_ell:    83.10 Hei_geo:    36.60
+Station_name: CARMA    Lat_gdt:  37.46605 Lon: 241.85840 Hei_ell:  2169.00 Hei_geo:  2194.70
+Station_name: CARNUSTY Lat_gdt:  56.65545 Lon: 357.21700 Hei_ell:    57.90 Hei_geo:     6.00
+Station_name: CARROLGA Lat_gdt:  33.75015 Lon: 274.89040 Hei_ell:   299.50 Hei_geo:   329.60
+Station_name: CEBREROS Lat_gdt:  40.64281 Lon: 355.63250 Hei_ell:   792.70 Hei_geo:   738.70
+Station_name: CEDUNA   Lat_gdt: -32.04051 Lon: 133.80980 Hei_ell:   164.60 Hei_geo:   173.70
+Station_name: CHANGBAI Lat_gdt:  42.31152 Lon: 127.78000 Hei_ell:   993.20 Hei_geo:   969.30
+Station_name: CHANGM13 Lat_gdt:  18.98397 Lon:  99.21790 Hei_ell:   371.50 Hei_geo:   410.50
+Station_name: CHICHI10 Lat_gdt:  27.22345 Lon: 142.19500 Hei_ell:   107.50 Hei_geo:    58.80
+Station_name: CHLBOLTN Lat_gdt:  51.33288 Lon: 358.56160 Hei_ell:   146.80 Hei_geo:    99.40
+Station_name: CRIMEA   Lat_gdt:  44.58999 Lon:  33.97960 Hei_ell:    50.20 Hei_geo:    25.60
+Station_name: CSO      Lat_gdt:  19.94559 Lon: 204.52450 Hei_ell:  4106.20 Hei_geo:  4079.80
+Station_name: CTVASBAY Lat_gdt:  45.59240 Lon: 284.08110 Hei_ell:    47.90 Hei_geo:    81.90
+Station_name: CTVASTJ  Lat_gdt:  47.78678 Lon: 307.32080 Hei_ell:   158.10 Hei_geo:   148.50
+Station_name: DAITO    Lat_gdt:  25.98014 Lon: 131.23340 Hei_ell:    52.70 Hei_geo:    17.90
+Station_name: DARNHALL Lat_gdt:  53.34080 Lon: 357.46430 Hei_ell:   111.90 Hei_geo:    59.80
+Station_name: DEADMANL Lat_gdt:  34.43427 Lon: 243.72110 Hei_ell:   833.90 Hei_geo:   865.30
+Station_name: DEFFORD  Lat_gdt:  52.28699 Lon: 357.85550 Hei_ell:    89.60 Hei_geo:    39.70
+Station_name: DSS11    Lat_gdt:  35.57140 Lon: 243.15060 Hei_ell:  1005.60 Hei_geo:  1036.30
+Station_name: DSS112   Lat_gdt:  35.48160 Lon: 243.19450 Hei_ell:   959.30 Hei_geo:   990.00
+Station_name: DSS12    Lat_gdt:  35.48160 Lon: 243.19450 Hei_ell:   962.20 Hei_geo:   992.90
+Station_name: DSS13    Lat_gdt:  35.42878 Lon: 243.20550 Hei_ell:  1070.50 Hei_geo:  1101.30
+Station_name: DSS14    Lat_gdt:  35.60788 Lon: 243.11050 Hei_ell:  1001.40 Hei_geo:  1032.10
+Station_name: DSS15    Lat_gdt:  35.60387 Lon: 243.11280 Hei_ell:   973.30 Hei_geo:  1004.00
+Station_name: DSS16    Lat_gdt:  35.52329 Lon: 243.12640 Hei_ell:   944.00 Hei_geo:   974.80
+Station_name: DSS161   Lat_gdt:  40.61878 Lon: 355.75100 Hei_ell:   837.40 Hei_geo:   784.00
+Station_name: DSS17    Lat_gdt:  35.52399 Lon: 243.12650 Hei_ell:   936.90 Hei_geo:   967.80
+Station_name: DSS23    Lat_gdt:  35.52139 Lon: 243.12710 Hei_ell:   945.40 Hei_geo:   976.20
+Station_name: DSS24    Lat_gdt:  35.52169 Lon: 243.12520 Hei_ell:   951.50 Hei_geo:   982.30
+Station_name: DSS25    Lat_gdt:  35.51938 Lon: 243.12460 Hei_ell:   960.20 Hei_geo:   991.00
+Station_name: DSS26    Lat_gdt:  35.51748 Lon: 243.12700 Hei_ell:   969.50 Hei_geo:  1000.30
+Station_name: DSS27    Lat_gdt:  35.41986 Lon: 243.22340 Hei_ell:  1052.50 Hei_geo:  1083.30
+Station_name: DSS28    Lat_gdt:  35.41986 Lon: 243.22110 Hei_ell:  1064.70 Hei_geo:  1095.50
+Station_name: DSS33    Lat_gdt: -35.58242 Lon: 148.98310 Hei_ell:   684.10 Hei_geo:   665.30
+Station_name: DSS34    Lat_gdt: -35.58042 Lon: 148.98200 Hei_ell:   692.00 Hei_geo:   673.20
+Station_name: DSS35    Lat_gdt: -35.57771 Lon: 148.98150 Hei_ell:   694.90 Hei_geo:   676.00
+Station_name: DSS36    Lat_gdt: -35.57701 Lon: 148.97850 Hei_ell:   686.10 Hei_geo:   667.30
+Station_name: DSS41    Lat_gdt: -31.55305 Lon: 136.88750 Hei_ell:   151.00 Hei_geo:   148.30
+Station_name: DSS42    Lat_gdt: -35.58262 Lon: 148.98130 Hei_ell:   674.70 Hei_geo:   655.80
+Station_name: DSS43    Lat_gdt: -35.58433 Lon: 148.98130 Hei_ell:   688.90 Hei_geo:   670.00
+Station_name: DSS44    Lat_gdt: -35.76552 Lon: 148.97780 Hei_ell:  1150.40 Hei_geo:  1131.30
+Station_name: DSS45    Lat_gdt: -35.58042 Lon: 148.97770 Hei_ell:   674.40 Hei_geo:   655.50
+Station_name: DSS46    Lat_gdt: -35.58693 Lon: 148.98310 Hei_ell:   676.90 Hei_geo:   658.00
+Station_name: DSS49    Lat_gdt: -33.17442 Lon: 148.26350 Hei_ell:   414.80 Hei_geo:   392.20
+Station_name: DSS51    Lat_gdt: -26.04129 Lon:  27.68540 Hei_ell:  1415.70 Hei_geo:  1390.30
+Station_name: DSS53    Lat_gdt:  40.61748 Lon: 355.75030 Hei_ell:   826.80 Hei_geo:   773.40
+Station_name: DSS54    Lat_gdt:  40.61568 Lon: 355.74590 Hei_ell:   837.00 Hei_geo:   783.60
+Station_name: DSS55    Lat_gdt:  40.61438 Lon: 355.74740 Hei_ell:   819.10 Hei_geo:   765.70
+Station_name: DSS56    Lat_gdt:  40.61608 Lon: 355.74790 Hei_ell:   835.80 Hei_geo:   782.50
+Station_name: DSS61    Lat_gdt:  40.61878 Lon: 355.75100 Hei_ell:   840.50 Hei_geo:   787.10
+Station_name: DSS62    Lat_gdt:  40.64321 Lon: 355.63220 Hei_ell:   787.20 Hei_geo:   733.30
+Station_name: DSS63    Lat_gdt:  40.62128 Lon: 355.75200 Hei_ell:   864.80 Hei_geo:   811.50
+Station_name: DSS65    Lat_gdt:  40.61728 Lon: 355.74860 Hei_ell:   833.80 Hei_geo:   780.50
+Station_name: DSS65A   Lat_gdt:  40.61728 Lon: 355.74930 Hei_ell:   833.80 Hei_geo:   780.50
+Station_name: DSS66    Lat_gdt:  40.62008 Lon: 355.74860 Hei_ell:   849.90 Hei_geo:   796.50
+Station_name: EFLSBERG Lat_gdt:  50.71353 Lon:   6.88360 Hei_ell:   416.70 Hei_geo:   368.80
+Station_name: ELY      Lat_gdt:  39.48194 Lon: 245.15700 Hei_ell:  1886.20 Hei_geo:  1906.50
+Station_name: EVPTRIYA Lat_gdt:  45.38121 Lon:  33.18740 Hei_ell:    86.10 Hei_geo:    61.20
+Station_name: FAST500  Lat_gdt:  25.80350 Lon: 106.85670 Hei_ell:  1110.00 Hei_geo:  1139.10
+Station_name: FD-VLBA  Lat_gdt:  30.80401 Lon: 256.05520 Hei_ell:  1606.40 Hei_geo:  1628.50
+Station_name: FLAGSTAF Lat_gdt:  35.39621 Lon: 248.36530 Hei_ell:  2144.70 Hei_geo:  2167.90
+Station_name: FORTLEZA Lat_gdt:  -3.90395 Lon: 321.57410 Hei_ell:    23.10 Hei_geo:    32.10
+Station_name: FORTORDS Lat_gdt:  36.77377 Lon: 238.22790 Hei_ell:   250.00 Hei_geo:   284.00
+Station_name: FORTZA12 Lat_gdt:  -3.90325 Lon: 321.57390 Hei_ell:    25.70 Hei_geo:    34.70
+Station_name: FORT_ORD Lat_gdt:  36.85432 Lon: 238.22670 Hei_ell:    23.80 Hei_geo:    57.90
+Station_name: FTD_7900 Lat_gdt:  30.80481 Lon: 256.05270 Hei_ell:  1583.40 Hei_geo:  1605.40
+Station_name: GBT-VLBA Lat_gdt:  38.62063 Lon: 280.16020 Hei_ell:   823.80 Hei_geo:   855.10
+Station_name: GGAO12M  Lat_gdt:  39.21038 Lon: 283.17270 Hei_ell:    18.60 Hei_geo:    51.60
+Station_name: GGAO7108 Lat_gdt:  39.21028 Lon: 283.17350 Hei_ell:    13.70 Hei_geo:    46.80
+Station_name: GIFU11   Lat_gdt:  35.64967 Lon: 136.73710 Hei_ell:    60.30 Hei_geo:    22.60
+Station_name: GIFU3    Lat_gdt:  35.64436 Lon: 136.73950 Hei_ell:    53.80 Hei_geo:    16.10
+Station_name: GILCREEK Lat_gdt:  65.12558 Lon: 212.50250 Hei_ell:   332.10 Hei_geo:   320.90
+Station_name: GLT      Lat_gdt:  76.62209 Lon: 291.31420 Hei_ell:    89.40 Hei_geo:    73.00
+Station_name: GOLDVENU Lat_gdt:  35.42928 Lon: 243.20510 Hei_ell:  1062.90 Hei_geo:  1093.80
+Station_name: GORF7102 Lat_gdt:  39.20908 Lon: 283.17190 Hei_ell:    18.00 Hei_geo:    51.00
+Station_name: GRASSE   Lat_gdt:  43.94687 Lon:   6.92070 Hei_ell:  1318.60 Hei_geo:  1267.60
+Station_name: HAERBIN  Lat_gdt:  45.65309 Lon: 127.14120 Hei_ell:   239.20 Hei_geo:   223.30
+Station_name: HALEAKAL Lat_gdt:  20.83521 Lon: 203.74390 Hei_ell:  3067.90 Hei_geo:  3050.10
+Station_name: HAOPIN40 Lat_gdt:  34.35397 Lon: 109.94960 Hei_ell:  1078.60 Hei_geo:  1106.90
+Station_name: HART15M  Lat_gdt: -26.04119 Lon:  27.68430 Hei_ell:  1409.40 Hei_geo:  1384.00
+Station_name: HARTRAO  Lat_gdt: -26.04129 Lon:  27.68540 Hei_ell:  1415.70 Hei_geo:  1390.30
+Station_name: HARTVGS  Lat_gdt: -26.03918 Lon:  27.68600 Hei_ell:  1418.30 Hei_geo:  1393.00
+Station_name: HATCREEK Lat_gdt:  41.00777 Lon: 238.52950 Hei_ell:  1009.30 Hei_geo:  1033.30
+Station_name: HAYSTACK Lat_gdt:  42.81511 Lon: 288.51180 Hei_ell:   116.70 Hei_geo:   145.40
+Station_name: HITACHI  Lat_gdt:  36.88208 Lon: 140.69210 Hei_ell:   120.30 Hei_geo:    79.60
+Station_name: HN-VLBA  Lat_gdt:  43.12557 Lon: 288.01340 Hei_ell:   295.60 Hei_geo:   323.70
+Station_name: HOBART12 Lat_gdt: -42.99751 Lon: 147.43810 Hei_ell:    41.00 Hei_geo:    44.70
+Station_name: HOBART26 Lat_gdt: -42.99551 Lon: 147.44050 Hei_ell:    65.10 Hei_geo:    68.80
+Station_name: HOFN     Lat_gdt:  64.41790 Lon: 344.80260 Hei_ell:    78.30 Hei_geo:    12.90
+Station_name: HOHENFRG Lat_gdt:  53.23540 Lon:  10.47650 Hei_ell:   149.80 Hei_geo:   108.90
+Station_name: HOHNBERG Lat_gdt:  47.99244 Lon:  11.01790 Hei_ell:  1005.70 Hei_geo:   958.80
+Station_name: HRAS_085 Lat_gdt:  30.80571 Lon: 256.05270 Hei_ell:  1595.10 Hei_geo:  1617.20
+Station_name: IIST     Lat_gdt:   8.68375 Lon:  77.03380 Hei_ell:   101.10 Hei_geo:   197.80
+Station_name: IITK     Lat_gdt:  26.67337 Lon:  80.23200 Hei_ell:    67.90 Hei_geo:   131.30
+Station_name: IRBENE16 Lat_gdt:  57.73328 Lon:  21.84730 Hei_ell:    50.10 Hei_geo:    29.10
+Station_name: IRBENE32 Lat_gdt:  57.72739 Lon:  21.85470 Hei_ell:    87.30 Hei_geo:    66.20
+Station_name: ISHIOKA  Lat_gdt:  36.39282 Lon: 140.21900 Hei_ell:   164.20 Hei_geo:   123.80
+Station_name: JCMT     Lat_gdt:  19.94589 Lon: 204.52310 Hei_ell:  4116.50 Hei_geo:  4090.10
+Station_name: JELEB13M Lat_gdt:   3.07344 Lon: 102.06400 Hei_ell:   159.70 Hei_geo:   160.70
+Station_name: JIAMIS66 Lat_gdt:  46.68583 Lon: 130.77100 Hei_ell:   300.00 Hei_geo:   279.20
+Station_name: JILIN12  Lat_gdt:  44.01599 Lon: 126.33100 Hei_ell:   315.10 Hei_geo:   298.50
+Station_name: JODRELL1 Lat_gdt:  53.42085 Lon: 357.69140 Hei_ell:   179.40 Hei_geo:   127.80
+Station_name: JODRELL2 Lat_gdt:  53.41835 Lon: 357.69610 Hei_ell:   143.80 Hei_geo:    92.10
+Station_name: JPL_MV1  Lat_gdt:  34.38424 Lon: 241.82670 Hei_ell:   424.10 Hei_geo:   457.80
+Station_name: KAINAN   Lat_gdt:  34.33502 Lon: 135.22990 Hei_ell:    60.50 Hei_geo:    22.60
+Station_name: KALYAZIN Lat_gdt:  57.39793 Lon:  37.90030 Hei_ell:   178.10 Hei_geo:   164.60
+Station_name: KANOZAN  Lat_gdt:  35.43670 Lon: 139.95300 Hei_ell:   373.30 Hei_geo:   338.40
+Station_name: KARLBURG Lat_gdt:  54.16645 Lon:  13.60930 Hei_ell:    77.10 Hei_geo:    40.60
+Station_name: KASHI12  Lat_gdt:  39.64716 Lon:  76.02820 Hei_ell:  1247.40 Hei_geo:  1295.60
+Station_name: KASHI35  Lat_gdt:  38.60872 Lon:  76.71470 Hei_ell:  1385.90 Hei_geo:  1431.80
+Station_name: KASHIM11 Lat_gdt:  36.13870 Lon: 140.65750 Hei_ell:    62.50 Hei_geo:    27.20
+Station_name: KASHIM34 Lat_gdt:  36.13900 Lon: 140.66010 Hei_ell:    78.40 Hei_geo:    43.10
+Station_name: KASHIMA  Lat_gdt:  36.13720 Lon: 140.66270 Hei_ell:    80.10 Hei_geo:    44.90
+Station_name: KATH12M  Lat_gdt: -14.46833 Lon: 132.15240 Hei_ell:   189.30 Hei_geo:   143.00
+Station_name: KAUAI    Lat_gdt:  22.26090 Lon: 200.33480 Hei_ell:  1168.30 Hei_geo:  1151.70
+Station_name: KHULGAI  Lat_gdt:  51.93277 Lon: 100.98500 Hei_ell:  3008.50 Hei_geo:  3045.00
+Station_name: KIRSBERG Lat_gdt:  51.40198 Lon:  14.28620 Hei_ell:   261.20 Hei_geo:   218.10
+Station_name: KNOCKIN  Lat_gdt:  52.97549 Lon: 357.00290 Hei_ell:   131.40 Hei_geo:    78.00
+Station_name: KODIAK   Lat_gdt:  57.91346 Lon: 207.50280 Hei_ell:    31.30 Hei_geo:    18.50
+Station_name: KOGANEI  Lat_gdt:  35.89319 Lon: 139.48810 Hei_ell:   125.40 Hei_geo:    87.20
+Station_name: KOGANEI3 Lat_gdt:  35.88958 Lon: 139.48760 Hei_ell:   114.50 Hei_geo:    76.30
+Station_name: KOKEE    Lat_gdt:  22.26120 Lon: 200.33490 Hei_ell:  1176.60 Hei_geo:  1160.00
+Station_name: KOKEE12M Lat_gdt:  22.26100 Lon: 200.33510 Hei_ell:  1168.20 Hei_geo:  1151.60
+Station_name: KP-VLBA  Lat_gdt:  32.12938 Lon: 248.38760 Hei_ell:  1902.00 Hei_geo:  1932.70
+Station_name: KP12M    Lat_gdt:  32.12637 Lon: 248.38510 Hei_ell:  1894.50 Hei_geo:  1925.20
+Station_name: KUNMING  Lat_gdt:  25.17514 Lon: 102.79590 Hei_ell:  1974.30 Hei_geo:  2007.10
+Station_name: KVNPC    Lat_gdt:  37.71949 Lon: 128.44860 Hei_ell:   556.80 Hei_geo:   529.20
+Station_name: KVNTN    Lat_gdt:  33.46580 Lon: 126.45960 Hei_ell:   441.50 Hei_geo:   416.10
+Station_name: KVNUS    Lat_gdt:  35.72784 Lon: 129.24980 Hei_ell:   160.60 Hei_geo:   131.00
+Station_name: KVNYS    Lat_gdt:  37.75134 Lon: 126.94100 Hei_ell:   121.60 Hei_geo:    98.70
+Station_name: KWAJAL26 Lat_gdt:   9.46100 Lon: 167.48210 Hei_ell:    57.40 Hei_geo:    26.50
+Station_name: LA-VLBA  Lat_gdt:  35.95783 Lon: 253.75440 Hei_ell:  1962.40 Hei_geo:  1982.40
+Station_name: LEONRDOK Lat_gdt:  36.09201 Lon: 264.20490 Hei_ell:   226.30 Hei_geo:   256.10
+Station_name: LMT      Lat_gdt:  19.10451 Lon: 262.68520 Hei_ell:  4593.30 Hei_geo:  4596.30
+Station_name: MABU     Lat_gdt:  24.74779 Lon:  72.69690 Hei_ell:   965.10 Hei_geo:  1013.60
+Station_name: MACGO12M Lat_gdt:  30.84945 Lon: 255.97630 Hei_ell:  1890.60 Hei_geo:  1912.70
+Station_name: MALARGUE Lat_gdt: -35.95873 Lon: 290.60180 Hei_ell:  1547.90 Hei_geo:  1521.80
+Station_name: MAMMOTHL Lat_gdt:  37.82787 Lon: 241.05480 Hei_ell:  2310.40 Hei_geo:  2335.00
+Station_name: MARCUS   Lat_gdt:  24.43452 Lon: 153.98420 Hei_ell:    41.70 Hei_geo:    16.20
+Station_name: MARPOINT Lat_gdt:  38.56164 Lon: 282.76940 Hei_ell:   -13.50 Hei_geo:    20.10
+Station_name: MATERA   Lat_gdt:  40.83981 Lon:  16.70400 Hei_ell:   543.40 Hei_geo:   497.90
+Station_name: MATVGOS  Lat_gdt:  40.84131 Lon:  16.70450 Hei_ell:   539.70 Hei_geo:   494.10
+Station_name: MCD_7850 Lat_gdt:  30.84965 Lon: 255.98490 Hei_ell:  2004.20 Hei_geo:  2026.30
+Station_name: MEDICINA Lat_gdt:  44.71291 Lon:  11.64690 Hei_ell:    67.20 Hei_geo:    27.40
+Station_name: MEERKAT  Lat_gdt: -30.88025 Lon:  21.44390 Hei_ell:  1085.40 Hei_geo:  1051.10
+Station_name: MEERKM01 Lat_gdt: -30.88216 Lon:  21.44390 Hei_ell:  1058.90 Hei_geo:  1024.60
+Station_name: METSA13M Lat_gdt:  60.38233 Lon:  24.39500 Hei_ell:    79.70 Hei_geo:    60.90
+Station_name: METSAHOV Lat_gdt:  60.38343 Lon:  24.39310 Hei_ell:    79.90 Hei_geo:    61.10
+Station_name: METSHOVI Lat_gdt:  60.40754 Lon:  24.38420 Hei_ell:    59.60 Hei_geo:    40.70
+Station_name: MIAMI20  Lat_gdt:  25.76404 Lon: 279.61530 Hei_ell:   -11.80 Hei_geo:    14.70
+Station_name: MILESMON Lat_gdt:  46.58866 Lon: 254.13920 Hei_ell:   703.50 Hei_geo:   719.30
+Station_name: MIURA    Lat_gdt:  35.38889 Lon: 139.65040 Hei_ell:   105.20 Hei_geo:    68.80
+Station_name: MIYAZAKI Lat_gdt:  32.26427 Lon: 131.48280 Hei_ell:   107.30 Hei_geo:    78.70
+Station_name: MIZNAO10 Lat_gdt:  39.32193 Lon: 141.13230 Hei_ell:   111.00 Hei_geo:    69.80
+Station_name: MIZUSGSI Lat_gdt:  39.29890 Lon: 141.20400 Hei_ell:   173.20 Hei_geo:   131.80
+Station_name: MK-VLBA  Lat_gdt:  19.92438 Lon: 204.54450 Hei_ell:  3763.10 Hei_geo:  3736.50
+Station_name: MOJAVE12 Lat_gdt:  35.51337 Lon: 243.11240 Hei_ell:   910.20 Hei_geo:   941.10
+Station_name: MOJ_7288 Lat_gdt:  35.51297 Lon: 243.10850 Hei_ell:   896.10 Hei_geo:   927.00
+Station_name: MON_PEAK Lat_gdt:  33.06753 Lon: 243.57720 Hei_ell:  1838.70 Hei_geo:  1870.60
+Station_name: MOPRA    Lat_gdt: -31.43880 Lon: 149.09960 Hei_ell:   867.30 Hei_geo:   839.50
+Station_name: MV2ONSLA Lat_gdt:  57.56994 Lon:  11.92540 Hei_ell:    43.40 Hei_geo:     6.80
+Station_name: NL-VLBA  Lat_gdt:  41.96267 Lon: 268.42590 Hei_ell:   222.30 Hei_geo:   255.10
+Station_name: NOBEY_6M Lat_gdt:  36.12397 Lon: 138.47220 Hei_ell:  1389.60 Hei_geo:  1345.90
+Station_name: NOME     Lat_gdt:  64.71166 Lon: 194.62880 Hei_ell:   331.70 Hei_geo:   324.60
+Station_name: NOTO     Lat_gdt:  37.06101 Lon:  14.98900 Hei_ell:   143.20 Hei_geo:   101.50
+Station_name: NOTOX    Lat_gdt:  37.06101 Lon:  14.98900 Hei_ell:   143.20 Hei_geo:   101.50
+Station_name: NRAO20   Lat_gdt:  38.62444 Lon: 280.17450 Hei_ell:   806.60 Hei_geo:   838.00
+Station_name: NRAO85_1 Lat_gdt:  38.62344 Lon: 280.17180 Hei_ell:   807.70 Hei_geo:   839.10
+Station_name: NRAO85_3 Lat_gdt:  38.61713 Lon: 280.15660 Hei_ell:   785.90 Hei_geo:   817.20
+Station_name: NRAO_140 Lat_gdt:  38.62534 Lon: 280.16420 Hei_ell:   812.50 Hei_geo:   843.90
+Station_name: NWNORCIA Lat_gdt: -31.21852 Lon: 116.19150 Hei_ell:   251.70 Hei_geo:   279.90
+Station_name: NYALE13N Lat_gdt:  79.01561 Lon:  11.85480 Hei_ell:    53.50 Hei_geo:    17.90
+Station_name: NYALE13S Lat_gdt:  79.01482 Lon:  11.85540 Hei_ell:    53.50 Hei_geo:    17.90
+Station_name: NYALES20 Lat_gdt:  79.00140 Lon:  11.86970 Hei_ell:    87.30 Hei_geo:    51.70
+Station_name: OCOTILLO Lat_gdt:  32.96555 Lon: 244.20380 Hei_ell:   -36.70 Hei_geo:    -2.30
+Station_name: OHIGGINS Lat_gdt: -63.47519 Lon: 302.09920 Hei_ell:    39.90 Hei_geo:    16.90
+Station_name: ONSA13NE Lat_gdt:  57.56805 Lon:  11.91970 Hei_ell:    52.30 Hei_geo:    15.70
+Station_name: ONSA13SW Lat_gdt:  57.56755 Lon:  11.91890 Hei_ell:    52.30 Hei_geo:    15.70
+Station_name: ONSALA60 Lat_gdt:  57.57024 Lon:  11.92640 Hei_ell:    59.30 Hei_geo:    22.70
+Station_name: ONSALA85 Lat_gdt:  57.56755 Lon:  11.91780 Hei_ell:    58.40 Hei_geo:    21.80
+Station_name: OV-VLBA  Lat_gdt:  37.41726 Lon: 241.72290 Hei_ell:  1196.30 Hei_geo:  1222.30
+Station_name: OVRO_130 Lat_gdt:  37.41706 Lon: 241.71730 Hei_ell:  1200.90 Hei_geo:  1226.80
+Station_name: OVR_7853 Lat_gdt:  37.41816 Lon: 241.70620 Hei_ell:  1178.10 Hei_geo:  1204.00
+Station_name: PALAPY15 Lat_gdt: -22.75063 Lon:  27.14280 Hei_ell:   928.20 Hei_geo:   912.90
+Station_name: PARKES   Lat_gdt: -33.17442 Lon: 148.26350 Hei_ell:   414.80 Hei_geo:   392.20
+Station_name: PBLOSSOM Lat_gdt:  34.69199 Lon: 242.07760 Hei_ell:   890.90 Hei_geo:   922.80
+Station_name: PDBURE   Lat_gdt:  44.82622 Lon:   5.90670 Hei_ell:  2614.40 Hei_geo:  2561.40
+Station_name: PENTICTN Lat_gdt:  49.51274 Lon: 240.38010 Hei_ell:   529.60 Hei_geo:   546.10
+Station_name: PICKMERE Lat_gdt:  53.47295 Lon: 357.55460 Hei_ell:   100.40 Hei_geo:    48.50
+Station_name: PICOVEL  Lat_gdt:  37.25136 Lon: 356.60740 Hei_ell:  2919.40 Hei_geo:  2868.40
+Station_name: PIETOWN  Lat_gdt:  34.48038 Lon: 251.88080 Hei_ell:  2364.70 Hei_geo:  2386.50
+Station_name: PINFLATS Lat_gdt:  33.78684 Lon: 243.54120 Hei_ell:  1235.60 Hei_geo:  1267.00
+Station_name: PLATTVIL Lat_gdt:  40.37262 Lon: 255.27370 Hei_ell:  1501.40 Hei_geo:  1519.70
+Station_name: PRESIDIO Lat_gdt:  37.99184 Lon: 237.54490 Hei_ell:   -29.40 Hei_geo:     2.90
+Station_name: PT_REYES Lat_gdt:  38.29052 Lon: 237.06340 Hei_ell:    -2.40 Hei_geo:    30.00
+Station_name: PVERDES  Lat_gdt:  33.92179 Lon: 241.59640 Hei_ell:    69.40 Hei_geo:   106.00
+Station_name: QTT      Lat_gdt:  43.79333 Lon:  89.68250 Hei_ell:  1755.90 Hei_geo:  1812.60
+Station_name: QUINCY   Lat_gdt:  40.16418 Lon: 239.05560 Hei_ell:  1105.80 Hei_geo:  1129.50
+Station_name: RAEGSMAR Lat_gdt:  37.17041 Lon: 334.87410 Hei_ell:   301.70 Hei_geo:   247.30
+Station_name: RAEGYEB  Lat_gdt:  40.71368 Lon: 356.91150 Hei_ell:   976.90 Hei_geo:   924.50
+Station_name: RICHMOND Lat_gdt:  25.76414 Lon: 279.61530 Hei_ell:   -13.60 Hei_geo:    12.90
+Station_name: ROBLED32 Lat_gdt:  40.61878 Lon: 355.75100 Hei_ell:   840.60 Hei_geo:   787.20
+Station_name: SAGARA   Lat_gdt:  34.85788 Lon: 138.18290 Hei_ell:   151.40 Hei_geo:   111.90
+Station_name: SANPAULA Lat_gdt:  34.56749 Lon: 241.00120 Hei_ell:   184.90 Hei_geo:   219.80
+Station_name: SANTIA12 Lat_gdt: -33.32794 Lon: 289.33170 Hei_ell:   730.30 Hei_geo:   702.90
+Station_name: SARDINIA Lat_gdt:  39.68180 Lon:   9.24500 Hei_ell:   598.90 Hei_geo:   551.60
+Station_name: SC-VLBA  Lat_gdt:  17.86868 Lon: 295.41640 Hei_ell:   -15.00 Hei_geo:    28.70
+Station_name: SEATTLE1 Lat_gdt:  47.87722 Lon: 237.75090 Hei_ell:   -16.40 Hei_geo:     6.40
+Station_name: SEJONG   Lat_gdt:  36.70694 Lon: 127.30340 Hei_ell:   194.60 Hei_geo:   170.00
+Station_name: SESHAN13 Lat_gdt:  31.27008 Lon: 121.19930 Hei_ell:    27.60 Hei_geo:    16.90
+Station_name: SESHAN25 Lat_gdt:  31.26968 Lon: 121.19970 Hei_ell:    29.40 Hei_geo:    18.80
+Station_name: SEST     Lat_gdt: -29.42790 Lon: 289.26770 Hei_ell:  2415.80 Hei_geo:  2382.90
+Station_name: SHANGHAI Lat_gdt:  31.36096 Lon: 121.42960 Hei_ell:    17.80 Hei_geo:     6.30
+Station_name: SHIGATSE Lat_gdt:  29.36970 Lon:  88.63220 Hei_ell:  4096.40 Hei_geo:  4129.60
+Station_name: SINTOTU  Lat_gdt:  43.72100 Lon: 141.84460 Hei_ell:   118.60 Hei_geo:    86.80
+Station_name: SINTOTU3 Lat_gdt:  43.72100 Lon: 141.84460 Hei_ell:   118.80 Hei_geo:    87.00
+Station_name: SIRINDHO Lat_gdt:  15.29243 Lon: 105.36370 Hei_ell:   114.30 Hei_geo:   134.20
+Station_name: SKAMPI   Lat_gdt: -30.88717 Lon:  21.41300 Hei_ell:  1084.80 Hei_geo:  1050.50
+Station_name: SNDPOINT Lat_gdt:  55.53208 Lon: 199.52450 Hei_ell:    92.80 Hei_geo:    74.80
+Station_name: SONGKHLA Lat_gdt:   7.20493 Lon: 100.61380 Hei_ell:    31.90 Hei_geo:    47.40
+Station_name: SOURDOGH Lat_gdt:  62.82059 Lon: 214.51630 Hei_ell:   748.00 Hei_geo:   731.90
+Station_name: SPART    Lat_gdt:  36.12478 Lon: 138.47090 Hei_ell:  1404.00 Hei_geo:  1360.40
+Station_name: SPT      Lat_gdt: -89.98977 Lon: 314.74990 Hei_ell:  2816.50 Hei_geo:  2846.60
+Station_name: SUWON    Lat_gdt:  37.46104 Lon: 127.05420 Hei_ell:    81.50 Hei_geo:    58.10
+Station_name: SVERT13V Lat_gdt:  60.69884 Lon:  29.77950 Hei_ell:    82.30 Hei_geo:    66.60
+Station_name: SVETLOE  Lat_gdt:  60.69684 Lon:  29.78190 Hei_ell:    86.00 Hei_geo:    70.30
+Station_name: SYOWA    Lat_gdt: -69.13470 Lon:  39.58630 Hei_ell:    51.00 Hei_geo:    28.80
+Station_name: TAKAHAGI Lat_gdt:  36.88308 Lon: 140.69470 Hei_ell:   116.90 Hei_geo:    76.30
+Station_name: TATEYAMA Lat_gdt:  35.11788 Lon: 139.84860 Hei_ell:   126.20 Hei_geo:    90.00
+Station_name: TIANMA13 Lat_gdt:  31.26105 Lon: 121.13670 Hei_ell:    15.30 Hei_geo:     4.90
+Station_name: TIANMA65 Lat_gdt:  31.26256 Lon: 121.13600 Hei_ell:    49.20 Hei_geo:    38.80
+Station_name: TIDBIN64 Lat_gdt: -35.58433 Lon: 148.98130 Hei_ell:   687.90 Hei_geo:   669.10
+Station_name: TIGOCONC Lat_gdt: -37.02755 Lon: 286.97490 Hei_ell:   170.90 Hei_geo:   150.90
+Station_name: TIGOWTZL Lat_gdt:  49.33482 Lon:  12.87760 Hei_ell:   658.90 Hei_geo:   612.10
+Station_name: TIMAU    Lat_gdt:  -9.66056 Lon: 123.94720 Hei_ell:  1319.00 Hei_geo:  1280.20
+Station_name: TITIJIMA Lat_gdt:  27.25437 Lon: 142.19450 Hei_ell:    98.90 Hei_geo:    50.10
+Station_name: TNRT     Lat_gdt:  18.98246 Lon:  99.21690 Hei_ell:   403.00 Hei_geo:   442.00
+Station_name: TOMAKO11 Lat_gdt:  42.86564 Lon: 141.59700 Hei_ell:    89.90 Hei_geo:    59.80
+Station_name: TORUN    Lat_gdt:  53.28012 Lon:  18.56410 Hei_ell:   133.60 Hei_geo:   103.80
+Station_name: TOULOUSE Lat_gdt:  43.75141 Lon:   1.48340 Hei_ell:   192.20 Hei_geo:   142.70
+Station_name: TROMSONO Lat_gdt:  69.78809 Lon:  18.93940 Hei_ell:   132.90 Hei_geo:   101.50
+Station_name: TRYSILNO Lat_gdt:  61.58417 Lon:  12.38160 Hei_ell:   724.00 Hei_geo:   687.80
+Station_name: TSUKU3   Lat_gdt:  36.28901 Lon: 140.08720 Hei_ell:    69.60 Hei_geo:    29.70
+Station_name: TSUKUB32 Lat_gdt:  36.28651 Lon: 140.08870 Hei_ell:    84.70 Hei_geo:    44.70
+Station_name: TSUKUBA  Lat_gdt:  36.28901 Lon: 140.08700 Hei_ell:    69.20 Hei_geo:    29.20
+Station_name: UCHINOUR Lat_gdt:  31.42526 Lon: 131.07840 Hei_ell:   375.70 Hei_geo:   345.90
+Station_name: URUMQI   Lat_gdt:  43.66368 Lon:  87.17810 Hei_ell:  2033.30 Hei_geo:  2092.00
+Station_name: URUMQI13 Lat_gdt:  43.66438 Lon:  87.17360 Hei_ell:  2043.20 Hei_geo:  2101.80
+Station_name: USSURISK Lat_gdt:  44.20843 Lon: 131.75730 Hei_ell:   155.00 Hei_geo:   129.80
+Station_name: USUDA64  Lat_gdt:  36.31587 Lon: 138.36280 Hei_ell:  1532.80 Hei_geo:  1489.60
+Station_name: VERAIRIK Lat_gdt:  31.92036 Lon: 130.43990 Hei_ell:   573.60 Hei_geo:   541.60
+Station_name: VERAISGK Lat_gdt:  24.55736 Lon: 124.17100 Hei_ell:    65.10 Hei_geo:    38.90
+Station_name: VERAMZSW Lat_gdt:  39.32203 Lon: 141.13260 Hei_ell:   116.50 Hei_geo:    75.30
+Station_name: VERAOGSW Lat_gdt:  27.24814 Lon: 142.21660 Hei_ell:   273.20 Hei_geo:   224.20
+Station_name: VERNAL   Lat_gdt:  40.51697 Lon: 250.42930 Hei_ell:  1590.60 Hei_geo:  1608.10
+Station_name: VICTORIA Lat_gdt:  48.58050 Lon: 236.51300 Hei_ell:    25.20 Hei_geo:    43.50
+Station_name: VLA      Lat_gdt:  34.25763 Lon: 252.38170 Hei_ell:  2114.80 Hei_geo:  2137.00
+Station_name: VLA-N8   Lat_gdt:  34.26154 Lon: 252.38130 Hei_ell:  2114.50 Hei_geo:  2136.70
+Station_name: VNDNBERG Lat_gdt:  34.73609 Lon: 239.38360 Hei_ell:   -12.30 Hei_geo:    24.10
+Station_name: WARK12M  Lat_gdt: -36.61887 Lon: 174.66330 Hei_ell:   128.00 Hei_geo:    92.60
+Station_name: WARK30M  Lat_gdt: -36.61727 Lon: 174.66290 Hei_ell:   122.70 Hei_geo:    87.30
+Station_name: WATPHRA  Lat_gdt:  18.58284 Lon:  98.67140 Hei_ell:   253.00 Hei_geo:   292.40
+Station_name: WESTFORD Lat_gdt:  42.80471 Lon: 288.50620 Hei_ell:    86.80 Hei_geo:   115.50
+Station_name: WETTZ13N Lat_gdt:  49.33422 Lon:  12.87770 Hei_ell:   672.60 Hei_geo:   625.80
+Station_name: WETTZ13S Lat_gdt:  49.33372 Lon:  12.87830 Hei_ell:   672.60 Hei_geo:   625.70
+Station_name: WETTZELL Lat_gdt:  49.33532 Lon:  12.87750 Hei_ell:   669.10 Hei_geo:   622.30
+Station_name: WHTHORSE Lat_gdt:  60.87512 Lon: 224.92290 Hei_ell:   709.60 Hei_geo:   702.00
+Station_name: WSTRB-07 Lat_gdt:  53.10026 Lon:   6.60680 Hei_ell:    70.90 Hei_geo:    29.20
+Station_name: WSTRBORK Lat_gdt:  53.10026 Lon:   6.63330 Hei_ell:    71.20 Hei_geo:    29.50
+Station_name: YAKATAGA Lat_gdt:  60.24759 Lon: 217.51350 Hei_ell:    21.10 Hei_geo:     9.50
+Station_name: YAMAGU34 Lat_gdt:  34.39597 Lon: 131.55790 Hei_ell:   166.70 Hei_geo:   134.30
+Station_name: YAMAGUCH Lat_gdt:  34.39517 Lon: 131.55710 Hei_ell:   165.70 Hei_geo:   133.30
+Station_name: YARRA12M Lat_gdt: -29.21084 Lon: 115.34560 Hei_ell:   248.30 Hei_geo:   274.10
+Station_name: YEBES    Lat_gdt:  40.71438 Lon: 356.91060 Hei_ell:   979.90 Hei_geo:   927.40
+Station_name: YEBES40M Lat_gdt:  40.71488 Lon: 356.91310 Hei_ell:   988.90 Hei_geo:   936.50
+Station_name: YELLOWKN Lat_gdt:  62.63680 Lon: 245.52760 Hei_ell:   176.80 Hei_geo:   203.50
+Station_name: YLOW7296 Lat_gdt:  62.63800 Lon: 245.52070 Hei_ell:   178.80 Hei_geo:   205.50
+Station_name: YUMA     Lat_gdt:  33.11496 Lon: 245.79690 Hei_ell:   238.60 Hei_geo:   272.20
+Station_name: ZELENCHK Lat_gdt:  43.98008 Lon:  41.56520 Hei_ell:  1175.00 Hei_geo:  1152.10
+Station_name: ZELRT13V Lat_gdt:  43.98038 Lon:  41.56380 Hei_ell:  1163.10 Hei_geo:  1140.20

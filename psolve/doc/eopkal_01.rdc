@@ -1,0 +1,133 @@
+#{ Title #}
+
+   How to use eopkal
+
+#{ Authors #}
+
+   John Gipson 
+
+#{ Date #}
+
+2000.10.31
+
+#{ Abstract #}
+
+This memo describes the use of the Goddard Earth orientation parameters Kalman.
+
+#{ Contact #}
+
+Questions and comments about this guide should be sent to:
+
+Leonid Petrov ( sgdass@lists.nasa.gov )
+
+#/ Overview #\
+
+eopkal reads in an eop file produced by snoop, Kalman filters it, and
+produces an eop_mod file. It will also produce a file /tmp/lod.out
+which contains lod estimates. It will produce several files containing
+debugging information. These includes a file containing EOP doubles,
+i.e., simultaneous measurements, an error file containing data which
+isn't used, etc.
+
+#/ Usage #\
+
+      eopkal [-i <input_file> -o <output_file> -s <status_file>]
+
+  User should specify either 6 or no parameters. If user specified 6 parameters,
+then eopkal runs in batch mode. Otherwise it will ask a user a series of 
+questions.
+
+##/ Batch interface ##\
+
+  <input_file>  -- name of the input eop file in either eopjmg format 
+                   (produced by snoop) or in eopb format (produced by getpar)
+                   or in IERS format.
+
+  <output_file> -- name of the output eop file.
+
+  <status_file> -- name of the status file. If upon finishing eopkal this
+                   file has a line "EOPKAL: finished at <date>" then it
+                   means that eopkal terminated successfully.
+
+  Other options are set to default values. Look at the section Options for
+learning what the default options.
+
+##/ Interactive interface ##\
+
+  If no parameters were supplied then eopkal will ask you for an input file. 
+This is an "eopjmg" file produced by snoop or .eob files produced by getpar.
+Enter the name of the input file e.g., /tmp/snoop.eopjmg.1102x. It will then 
+ask for the output file. Typically I call this something like 
+/data1/solve_files/er1102x.98dec08, where the suffix is the last experiment 
+in the arc list. The program will ask if you want to use the default settings. 
+Most of the time the answer to this is yes. If you say yes then it will 
+produce a file er1102x (or however your snoop.eopjmg was suffixed) in the 
+temp directory. For details on the run, look at the end of this file.
+
+The next page summarizes the questions eopkal asks, and suggests
+appropriate answers.
+
+#/ Options #\
+
+If you answer No to the default options question, then you have a
+whole series of questions you need to answer. Here I describe these
+one-by-one:
+
+1. Error file name: Enter in the name of the error file. This contains a
+   list of experiments which were rejected. Default: /tmp/eop_kal.err
+
+2. Double file name: Enter in the name of the file which contains a list
+   of simultaneous EOP measurements. Default: /tmp/eop_kal.dub
+
+3. Make LOD file: If you answer yes, then you have the following
+   additional options: (Default yes)
+
+   A. LOD file name: Name of the output file to contain LOD data. 
+      Default is /tmp/lod.dat
+
+   B. Make Plot file: If you answer yes, it will create a pgplot control
+      file. Default is /tmp/eop_kal.plt
+
+4. Monitor progress: If you answer yes, it will keep you posted of
+   its progress. Default is Yes.
+
+5. Use only NAVNET, Polaris, IRIS: If you answer yes, then
+   it will only use these experiments to estimate EOP. I never use this
+   option anymore. Default is NO.
+
+6. Sig1 uncertainty (99 no constraints, 5 is nominal): This is the size
+   of the largest component of the EOP. If the EOP error is larger than
+   this, then the measurement is not used. Default is 5.0
+
+7. Rescale formal errors by how much? It is known that the formal error
+   solves reports are two small. This option allows you to inflate them
+   (or for that matter, deflate them.) If you type "Yes" to the default
+   options, the formal errors are inflated by a factor 1.5. Default is Yes.
+
+8. Enter in starting date: Enter in the starting date in YY MM DD
+   format. If you enter in "0 0 0" it will start at the beginning of the
+   data. Default is "0 0 0".
+
+9. Enter in ending date: Enter in the ending date in YY MM DD format. If
+   you enter in "0 0 0" it will proceed to the end of the data. Default is
+   "0 0 0".
+
+10. Do UT1S pre-smoothing? If you answer yes, it will subtract UT1S from
+    the data before doing the Kalman filtering. After doing the filtering,
+    UT1 is added back in. The default is to use UT1S.
+
+11. Spacing of Mod file in days: (0.05-1) Just like it sounds. I have
+    played around with this, and I have found that it doesn't make much
+    different.  Note that the modfile only has 2 digits for the decimal,
+    so you should enter in 0.25, 0.5, or 0.1, or something that is evenly
+    divisible into 1. If you enter in 0.33333 it will only output the first
+    2 digits, and since EOP changes so rapidly, your EOP time tags will be
+    way off. Default is 1.
+
+12. Use UT1 Rates? (Yes/No). Unless you didn't estimate UT1 rates in the
+    solution, you should yes. This gives superior results for the EOP file.
+    Default depends on the type of the input file. If the input file is
+    in eopb or eopjmg file then default is Yes, otherwise default is No
+
+Status file name for interactive interface is hard-coded: /tmp/eopkal.sts
+

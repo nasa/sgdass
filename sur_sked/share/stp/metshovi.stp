@@ -1,0 +1,29 @@
+# VLBI station parameters Format 2022.04.03
+#
+# NOT REAAL NUMBERS: Can be used for simulations only!!!
+#
+SHORT_NAME:   METSHOVI  char      Mh
+LAST_UPDATE:  METSHOVI  char      2026.07.16_16:00:44
+COORD:        METSHOVI  meters    2890652.756     1310295.390     5513958.816   
+MOUNT:        METSHOVI  char       ALTAZ
+SLEW_AZ:      METSHOVI  deg/sec    1.0
+SLEW_EL:      METSHOVI  deg/sec    1.0
+ACCL_AZ:      METSHOVI  deg/sec^2  0.25
+ACCL_EL:      METSHOVI  deg/sec^2  0.25
+TSETTLE_AZ:   METSHOVI  sec        2.0
+TSETTLE_EL:   METSHOVI  sec        2.0
+EL_MIN:       METSHOVI  deg        5.0
+EL_MAX:       METSHOVI  deg       90.0
+AZ_RANGE:     METSHOVI  deg      -55.0   55.0  305.0  415.0
+RECORDER:     METSHOVI  char      flexbuf
+BACKEND:      METSHOVI  char      dbbc3
+SETMODE:      METSHOVI  sec         4.0
+PREOB:        METSHOVI  sec       10.0
+POSTOB:       METSHOVI  sec        2.0
+HOR_AZIM:     METSHOVI  deg       0   360 
+HOR_ELEV:     METSHOVI  deg       9     9
+STOW_AZIM:    METSHOVI  deg       80.0
+STOW_ELEV:    METSHOVI  deg       80.0
+#
+CLOCK_DATES:  METSHOVI  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: METSHOVI  sec        0.0E06

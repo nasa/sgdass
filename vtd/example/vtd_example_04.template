@@ -1,0 +1,283 @@
+       PROGRAM    VTD_EXAMPLE_04_MAIN
+       IMPLICIT   NONE 
+       CHARACTER  STR*128
+       INTEGER*8    STACK_SIZE_IN_BYTES, GB, IS
+       PARAMETER  ( GB = 1024*1024*1024 )
+       PARAMETER  ( STACK_SIZE_IN_BYTES = INT8(4) * GB )
+       INTEGER*8, EXTERNAL :: SET_STACKSIZE 
+!
+! ---- Set stacksize. Alterntive is to set stacksize in shell:
+! ---- commands limit stacksize 4000000 or limit -s 4000000
+! ---- and set evironment variable GOMP_STACKSIZE
+! ---- Program will crash in attempt to use default stacksize,
+! ---- because fortran uses stack for storing variables
+!
+       IS = SET_STACKSIZE ( %VAL(STACK_SIZE_IN_BYTES) )
+       CALL INCH8    ( STACK_SIZE_IN_BYTES/INT8(1024), STR )
+       CALL SETENV   ( 'GOMP_STACKSIZE'//CHAR(0), TRIM(STR)//CHAR(0), %VAL(1) )
+       CALL VTD_EXAMPLE_04()
+       END  PROGRAM  VTD_EXAMPLE_04_MAIN
+!
+! ------------------------------------------------------------------------
+!
+       SUBROUTINE VTD_EXAMPLE_04()
+! ************************************************************************
+! *                                                                      *
+! *   Program VTD_EXAMPLE_04 is for for computing path delay for VERA    *
+! *   interferometer.                                                    *
+! *                                                                      *
+! *  ### 07-MAY-2009  VTD_EXAMPLE_04  v1.0 (c) L. Petrov 07-MAY-2009 ### *
+! *                                                                      *
+! ************************************************************************
+      IMPLICIT   NONE 
+      INCLUDE   'vtd.i'
+      TYPE     ( VTD__TYPE      ) :: VTD
+      TYPE     ( VTD__OBS_TYPE  ) :: OBS_TYP
+      CHARACTER  C_SOU(VTD__M_SOU)*8, C_STA(VTD__M_STA)*8
+      CHARACTER  VTD_CONF_FILE*128, DATE_OBS*30, DATE_BEG*21, DATE_END*21, &
+     &           FIL_IN*128, FIL_OUT*128, STR*80, DATE_VEX*32 
+      INTEGER*4  L_STA, L_SOU, MJD_BEG, MJD_END, MJD_OBS, IUER
+      REAL*8     TEMP(3), PRES(3), UTC_OBS, TAI_OBS, TAI_BEG, TAI_END, &
+     &           TAU_GR, TAU_PH, &
+     &           RATE_PH, DER_DEL(VTD__NDER), DER_RAT(VTD__NDER)
+      REAL*8     TAU_GR2
+      INTEGER*4  MBUF, MIND
+      PARAMETER  ( MBUF = 8192 )
+      PARAMETER  ( MIND =   32 )
+      CHARACTER  BUF(MBUF)*256, OUT(MBUF)*256
+      CHARACTER  REG*3
+      PARAMETER  ( REG = CHAR(0)//CHAR(32)//CHAR(9) )
+      INTEGER*4  TIM_CODE, COO_CODE, M_ARR, L_ARR, L_NOD, L_DEG
+      INTEGER*4  J1, J2, J3, J4, J5, IND_FIRST_OBS, NBUF, NOUT, &
+     &           LIND, IND(2,MIND), IND_STA(2), IND_SOU 
+      INTEGER*4, EXTERNAL :: ADD_CLIST, I_LEN, ILEN, LTM_DIF 
+      CHARACTER, EXTERNAL :: VEX_TO_DATE*19, GET_CDATE*19
+!
+      VTD_CONF_FILE = '__VTD_SHARE__/vtd_test_02.cnf'
+      FIL_IN  = '__VTD_SHARE__/vtd_example_04.com'
+      FIL_OUT = '/tmp/vera_delay.out'
+!
+      IUER = -1
+      CALL RD_TEXT ( FIL_IN, MBUF, BUF, NBUF, IUER )
+      IF ( IUER .NE. 0 ) CALL EXIT ( 1 )
+!
+      OBS_TYP%PLRZ    = 'RR'     
+      OBS_TYP%FRQ_REF(1) = 2.2D9
+      OBS_TYP%FRQ_REF(2) = 8.2D9
+      OBS_TYP%N_BND      = 2
+      OBS_TYP%DELAY_TYPE = VTD__MLMH__DTP 
+      OBS_TYP%FRQ_ION_EFF(1) = 2.3D9
+      OBS_TYP%FRQ_ION_EFF(2) = 8.5D9
+      OBS_TYP%STATUS     = VTD__BND 
+!
+      IND_FIRST_OBS = 0
+      L_STA = 0
+      L_SOU = 0
+      DO 410 J1=1,NBUF
+         IF ( BUF(J1)(1:1) == '#' ) GOTO 410
+         CALL EXWORD ( BUF(J1), MIND, LIND, IND, REG, -2 )
+         IF ( BUF(J1)(IND(1,1):IND(2,1)) == 'DATE_BEG_TAI:' ) THEN
+              DATE_BEG = BUF(J1)(IND(1,2):IND(2,2)) 
+            ELSE IF ( BUF(J1)(IND(1,1):IND(2,1)) == 'DATE_END_TAI:' ) THEN
+              DATE_END = BUF(J1)(IND(1,2):IND(2,2)) 
+            ELSE IF ( BUF(J1)(IND(1,1):IND(2,1)) == 'STATION:' ) THEN
+              IUER = -1
+              IND_STA(1) = ADD_CLIST ( VTD__M_STA, L_STA, C_STA, &
+     &                                 BUF(J1)(IND(1,2):IND(2,2)), IUER )
+              IF ( IUER .NE. 0 ) CALL EXIT ( 1 )
+            ELSE IF ( BUF(J1)(IND(1,1):IND(2,1)) == 'SOURCE:'  ) THEN
+              IUER = -1
+              IND_SOU = ADD_CLIST ( VTD__M_SOU, L_SOU, C_SOU, &
+     &                              BUF(J1)(IND(1,2):IND(2,2)), IUER )
+              IF ( IUER .NE. 0 ) CALL EXIT ( 1 )
+            ELSE IF ( BUF(J1)(IND(1,1):IND(2,1)) == 'OBS:'  ) THEN
+               IND_FIRST_OBS = J1
+               GOTO 810
+            ELSE 
+              CALL CLRCH ( STR )
+              CALL INCH  ( J1, STR )
+              CALL ERR_LOG ( 3711, -1, 'VTD_EXAMPLE_04', 'Wrong first word '// &
+     &            'at line '//STR(1:I_LEN(STR))//' -- '// &
+     &             BUF(J1)(IND(1,1):IND(2,1)) )
+              CALL EXIT ( 1 )
+         END IF
+ 410  CONTINUE 
+ 810  CONTINUE 
+!
+! --- Transform the dates from calendar dates to pairs MJD/TAI
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_BEG, MJD_BEG, TAI_BEG, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3712, -1, 'VTD_EXAMPLE_04', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_BEG )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_END, MJD_END, TAI_END, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3713, -1, 'VTD_EXAMPLE_04', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_END )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+      IUER = -1
+      CALL VTD_INIT ( VTD,  IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3714, -1, 'VTD_EXAMPLE_04', 'Error in an attempt to '// &
+     &         'initialize VTD oibject' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Read and parse configuration file
+!
+      IUER = -1
+      CALL VTD_CONF ( VTD_CONF_FILE, VTD, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3715, -1, 'VTD_EXAMPLE_04', 'Error in an attempt '// &
+     &         'to read configuration file '//VTD_CONF_FILE )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Load catalogues, ephemerides, EOP series and other data files
+!
+      IUER = -1
+      CALL VTD_LOAD  ( VTD, L_STA, C_STA, L_SOU, C_SOU, MJD_BEG, TAI_BEG, &
+     &                 MJD_END, TAI_END, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3716, IUER, 'VTD_EXAMPLE_04', 'Error in an '// &
+     &         'attempt to load the data into VTD data structure' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Meteorological parameter for station 1 and station 2
+!
+      PRES(1) = 101300.0D-12  ! Pa
+      PRES(2) = 101300.0D0  ! Pa
+      PRES(3) =      0.0D0  ! Pa
+      TEMP(1) =    273.15D0 ! K
+      TEMP(2) =    273.15D0 ! K
+      TEMP(3) =      0.0D0  ! K
+!
+      OUT(1) = 'VTD_RES. Results of VTD computation. Format version of 2009.05.07' 
+      OUT(2) = '#'
+      OUT(3) = '# VTD control file: '//VTD_CONF_FILE 
+      OUT(4) = '#'
+      OUT(5) = '# Created on '//GET_CDATE()
+      OUT(6) = '#'
+      NOUT = 6
+      DO 420 J2=IND_FIRST_OBS,NBUF
+         IF ( BUF(J2)(1:1) == '#' ) GOTO 420
+         CALL EXWORD ( BUF(J2), MIND, LIND, IND, REG, -2 )
+         IF ( BUF(J2)(IND(1,1):IND(2,1)) .NE. 'OBS:' ) GOTO 420
+!
+         IND_STA(1) = LTM_DIF ( 0, L_STA, C_STA, BUF(J2)(IND(1,3):IND(2,3)) )
+         IND_STA(2) = LTM_DIF ( 0, L_STA, C_STA, BUF(J2)(IND(1,4):IND(2,4)) )
+         IND_SOU    = LTM_DIF ( 0, L_SOU, C_SOU, BUF(J2)(IND(1,5):IND(2,5)) )
+         IF ( IND_STA(1) .LE. 0 ) THEN
+              CALL CLRCH ( STR )
+              CALL INCH  ( J2, STR )
+              CALL ERR_LOG ( 3717, -2, 'VTD_EXAMPLE_04', 'Wrong station '// &
+     &            'name '//BUF(J2)(IND(1,3):IND(2,3))//'  at line '// &
+     &             STR(1:I_LEN(STR))//' it was not defined before' )
+              CALL EXIT ( 1 )
+         END IF
+         IF ( IND_STA(2) .LE. 0 ) THEN
+              CALL CLRCH ( STR )
+              CALL INCH  ( J2, STR )
+              CALL ERR_LOG ( 3718, -2, 'VTD_EXAMPLE_04', 'Wrong station '// &
+     &            'name '//BUF(J2)(IND(1,4):IND(2,4))//'  at line '// &
+     &             STR(1:I_LEN(STR))//' it was not defined before' )
+              CALL EXIT ( 1 )
+         END IF
+         IF ( IND_SOU .LE. 0 ) THEN
+              CALL CLRCH ( STR )
+              CALL INCH  ( J2, STR )
+              CALL ERR_LOG ( 3719, -2, 'VTD_EXAMPLE_04', 'Wrong source '// &
+     &            'name '//BUF(J2)(IND(1,5):IND(2,5))//'  at line '// &
+     &             STR(1:I_LEN(STR))//' it was not defined before' )
+ 1            CALL EXIT ( 1 )
+         END IF
+!
+! ------ Load meteorological parameters of the first station into the VTD record
+!
+         IUER = -1 
+         CALL VTD_METEO_IN ( VTD, C_STA(IND_STA(1)), PRES(1), TEMP(1), TEMP(1), IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3720, -1, 'VTD_EXAMPLE_04', 'Error in an '// &
+     &            'attempt to load meteorological parameters for station '// &
+     &             C_STA(IND_STA(1)) )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+! ------ Load meteorological parameters of the first station into the VTD record
+!
+         IUER = -1 
+         CALL VTD_METEO_IN ( VTD, C_STA(IND_STA(2)), PRES(2), TEMP(2), TEMP(2), IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3721, -1, 'VTD_EXAMPLE_04', 'Error in an '// &
+     &            'attempt to load meteorological parameters for station '// &
+     &             C_STA(IND_STA(2)) )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+         IUER = -1
+         CALL CLRCH ( DATE_VEX )
+         CALL CLRCH ( DATE_OBS )
+         DATE_VEX = BUF(J2)(IND(1,2):IND(1,2)+3)//'y'// &
+     &              BUF(J2)(IND(1,2)+4:IND(1,2)+6)//'d'// &
+     &              BUF(J2)(IND(1,2)+7:IND(1,2)+8)//'h'// &
+     &              BUF(J2)(IND(1,2)+9:IND(1,2)+10)//'m'// &
+     &              BUF(J2)(IND(1,2)+11:IND(1,2)+12)//'s'// &
+     &              BUF(J2)(IND(1,2)+13:IND(2,2))
+!
+         IUER = -1
+         DATE_OBS = VEX_TO_DATE ( DATE_VEX, IUER )
+         DATE_OBS(20:) = BUF(J2)(IND(1,2)+13:IND(2,2)) 
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3722, -1, 'VTD_EXAMPLE_04', 'Error in an '// &
+     &            'attempt to convert the date '//BUF(J2)(IND(1,2):IND(2,2)) )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+         IUER = -1
+         CALL DATE_TO_TIME ( DATE_OBS, MJD_OBS, UTC_OBS, IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3723, -1, 'VTD_EXAMPLE_04', 'Error in an '// &
+     &            'attempt to convert the date '//BUF(J2)(IND(1,2):IND(2,2)) )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+         IUER = -1
+         CALL VTD_UTC_TO_TAI ( VTD, MJD_OBS, UTC_OBS, TAI_OBS, IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3724, -1, 'VTD_EXAMPLE_04', 'Error in an '// &
+     &            'attempt to convert the date from UTC to TAI' )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+         VTD%CONF%IVRB = 0
+         IUER = -1
+         CALL VTD_DELAY ( C_SOU(IND_SOU), C_STA(IND_STA(1)), C_STA(IND_STA(2)), &
+     &                    MJD_OBS, TAI_OBS, OBS_TYP, VTD, TAU_GR, RATE_PH, &
+     &                    DER_DEL, DER_RAT, IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3725, IUER, 'VTD_EXAMPLE_04', 'Error in an '// &
+     &            'attempt to compute VLBI time delay' )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+         NOUT = NOUT + 1
+         CALL CLRCH ( OUT(NOUT) )
+         OUT(NOUT) = BUF(J2)(1:52)
+         WRITE ( UNIT=OUT(NOUT)(52:71), FMT='(1PD20.13)' ) TAU_GR
+         WRITE ( UNIT=OUT(NOUT)(73:92), FMT='(1PD20.13)' ) RATE_PH
+ 420  CONTINUE 
+!
+      IUER = -1
+      CALL WR_TEXT ( NOUT, OUT, FIL_OUT, IUER ) 
+      IF ( IUER .NE. 0 ) CALL EXIT ( 1 )
+      WRITE ( 6, * ) 'Output file: '//FIL_OUT(1:I_LEN(FIL_OUT))
+!
+      END  SUBROUTINE  VTD_EXAMPLE_04  !#!#

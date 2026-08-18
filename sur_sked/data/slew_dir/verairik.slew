@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  VERAIRKI  Vr
+MOUNT:       VERAIRKI  char       ALTAZ
+LAST_UPDATE: VERAIRKI  2018.01.20
+COORD:       VERAIRKI  meters    -3521719.642  4132174.729  3336994.272
+SLEW_AZ:     VERAIRKI  deg/sec    2.0
+SLEW_EL:     VERAIRKI  deg/sec    2.0
+ACCL_AZ:     VERAIRKI  deg/sec^2  2.00
+ACCL_EL:     VERAIRKI  deg/sec^2  2.00
+TSETTLE_AZ:  VERAIRKI  sec        2.00
+TSETTLE_EL:  VERAIRKI  sec        2.00
+EL_MIN:      VERAIRKI  deg        10.0
+EL_MAX:      VERAIRKI  deg        84.5
+AZ_RANGE:    VERAIRKI  deg       -90.0  90.0 270.0 450.0
+RECORDER:    VERAIRKI  char       vera2000
+PREOB:       VERAIRKI  sec        10.0
+POSTOB:      VERAIRKI  sec         2.0

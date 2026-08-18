@@ -1,0 +1,18 @@
+# SOB SHOW   Format v 1.0  of 2014.09.13
+#
+# Definitions
+#
+SOB_DIR:      /tmp/s8/
+DATE_TAI_BEG: 2006.06.04_14:00:00
+DATE_TAI_END: 2006.06.05_15:00:00
+#
+#    Station   TAI Date                  Frequency  Unit Azimuth    Elevation Unit
+#
+OBS: MK-VLBA   2006.06.04_18:00:00.0     24213.57D6  Hz   30.0       90.0     deg
+OBS: MK-VLBA   2006.06.04_18:00:00.0     24213.57D6  Hz   30.0        5.0     deg
+OBS: MK-VLBA   2006.06.04_19:41:23.459   24213.57D6  Hz  127.28345   62.2342  deg
+OBS: MK-VLBA   2006.06.04_20:28:19.822   24213.57D6  Hz    2.29381    0.2928  rad
+OBS: SC-VLBA   2006.06.04_18:00:00.0     24681.57D6  Hz    0.0       90.0     deg
+OBS: SC-VLBA   2006.06.04_18:00:00.0     24681.57D6  Hz    0.0        5.0     deg
+OBS: SC-VLBA   2006.06.04_19:41:23.459   24681.57D6  Hz  127.28345   62.2342  deg
+OBS: SC-VLBA   2006.06.04_20:28:19.822   24681.57D6  Hz    2.293812   0.2928  rad

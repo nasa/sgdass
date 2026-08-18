@@ -1,0 +1,42 @@
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$HOME]
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+Optional Packages:
+
+  --with-PACKAGE[=ARG]      -- use PACKAGE [ARG=yes]
+
+  --without-PACKAGE         -- do not use PACKAGE (same as --with-PACKAGE=no)
+
+  --with-petools=[dir name] -- specifies directory names where package petools
+                               is installed (default $HOME )
+			      
+  --with-malo=[dir name]    -- specifies directory names where package MALO
+                               is installed (default $HOME )
+			      
+  --with-netcdf=[dir name]  -- specifies directory name where package netcdf
+                               is installed (default $HOME )
+
+  --with-hdf4=[dir name]    -- specifies directory name where package HDF4
+                               is installed (default $HOME )
+
+  --with-fourpack=[dir name] - specifies directory names where package fourpack
+                               is installed (default: $HOME )
+
+  --with-z=[file name}      -- name of 32-bit zlib library
+
+  --with-jpeg=[file name}   -- name of 32-bit jpeg library

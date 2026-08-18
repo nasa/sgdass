@@ -1,0 +1,62 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+#  Frequency sequence used by Haystack in 2017-2024
+#
+#  Astronomical convention is used for band definition
+#  For instance notation 2004.1 32.0 means the band
+#  that covers range [2004.1, 2036.1] MHz
+#
+#  Last updated by L. Petrov on 2025.11.25_14:25:03
+#
+#  The sequence suggested by Haystack for VGOS experiments
+#
+MOD_NAME  g01
+HDS_NAME  h1
+#
+#       station       wiring name
+#
+STATION GGAO12M   Gs  udc_01
+STATION KOKEE12M  K2  udc_01
+STATION MACGO12M  Mg  udc_01
+STATION WESTFORD  Wf  udc_01
+#
+#  Bnd Low_frq bandwidh  IF Order (dir/inv)
+#
+BAND A  3188.0  32.0     Inv
+BAND A  3220.0  32.0     Inv
+BAND A  3252.0  32.0     Inv
+BAND A  3284.0  32.0     Inv
+BAND A  3316.0  32.0     Inv
+BAND A  3348.0  32.0     Inv
+BAND A  3380.0  32.0     Inv
+BAND A  3412.0  32.0     Inv
+BAND A  3444.0  32.0     Inv
+BAND A  3476.0  32.0     Inv
+BAND A  3508.0  32.0     Inv
+#
+BAND B  5240.4  32.0     Inv
+BAND B  5272.4  32.0     Inv
+BAND B  5304.4  32.0     Inv
+BAND B  5432.4  32.0     Inv
+BAND B  5528.4  32.0     Inv
+BAND B  5592.4  32.0     Inv
+BAND B  5656.4  32.0     Inv
+BAND B  5688.4  32.0     Inv
+#
+BAND C 10188.0  32.0     Inv
+BAND C 10196.0  32.0     Inv
+BAND C 10204.0  32.0     Inv
+BAND C 10212.0  32.0     Inv
+BAND C 10220.0  32.0     Inv
+BAND C 10228.0  32.0     Inv
+BAND C 10236.0  32.0     Inv
+BAND C 10244.0  32.0     Inv
+#
+BAND D 10200.4  32.0     inv
+BAND D 10232.4  32.0     Inv
+BAND D 10264.4  32.0     Inv
+BAND D 10392.4  32.0     Inv
+BAND D 10488.4  32.0     Inv
+BAND D 10552.4  32.0     Inv
+BAND D 10616.4  32.0     Inv
+BAND D 10648.4  32.0     Inv

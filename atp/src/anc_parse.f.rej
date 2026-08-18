@@ -1,0 +1,181 @@
+--- anc_parse.f_orig	2025-02-26 09:29:36.000000000 -0500
++++ anc_parse.f		2025-08-14 14:59:12.585354005 -0400
+@@ -29,7 +29,7 @@
+ ! *   Administration. All Rights Reserved.                               *
+ ! *   License: NASA Open Source Software Agreement (NOSA).               *
+ ! *                                                                      *
+-! *  ### 07-MAY-2021  ANC_PARSE   v3.0 (d)  N. Habana  06-Oct-2022  ###  *
++! *  ### 07-MAY-2021  ANC_PARSE   v4.0 (d)  N. Habana  01-Jul-2025  ###  *
+ ! *                                                                      *
+ ! ************************************************************************
+ !
+@@ -52,6 +52,7 @@
+       INTEGER*4  J1, J2, J3, J4, J5, J6, J7
+       INTEGER*4  IND_TGPS, IND_PCS, IND_TPS, UNIX_DATE, IS, IER
+       INTEGER*4  K_TPS, K_TSYS, K_PCS, K_PCAL, K_SEFD, K_TGPS, K_GPS
++      INTEGER*4  K_TPI, ITPION, ITPIOFF
+       INTEGER*8  SIZE_I8, MLEN_STR
+       INTEGER*4  MJD
+       REAL*8     TAI, UTC, UTC_MTAI, EPS
+@@ -115,7 +116,6 @@
+      &           ' bytes of dynamic memory for average file' )
+          RETURN 
+       END IF
+-
+ !
+ ! --- Write the first line to the the first buffer
+ !
+@@ -131,12 +131,14 @@
+       ANC%MJD_PCAL = -1
+       ANC%MJD_SEFD = -1
+       ANC%MJD_GPS  = -1
++      ANC%MJD_TPI  = -1
+       ANC%TAI_DOO  =  0.0D0
+       ANC%TAI_MET  =  0.0D0
+       ANC%TAI_TSYS =  0.0D0
+       ANC%TAI_PCAL =  0.0D0
+       ANC%TAI_SEFD =  0.0D0
+       ANC%TAI_GPS  =  0.0D0
++      ANC%TAI_TPI  =  0.0D0
+ ! ---
+       K_TPS    =  0
+       K_TSYS   =  0
+@@ -1033,7 +1077,7 @@
+ !           coincides with the index of the sensor tag in TP_SENSOR 
+ !           Block. Units = K
+ !
+-            READ (UNIT=BUF(J1)(IND(1,5):IND(2,5)), FMT='(F20.12)' )    &
++            READ (UNIT=BUF(J1)(IND(1,5):IND(2,5)), FMT='(F20.12)' )     &
+      &            ANC%TSYS(K_TSYS)%TSYS(IND_TPS)
+ ! ---------
+             READ ( UNIT=BUF(J1)(IND(1,6):IND(2,6)), FMT='(F20.12)' )    &
+@@ -1046,8 +1090,128 @@
+ ! ---------
+             ANC%TSYS(K_TSYS)%SOU_NAM = BUF(J1)(IND(1,8):IND(2,8))       ! Source Name
+ ! ---------
+-            ANC%TSYS(K_TSYS)%SCA_NAM = BUF(J1)(IND(1,9):IND(2,9))       ! Scan name
++            ANC%TSYS(K_TSYS)%SCA_NAM = BUF(J1)(IND(1,9):IND(2,9)) ! Scan name
++!$$$$$$$$$$$$$$$$$$
++!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
++!
++! ------ Parse information from the TPI Block
++!
++         ELSEIF ( BUF(J1)(IND(1,1):IND(2,1)) == 'TPI:' ) THEN
++! ---------
++            IF ( LIND < 11 ) THEN
++               CALL ERR_LOG ( 6892, IUER, 'ANC_PARSE',                  &
++     &                 'Too few words on TPI block line '//TRIM(STR)// &
++     &                 ' of the antenna calibration file '//FILIN )
++               DEALLOCATE ( BUF )
++               RETURN
++            END IF
++! ---------
++            CALL ERR_PASS ( IUER, IER )
++            CALL DATE_TO_TIME(BUF(J1)(IND(1,3):IND(2,3)), MJD, UTC, IER)
++            IF ( IER .NE. 0 ) THEN
++               CALL ERR_LOG ( 6893, IUER, 'ANC_PARSE',                  &
++     &                 'Error in parsing TPI date '//                   &
++     &                 BUF(J1)(IND(1,3):IND(2,3))//' on line '//        &
++     &                 TRIM(STR) )
++               DEALLOCATE ( BUF )
++               RETURN
++            END IF
++! ---------
++            IF ( ANC%MJD_TPI < 0 ) THEN
++               CALL ERR_PASS ( IUER, IER )
++               CALL NERS_GET_UTCMTAI (NERS,                             &
++     &                                (MJD - J2000__MJD)*86400.D0 + UTC,&
++     &                                UTC_MTAI, IER )
++               IF ( IER .NE. 0 ) THEN
++                  CALL ERR_LOG ( 6894, IUER, 'ANC_PARSE',               &
++     &                    'Error in getting UTC_MTAI on TPI Block' )
++                  DEALLOCATE ( BUF )
++                  RETURN
++               END IF
++!
++! ------------ MJD_TPI and TAI_TPI
++!
++               ANC%MJD_TPI = MJD
++               ANC%TAI_TPI = UTC - UTC_MTAI
++            END IF
++            TAI = UTC - UTC_MTAI
++!
++! --------- Update the TPI counter, given the time diff. error is met
++!
++            IF ( K_TPI == 0 ) THEN
++               K_TPI = 1
++            ELSE
++               IF ( DABS((MJD - ANC%MJD_TPI)*86400.D0 +                 &
++     &                   (TAI - ANC%TAI_TPI) - ANC%TPI(K_TPI)%TIM) >    &
++     &              3*ANC__EPS_TIM ) THEN
++                  K_TPI = K_TPI + 1
++               END IF
++            END IF
++!
++! --------- Error in logging NUM_TPI
++!
++            IF ( K_TPI > ANC%NUM_TPI ) THEN
++               CALL IINCH ( K_TPI, STR1 )
++               CALL IINCH ( ANC%NUM_TPI, STR2 )
++               CALL ERR_LOG ( 6895, IUER, 'ANC_PARSE',                  &
++     &                 'Malformed antenna calibration file '//          &
++     &                 TRIM(FILIN)//' -- too many TPI lines. '// &
++     &                 'Got '//TRIM(STR1)//' ,expected '//TRIM(STR2) )
++               DEALLOCATE ( BUF )
++               RETURN
++            END IF
++!
++! --------- Compute time
++!
++            ANC%TPI(K_TPI)%TIM = (MJD - ANC%MJD_TPI)*86400.D0 +          &
++     &                           (TAI - ANC%TAI_TPI)
++! ---------
++            READ ( UNIT=BUF(J1)(IND(1,2):IND(2,2)), FMT='(I8)' )        &
++     &             ANC%TPI(K_TPI)%IND_SCA
++!
++! --------- Is the sensor tag in TPI block available in list of tags
++!           from TPS_SENSOR block
++!
++            IND_TPS = LTM_DIF ( 0, ANC%NUM_TPS, ANC%TPS_TAG,            &
++     &                          BUF(J1)(IND(1,4):IND(2,4))   )
++            IF ( IND_TPS < 1 ) THEN
++               CALL ERR_LOG ( 6896, IUER, 'ANC_PARSE',                  &
++     &                 'Tag '//BUF(J1)(IND(1,4):IND(2,4))//             &
++     &                 'not part of TP_SENSOR tags in '//TRIM(FILIN)//  &
++     &                 ' .See line '//TRIM(STR)//' on the TPI Block' )
++               DEALLOCATE ( BUF )
++               RETURN
++            END IF
++!
++! --------- Parse the TPI value to the index of TPI in ANC%TPI that 
++!           coincides with the index of the sensor tag in TP_SENSOR 
++!           Block. Units = K
++!           Getting both TPION and TPIOFF
++!
++!!<<>>!!            Read ( UNIT=BUF(J1)(IND(1,5):IND(2,5)), FMT='(F20.12)' )    &
++!!<<>>!!  &                ANC%TPI(K_TPI)%TPION(IND_TPS)
++            READ ( UNIT=BUF(J1)(IND(1,5):IND(2,5)), FMT='(I8)' ) ITPION
++            ANC%TPI(K_TPI)%TPION(IND_TPS) = REAL(ITPION, 8)
++! ------------
++
++!!<<>>!!            READ ( UNIT=BUF(J1)(IND(1,6):IND(2,6)), FMT='(F20.12)' )    &
++!!<<>>!!  &                ANC%TPI(K_TPI)%TPIOFF(IND_TPS)
++            READ ( UNIT=BUF(J1)(IND(1,6):IND(2,6)), FMT='(I8)' ) ITPIOFF
++            ANC%TPI(K_TPI)%TPIOFF(IND_TPS) = REAL(ITPIOFF, 8)
++! ---------
++            READ ( UNIT=BUF(J1)(IND(1,7):IND(2,7)), FMT='(F20.12)' )    &
++     &             ANC%TPI(K_TPI)%AZ
++            ANC%TPI(K_TPI)%AZ = ANC%TPI(K_TPI)%AZ*DEG__TO__RAD          ! Azimuth [rad]
++! ---------
++            READ ( UNIT=BUF(J1)(IND(1,8):IND(2,8)), FMT='(F20.12)' )    &
++     &             ANC%TPI(K_TPI)%EL
++            ANC%TPI(K_TPI)%EL = ANC%TPI(K_TPI)%EL*DEG__TO__RAD          ! Elevation [rad]
++! ---------
++            ANC%TPI(K_TPI)%SOU_NAM = BUF(J1)(IND(1,9):IND(2,9))         ! Source Name
++! ---------
++            ANC%TPI(K_TPI)%SCA_NAM = BUF(J1)(IND(1,10):IND(2,10))       ! Scan name
+ !$$$$$$$$$$$$$$$$$$
++!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ !
+ ! ------ Parse information from the PC_SENSOR block
+ !

@@ -1,0 +1,369 @@
+!
+! >>>>> Include block for external computation of tropospheric path delay
+! >>>>> 2007.10.02  (c)  L. Petrov  v 1.5  2008.10.01_19:33:50
+!
+      INTEGER*4  MOBS__TRP
+      INTEGER*4  MSCA__TRP
+      INTEGER*4  MSTA__TRP
+      INTEGER*4  MSOU__TRP
+      PARAMETER  ( MOBS__TRP = 256*1024 )
+!@      PARAMETER  ( MSCA__TRP =   8*1024 )
+      PARAMETER  ( MSCA__TRP = 128*1024 )
+      PARAMETER  ( MSTA__TRP =      256 )
+      PARAMETER  ( MSOU__TRP =     1024 )
+      INTEGER*4    M_HDR__TRP, M_LLN__TRP, M_LLN__TRP_V1, M_MLM__TRP
+      PARAMETER  ( M_HDR__TRP    = 164 ) ! Approximate number of header lines
+      PARAMETER  ( M_LLN__TRP    = 188 ) ! Lenght of a line in the body V2
+      PARAMETER  ( M_LLN__TRP_V1 = 155 ) ! Lenght of a line in the body V1
+      PARAMETER  ( M_MLM__TRP    =  32 ) ! Recommended margine for computing the number of lines
+!
+      CHARACTER    TRP__LABEL_V10*52, TRP__LABEL_V11*52, TRP__LABEL*52
+      PARAMETER  ( TRP__LABEL_V10 = 'TROPO_PATH_DELAY  Exchange format  v 1.0  2007.10.04' )
+      PARAMETER  ( TRP__LABEL_V11 = 'TROPO_PATH_DELAY  Exchange format  v 1.1  2008.03.20' )
+      PARAMETER  ( TRP__LABEL     = 'TROPO_PATH_DELAY  Exchange format  v 2.0  2008.10.01' )
+      CHARACTER    TRP_HELP_V1*17, TRP_HELP_V2*17, MMF_EPO__HELP*18, &
+     &             MMF_MOD__HELP*18, MMF_STAT__HELP*19
+      PARAMETER  ( TRP_HELP_V1 = 'trp_v1_format.txt' )
+      PARAMETER  ( TRP_HELP_V2 = 'trp_v2_format.txt' )
+      PARAMETER  ( MMF_EPO__HELP  = 'mmf_epo_format.txt' )
+      PARAMETER  ( MMF_MOD__HELP  = 'mmf_mod_format.txt' )
+      PARAMETER  ( MMF_STAT__HELP = 'mmf_stat_format.txt' )
+      INTEGER*4    MHLP__TRP
+      PARAMETER  ( MHLP__TRP = 512 )
+!
+      TYPE  DBS_OBS__TYPE
+          CHARACTER  SCA_NAM*16
+	  CHARACTER  STA_NAM(2)*8
+          CHARACTER  SOU_NAM*8
+	  CHARACTER  QUALCODE(2)*2
+	  INTEGER*4  IND_SCA
+	  INTEGER*4  MJD
+	  REAL*8     TAI
+      END TYPE  DBS_OBS__TYPE
+!
+      TYPE  DBS__TYPE
+	  CHARACTER  DB_NAME*16
+	  CHARACTER  MK3_DBNM*16
+          INTEGER*4  N_STA
+          INTEGER*4  N_SOU
+          INTEGER*4  N_OBS
+          INTEGER*4  N_SCA
+	  INTEGER*4  STATUS
+	  TYPE ( TRP_STA__TYPE ), POINTER :: STA(:)
+	  TYPE ( DBS_OBS__TYPE ), POINTER :: OBS(:)
+      END TYPE  DBS__TYPE
+!
+! ====
+!
+      TYPE  TRP_STA__TYPE
+	  CHARACTER  NAME*8
+	  REAL*8     COO(3)
+	  REAL*8     PHI_GCN
+	  REAL*8     PHI_GDT
+	  REAL*8     LONG
+	  REAL*8     HEI_ELL
+      END TYPE  TRP_STA__TYPE
+!
+      TYPE  TRP_STA_REC__TYPE
+	  CHARACTER*1  ID
+	  CHARACTER*2  FILLER_01
+	  CHARACTER*8  NAME
+	  CHARACTER*2  FILLER_02
+	  CHARACTER*13 X_COO
+	  CHARACTER*1  FILLER_03
+	  CHARACTER*13 Y_COO
+	  CHARACTER*1  FILLER_04
+	  CHARACTER*13 Z_COO
+	  CHARACTER*2  FILLER_05
+	  CHARACTER*8  LAT_GCN
+	  CHARACTER*1  FILLER_06
+	  CHARACTER*8  LONG
+	  CHARACTER*1  FILLER_07
+	  CHARACTER*6  HEI_ELL
+      END TYPE  TRP_STA_REC__TYPE
+!
+      TYPE  TRP_SCA__TYPE
+	  INTEGER*4  L_STA
+	  INTEGER*4  MJD
+	  REAL*8     TAI
+	  INTEGER*4, POINTER :: IND_STA(:)
+	  TYPE ( TRP_OBS__TYPE ), POINTER :: DAT(:)
+!@	  CHARACTER  SCAN_NAME*10
+      END TYPE  TRP_SCA__TYPE
+!
+      TYPE  TRP_OBS__TYPE
+          REAL*8     PRES
+          REAL*8     TEMP
+	  REAL*8     EL
+	  REAL*8     AZ
+          REAL*8     DEL_TOT_SLANT
+          REAL*8     DER_ZEN
+          REAL*8     DER_TILT_NORTH
+          REAL*8     DER_TILT_EAST
+!
+	  REAL*8     DEL_HDR_SLANT
+	  REAL*8     DEL_NHD_SLANT
+	  REAL*8     DEL_TOT_ZEN
+	  REAL*8     DEL_HDR_ZEN
+	  REAL*8     DEL_NHD_ZEN
+	  LOGICAL*1  FL_SLANT
+	  LOGICAL*1  FL_TILT
+	  LOGICAL*1  FL_HDR
+	  LOGICAL*1  FL_NHD
+     END TYPE  TRP_OBS__TYPE
+!
+      TYPE  TRP_OBS_O_REC__TYPE
+	  CHARACTER*1  ID
+	  CHARACTER*2  FILLER_01
+	  CHARACTER*10 EXP_NAME
+	  CHARACTER*1  FILLER_02
+	  CHARACTER*10 SCAN_NAME
+	  CHARACTER*1  FILLER_03
+	  CHARACTER*21 DATE_TAI
+	  CHARACTER*2  FILLER_04
+	  CHARACTER*8  STA_NAM
+	  CHARACTER*2  FILLER_05
+	  CHARACTER*9  AZ_DEG     ! F9.5
+	  CHARACTER*1  FILLER_06
+	  CHARACTER*8  EL_DEG     ! F8.5
+	  CHARACTER*2  FILLER_07
+	  CHARACTER*6  ATM_PRES   ! F6.1
+	  CHARACTER*1  FILLER_08
+	  CHARACTER*5  TEMP_C     ! F5.1
+	  CHARACTER*2  FILLER_09
+	  CHARACTER*15 PATH_DEL   ! 1PD15.7
+	  CHARACTER*1  FILLER_10
+	  CHARACTER*15 DER_ZEN    ! 1PD15.7
+	  CHARACTER*1  FILLER_11
+	  CHARACTER*15 DER_GR_N   ! 1PD15.7
+	  CHARACTER*1  FILLER_12
+	  CHARACTER*15 DER_GR_E   ! 1PD15.7
+      END TYPE  TRP_OBS_O_REC__TYPE
+!
+      TYPE  TRP_OBS_D_REC__TYPE
+	  CHARACTER*1  ID
+	  CHARACTER*2  FILLER_01
+	  CHARACTER*10 EXP_NAME
+	  CHARACTER*1  FILLER_02
+	  CHARACTER*10 SCAN_NAME
+	  CHARACTER*1  FILLER_03
+	  CHARACTER*21 DATE_TAI
+	  CHARACTER*2  FILLER_04
+	  CHARACTER*8  STA_NAM
+	  CHARACTER*2  FILLER_05
+	  CHARACTER*9  AZ_DEG     ! F9.5
+	  CHARACTER*1  FILLER_06
+	  CHARACTER*8  EL_DEG     ! F8.5
+	  CHARACTER*2  FILLER_07
+	  CHARACTER*6  ATM_PRES   ! F6.1
+	  CHARACTER*1  FILLER_08
+	  CHARACTER*5  TEMP_C     ! F5.1
+	  CHARACTER*2  FILLER_09
+	  CHARACTER*15 DEL_TOT_SLANT ! 1PD15.7
+	  CHARACTER*1  FILLER_10
+	  CHARACTER*15 DEL_HDR_SLANT ! 1PD15.7
+	  CHARACTER*1  FILLER_11
+	  CHARACTER*15 DEL_NHD_SLANT ! 1PD15.7
+	  CHARACTER*1  FILLER_12
+	  CHARACTER*15 DEL_TOT_ZEN   ! 1PD15.7
+	  CHARACTER*1  FILLER_13
+	  CHARACTER*15 DEL_HDR_ZEN   ! 1PD15.7
+	  CHARACTER*1  FILLER_14
+	  CHARACTER*15 DEL_NHD_ZEN   ! 1PD15.7
+	  CHARACTER*1  FILLER_15
+      END TYPE  TRP_OBS_D_REC__TYPE
+!
+      TYPE  TRP__TYPE
+	  CHARACTER  DB_NAME*16
+	  CHARACTER  MK3_DBNM*16
+	  CHARACTER  MODEL*128
+	  CHARACTER  MODE_STR*64
+	  INTEGER*4  MODE_ZEN
+	  INTEGER*4  MODE_SLANT
+	  INTEGER*4  MODE_PART_ZEN
+	  INTEGER*4  MODE_PART_NORTH
+	  INTEGER*4  MODE_PART_EAST
+          INTEGER*4  N_STA
+          INTEGER*4  N_SCA
+	  CHARACTER, POINTER :: C_SCA(:)*16
+	  TYPE ( TRP_STA__TYPE ), POINTER :: STA(:)
+	  TYPE ( TRP_SCA__TYPE ), POINTER :: SCA(:)
+	  CHARACTER  FILE_NAME*128
+	  INTEGER*4  STATUS
+      END TYPE  TRP__TYPE
+!
+      INTEGER*4  UNDF__TRP, TMPL__TRP, DATA__TRP, ALLO__TRP, LOAD__TRP, &
+     &           REQ__TRP, USE__TRP, ASCII__TRP_V1, ASCII__TRP_V2, BINARY__TRP
+      PARAMETER  ( UNDF__TRP     =     0 )
+      PARAMETER  ( TMPL__TRP     = 18001 )
+      PARAMETER  ( DATA__TRP     = 18002 )
+      PARAMETER  ( ALLO__TRP     = 18003 )
+      PARAMETER  ( LOAD__TRP     = 18004 )
+      PARAMETER  ( REQ__TRP      = 18005 )
+      PARAMETER  ( USE__TRP      = 18006 )
+      PARAMETER  ( ASCII__TRP_V1 = 18007 )
+      PARAMETER  ( ASCII__TRP_V2 = 18008 )
+      PARAMETER  ( BINARY__TRP   = 18009 )
+! 
+      INTEGER*4  M__MAP_ARR
+      PARAMETER  ( M__MAP_ARR = 8 )
+      INTEGER*4  HYD__IND, NHY__IND    
+      CHARACTER  MMF__TYP(2)*3
+      DATA       MMF__TYP / 'HYD', 'NHY' /
+      PARAMETER  ( HYD__IND = 1 )
+      PARAMETER  ( NHY__IND = 2 )
+      TYPE  TRP_MMF_EPO__TYPE
+	  CHARACTER*8  STA_NAM
+	  INTEGER*4    TYP
+	  INTEGER*4    MJD
+	  REAL*8       TAI
+	  REAL*8       COO(3)
+	  REAL*8       PHI_GCN
+	  REAL*8       PHI_GDT
+	  REAL*8       LONG
+	  REAL*8       HEI_ELL
+	  REAL*8       EL_MIN
+	  REAL*8       EL_MAX
+!
+	  INTEGER*4    N_POL
+	  REAL*8       DEL_Z
+	  REAL*8       DER_N
+	  REAL*8       DER_E
+	  REAL*8       MAP_CHE(0:M__MAP_ARR)
+	  REAL*8       RMS_5DEG
+	  REAL*8       RMS_12DEG
+      END TYPE  TRP_MMF_EPO__TYPE
+!
+      TYPE  TRP_MMF_EPO_DATA__TYPE
+	  CHARACTER*1  ID
+	  CHARACTER*2  FILLER_1
+          CHARACTER*19 DATE
+	  CHARACTER*2  FILLER_2
+	  CHARACTER*8  STATION
+	  CHARACTER*2  FILLER_3
+	  CHARACTER*3  TYP
+	  CHARACTER*2  FILLER_4
+	  CHARACTER*2  N_POL
+	  CHARACTER*2  FILLER_5
+	  CHARACTER*11 DEL_Z
+	  CHARACTER*2  FILLER_6
+	  CHARACTER*11 DER_N
+	  CHARACTER*2  FILLER_7
+	  CHARACTER*11 DER_E
+	  CHARACTER*2  FILLER_8
+	  CHARACTER*11 RMS_12DEG
+	  CHARACTER*2  FILLER_9
+	  CHARACTER*11 RMS_5DEG
+	  CHARACTER*2  FILLER_10
+	  CHARACTER*13 MAP_CHE(0:M__MAP_ARR)
+      END   TYPE  TRP_MMF_EPO_DATA__TYPE
+!
+      INTEGER*4  MMF__N_PAR
+      INTEGER*4  MMF__AVR, &
+     &           MMF__SA_COS,  MMF__SA_SIN,  MMF__SSA_COS, MMF__SSA_SIN, &
+     &           MMF__STA_COS, MMF__STA_SIN, MMF__S1_COS,  MMF__S1_SIN
+      PARAMETER  ( MMF__N_PAR   = 9 ) 
+      PARAMETER  ( MMF__AVR     = 1 ) 
+      PARAMETER  ( MMF__SA_COS  = 2 ) 
+      PARAMETER  ( MMF__SA_SIN  = 3 ) 
+      PARAMETER  ( MMF__SSA_COS = 4 ) 
+      PARAMETER  ( MMF__SSA_SIN = 5 ) 
+      PARAMETER  ( MMF__STA_COS = 6 ) 
+      PARAMETER  ( MMF__STA_SIN = 7 ) 
+      PARAMETER  ( MMF__S1_COS  = 8 ) 
+      PARAMETER  ( MMF__S1_SIN  = 9 ) 
+!
+      INTEGER*4  MMF__N_VAR, MMF__N_POL
+      INTEGER*4  MMF__DER_NOR, MMF__DER_EAS, MMF__CHE0, &
+    &            MMF__CHE1, MMF__CHE2, MMF__CHE3, MMF__CHE4, MMF__CHE5
+      PARAMETER  ( MMF__N_VAR   = 8 )
+      PARAMETER  ( MMF__N_POL   = 5 )
+      PARAMETER  ( MMF__DER_NOR = 1 )
+      PARAMETER  ( MMF__DER_EAS = 2 )
+      PARAMETER  ( MMF__CHE0    = 3 )
+      PARAMETER  ( MMF__CHE1    = 4 )
+      PARAMETER  ( MMF__CHE2    = 5 )
+      PARAMETER  ( MMF__CHE3    = 6 )
+      PARAMETER  ( MMF__CHE4    = 7 )
+      PARAMETER  ( MMF__CHE5    = 8 )
+!
+      CHARACTER  MMF__VAR_NAM(MMF__N_VAR)*8
+      DATA       MMF__VAR_NAM &
+    &            / &
+    &              'DER_NORT', &
+    &              'DER_EAST', &
+    &              'CHEB_0  ', &
+    &              'CHEB_1  ', &
+    &              'CHEB_2  ', &
+    &              'CHEB_3  ', &
+    &              'CHEB_4  ', &
+    &              'CHEB_5  '  &
+    &            /
+      CHARACTER  MMF__PAR_NAM(MMF__N_PAR)*8
+      DATA       MMF__PAR_NAM &
+    &            / &
+    &              'AVERAGE ', &
+    &              'SA_SIN  ', &
+    &              'SA_COS  ', &
+    &              'SSA_SIN ', &
+    &              'SSA_COS ', &
+    &              'STA_SIN ', &
+    &              'STA_COS ', &
+    &              'S1_SIN  ', &
+    &              'S1_COS  '  &
+    &            /
+!
+      TYPE  TRP_MMF_MOD__TYPE
+	 CHARACTER  STA_NAM*8
+	 REAL*8     COO(3)
+	 REAL*8     PHI_GCN
+	 REAL*8     PHI_GDT
+	 REAL*8     LONG
+	 REAL*8     HEI_ELL
+	 REAL*8     EL_MIN
+	 REAL*8     EL_MAX
+	 REAL*8     COEF(MMF__N_PAR,MMF__N_VAR,2)
+      END TYPE  TRP_MMF_MOD__TYPE
+!
+      TYPE  MMF_MOD_DATA__TYPE
+	  CHARACTER*1  ID
+	  CHARACTER*2  FILLER_1
+	  CHARACTER*8  STA_NAM
+	  CHARACTER*2  FILLER_2
+	  CHARACTER*3  PAR_TYP
+	  CHARACTER*2  FILLER_3
+	  CHARACTER*8  VAR_NAM
+	  CHARACTER*2  FILLER_4
+	  CHARACTER*13 VAL_PAR(MMF__N_PAR)
+      END TYPE  MMF_MOD_DATA__TYPE
+!
+      INTEGER*4  MTRP__MST
+      INTEGER*4  MTRP__EL
+      PARAMETER  ( MTRP__EL  = 16 )
+      PARAMETER  ( MTRP__MST = 3 )
+      TYPE  MMF_STA_DATA__TYPE
+	  CHARACTER  STA_NAM*8
+	  REAL*8     COO(3)
+	  REAL*8     PHI_GCN
+	  REAL*8     PHI_GDT
+	  REAL*8     LONG
+	  REAL*8     HEI_ELL
+	  REAL*8     EL(MTRP__EL)
+	  INTEGER*4  N_EL
+	  REAL*8     RMS(MTRP__MST,MTRP__EL)
+      END TYPE  MMF_STA_DATA__TYPE
+      REAL*8     SA_FRQ__TRP, SSA_FRQ__TRP, STA_FRQ__TRP, S1_FRQ__TRP
+      PARAMETER  ( SA_FRQ__TRP  = 1.990968752920D-07 )
+      PARAMETER  ( SSA_FRQ__TRP = 3.982127698995D-07 )
+      PARAMETER  ( STA_FRQ__TRP = 5.973096451915D-07 )
+      PARAMETER  ( S1_FRQ__TRP  = 7.272206167609D-05 )
+!
+      CHARACTER  MMF_EPO_FORMAT__LABEL*32
+      CHARACTER  MMF_MOD_FORMAT__LABEL*32
+      CHARACTER  MMF_STAT_FORMAT__LABEL*32
+      PARAMETER  ( MMF_EPO_FORMAT__LABEL  = '# MMF_EPO   Format of 2008.09.18' )
+      PARAMETER  ( MMF_MOD_FORMAT__LABEL  = '# MMF_MOD   Format of 2008.09.21' )
+      PARAMETER  ( MMF_STAT_FORMAT__LABEL = '# MMF_STAT  Format of 2008.09.25' )
+!
+! >>>>> End if include block for external computation of tropospheric path delay
+!

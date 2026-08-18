@@ -1,0 +1,13 @@
+      SUBROUTINE REDSIG(SIG,ROWS)
+      IMPLICIT NONE
+      INTEGER*4 ROWS
+      REAL*8 SIG(ROWS)
+!
+      INTEGER*4 I
+!
+      DO I=1,ROWS
+        SIG(I)=DSQRT(SIG(I))
+      ENDDO
+!
+      RETURN
+      END

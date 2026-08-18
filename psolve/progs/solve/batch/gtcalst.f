@@ -1,0 +1,79 @@
+      SUBROUTINE GTCALST(CNTCAL,STRING)
+      IMPLICIT   NONE ! Updated by Jim Ryan for I*4 compliance, Sept 2002
+!
+! 1.  GTCALST PROGRAM SPECIFICATION
+!
+! 1.1 Add a string to current frame
+!
+! 1.2 REFERENCES:
+!
+! 2.  GTCALST INTERFACE
+!
+! 2.1 Parameter File
+!
+! 2.2 INPUT Variables:
+!
+      CHARACTER*(*) STRING
+      INTEGER*2 CNTCAL
+!
+! CNTCAL - Calibration array position of current frame
+! STRING - String to be parsed
+!
+! 2.3 OUTPUT Variables: None
+!
+! 2.4 COMMON BLOCKS USED
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES: gcalib
+!       CALLED SUBROUTINES: cfread,addstr
+!
+! 3.  LOCAL VARIABLES
+!
+      LOGICAL*2 CFEOF,KFIRST,KEXCEPT
+      INTEGER*2 LENGTH,CFREAD,IDUM,J,IPOS,IERR
+      CHARACTER*80 TOKEN
+      CHARACTER*1 BSLASH
+      BSLASH = CHAR(92)
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!   JLR  921215  replaced '\' with BSLASH
+!
+! 5.  GTCALST PROGRAM STRUCTURE
+!
+      CALL SPLITSTRING(STRING,TOKEN,STRING )
+      IF(TOKEN.EQ.' ') THEN
+        CALL ADDSTR(CNTCAL,'ALL     ' )
+        RETURN
+      ENDIF
+!
+      KFIRST=.TRUE.
+      KEXCEPT=.FALSE.
+      DO WHILE(TOKEN.NE.' ')
+        IF(TOKEN.EQ.BSLASH) THEN
+          LENGTH=CFREAD(STRING)
+          IF(STRING(1:1).EQ.'$'.OR.CFEOF(IDUM)) THEN
+            CALL FERR( INT2(9020), 'ILLEGAL CONTINUATION LINE '//STRING(1:10), &
+     &           INT2(0), INT2(0) )
+          ENDIF
+        ELSE IF((TOKEN.EQ.'ALL'.OR.TOKEN.EQ.'NONE').AND..NOT.KFIRST)THEN
+          CALL FERR( INT2(9025), 'NO ALL OR NONE ALLOWED IN EXCEPT ', INT2(0), &
+     &         INT2(0) )
+        ELSE IF(TOKEN.EQ.'EXCEPT'.AND.KEXCEPT) THEN
+          CALL FERR( INT2(9030), 'EXCEPT ENCOUNTERED TWICE', INT2(0), INT2(0) )
+        ELSE IF(TOKEN.NE.'ALL'.AND.TOKEN.NE.'NONE'.AND.KFIRST) THEN
+          CALL FERR( INT2(9035), 'ALL OR NONE MUST BE FIRST ', INT2(0), &
+     &         INT2(0) )
+        ELSE IF(TOKEN.EQ.'EXCEPT') THEN
+          KEXCEPT=.TRUE.
+        ELSE
+!@U          CALL UNDSCR(TOKEN )
+          CALL ADDSTR(CNTCAL,TOKEN )
+          KFIRST=.FALSE.
+        ENDIF
+        CALL SPLITSTRING(STRING,TOKEN,STRING )
+      ENDDO
+!
+      RETURN
+      END

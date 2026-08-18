@@ -1,0 +1,278 @@
+   Specifications of HEO format version of 2007.08.23
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   HEO format is for describing small harmonic variations in the Earth 
+orientation. "Small" means that the squares of the rotation angles
+can be neglected.
+ 
+   A file in HEO format consists of records of variable length in
+ASCII coding. The records are separated by a character with decimal
+code 13. The records of the following types are supported:
+ 
+1) Header record;
+2) N-record: Model name record;
+3) E-record: Time epoch record;
+4) H-record: Harmonic definition records;
+5) A-record: Amplitude definition records;
+6) V-record: Velocities definition records;
+7) S-record: Amplitude errors definition records;
+8) R-record: Velocities errors definition records;
+9) Trailer record.
+ 
+   Records which start from # character are considered as comments.
+ 
+   The first record of a valid file in HEO format is the header record.
+It is followed by the model name record, time epoch record and then by one 
+or more harmonic definition records and one or more harmonic definition 
+records. The last record is a trailer record. All harmonic definition records
+should precede amplitude and velocity definition records. Names of a harmonic
+in the amplitude or velocity records should be defined in the harmonic 
+definition record. The number of velocity records can be less than the number
+of amplitude records, and the number of amplitude records can be less than 
+the number of harmonic records. If a harmonic is not defined in an amplitude 
+records, its amplitude is considered to be zero. If a harmonic is not defined
+in a velocity records, the rate of change of the amplitude of that harmonic 
+is considered to be zero. 
+ 
+   Records format:
+ 
+1) A header record contains the string
+   "HEO  Format version of 2007.08.23 "
+ 
+   The header record allows to distinguish the valid file in the
+   HEO format from files in other formats and tells to a parsing software
+   that is the version of the format.
+ 
+
+2) A name record defines the name of the model of the harmonic Earth 
+   orientation variations.
+
+Format of an N-record:
+----------------------
+ 
+Field  1:1   A1     -- Records ID: letter N (decimal code 78).
+field  2:3   a2     -- delimiters: blanks.
+Field  4:80  A77    -- 77-letter long model name. May contain any
+                       characters in the decimal range [32, 255].
+
+3) An epoch record defines the epoch of the expansion.
+   An expansion may have mixed terms (t-t0)*sin(at+p), (t-t0)*cos(at+p),
+   where t is time. The E-record defines the epoch t0 in mixed terms.
+   If an expansion does not have mixed terms, then the epoch defined in
+   this record is not used. Time scale TDT is used for defining the
+   reference epoch.
+
+Format of a E-record:
+---------------------
+
+Field  1:1   A1     -- Records ID: letter E (decimal code 69).
+field  2:2   a2     -- delimiters: blanks.
+Field  4:7   I4     -- Year
+field  8:8   a1     -- delimiter: letter . (decimal code 46).
+Field  9:10  I2     -- The index of the month in the year in the range [1,12]
+field 11:11  a1     -- delimiter: letter . (decimal code 46).
+Field 12:13  I2     -- The index of the day in the month in the range [1,31]
+field 14:14  a1     -- delimiter: letter - (decimal code 45).
+Field 15:16  I2     -- Hour in the range [0,23]
+field 17:17  a1     -- delimiter: letter : (decimal code 58).
+Field 18:19  I2     -- Minute in the range [0,23]
+field 20:20  a1     -- delimiter: letter : (decimal code 58).
+Field 21:24  F4.1   -- Seconds in the range [0.0, 59.9]
+
+ 
+4) A harmonic definition record defines the argument of the harmonic in
+   the form {phase + freq*(t-tr) + 1/2*accel*(t-tr)**2}  where t is
+   time in TDT time scale and tr is the reference epoch J2000.0,
+   01 January 2000, 12 hours TDT. The file cannot contain more than one
+   definition of the same harmonic. 
+   
+ 
+Format of an H-record:
+----------------------
+ 
+Field  1:1   A1     -- Records ID: letter H (decimal code 72).
+field  2:3   a2     -- delimiters: blanks.
+Field  4:11  A8     -- 8-letter long harmonic name. May contain any
+                       characters with decimal codes 32-255, but blanks
+                       are allowed only at the end of the harmonic name.
+                       This field should not necessarily have a special
+                       meaning. Parsing software should not try to
+                       interpret this name.
+field 12:13  a2     -- delimiters: blanks.
+Field 14:25  F11.9  -- Phase of the harmonic in float format.
+                       Units: rad.
+field 26:27  a2     -- delimiters: blanks.
+Field 28:46  D19.12 -- Frequency of the harmonic in float format.
+                       Units: rad/sec.
+field 47:48  a2     -- delimiters: blanks.
+Field 49:59  D11.4  -- Acceleration of the harmonic in float format.
+                       Units: rad/sec**2.
+field 60:60  a1     -- delimiters: blanks.
+field 61:80  A20    -- Comment. Parser ignores contents of this field.
+ 
+ 
+5) An amplitude record specifies the harmonic and 4 amplitudes of
+   the variation of the Earth orientation: the in_phase polar motion
+   (PM_amp_cos), the out_of_phase polar motion (PM_amp_sin), the in_phase
+   rotation around E3 axis (E3_amp_cos), adn the out_of_phase rotation 
+   around E3 axis (E3_amp_sin). A file cannot contain more than one amplitude
+   record for the same harmonic. The harmonic referred in an amplitude record 
+   must be defined in the preceding harmonic definition record.
+ 
+   These amplitudes allows to define instantaneous small Euler angles of 
+   the perturbations in the Earth rotation with respect to an apriori model
+   in this way:
+ 
+   E1 = [ PM_amp_cos + PM_vel_cos*(t-t0) ] * 
+        cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+      + [ PM_amp_sin + PM_vel_sin*(t-t0) ] * 
+        sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+ 
+   E2 = [ PM_amp_cos + PM_vel_cos*(t-t0) ] * 
+        sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+      - [ PM_amp_sin + PM_vel_sin*(t-t0) ] * 
+        cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+ 
+   E3 = [ E3_amp_cos + E3_vel_cos*(t-t0) ] * 
+        cos { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+      + [ E3_amp_sin + E3_vel_sin*(t-t0) ] * 
+        sin { (ut1-tdt)*2*pi/86400 + phase + freq*(t-tr) + 1/2*accel*(t-tr)**2 }
+ 
+   Where 
+
+   E1 -- rotation around axis 1 (+Y angle of the polar motion)
+   E2 -- rotation around axis 2 (+X angle of the polar motion)
+   E3 -- rotation around axis 3 (-1.0027*Ut1 angle of the Earth's rotation)
+
+   t-tr  -- The interval of time in scale TAU elapsed since 
+            01 January 2000, 12 hours TAI, in seconds
+   t-t0  -- The interval of time in scale TAI elapsed since the reference 
+            epoch for the expansion defined in the E-record, in seconds.
+
+ 
+Format of a A-record
+---------------------
+ 
+Field  1:1   A1     -- Record ID: letter A (decimal code 65).
+field  2:3   a2     -- Delimiters: blanks.
+Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                       must be defined in a preceding H-record.
+field 12:13  a2     -- Delimiters: blanks.
+Field 14:25  F12.0  -- PM_amp_cos -- cosine amplitude of the small angle
+                       of polar motion. Units: prad.
+field 26:26  a1     -- delimiter: blank.
+Field 27:38  F12.0  -- PM_amp_sin -- sine amplitude of the small angle
+                       of polar motion. Units: prad.
+field 39:39  a2     -- Delimiters: blanks.
+Field 41:52  F12.0  -- E3_amp_cos -- cosine amplitude of the small angle
+                       of the Earth rotation around axis 3. Units: prad.
+field 53:53  a1     -- Delimiter: blank.
+Field 54:65  F12.0  -- E3_amp_sin -- sine amplitude of the small angle
+                       of the Earth rotation around axis 3. Units: prad.
+ 
+ 
+6) A velocity record specifies rates of changes of the amplitudes of
+   the harmonic of the variation of the Earth orientation: in phase polar 
+   motion (PM_vel_cos), out_of_phase polar motion (PM_vel_sin), in_phase
+   rotation around E3 axis (E3_vel_cos), out_of_phase rotation around
+   E3 axis (E3_vel_sin). A file cannot contain more than one velocity 
+   record for the same harmonic. The harmonic referred in an velocity record 
+   must be defined in the preceding harmonic definition record.
+ 
+ 
+Format of a V-record
+---------------------
+ 
+Field  1:1   A1     -- Record ID: letter A (decimal code 65).
+field  2:3   a2     -- Delimiters: blanks.
+Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                       must be defined in a preceding H-record.
+field 12:13  a2     -- Delimiters: blanks.
+Field 14:25  F12.0  -- PM_vel_cos -- rate of change of the cosine amplitude 
+                       of the small angle of polar motion. 
+                       Units: 10^{-21} rad/sec.
+field 26:26  a1     -- delimiter: blank.
+Field 27:38  F12.0  -- PM_amp_sin -- rate of change of the sine amplitude 
+                       of the small angle of polar motion. 
+                       Units: 10^{-21} rad/sec.
+field 39:40  a2     -- Delimiters: blanks.
+Field 41:52  F12.0  -- E3_amp_cos -- rate of change of the cosine amplitude 
+                       of the small angle of the Earth rotation around axis 3. 
+                       Units: 10^{-21} rad/sec.
+field 53:53  a1     -- Delimiter: blank.
+Field 54:65  F12.0  -- E3_amp_sin -- rate of change of the sine amplitude 
+                       of the small angle of the Earth rotation around 
+                       axis 3. Units: 10^{-21} rad/sec.
+
+7) An amplitude error record specifies the harmonic and 4 formal uncertainties 
+   of amplitudes of the variation of the Earth orientation: the error of the
+   in_phase polar motion (PM_amp_cos_err), the error of the out_of_phase 
+   polar motion (PM_amp_sin_err), the error of the in_phase rotation around 
+   E3 axis (E3_amp_cos_err), and the error of the out_of_phase rotation around
+   E3 axis (E3_amp_sin). A file cannot contain more than one amplitude error
+   record for the same harmonic. If information about errors of the amplitude
+   of the harmonic is unavilalbe, the record can be omitted. The harmonic 
+   referred in an amplitude error record must be defined in the preceding 
+   harmonic definition record.
+ 
+ 
+Format of a S-record
+---------------------
+ 
+Field  1:1   A1     -- Record ID: letter A (decimal code 83).
+field  2:3   a2     -- Delimiters: blanks.
+Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                       must be defined in a preceding H-record.
+field 12:13  a2     -- Delimiters: blanks.
+Field 15:26  F12.1  -- PM_amp_cos_err -- cosine amplitude of the small 
+                       angle of polar motion. Units: prad.
+field 27:27  a1     -- delimiter: blank.
+Field 28:39  F12.1  -- PM_amp_sin_err -- sine amplitude of the small 
+                       polar motion. Units: prad.
+field 40:41  a2     -- Delimiters: blanks.
+Field 42:53  F12.1  -- E3_amp_cos_err -- cosine amplitude of the small 
+                       angleof the Earth rotation around axis 3. Units: prad.
+field 54:54  a1     -- Delimiter: blank.
+Field 55:66  F12.1  -- E3_amp_sin_err -- sine amplitude of the small angle
+                       of the Earth rotation around axis 3. Units: prad.
+ 
+ 
+8) A velocity error record specifies errors of rates of changes of the 
+   amplitudes of the harmonic of the variation of the Earth orientation: 
+   the in_phase polar motion (PM_vel_cos_err), the out_of_phase polar motion 
+   (PM_vel_sin_err), the in_phase rotation around E3 axis (E3_vel_cos_err), 
+   and the out_of_phase rotation around E3 axis (E3_vel_sin_err). 
+   A file cannot contain more than one velocity record for the same harmonic. 
+   If information about errors of the rate of change of amplitude of the 
+   harmonic is unavilalbe, the record can be omitted. The harmonic referred 
+   in an velocity record must be defined in the preceding harmonic 
+   definition record.
+ 
+ 
+Format of a R-record
+---------------------
+ 
+Field  1:1   A1     -- Record ID: letter R (decimal code 82).
+field  2:3   a2     -- Delimiters: blanks.
+Field  4:11  A8     -- 8-letter long harmonic name. The harmonic name
+                       must be defined in a preceding H-record.
+field 12:13  a2     -- Delimiters: blanks.
+Field 14:25  F12.0  -- PM_vel_cos_err -- error of the rate of change of 
+                       the cosine amplitude of the small angle of polar 
+                       motion. Units: 10^{-21} rad/sec.
+field 26:26  a1     -- delimiter: blank.
+Field 27:38  F12.0  -- PM_amp_sin_err -- error of the rate of change of 
+                       the sine amplitude of the small angle of polar motion. 
+                       Units: 10^{-21} rad/sec.
+field 39:40  a2     -- Delimiters: blanks.
+Field 41:52  F12.0  -- E3_amp_cos_err -- error of rate of change of 
+                       the cosine amplitude of the small angle of the Earth 
+                       rotation around axis 3. 
+                       Units: 10^{-21} rad/sec.
+field 53:53  a1     -- Delimiter: blank.
+Field 54:65  F12.0  -- E3_amp_sin_err -- error of rate of change of the sine 
+                       amplitude of the small angle of the Earth rotation 
+                       around axis 3. Units: 10^{-21} rad/sec.
+ 
+ 
+9) Trailer record is the same as the header record.

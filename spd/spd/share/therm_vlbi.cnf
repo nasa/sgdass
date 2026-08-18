@@ -1,0 +1,17 @@
+SPD_3D_CONF   Format version of 2013.11.20
+#
+#  Last updated 2009.08.26
+#
+REFR_EXPR:   Radio_Aparicio_2011
+SPD_ALG:     thermdef
+FIL_STA:     /progs/spd_20140625/spd/share/vlbi.inp
+FIL_GEOID:   EGM2008_geoid_height_bspl_d1023.heb
+FIL_OH:      gtopo30_dig_elev_above_geoid_d1023.heb
+FIL_LEAPSEC: /apr/eop/leapsec.dat
+FIL_DESC:    /progs/spd_20140625/spd/share/therm_vlbi_desc.txt
+FIL_COMM:    /progs/spd_20140625/spd/share/therm_vlbi_comm.txt
+FIL_FMT:     /progs/malo_20140625/share/ephedisp_format.txt
+TIM_INTRV:   21600.0D0
+LAG:         5400.0
+N_EL:        16
+N_AZ:        12

@@ -1,0 +1,43 @@
+FLYBY_OPTIONS:
+APRIORI STATIONS: ,glo.sit   ,          ,          ,
+APRIORI SOURCES : ,glo.src   ,          ,          ,
+NUTATION MODEL  : ,          ,          ,          ,
+NUTATION OFFSET : ,          ,          ,          ,
+EARTH ROTATION  : ,last.erp  ,          ,          ,
+TECTONIC PLATE  : ,NUVEL_VEL ,          ,          ,
+APRIORI VELOCITY: ,glo.vel   ,          ,          ,
+HIGH_FREQ_EOP   : ,jmg96.hf  ,          ,          ,
+PRESSURE LOADING: ,          ,          ,          ,
+AXIS OFFSET     : ,glo.axis  ,          ,          ,
+SITPL           : ,sitpl.dat ,          ,          ,
+MASTER REF_DATE : ,000101    ,970101    ,          ,
+*
+* The following mod files will be turned on by default when
+* a database or superfile is read in
+*
+* NOTE 1 : The above will appear as options in the interactive
+*          flyby options menu
+*
+* NOTE 2 : File fledit.f of flopt must be modified accordingly if any of
+*          the above lines has to contain more than 3 parameters.
+*
+* NOTE 3 : You should check whether the files specified in FLYBY_DEFAULTS
+*          are present in $SAVE_DIR directory and has correct format BEFORE
+*          launching solve_reset and Solve!
+*
+FLYBY_DEFAULTS:
+SITE_FLYBY  ='glo.sit       '
+SOURCE_FLYBY='glo.src       '
+NUTSRS_FLYBY='NONE          '
+NUTDLY_FLYBY='NONE          '
+EOPDLY_FLYBY='NONE          '
+PLATE_MODEL ='NONE          '
+STAVEL_FLYBY='glo.vel       '
+HFEOP_FLYBY ='jmg96.hf      '
+PLOD_FLYBY  ='NONE          '
+AXOF_FLYBY  ='glo.axis      '
+SITFL       ='sitpl.dat     '
+*
+* NOTE:
+* File names must be with in the single quotes starting from column 15 
+* and ending before or at column 28.

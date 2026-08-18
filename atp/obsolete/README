@@ -1,0 +1,65 @@
+The library atp_YYYYMMDD (ATP) is a toolkit for processing the telemetry
+data from a software package known as VLBI Field System
+(https://github.com/nvi-inc/fs). VLBI Field System runs ground
+radiotelescopes and records telemetry in log files. ATP processes the
+following parameters: system temperature (Tsys); phase calibration
+amplitude and phase (PCal); system equivalent flux density (SEFD); and
+the time offset between formatter and GPS time. ATP expects the telemetry
+in, so called, anc format. Therefore, original log files have to be
+converted to anc format using the utility log2ant which is a part of
+software package nuSolve (https://sourceforge.net/projects/nusolve/).
+Finally ATP generates a reduced data file in anc format with processed
+telemetry data, in the form of scan averages and their respective
+standard deviations. The user also has the option to visualise any of the
+telemetry parameters.
+
+It is noted that this toolkit considered two kinds of observation
+sessions for the antenna: i) VLBI; and Single Dish Experiments (SDE), so
+one has to know the kind of log file they are processing before hand.
+VLBI experiments typically involve atleast two telescopes simultaneously
+observing the same source, examples of their log files can be downloaded
+from https://cddis.nasa.gov/archive/vlbi/ivsdata/aux. SDE's on the other
+hand only involve one dish, and can be run either with the antenna
+in, so called, stow mode, during which it does not move or can be run
+with the antenna slewing between scans.
+
+For the usage of this toolkit, there are some common terms that need to
+be defined for the user to understand how they are used in the context
+of ATP.
+1. Scan: Any group of conservative points with a time step less than
+   a given time difference, e.g., given 10 points with the following
+   time steps in seconds [ 0, 1, 2, 3, 4, 9, 10, 12, 16, 17 ], and a
+   scan time difference defined as 4s, then we will have three scans,
+   made up of the following timesteps [0,1,2,3,4]; [9,10,12]; and
+   [16,17].
+2. Outlier: Any point with a variance that is over 3 times greater than
+   the nominal variance, i.e., variance before filtering
+
+To process Tsys data, first the toolkit filters any outliers within
+each scan. After filtering, a new average and standard deviation is
+defined for the scan. For each raw Tsys value, there is a corresponding
+frequency, timestamp, elevation, and frequency. Hence, the scan Tsys
+values are functions of the same variables. For visualisation, one can
+view the Tsys as a function of either variable, or a combination thereof.
+
+To process the PCal data, we remove the group delays, resolve
+ambiguities, filter outliers, and then compute the scan averages and
+their corresponding standard deviations. For each raw PCal value, there
+is a given frequency and timestamp. Analogous to the Tsys visualisation,
+either of the components of PCal (i.e., phase calibration amplitude and
+phase) can be plotted as functions of their spectrum, or observation
+period.
+
+The VLBI Field System software package also records the time differences
+between the antenna's time, known as the formatter clock, and GPS time.
+These are comparable to the maser clock and GPS clock difference, and
+thus we use it as a stand in for that clock difference. These differences
+are recorded across four (4) boards, and if all is working well then all
+four boards should be recording the same differences. If not, then ATP is
+meant to alert the user.
+
+For stations using ROACH Digital Backends (RDBE),
+(https://science.nrao.edu/facilities/vlba/docs/manuals/oss/sig-proc/rdbe),
+the VLBI Field System also records the System Equivalent Flux Densities
+(SEFD) in the log file. ATP can also be used to display these SEFD's as
+functions of frequency.

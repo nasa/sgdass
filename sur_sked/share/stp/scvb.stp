@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    SCVB      char       HB
+LAST_UPDATE:   SCVB      char       2025.03.23
+COORD:         SCVB      meters      2607898.521    -5488019.690     1932789.537
+MOUNT:         SCVB      char       ALTAZ
+#
+SLEW_AZ:       SCVB      deg/sec    9.9
+SLEW_EL:       SCVB      deg/sec    9.9
+ACCL_AZ:       SCVB      deg/sec^2  9.9
+ACCL_EL:       SCVB      deg/sec^2  9.9
+TSETTLE_AZ:    SCVB      sec        0.0
+TSETTLE_EL:    SCVB      sec        0.0
+#
+EL_MIN:        SCVB      deg        2.0
+EL_MAX:        SCVB      deg       90.0
+AZ_RANGE:      SCVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      SCVB      char      hrtr
+BACKEND:       SCVB      char      hrtr
+SETMODE:       SCVB      sec        0.0
+PREOB:         SCVB      sec        0.0
+POSTOB:        SCVB      sec        0.0
+#
+HOR_AZIM:      SCVB      deg        0.0  360.0
+HOR_ELEV:      SCVB      deg        2.0   2.0
+STOW_AZIM:     SCVB      deg        0.0
+STOW_ELEV:     SCVB      deg       90.0
+#
+CLOCK_DATES:   SCVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  SCVB      sec        0.0

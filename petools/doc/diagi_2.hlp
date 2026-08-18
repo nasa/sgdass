@@ -1,0 +1,214 @@
+                        Description of DiaGI commands.
+                        같같같같같같같같같같같같같같같
+
+  1) Change plotting boundaries using mouse. The command is bound with mouse 
+     middle button. Synonym: "D"
+
+     To change plotting boundary user should position cursor near the plotting
+     boundary which he is going to change and then click middle mouse button.
+     Moving vertical or horizontal line will appear. If user is going to shrink 
+     plotting area it is sufficient to position the moving line to the 
+     desirable place and then click middle or left mouse button. If user is 
+     going to enlarge plotting boundary or to specify the value of the boundary 
+     directly he should position the moving boundary out of the plotting area 
+     and then to click middle or left mouse button. Old value of the boundary 
+     will be displayed and the prompt will appear: "Enter new boundary". Value 
+     of new boundary should be entered using keyboard. Clicking right mouse 
+     button cancels the operation of setting new plotting boundary.
+
+     RESTRICTION: Plotting boundary cannot be set up closer than 10^-4 part of 
+     the maximal value of the boundaries. For example, if the left vertical 
+     boundary has value 87 then the right vertical boundary should be no less 
+     than 87.0087 (87 + 10**-4*87). 
+
+  2) Get information about the point of the current colour to be nearest 
+     to the cursor. The command is bound with mouse left button. Synonym: "A"
+ 
+     After hitting left mouse button DiaGI will find the point to be nearest 
+     to the cursor position among displayed point of the current main colour.
+     Message like "CLR=r, POINT: k(m)[n], X=a Y=b E=c" will appear at the 
+     bottom of the graphic window, where r -- current main colour, k -- index 
+     of the point to be targeted, m -- total number of points of the current
+     colour, n -- the number of displayed points of the current colour;
+     a and b -- coordinates of the point, c -- its error.
+
+  3) Change plotting boundaries automatically to include all points of all 
+     functions leaving small fields. The command is bound with key "M".
+
+  4) Change title. The command is bound with key "T".
+
+     DiaGI will request to enter using keyboard at graphic window new title 
+     of the plot. Key CNTRL/C aborts the insertion of new text and leaves
+     old title unchanged.
+
+  5) Change a label "argument units". The command is bound with key "U".
+
+     DiaGI will request to enter using keyboard at graphic window new units
+     of the argument. Key CNTRL/C aborts the insertion of new text and leaves
+     old arguments units unchanged.
+  
+  6) Change main function (or current color) when more than one function is 
+     displayed. The command is bound with key "C". Command will be ignored if
+     only one function was plotted by DiaGI.
+
+     Set of pictograms, displaying colours used for representation of the
+     plotted functions is displayed. To choose new main colour user should
+     either position cursor in the rectangular with desirable colour and then
+     click left or middle mouse button or hit the key with number (but in the
+     range [1,9] only) of the desired colour. Hitting right mouse button aborts
+     the operation and leaves main colour unchanged.
+
+     Choice of the main colour doesn't affect the plot itself but points to
+     the commands "change point style", "change line style", "change line 
+     width", "change error bar style" representation of which function they 
+     should change.
+
+  7) Change point style for the current colour. The command is bound with 
+     key "P".
+
+     Set of pictograms, displaying possible point styles will be shown.
+     Rectangular with the current point style will be filled by deeply grey
+     colour. To choose new point style user should either position cursor in 
+     the rectangular with desirable point style and then click left or middle 
+     mouse button or hit the key with number of the desired point style.
+     Hitting right mouse button aborts the operation and leaves the current
+     point style unchanged. The following point styles are available:
+         1 -- small dots (1 pixel);
+         2 -- small outlined circles;
+         3 -- large outlined circles;
+         4 -- small filled circles;
+         5 -- large filled circles.
+
+  8) Change line style for the current colour. The command is bound with 
+     key "L".
+
+     Set of pictograms, displaying possible line styles will be shown.
+     Rectangular with the current line style will be filled by deeply grey
+     colour. To choose new line style user should either position cursor in 
+     the rectangular with desirable line style and then click left or middle 
+     mouse button or hit the key with number of the desired line style.
+     Hitting right mouse button aborts the operation and leaves the current
+     line style unchanged. The following line styles are available:
+         1 -- point-by-point;
+         2 -- linear interpolation. Points are connected by pieces of straight 
+              line.
+         3 -- cubic spline interpolation.
+
+  9) Change line width for the current colour. The command is bound with 
+     key "W".
+
+     Set of pictograms, displaying possible line width styles will be shown.
+     Rectangular with the current line width style will be filled by deeply 
+     grey colour. To choose new line width style user should either position 
+     cursor in the rectangular with desirable line width style and then click 
+     left or middle mouse button or hit the key with number of the desired 
+     line width style. Hitting right mouse button aborts the operation and 
+     leaves the current line width style unchanged. The following line width 
+     styles are available:
+         1 -- thin line (1 pixel).
+         2 -- medium line.
+         3 -- thick line.
+
+ 10) Change error bar representation style for the current colour. The command
+     is bound with key "B". The command is ignored if the errors for the
+     current main function (main colour) have not been specified.
+
+     Set of pictograms, displaying possible error bars styles will be shown.
+     Rectangular with the current error bar style will be filled by deeply 
+     grey colour. To choose new error bar style user should either position 
+     cursor in the rectangular with desirable error bar style and then click 
+     left or middle mouse button or hit the key with number of the desired 
+     error bar style. Hitting right mouse button aborts the operation and 
+     leaves the current error bar style unchanged. The following error bar 
+     styles are available:
+
+         0 -- no error bars;
+         1 -- sticks with terminators;
+         2 -- sticks without terminators;
+         3 -- outlined region - and + errors;
+         4 -- region - and + errors filled by shadow colour.
+
+ 11) Change overplot mode. The ocmmand is bound with key "O". In overplot 
+     mode 1, DiaGI will put the points beyond the plotting area to the place
+     several pixels beyond the frame. In overplot mode 0, DiaGI will not 
+     show such points at all.
+
+ 12) Make graphic output in GIF or PostScript format, to write it on disk and
+     to send it at the printer if necessary. The command is bound with 
+     <CNTRL/P> key.
+
+     Hard copy of the plot may be obtained in two formats: landscape and 
+     portrait. It is assumed that sheet of paper has format 210x297mm. In 
+     landscape format the axis box has size 140x221mm and the following fields 
+     will be left: 30mm left, 30mm top, 25mm right, and 25 mm down. In portrait 
+     format the axis box has size 141x90mm and the following fields will be 
+     left: 30mm left, 165mm top, 30mm right, and 25 mm down. Plot may be
+     done in different printing modes and different sizes.
+
+     Plot can be 
+     1) written in file <filename>.ps in PostScript format
+     2) written in file <filename>.ps in PostScript format and then sent to
+        printer. But it will happen only if the environment variable 
+        DIAGI_PRICOM specifies the command for printing PostScript files.
+     3) written in file <filename>.gif in GIF format. Picture in gif-formate
+        may be modified and transformed to another graphic formats by powerful 
+        package XV ( http://www.sun.com/software/catlink/xv/xv.html )
+
+     <filename> is defined by the following way:
+     1) if the field NAME in DIAGI_S is empty or user used a simplified 
+        interface to DiaGI then <filename> = "/tmp/diagi"
+     2) if the field NAME in DIAGI_S is not empty then <filename> = DIAGI_S.NAME
+
+     A set of pictograms, displaying possible hard copy modes will be shown.
+     To choose desirable hard copy mode user should either position 
+     cursor in the rectangular with mode and then click left or middle mouse 
+     button or hit the key with number of the desired mode. Hitting right 
+     mouse button aborts the operation.
+
+ 13) View plotting values. Hitting V displays in MATView mode the tables of
+     arguments, values and errors (if specified) of the current colour at the 
+     text window from which DiaGI was activated. The first column of the output 
+     is the arguments list, the second is the list of corresponding values and 
+     the third is the lists of errors  of the function to be plotted 
+     (if specified). The second table is written in file /tmp/diagi.tab .
+     That ASCII table contains 3 columns: argument, value, error for the 
+     function specified by the current color. 0 fill be in the third columns
+     if no error were used. Graphic window is activated after termination of
+     MATView and user can continue view the plot.
+
+ 14) Return to initial plotting parameters. The command is bound with key "I".
+     Plotting parameters which you had when you saw the plot at the beginning
+     of DiaGI work will be set. It is useful when you "lost" the points
+
+ 15) Redraw the plot. The command is bound with "R".
+
+ 16) Get help information. The command is bound with key "?". Synonym: "H".
+
+     Brief help information will be drawn at the graphic window. Having entered
+     1 or 2 user can get more verbose information. To scroll the test down
+     user should either position cursor at the box "Down" and then click either
+     mouse button or click middle mouse button when cursor points at the text.
+     To scroll the test down user should either position cursor at the box 
+     "Up" and then click either mouse button or click left mouse button when 
+     cursor points at the text. To come back to the plot user should click
+     right mouse button or enter any key at the keyboard when cursor points at 
+     the text.
+
+ 17) Save the plot in the intermediary file. This command is bound with 
+     key "S". 
+
+     DiaGI plots is written to the file /tmp/diagi.sav . This file then may be
+     read and plot will be drawn again. There is a program diagi_rst in 
+     distribution kit which reads file name with saved plot and draws it on 
+     the screen.
+
+ 18) Terminate displaying graphic and to pass control to the calling routine.
+     This command is bound with double click of right button of mouse.
+     Synonym: "E", "Q".
+
+     Graphic window become inactive (cursor takes shape of skull and bones).
+     Then graphic is iconified and goes out from the screen. A program which
+     called DiaGI continues its execution.
+
+                           --------------
+     To get more information see  diagi_1.hlp

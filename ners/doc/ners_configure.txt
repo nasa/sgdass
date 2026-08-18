@@ -1,0 +1,50 @@
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+  -V, --version           display version information and exit
+  --debug                 prints debugging messages during configuration
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$HOME]
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+
+  --enable-shared         create both shared and static library
+  --disable-shared        create only static library (default)
+
+Optional Packages:
+  --with-PACKAGE[=ARG]        use PACKAGE [ARG=yes]
+  --without-PACKAGE           do not use PACKAGE (same as --with-PACKAGE=no)
+
+  --with-petools=[dir name]   specifies directory name where package petools
+                              is installed (default NO)
+  --python-dir=[dir name]     specifies directory name where ners python module
+                              will be installed. Default: 
+                              /usr/lib/pythonVERS/site-packages, where VERS
+                              is the python version.
+
+  --debug                     prints debugging information during configurtation
+
+  --noopt                     disables all optimizations. May be useful for 
+                              debugging since more checks are imposed in
+                              non-optimized mode.
+
+  FC=command     Fortran   compiler with arguments if needed
+  CC=command     C compiler command with arguments if needed
+  LDFLAGS=flags  linker flags, e.g. -L<lib dir> if you have libraries in a
+
+The influential environment variables that are honored:
+
+  FC          Fortran compiler command
+  CC          C compiler command
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>

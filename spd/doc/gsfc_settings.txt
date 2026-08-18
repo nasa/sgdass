@@ -1,0 +1,24 @@
+2015.08.02
+
+  spd_server runs on gs698-xyz4.gsfc.nasa.gov
+  
+  If you try to access to the spd server from another computer,
+  use command 
+
+  ssh -fNL 16000:localhost:16000  gs698-xyz4.gsfc.nasa.gov
+
+  The system will ask you the password at gs698-xyz4.gsfc.nasa.gov
+  and set up tunnel at port 16000 to localhost. That means your 
+  request to the local host at port 16000 will be secure tunneled
+  to gs698-xyz4.gsfc.nasa.gov till you log out or gs698-xyz4.gsfc.nasa.gov
+  is rebooted.
+
+  spd_client is installed at both gs698-xyz4.gsfc.nasa.gov and gs698-xyz3.gsfc.nasa.gov
+
+  To test connection, execute command 
+  
+  /Users/lpetrov/opt/bin/spd_cli_example ping
+
+  you should get response 
+
+  Server localhost ( 127.0.0.1 ) is OK

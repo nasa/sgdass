@@ -1,0 +1,35 @@
+      SUBROUTINE REWAYPAR_SET ( IWT_MODE, PAUSE_REWAY, KFALL_BACK, KNEW_UPDATE, &
+     &                          MAX_ITER, CHI_TOL, WT_FLOOR, WT_CEILING )
+      IMPLICIT   NONE
+      INCLUDE   'solve.i'
+      INCLUDE   'glbc4.i'
+      INTEGER*2  IWT_MODE, MAX_ITER, IWT_MODE__DEF
+      LOGICAL*2  PAUSE_REWAY, KFALL_BACK, KNEW_UPDATE
+      REAL*8     CHI_TOL, WT_FLOOR(2), WT_CEILING(2)
+      PARAMETER  ( IWT_MODE__DEF = 2 )
+!
+      CALL USE_GLBFIL_4 ( 'ORC' )
+!
+      IF ( REWAY_TYPE .EQ. 'GL' ) THEN
+           IWT_MODE = 0
+        ELSE IF ( REWAY_TYPE .EQ. 'SI' ) THEN
+           IWT_MODE = 1
+        ELSE IF ( REWAY_TYPE .EQ. 'BA' ) THEN
+           IWT_MODE = 2
+      END IF
+      IF ( IWT_MODE .LT. 0 .OR. IWT_MODE .GT. 2 ) THEN
+           IWT_MODE = IWT_MODE__DEF
+      END IF
+!
+      PAUSE_REWAY   = REWAY_VERBOSE
+      KFALL_BACK    = REWAY_FALLBACK
+      KNEW_UPDATE   = REWAY_NEWUPD
+      MAX_ITER      = REWAY_MAXIT
+      CHI_TOL       = REWAY_CHITOL
+      WT_FLOOR(1)   = REWAY_FLODEL
+      WT_FLOOR(2)   = REWAY_FLORATE
+      WT_CEILING(1) = REWAY_CEIDEL
+      WT_CEILING(2) = REWAY_CEIRATE
+!
+      RETURN
+      END  !#!  REWAYPAR_SET  #!#

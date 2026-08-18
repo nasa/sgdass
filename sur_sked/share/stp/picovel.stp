@@ -1,0 +1,29 @@
+# VLBI station parameters Format 2022.04.03
+#
+# NOT REAL NUMBERS: Can be used for simulations only!!!
+#
+SHORT_NAME:   PICOVEL   char      Pv
+LAST_UPDATE:  PICOVEL   char      2026.07.16_20:25:45
+COORD:        PICOVEL   meters    5088967.745     -301681.186     3825012.206 
+MOUNT:        PICOVEL   char       ALTAZ
+SLEW_AZ:      PICOVEL   deg/sec    0.5
+SLEW_EL:      PICOVEL   deg/sec    0.5
+ACCL_AZ:      PICOVEL   deg/sec^2  0.2
+ACCL_EL:      PICOVEL   deg/sec^2  0.2
+TSETTLE_AZ:   PICOVEL   sec        2.0
+TSETTLE_EL:   PICOVEL   sec        2.0
+EL_MIN:       PICOVEL   deg        9.0
+EL_MAX:       PICOVEL   deg       89.0
+AZ_RANGE:     PICOVEL   deg      -90.0   90.0  270.0  450.0
+RECORDER:     PICOVEL   char      flexbuf
+BACKEND:      PICOVEL   char      dbbc3
+SETMODE:      PICOVEL   sec         4.0
+PREOB:        PICOVEL   sec       10.0
+POSTOB:       PICOVEL   sec        2.0
+HOR_AZIM:     PICOVEL   deg       0   360 
+HOR_ELEV:     PICOVEL   deg       9     9
+STOW_AZIM:    PICOVEL   deg       80.0
+STOW_ELEV:    PICOVEL   deg       80.0
+#
+CLOCK_DATES:  PICOVEL   sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: PICOVEL   sec        0.0E06

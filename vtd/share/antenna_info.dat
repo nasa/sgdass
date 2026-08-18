@@ -1,0 +1,46 @@
+$ Antenna Information File  Format Version of 2008.04.22
+# 
+# Antenna information file contains information about 
+# a) dimensions
+# b) reference pressure and temperature
+# c) thermal expansion of elements
+#
+# Antenna information file consists of records of fixed length
+# The first and the last record is the format label
+#
+# Data record format:
+#
+# word  field
+#
+#   1)   1:12  -- Record label: word ANTENNA_INFO
+#   2)  15:22  -- IVS station name
+#   3)  25:31  -- Focus type: FO_PRIM -- primary, FO_SECN -- secondary
+#   4)  33:39  -- Mounting type: MO_AZEL (azimuthal), MO_EQUA (equatorial),
+#                 MO_XYNO (XY north), MO_XYEA (XY east),
+#                 MO_RICH (misplaced equatorial RICHMOND)
+#   5)  41:47  -- Flag, whether the station has radome: RA_NO or RA_YES
+#   6)  49:55  -- Measurement type ME_COMP (complete) ME_INCM (incomplete) 
+#                 ME_ROUG (rough)
+#   7)  58:61  -- Reference temperature (degree C)
+#   8)  63:66  -- sin amplitude of annual temperature variations with respect 
+#                 to the J2000.0 epoch (degree C)
+#   9)  68:71  -- cos amplitude of annual temperature variations with respect 
+#                 to the J2000.0 epoch (degree C)
+#  10)  73:78  -- Reference pressure (hPa)
+#  11)  81:85  -- Antrenna diameter (m)
+#  12)  87:93  -- Height of foundation (m)
+#  13)  95:100 -- Depth of foundation (m)
+#  14) 103:109 -- Foundation thermal expansion coefficient (1/K)
+#  15) 112:118 -- Length of the antenna pillar (m)
+#  16) 120:126 -- Antenna pillar thermal expansion coefficient (1/K)
+#  17) 129:135 -- Length of the axis offset (m)
+#  18) 137:143 -- Axis offset thermal expansion coefficient (1/K)
+#  19) 146:152 -- Distance from the movable axis to the antenna vertex (m)
+#  20) 154:160 -- Thermal expansion coefficient of the structure from 
+#                 the movable axis to the antenna vertex (1/K)
+#  21) 163:169 -- Height of the sub-reflector above the vertex (m)
+#  22) 171:177 -- Sub-reflector mounting legs thermal expansion coefficient (1/K)
+#
+ANTENNA_INFO  FAKED_AN  FO_PRIM MO_AZEL RA_NO   ME_COMP   4.7 11.0  2.0 1002.0   42.0 13.0000 15.0000 1.00E-5   9.6000 1.20E-5  10.0014 1.20E-5   6.3000 1.20E-5  18.3000 1.20E-5
+#
+$ Antenna Information File  Format Version of 2008.04.22

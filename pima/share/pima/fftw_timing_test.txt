@@ -1,0 +1,26 @@
+Timing test
+
+model name	: Intel(R) Core(TM) i7-3930K CPU @ 3.20GHz
+stepping	: 7
+microcode	: 0x70c
+cpu MHz		: 4500.040
+cache size	: 12288 KB
+MemTotal:       65925368 kB
+
+           Dimension   N threads CPU time init    CPU time perform
+
+FFT dim:   1024x  1024 N_thr:  6 Cpu:     0.017314     0.002752 
+FFT dim:   2048x  2048 N_thr:  6 Cpu:     0.017171     0.011554 
+FFT dim:   4096x  4096 N_thr:  6 Cpu:     0.017201     0.054932 
+FFT dim:   8192x  8192 N_thr:  6 Cpu:     0.017206     0.309934 
+FFT dim:   8192x 16384 N_thr:  6 Cpu:     0.017264     0.666744 
+FFT dim:   8192x 32768 N_thr:  6 Cpu:     0.017089     1.374347 
+FFT dim:   8192x 65536 N_thr:  6 Cpu:     0.017274     5.079986 
+FFT dim:  16384x 16384 N_thr:  6 Cpu:     0.017080     1.846273 
+FFT dim:  16384x 32768 N_thr:  6 Cpu:     0.017101     5.815141 
+FFT dim:  16384x 65536 N_thr:  6 Cpu:     0.017165    10.026904 
+FFT dim:  16384x131072 N_thr:  6 Cpu:     0.017113    42.484780 
+FFT dim:  16384x262144 N_thr:  6 Cpu:     0.017074   112.776902
+FFT dim:  32768x 32768 N_thr:  6 Cpu:     0.017215     8.174848 
+FFT dim:  32768x 65536 N_thr:  6 Cpu:     0.017168    42.312538 
+FFT dim:  65536x 65536 N_thr:  6 Cpu:     0.017167    35.921991 

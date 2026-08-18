@@ -1,0 +1,8 @@
+JILIN12
+KASHI12
+DARNHALL
+KNOCKIN
+PICKMERE
+HART13M
+PALAPY15  5242727.993  2687784.136 -2437646.374 begin      end        R                             1  -22.613747  27.142808    919.                         palapye       1012.  1028.
+KAT7      5109965.691  2003703.706 -3239928.506 begin      end        R                            12  -30.721388   21.410983  1050. KAT7                    South Africa  1050.  1084.

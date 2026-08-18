@@ -1,0 +1,1360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- Created by L. Petrov 05-AUG-99 21:06:43  -->
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+    <META NAME="Generator"          CONTENT="manually" >
+    <META NAME="Author"             CONTENT="Leonid Petrov" >
+
+    <TITLE> Specifications of the geo-VLBI data format (GVF) </TITLE>
+
+    <BASEFONT SIZE="3">
+</HEAD>
+<BODY>
+<CENTER><H1> Specifications of the geo-VLBI data format (GVF)
+             </H1></CENTER>
+<HR SIZE="4">
+
+<TABLE BORDER="0">
+<TR VALIGN=BOTTOM ><TD WIDTH="55%"> &nbsp; </TD> <TD WIDTH=40%> <FONT SIZE=2><I> 
+                     That what is not evolving doesn't live. 
+</FONT></I></TD></TR>
+<TR VALIGN=TOP ><TD WIDTH="55%"> &nbsp; </TD> <TD WIDTH=40%> <FONT SIZE=2><I> 
+                     That what doesn't live dies. 
+</FONT></I></TD></TR>
+</TABLE>
+<P>
+
+<CENTER><EM> Contents: </CENTER></EM>
+
+<UL>
+  <LI> <A HREF="#introduction"> Introduction                    </A> </LI>
+  <LI> <A HREF="#why">          Why not old MARK3-DBH format?   </A> </LI>
+  <LI> <A HREF="#alt_format">    An alternative GVF format       </A> </LI>
+  <LI> <A HREF="#gvf">          Specifications of gvf format    </A> </LI>
+       <UL>
+          <LI> <A HREF="#overview"> Overview                    </A> </LI>
+          <LI> <A HREF="#details">  Detailed specifications     </A> </LI>
+          <LI> <A HREF="#how">      How gvf-handler should work </A> </LI>
+          <LI> <A HREF="#agvf">     Ascii gvf format            </A> </LI>
+       </UL>
+</UL>
+
+<HR SIZE="2">
+
+<A NAME="introduction"> 
+<H2> Introduction </H2>
+
+     Geodetic VLBI data go through several phases of transformations during 
+     their analysis:
+<OL>
+    <LI>  Firstly, signal is recorded on tapes (discs). Data acquisition terminal
+          writes the signal in its internal format: one of Mark-5, Mark-4, 
+          Mark-3, K-3, K-4 or S2 formats. Let's call it "signal format".
+          </LI><BR><BR>
+
+    <LI>  Correlator writes the output in another format. </LI><BR><BR>
+
+    <LI>  Programs of fringe fitting like PIMA, AIPS, or FOURFIT add 
+          record to the correlator output. Let's call it "post-correlator 
+          format".
+          </LI><BR><BR>
+
+    <LI>  Geodetic VLBI data analysis software transforms the post-correlator 
+          output to another format. Let's call it "observations format".
+          </LI><BR><BR>
+
+    <LI>  Results of analysis are written in different formats.
+          Let's call them "results formats".
+          </LI><BR><BR>
+</OL>
+
+ The subject of these specifications is "observations format".
+
+<P>
+
+  In the past Mark-3/Mark-4 VLBI data analysis software used so-called MARK-3
+DBH format (or database-format) which kept information about VLBI 
+session. Data could be transformed from MARK-3 DBH format to a NGS-format or a 
+SUP (or superfile) format but with substantial loss of information which might
+be not essential for a simplified analysis.
+
+<P>
+
+  MARK-3 DBH format was developed in middle 70-s. It has a substantial 
+deficiencies. New format, called gvf (geo-VLBI format) suprseded the old
+format. 
+  
+<A NAME="why"> 
+<H2> Why not old MARK-3 DBH format? </H2>
+
+  VLBI Data handler MARK-3 DBH was written in 1976. It is difficult to 
+find any other program in the world which is intensively used for a 
+quarter of century. However, several generations of computers changed 
+since then; approaches to developing software also changed and MARK-3 DBH 
+database handler is not adequate now. It has deficiencies which become 
+more and more considerable obstacles to the proper use of VLBI data.
+
+<OL TYPE=A>
+
+    <LI> MARK-3 DBH format is not documented. Of course, it is not impossible
+         to decipher the format, to reveal its internal structure and to
+         compile <A HREF="dbh_format_rus.html">its description</A> but it is
+         a tedious work. As a result we are not able to disseminate VLBI data 
+         for a scientific community. We can put and we are putting MARK-3 DBH 
+         files in Web, but only SOLVE users are able to use them. 
+         </LI><BR><BR>
+
+    <LI> MARK-3 DBH handler is terribly, <B>terribly</B>, <B>TERRIBLY</B> slow!
+         Probably, it is the world most inefficient database handler. Each
+         database handler has overheads which can be expressed as a ratio of
+         physical time needed for reading the database to an amount of physical
+         time needed to read the same amount of bytes. Usually this ratio is 
+         expressed in percents. MARK-3 DBH has this ratio about 100! I have 
+         a database which was loaded for 40 minutes.
+<P>
+         These overheads are so tremendous what makes it impossible to use
+         MARK-3 DBH handler routinely. As a result, SOLVE uses another format 
+         called "superfile" for only one reason: to reduce overheads. It makes
+         the process of data analysis rather more difficult and poses 
+         additional heavy obstacles to further development of analysis 
+         software. The first operation which non-SOLVE VLBI analysis software 
+         does is to convert data from MARK-3 DBH to another usable format.
+         </LI><BR><BR>
+
+    <LI> MARK-3 DBH format has huge redundancy. The same item is stored many
+         times. Redundancy is moderate for 2-, 3- stations experiments,
+         but grows rapidly with increasing the number of stations. For example,
+         if the session has 10 stations and therefore 45 baselines, time tag 
+         of the scan is stored 45 times, air pressure of the station A is 
+         stored 9 times and so on. Database size grows <B>quadratically</B> 
+         with increasing the number of stations instead of <B>linear</B> grow. 
+         A 17-baselines, 30000 observations pair of X- and S-band databases 
+         after compression has size more than 150Mb. To transfer such a huge 
+         amount of data through network is a challenge. Since the number 
+         of scans is increased in Mark-4 epoch we have to acknowledge
+         that <B>we will lose capacity to exchange databases electronically
+         in Mark-4 epoch unless we change database format</B>. We already
+         reached this limit <B>today</B>. Disk space needed for analysis of 
+         entire data set (about 3000 24-hours experiments for 1979-1999) is 
+         40-50 Gb. Not every analysis center is able to afford such resources. 
+         Redundancy (unnecessary!) of MARK-3 DBH format puts another strong 
+         restriction on data analysis.
+         </LI><BR><BR>
+
+    <LI> MARK-3 DBH format treats X-band and S-band data as different 
+         experiments and the S-band data are treated as the data of the second
+         sort. As a result of this band discrimination some S-band databases 
+         were lost. Remarkably, X-band and S-band databases contain at least 
+         80% the same information.
+         </LI><BR><BR>
+
+    <LI> MARK-3 DBH handler is not portable. It is a torture to install 
+         the handler at the native HP machine even for SOLVE developers.
+         We cannot say to a colleague: get the source code, install it and read
+         a database. </LI><BR><BR>
+
+    <LI> MARK-3 DBH is tied with another complicated and weird program called 
+         SOLVE catalogue. We are not able to separate SOLVE catalogue and MARK3
+         database handler. As a result we cannot use VLBI databases without 
+         entire sophisticated SOLVE infrastructure. </LI><BR><BR>
+
+    <LI> MARK-3 DBH handler makes database update difficult. It rewrites
+         entire database of the experiment (which may have size up to 200Mb)
+         regardless amount of updated data.
+         </LI><BR><BR>
+
+    <LI> MARK-3 DBH handler makes it difficult to maintain multiple updates 
+         of the same experiment. We are able to save an update only of the last,
+         the k-th version, but not the previous k-1, k-2 -th versions. 
+         It makes independent work of two analysts difficult. This puts
+         an obstacle even to a work of one analyst when the different 
+         approaches of data analysis applied to the same experiment are 
+         compared.
+         </LI><BR><BR>
+
+    <LI> At last, MARK-3 DBH catalogue system is (was?) not Y2K compliant 
+         (who thought about it in 1976?!).
+</OL>
+
+  I should notice that many of these setbacks stem from severe memory 
+restrictions which we had in 70-s. MARK-3 DBH handler should have operated 
+at the machines with 20Kb available memory and it did! A heavy price has been 
+paid for it. Times changed. Now we can take 1Gb of operative memory with 
+impunity and restrictions of MARK-3 DBH format can be and <B>must be</B> 
+overcome.
+
+<A NAME="#alt_format">
+<H2> Alternative format </H2>
+
+<H3> Geo VLBI Format</H3>
+
+What was done as an alternative
+<OL>
+     <LI> Specifications and documentation of a new format
+          of geodetic VLBI observations were developed. The new format
+          is called gvf (geo-VLBI format). 
+          </LI><BR><BR>
+
+     <LI> A set of subroutines which implement a gvf-handler has been developed.
+          </LI><BR><BR>
+
+
+     <LI> a program gvf_read which reads a database in gvf format,
+          extracts the specified item and writes it down in standard output
+           has been developed
+          </LI><BR><BR>
+
+     <LI> To develop a program gvf_transform which converts data 
+          <UL>
+	       <LI> from binary gvf format to ---> ascii gvf format; </LI>
+	       <LI> from ascii gvf format to ---> binary gvf format; </LI>
+	       <LI> from MARK-III DBH format to ---> binary gvf format; </LI>
+          </UL>
+          </LI><BR>
+</OL>
+
+<H3> What did it bring? </H3>
+
+<OL>
+   <LI> VLBI data are open for scientific community. It is not enough
+        to put the data in an ftp server. We should provide easy tools for
+        using them.
+        </LI><BR><BR>
+
+   <LI> VLBI databases became much shorter and transferable through slow
+        networks. 
+        </LI><BR><BR>
+
+   <LI> VLBI handler became 100 times(!) faster. The objective: to 
+        read a database with 10 000 observations for less than 1 second
+        has been met.
+        </LI><BR><BR>
+
+   <LI> There is no necessity to support alternative VLBI data formats
+        like superfiles and NGS-card formats.
+        </LI><BR><BR>
+
+   <LI> Capacity to maintain simultaneously different database updates has
+        bern provided.
+        </LI><BR><BR>
+</OL>
+
+<A NAME="gvf"> 
+
+<H2> Specifications of gvf format (geo-VLBI format) </H2>
+
+<A NAME="overview"> 
+<H3> Overview of general approaches </H3>
+
+<OL>
+     <LI> <B> Optimization criteria: </B> high speed (weight: 70%), small size 
+          (weight: 30%).
+          </LI><BR><BR>
+
+     <LI> <B> Data representation: </B> binary. Binary data format provides 
+          the highest efficiency but is somehow obscure for non-professionals. 
+          As a compromise between the data transparency and the efficiency 
+          ascii version of gvf format is proposed. Ascii gvf-format and binary 
+          gvf format will be mutually convertible. It means that a user will 
+          have a capacity to convert a binary gvf-file to an ascii gvf-file, 
+          to look at it, even to edit (but it is not recommended) and then 
+          to convert it back to a binary format. Gvf-handler will be optimized 
+          for using only binary version. Some users has an inexplicable 
+          allergic to binary files. A capacity to keep the data in ascii format 
+          and convert then to binary on the fly can be provided although it is 
+          assumed that the binary version of the format will be normally used.
+          </LI><BR><BR>
+
+     <LI> <B> Data files</B>.
+              A database for an experiment may be split onto several files 
+              called extents (although it is not mandatory).
+              One of the possible ways to split is:
+<PRE><B>
+------------    -----------    -----------    -----------    -----------
+| Fringe-1 |    | Calib-1 |    | Theo-1  |    | Solve-1 |    | Docs-1  |
+------------    -----------    -----------    -----------    -----------
+
+------------    -----------    -----------    -----------    
+| Fringe-2 |    | Calib-2 |    | Theo-2  |    | Solve-2 |    
+------------    -----------    -----------    -----------    
+</B></PRE>
+
+              Different files contain different type of information:
+              <OL>
+	           <LI> <B>Fringe</B> is produced by a post-correlator software 
+                        (namely, FOURFIT) and contains root information.
+                        This file is mandatory. 
+                        </LI>
+
+	           <LI> <B>Calib</B> contains additional calibration, like
+                        system temperature, cable calibration, meteorological
+                        information and so on.
+                        </LI>
+
+	           <LI> <B>Theo</B> contains calc-supplied information: 
+                        theoretical delays, partial derivatives, intermediary 
+                        quantiles, like nutation angles.
+                        </LI>
+
+	           <LI> <B>Solve</B> contains solution supplied information:
+                        solution setup, ambiguities, suppression flags and so 
+                        on.
+                        </LI>
+
+	           <LI> <B>Doc</B> contains arbitrary textual information.
+                        I proposed to put there verbose description of items 
+                        kept in the database.
+                        </LI>
+              </OL><BR>
+
+	      More than one extent of the same type can be used. It is 
+              proposed to split the extents of the same type onto extents with
+              frequently used information and with rarely used information. 
+              It is debatable which items should 
+              be treated as "frequently used". At the beginning we can consider
+              information to be put in superfiles now as "frequently used".
+              It assumed that a list of the files related to the experiment 
+              is passed to the gvf-handler.
+<P>
+              <B>Advantages</B> of this scheme:
+              <OL TYPE=I>
+	           <LI> We can load not all information. F.e., phase cal 
+                        amplitudes are not used in routine data analysis,
+                        why to load it? We can save a lot of resources.
+                        </LI>
+
+	           <LI> A user may wish to get not all extents from data 
+                        centers. F.e. CALC supplied information is a garbage 
+                        for non-SOLVE users; SOLVE users may wish to re-CALC
+                        foreign databases, then why to browse "Theo" extents?
+                         </LI>
+
+	           <LI> Only the targeted section will be updated. If we made
+                        a new solution we update only relevant extents.
+                        </LI>
+
+	           <LI> User-supplied information can be written in another
+                        section, f.e. Calib-3, Calib-4. Moreover, it can 
+                        override items in another sections when it is desired.
+                        </LI>
+
+	           <LI> A user "N" may have a personal copy of the extent and 
+                        his/her manipulations will not affect work of a user 
+                        "M" which can use either his/her own copy or 
+                        a system-wide version.
+                        </LI>
+
+	           <LI> Files can have different protection. F.e., it is 
+                        assumed that nobody will update Fringe-1 and Calib-1 
+                        extents.
+                        </LI>
+	      </OL>
+          </LI><BR>
+
+     <LI> <B> Data structure</B>. Any valid gvf-file has preamble, history, 
+          table of lcodes (or by other words items) and the data themself 
+          similar to MARK-III DBH. But the data are ordered in according with 
+          an observation basis in MARK-III DBH format: first all lcodes for the 
+          k-th observation, then all lcodes for the k+1 -th observation and 
+          so on. The data are ordered by lcodes in gvf-format: first data for 
+          all observations for the lcode j, then data for all observations for 
+          lcode j+1 and so on. It allows to exclude redundancy. The data are 
+          structured by such a manner to provide mapping the file to 
+          an address space with minimal transformation.
+          </LI><BR><BR>
+
+     <LI> <B> File names</B>. The following file naming scheme is proposed:
+          filename consists of 6 fields of lower case letters or digits 
+          separated by an underscore and dot like
+<PRE>
+             europe55_b2_b03_cal1.gvf   
+
+             neos-a784_w1_g08_sol2.agvf 
+</PRE>
+          <B>Fields:</B><BR>
+
+          <UL TYPE=SQUARE>
+               <LI> Experiment identifier. It is granted by IVS and is used
+                    for schedules, correlation and further analysis.
+                    </LI>
+               <LI> Delimiter: underscore. </LI>
+               <LI> One-symbol correlation center code which has fringed the 
+                    data. For example, b for GIUB, w for USNO and so on.
+                    </LI>
+               <LI> One-digit fringing version. Database with different 
+                    fringing version are considered as different experiments.
+                    </LI>
+               <LI> Delimiter: underscore. </LI>
+               <LI> One-symbol analysis center code which has created 
+                    this file. For example, g for Goddard, i for IRACNR and 
+                    so on.
+                    </LI>
+               <LI> Two-digit version number of the file.
+                    </LI>
+               <LI> Delimiter: underscore. </LI>
+               <LI> Four-symbol extent code. </LI>
+               <LI> Delimiter: dot </LI>
+               <LI> Extension: gvf for binary files and agvf for ascii files.
+                    </LI>
+          </UL><BR>
+
+     <LI> <B> Data classes</B>. All data are considered as of a) session class,
+          b) scan class, c) station class and d) baseline class.
+          It allows to exclude redundancy. X-band and S-band data of the same 
+          experiment are put together. More than 2 bands and more than one 
+          recording mode (f.e. polarization) is supported.
+          </LI><BR><BR>
+
+     <LI> <B> Data handler</B>. 
+          <UL TYPE=I>
+              <LI> The data handler is considered as independent on a VLBI 
+                   catalogue system. It gets input files which can be obtained 
+                   either by the previous calls to a catalogue system or by
+                   another way, f.e. are supplied by user.
+                   </LI><BR><BR>
+
+              <LI> The data handler first reads all data in memory, 
+                   sets internal caching tables and then handles individual 
+                   queries.
+                   </LI><BR><BR>
+
+              <LI> The data handler consists of
+                   <OL TYPE=i>
+		       <LI> <B> Input/output segment.</B> It manipulates with
+                            records, opening, reading/writing and closing files,
+                            memory management. All potential system 
+                            dependencies are gathered there. </LI>
+		       <LI> <B>Query segment.</B> It contains a collection of
+                            subroutines which provide a user interface. </LI>
+		       <LI> <B>Compatibility mode segment.</B>  It contains a 
+                            set of routines with the same names as routines
+                            of MARK-III DBH handler which in turn calls
+                            procedures of the query segment. </LI>
+                   </OL>
+                   </LI><BR>
+          </OL> 
+
+      <LI> <B>Catalogue system</B> is not a part of the handler but it provides
+           an additional service and it is assumes that normal access to the
+           gvf-files is done through the catalogue system, although in 
+           principle it is possible to pass it by. The catalogue system serves
+           the following functions:
+           <OL TYPE=I>
+	        <LI> <B> Filename control.</B> Several files with long names 
+                     are related to one experiment. User may want to use short
+                     aliases like $99JUN14XH or EUROPE50. Catalogue system
+                     maintains such aliases and prevents using duplicate 
+                     file names.
+		     </LI>
+	        <LI> <B>Backup</B>. Functions like maintaining tape archives, 
+                     compressed archives of the files related to the 
+                     experiment, data import and export.
+		     </LI>
+	        <LI> <B>Information service.</B> The catalogue system reads
+                     databases, extracts some information about configuration
+                     of the experiment, saves it in internal data structures, 
+                     regularly updates then and serves queries. It fulfills
+                     simple queries like to print the list of experiment names 
+                     within the specified time range as well as more 
+                     complicated queries like to create the list of all sessions
+                     with more than 10 good observations at the baseline 
+                     NRAO20/NRAO85~3 and is able to provide statistics similar 
+                     to that the program SUMRY generates.
+		     </LI>
+           </OL>
+           </LI>
+</OL>
+
+<A NAME="details"> 
+<H3> Detailed specifications of binary gvf format </H3>
+
+<OL>
+     <LI><B>Physical structure</B><BR>
+         A valid binary gvf file consists of several sections of variable 
+         length: a) preamble; b) text section; c) table of contents; 
+         d) binary data section in this order. Text section or "table 
+         of contents" and "binary data" sections may be omitted. Each section 
+         is aligned in order to start from the 256-byte page boundary. 
+         Unused space is always filled by zeroes.
+<P>
+        <LI> <B>Section format:</B>
+<PRE>
+.--------.--------.------.--------.-------------.
+| Length | Prefix | Body | Filler | Control sum |
+.--------.--------.------.--------.-------------.
+</PRE>
+        where
+<P>
+        <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="5%">
+           <TR VALIGN=TOP ><TD><B>Length</B> </TD><TD> INTEGER*4 </TD>
+              <TD> Length in bytes of the entire section, including body, 
+                   length, prefix, control sum and filler.</TD></TR>
+           <TR VALIGN=TOP ><TD><B>Prefix</B> </TD><TD> CHARACTER*4 </TD>
+              <TD> Section identifier. One of PREA, TEXT, CONT, DATA </TD></TR>
+           <TR VALIGN=TOP ><TD><B>Body</B> </TD><TD> Undefined </TD>
+              <TD> Section content. Treated as a byte stream.</TD></TR>
+           <TR VALIGN=TOP ><TD><B>Filler</B> </TD><TD> Undefined </TD>
+              <TD> Unused space. May have zero length. Always binary zeroes.
+                   </TD></TR>
+           <TR VALIGN=TOP ><TD><B>Control sum</B> </TD><TD> INTEGER*4 </TD>
+              <TD> Control sum. </TD></TR>
+	</TABLE>
+        </LI><BR><BR>
+
+        <LI> <B>Format of PREA</B> section:
+             <BR>      
+             The preamble section consists of an ordered sequence of logical 
+             records of variable length. The sequence is terminated by 
+             a section terminator: CNTRL/Z (decimal code 26). Firstly, 
+             mandatory records follow, then optional records may follow.
+	     <BR><BR>
+	     Format of a <B>logical record</B> in preamble section:
+
+             <BR>
+             <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="1%">
+                <TR VALIGN=TOP ><TD><B>Identifier</B> </TD>
+                    <TD> Sequence of letters (without delimiters!).
+                         Identifier should be unique. </TD></TR>
+                <TR VALIGN=TOP ><TD><B>Id_delimiter</B> </TD>
+                    <TD>two bytes: semi-column, blank (decimal codes: 58, 32)
+                    </TD></TR>
+                <TR VALIGN=TOP ><TD><B>Body</B> </TD>
+                    <TD>Sequence of ascii symbols in the range 32-127 decimal
+                    </TD></TR>
+                <TR VALIGN=TOP ><TD><B>Record terminator</B> </TD>
+                       <TD>CNTRL/J (decimal code: 10) </TD></TR>
+             </TABLE>
+        </LI><BR>
+
+        All mandatory records are written by handler automatically. 
+	<BR><BR>
+
+        The list of mandatory records:
+        <BR>
+
+        <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="1%">
+            <TR VALIGN=TOP ><TD><TT>
+                File_format:
+                            </TT></TD><TD>
+                Identifier of the format and its version.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Generator:
+                            </TT></TD><TD>
+                Name of the program to have generated the file and its version.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Creation_UTC_date:
+                            </TT></TD><TD>
+                Creation date.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Binary_format:
+                            </TT></TD><TD>
+                Identifier of binary numbers format. It is assumed that
+                normally IEEE standard will be used, but why not to reserve
+                the capacity to use alternative format?
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                File_name: 
+                            </TT></TD><TD>
+                File name
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                File_version: 
+                            </TT></TD><TD>
+                Version number of the file. Versions are numbered starting
+                with 1 up to 99.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Previous_filename_{ver}: 
+                            </TT></TD><TD>
+                File name of the version {ver}, where {ver} is a version number
+                which is less than the current version number. If the current
+                version number of greater than 2 then several
+                Previous_filename_{ver}: records should present.
+                For example, if the current
+                version is 4 then records Previous_filename_03:, 
+                Previous_filename_02:, Previous_filename_01: should present.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Experiment_id:
+                            </TT></TD><TD>
+                Experiment identifier in lower register letters.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Experiment_start_date:
+                            </TT></TD><TD>
+                Start date in the format: YYYY.MM.DD , for example, 1999.08.06
+                The first observation which has been correlated considered
+                as a start observation.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Experiment_start_doy:
+                            </TT></TD><TD>
+                Day of year of the first observation of the experiment.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Experiment_start_UTC_time:
+                            </TT></TD><TD>
+                Start time in the format HH:MM:SS.FFF, f.e. 08:00:52.028
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Duration:
+                            </TT></TD><TD>
+                duration of the experiment in seconds.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Correlation_center_code:
+                            </TT></TD><TD>
+                One-symbol code of the correlation center.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Correlation_center_name:
+                            </TT></TD><TD>
+                Full name of the correlation center. 
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Analysis_center_code:
+                            </TT></TD><TD>
+                One-symbol code of the center where the file has been
+                created.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Analysis_center_name:
+                            </TT></TD><TD>
+                Full analysis center name.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                analyst_name:
+                            </TT></TD><TD>
+		Analyst name as it registered in the operating system.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Analyst_e-mail_address:
+                            </TT></TD><TD>
+                E-mail address of the person who created a database and to whom
+                to send questions as a last resort. The name is generated 
+                by operating system.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Hardware_name:     
+                            </TT></TD><TD>
+                Name and type of the computer used for creation of the file.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                OS_name: 
+                            </TT></TD><TD>
+                Name and version number of the operating system.
+                            </TD></TR>
+            </TABLE>
+	    <BR>
+	    
+            Records with arbitrary identifiers can be added after mandatory
+            records.
+	    </LI><BR><BR>
+
+        <LI> <B>Format of TEXT</B> section:
+	     <BR>
+	     The TEXT section consists of an ordered sequence of subsections.
+             Each subsection is terminated by CNTRL/Z (decimal code: 26).
+             Each subsection consists of a prefix, title, title delimiter, 
+             body and subsection terminator:
+             <BR>
+
+        <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="5%">
+            <TR VALIGN=TOP ><TD><TT>
+                Prefix:
+                            </TT></TD><TD>
+                Sequence of 7 symbols: "Title: " 
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Title:
+                            </TT></TD><TD>
+                Ascii text with any symbols, except CNTRL/J and CNTRL/Z
+                (decimal codes 10 and 26).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Title delimiter:
+                            </TT></TD><TD>
+                CNTRL/J (decimal codes 10).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Body:
+                            </TT></TD><TD>
+                Any symbols, except CNTRL/Z (decimal 26).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Subsection terminator:
+                            </TT></TD><TD>
+                CNTRL/Z (decimal 26)
+                            </TD></TR>
+        </TABLE>
+        <BR>
+
+	Text section is for history records and for any textual information.
+
+	</LI><BR><BR>
+
+        <LI> <B>Format of CONT</B> -- contents section:
+	     <BR>
+	     The CONT section consists of a sequence of records of fixed length.
+	     It describes contents of binary data section:
+            <BR>
+        <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="5%">
+            <TR VALIGN=TOP ><TD><TT>
+                Lcode
+                            </TT></TD><TD>
+                CHARACTER*8
+                            </TT></TD><TD>
+                Identifier of the item in the database.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                OFFSET
+                            </TT></TD><TD>
+                INTEGER*4
+                            </TD><TD>
+                Offset in bytes of the first byte of the first occurrence of 
+                this lcode with respect to the beginning of DATA section.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                DIM1
+                            </TT></TD><TD>
+                INTEGER*2
+                            </TD><TD>
+                First dimension of the array of values for the lcode.
+                Lcode is considered as a three-dimensional array.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                DIM2
+                            </TT></TD><TD>
+                INTEGER*2
+                            </TD><TD>
+                Second dimension of the array of values for the lcode.
+                Lcode is considered as a three-dimensional array.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                DIM3
+                            </TT></TD><TD>
+                INTEGER*2
+                            </TD><TD>
+                Third dimension of the array of values for the lcode.
+                Lcode is considered as a three-dimensional array.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Type
+                            </TT></TD><TD>
+                Byte*1
+                            </TD><TD>
+                Data type code. Supported data types: CHARACTER,
+                BYTE*1, INTEGER*2, INTEGER*4, REAL*4, REAL*8.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Class
+                            </TT></TD><TD>
+                Byte*1
+                            </TD><TD>
+                Code of the data class. Supported data classes: Session,
+                Scan, Station, Baseline.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Usage code
+                            </TT></TD><TD>
+                Byte*1
+                            </TT></TD><TD>
+                Lcode usage code. Supported usage codes are: Primitive,
+                Synonym, Derived. Usage code describes which additional 
+                actions are needed besides reading/writing.
+                            </TD></TR>
+        </TABLE>
+        </LI><BR><BR>
+
+        <LI> <B>Format of DATA</B> --  section:
+	     <BR>
+	     The DATA section consists of an ordered sequence of logical 
+             records of variable length. Each logical record corresponds to a
+             LCODE and contains an ordered sequence of frames. Each frame
+             contains an array of values of the lcode which corresponds to one 
+             observation. All frames have fixed length within one logical 
+             record.
+<P>
+             Structure of a DATA-section:
+<PRE>
+DATA-section:
+                  ~~~~~~~~~~~~~
+     Record k     | LCODE-k   |
+                  ~~~~~~~~~~~~~
+
+                  ~~~~~~~~~~~~~
+     Record k+1   | LCODE-k+1 |
+                  ~~~~~~~~~~~~~
+  
+                  ~~~~~~~~~~~~~
+     Record k+2   | LCODE-k+2  |
+                  ~~~~~~~~~~~~~
+     ...
+
+</PRE>
+
+             Structure of a data record:
+<PRE>
+record-k:
+         ~~~~~~~~~~~~~~~
+         |  Frame j    |
+         ~~~~~~~~~~~~~~~
+
+         ~~~~~~~~~~~~~~~
+         |  Frame j+1  |
+         ~~~~~~~~~~~~~~~
+
+         ~~~~~~~~~~~~~~~
+         |  Frame j+2  |
+         ~~~~~~~~~~~~~~~
+     ...
+
+</PRE>
+
+     The number of records is the same as the number of lcodes.
+<BR>
+     The number of frames depends on the class of the lcode: 
+     <UL> 
+       <LI> <B>Session</B>-class: 1;
+            </LI><BR>  
+       <LI> <B>Scan</B>-class: total number of scans;
+	    </LI><BR>
+       <LI> <B>Station</B>-class: sum over all stations: the number of scans 
+             with participation of the i-th station;
+	    </LI><BR>
+       <LI> <B>Baseline</B>-class: total number of observations.
+	    </LI><BR>
+     </UL>
+          </LI><BR>
+     <LI> <B>Lcodes</B> <BR>
+          All lcodes are split onto three groups: 
+          <UL>
+              <LI> <B>Primitives</B> which does not require any additional 
+                   actions; 
+                   </LI><BR>
+              <LI> <B>Synonyms.</B> It means that a request to the data of lcode
+                   A is redirected to a request to the data of lcode B.
+		   It is done primarily for compatibility with old lcode
+                   naming scheme. For example, current lcode scheme calls
+                   formal error of group delay at X band as "DELSIGMA",
+                   but formal error of group delay at S band as "DLERR XS" what
+                   is too obscure. Synonym lcodes will allow to serve request
+                   to the old lcode names.
+                   </LI><BR>
+              <LI> <B>Derived.</B> It means that some data transformation 
+                   is to be done, for example type conversion.
+                   </LI><BR>
+          </UL>
+<P>
+	  Some new lcodes will be added:
+          <UL>
+	       <LI> "NUMSCA  " -- Number of scans.
+                    </LI><BR><BR>
+	       <LI> "SCAN_ID " -- Scan identifier in according with 
+                    specifications of the correlator output format.
+                    </LI><BR><BR>
+	       <LI> "SCAN_IND" -- Index	of the current scan in the ordered
+                     scans table.
+                    </LI><BR><BR>
+	       <LI> "STASCATB" -- Two-dimensional table of scan participation 
+                    indices. Columns of the table are stations participated 
+                    in the experiment. Rows of the table are scans. A value is
+                    an index of scan participation. It is zero if the station 
+                    didn't participate in the scan (or precisely speaking, 
+                    database doesn't have information about it). Participation
+                    indices are consecutively numbered from 1 till K.
+                    Example: 3 stations, 10 scans:
+<PRE>
+          1    8    0
+          2    9   15
+          0   10   16
+          0   11   17
+          3   12   18
+          4    0   19
+          5    0   20
+          6    0   21
+          7   13   22
+          0   14   23
+</PRE>
+                    Here station 1 and 3 participated in the 
+                    scan #8, while station 2 -- not. Information for 
+                    station-type lcodes related to the station 1 and scan #8 
+                    is in the frame with index 6; information for 
+                    station-type lcodes related to the station 3 and scan #8 
+                    is in the frame with index 21. Station-dependent lcodes 
+                    are written 23 times in this example; they would be written 
+                    60 times if the MARK-3 DBH format would be in use.
+                    </LI><BR><BR>
+
+	       <LI> "BASSCATB" -- One-dimensional table of scan participation 
+                    indices. Input of the table is the index of the observation
+                    in the database. Output of the table is a scan index.
+                    Example, 13 observations, 5 scans:
+<PRE>
+          1
+          1
+          1
+          2
+          3
+          3
+          3
+          3
+          3
+          3
+	  4
+          5
+          5
+</PRE>
+          </UL>
+             
+</OL>
+
+<A NAME="how"> 
+<H3> How gvf handler should work </H3>
+<H4> Reading </H4>
+
+<OL>
+     <LI> The files are consecutively read entirely to operative memory which
+          is allocated dynamically;
+          </LI><BR><BR>
+
+     <LI> All preamble sections are parsed. The following information 
+          is written in internal data structures:
+          <UL>
+	      <LI> The total number of preamble logical records; 
+                    </LI><BR>
+	      <LI> The index of the file in the sequence;
+                    </LI><BR>
+	      <LI> Address of the identifier of the k-th logical record;
+                    </LI><BR>
+	      <LI> Length of the identifier of the k-th logical record;
+                    </LI><BR>
+	      <LI> Address of the body of the k-th logical record;
+                    </LI><BR>
+	      <LI> Length of the body of the k-th logical record.
+                    </LI><BR>
+          </UL>
+          </LI><BR><BR>
+
+     <LI> All text sections are parsed. The following information 
+          is written in internal data structures:
+          <UL>
+	      <LI> The total number of text subsections;
+                    </LI><BR>
+	      <LI> The index of the file in the sequence;
+                    </LI><BR>
+	      <LI> Address of the title of the k-th subsection;
+                    </LI><BR>
+	      <LI> Length of the title of the k-th subsection;
+                    </LI><BR>
+	      <LI> Address of the body of the k-th subsection;
+                    </LI><BR>
+	      <LI> Length of the k-th subsection.
+                    </LI><BR>
+          </UL>
+          </LI><BR>
+
+     <LI> All contents sections are copied to the internal data structure.
+          The format of internal data structure is similar to the format 
+          of the contents records. Fields "size" (length of the frame in 
+          bytes), "index of the file" and "address" (physical address of the 
+          first frame of the lcode) are added.
+          </LI><BR>
+
+     <LI> Lcodes are sorted in internal data structure.
+          </LI><BR>
+
+</OL>
+
+      Now handler is ready to fulfill a request to the data. Request to preamble
+is carried out by searching preamble identifiers codes. Request to the text 
+data is carried out by searching the title. Request to the binary data is 
+fulfilled by the following way:
+   <OL>
+        <LI> Search in the lcode table. Find address of the first frame.
+	     Learn type of the data and their size.
+             </LI><BR>
+
+        <LI> If the lcode is of station-class then look at the table of scan 
+             participation indices which in turn is kept in memory after the
+             first call to a station-class lcode. Find the frame index. 
+
+        <LI> Compute frame address. 
+             <OL TYPE=i> 
+                 <LI> <B>Session</B>-class data: frame address is the same as 
+                      lcode-address;
+                      </LI><BR>
+                 <LI> <B>Scan</B>-class data: 
+                                  Lcode_address + (Scan_index-1)*Size;
+                      </LI><BR>
+                 <LI> <B>Station</B>-class data: 
+                                  Lcode_address + (frame_index-1)*Size;
+                      </LI><BR>
+                 <LI> <B>Baseline</B>-class data: Lcode_address + 
+                                   (Observation_index-1)*Size
+                      </LI><BR>
+             </OL>
+             </LI><BR>
+
+        <LI> Move data. If lcode usage code is "Derived" then call the procedure 
+             of transformation.
+             </LI><BR>
+   </OL>
+That is all.
+
+<A NAME="agvf"> 
+<H3> Ascii gvf format </H3>
+
+  Ascii gvf format should satisfy two criteria:
+  <UL>
+         <LI> To be human readable;
+              </LI><BR><BR>
+         <LI> To be unambiguously convertible to the binary gvf format;
+              </LI><BR><BR>
+  </UL>
+
+  It consists of records of variable length terminated by CNTRL/J (decimal 
+code: 10) symbol. Alphabetic symbols with codes 32-127 decimal are allowed.
+<BR><BR>
+
+   Format of a record in the ascii gvf format:
+<BR>
+        <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="5%">
+            <TR VALIGN=TOP ><TD><TT>
+                Prefix
+                            </TT></TD><TD>
+                CHARACTER*2
+                            </TT></TD><TD>
+                One of "$$", " $", "  ": "$$" is a section prefix; 
+                " $" is a keyword prefix, "  " is continuation prefix.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Keyword_delimiter_start
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Double quotation sign " (decimal code 34). It is ignored if
+                a continuation prefix was used.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Keyword
+                            </TT></TD><TD>
+                CHARACTER  
+                            </TD><TD>
+                Keyword. It is ignored if a continuation prefix was used.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Keyword_delimiter_end
+                            </TT></TD><TD>
+                CHARACTER*2
+                            </TD><TD>
+                Double quotation sign " and blank (decimal codes 34, 32). 
+                It is ignored if a continuation prefix was used.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Value
+                            </TT></TD><TD>
+                CHARACTER  
+                            </TD><TD>
+                Value of the keyword.
+                            </TD></TR>
+        </TABLE>
+
+<P>
+   The records with session prefix have the name of the section and empty 
+value. They are the first record of the section and are inserted into the 
+agvf-file as section delimiters.
+
+   Format of a keyword and a value depends on section. 
+<P>
+  <UL TYPE=CIRCLE>
+     <LI> A keyword of PREA section is an identifier of the logical 
+          record and the value is its body.
+          </LI><BR><BR>
+
+     <LI> A keyword of the TEXT section is a title of a subsection and a value
+          is its body.
+          </LI><BR><BR>
+
+     <LI> Format of the CONT section:
+
+        <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="5%">
+            <TR VALIGN=TOP ><TD><TT>
+                Prefix
+                            </TT></TD><TD>
+                CHARACTER*2
+                            </TT></TD><TD>
+                " $" (decimal codes: 32, 36)
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Double quotation sign " (decimal code 34). 
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Lcode
+                            </TT></TD><TD>
+                CHARACTER*8
+                            </TD><TD>
+                Lcode.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*2
+                            </TD><TD>
+                Delimiter (decimal codes: 34, 32).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Offset
+                            </TT></TD><TD>
+                CHARACTER*9
+                            </TD><TD>
+                Offset in bytes of the first byte of a logical record in the 
+                DATA section with respect to beginning of the DATA section.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter (decimal code: 32).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Dim1
+                            </TT></TD><TD>
+                CHARACTER*5
+                            </TD><TD>
+                First dimension of the array of values of LCODE.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter (decimal code: 32).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Dim2
+                            </TT></TD><TD>
+                CHARACTER*5
+                            </TD><TD>
+                Second dimension of the array of values of LCODE.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter (decimal code: 32).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Dim3
+                            </TT></TD><TD>
+                CHARACTER*5
+                            </TD><TD>
+                Third dimension of the array of values of LCODE.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter (decimal code: 32).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Date type
+                            </TT></TD><TD>
+                CHARACTER*2
+                            </TD><TD>
+                One of CH, B1, I2, I4, R4, R8
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter (decimal code: 32).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Date class
+                            </TT></TD><TD>
+                CHARACTER*4
+                            </TD><TD>
+                One of SESS, SCAN, STAN, BASE
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter (decimal code: 32).
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Usage code
+                            </TT></TD><TD>
+                CHARACTER*4
+                            </TD><TD>
+                One of PRIM, DERV, SYNM
+                            </TD></TR>
+       </TABLE>
+       </LI><BR><BR>
+
+     <LI> Format of the DATA section: 
+
+        <TABLE CELLSPACING=1 BORDER=1 CELLPADDING="5%">
+            <TR VALIGN=TOP ><TD><TT>
+                Prefix
+                            </TT></TD><TD>
+                CHARACTER*2
+                            </TT></TD><TD>
+                " $" (decimal codes: 32, 36)
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter: double quotation sign " (decimal code 34). 
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Lcode
+                            </TT></TD><TD>
+                CHARACTER*8
+                            </TD><TD>
+                Lcode.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter: (decimal code: 32)
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Object name
+                            </TT></TD><TD>
+                CHARACTER
+                            </TD><TD>
+                Experiment-code for session-class lcodes; source name for
+                scan-class lcodes; station name for station-class lcodes and
+                baseline name for baseline-class lcodes.
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD> <TD>
+                CHARACTER*1
+                            </TD><TD>
+                Delimiter: (decimal code 32)
+                            </TD></TR>
+             <TR VALIGN=TOP ><TD><TT>
+                Date
+                            </TT></TD><TD>
+                CHARACTER*10
+                            </TD><TD>
+                Date in the format yyyy.mm.dd
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1 
+                            </TD><TD>
+                Delimiter (decimal code 95)
+                            </TD></TR>
+             <TR VALIGN=TOP ><TD><TT>
+                Time
+                            </TT></TD><TD>
+                CHARACTER*8
+                            </TD><TD>
+                UTC time tag in the format HH:MM:SS
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*1  
+                            </TD><TD>
+                Delimiter: (decimal code 32)
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Index element 
+                            </TT></TD><TD>
+                CHARACTER  
+                            </TD><TD>
+                Index of the element in the lcode array in the format 
+                (IN1, IN2, IN3)
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Delimiter
+                            </TT></TD><TD>
+                CHARACTER*2
+                            </TD><TD>
+                Delimiter: double quotation sign " and blank 
+                (decimal codes 34, 32)
+                            </TD></TR>
+            <TR VALIGN=TOP ><TD><TT>
+                Value
+                            </TT></TD><TD>
+                CHARACTER  
+                            </TD><TD>
+                Value of the keyword.
+                            </TD></TR>
+       </TABLE>
+       </LI><BR><BR>
+
+  </UL>
+<P>
+
+  Example:
+
+<PRE>
+$$"PREA"
+ $"File_format:" gvf v 0.1  1999.08.08
+
+...
+
+$$"TEXT"
+ $"HISTORY version 1 1999.08.04 08:34:35" Created by Dbedit HP-UX version 3.1
+  Dbedit control file history entry: IRIS-S138, fort-gilc-hart-west-wett, -LP
+  Directory /diskA5/is138/1513
+
+...
+
+$$"CONT"
+ $"JUL DATE"    880256    1   1    1  R8 SCAN PRIM
+ $"CALBYFRQ"   1280264    3   2   14  I2 STAN PRIM
+
+...
+
+$$"DATA"
+ $"JUL DATE 0552+398 1999.05.03 22:12:33 (1,1,1)" .2451301500000000D+07
+
+...
+
+ $"CALBYFRQ HARTRAO  1999.05.03_22:12:33 (1,1,1)"    459  
+ $"CALBYFRQ HARTRAO  1999.05.03_22:12:33 (2,1,1)"  -1752
+ $"CALBYFRQ HARTRAO  1999.05.03_22:12:33 (3,1,1)"     10
+
+ $"GRDEL    GILCREEK/HARTRAO 1999.05.03_22:12:33 (1,1,1)" -.1162569743908074D-02
+ $"GRDEL    GILCREEK/HARTRAO 1999.05.03_22:12:33 (2,1,1)" -.1162561782032324D-02
+
+...
+
+</PRE>
+
+   Format of other keywords is seen from the example above.
+
+<HR SIZE="2">
+<P>
+
+<EM>
+   This page was prepared by 
+    (<IMG SRC="/petrov/icons/business_email_address.gif" ALIGN=MIDDLE>) <BR />
+
+   Last update: 05-SEP-99 19:53:44
+</EM>
+</BODY>
+</HTML>

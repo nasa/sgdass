@@ -1,0 +1,540 @@
+                         Manual to vtd_apriori_update.py
+ 
+ 
+                                   L. Petrov
+ 
+ 
+                                   2020.03.22
+ 
+ 
+                                Abstract
+ 
+   This document provides description of vtd_apriori_update.py
+program that updates those a priori parameters used by VTD
+that are changed on daily basis.
+ 
+ 
+Questions and comments about this guide should be directed to:
+ 
+Leonid Petrov ( https://science.gsfc.nasa.gov/sed/bio/leonid.petrov-1 )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ Scope
+ 
+ 
+2 ................ Program vtd_apriori_update.py
+ 
+   2.1 ........... What if vtd_apriori_update.py is interrupted
+ 
+3 ................ vtd_apriori_update.py control file
+ 
+   3.1 ........... vtd_apriori_update.py control file
+   3.2 ........... SPD_URL:
+   3.3 ........... BDS_URL:
+   3.4 ........... HPS_URL:
+   3.5 ........... IONO_URL:
+   3.6 ........... LOG_FILE:
+   3.7 ........... LOG_VERBOSE_FILE:
+   3.8 ........... VERBOSITY_LEVEL:
+   3.9 ........... EOP_FILE:
+   3.10 .......... IONO_DIR:
+   3.11 .......... LOAD_BDS_DIR:
+   3.12 .......... LOAD_HPS_DIR:
+   3.13 .......... SPD_BIN_DIR:
+   3.14 .......... EOP_SERIES_UPDATE:
+   3.15 .......... IONO_UPDATE:
+   3.16 .......... SPD_UPDATE:
+   3.17 .......... LOAD_UPDATE:
+   3.18 .......... MERRA2_GEOSFPIT_ATM:
+   3.19 .......... MERRA2_GEOSFPIT_LWS:
+ 
+4 ................ Example
+ 
+   4.1 ........... Example of a vtd_apriori_update.py control file
+   4.2 ........... Example of a corresponding VTD control file
+ 
+________________________________________________________________________________
+ 
+        1 Scope
+        =======
+ 
+   The following a priori values are derived from observations and need
+be updated on a regular basis:
+ 
+   1) Earth orientation parameters. The source of these data is
+      the Network Earth rotation service.
+ 
+   2) Ionosphere total electron contents maps. The source of these data
+is the GNSS.
+ 
+   3) Expansion coefficients for slant path delays for VLBI stations.
+The source of these data is the path delay service.
+ 
+   4) Time series of crustal deformation excreted my mass loading.
+The source of these data is the International Mass Loading Service.
+ 
+        2 Program vtd_apriori_update.py
+        ===============================
+ 
+   Program vtd_apriori_update.py is a part of VTD package. It is written
+in Python3 language. NB: python3 is totally incompatible with python3.
+Usage:
+ 
+      vtd_apriori_update.py -c configuration_file -v verbosity level [-d]
+ 
+   where,
+ 
+   configuration_file -- name of the configuration file
+   verbosity_level    -- 0 -- silent,
+                         1 -- normal verbosity,
+                         2 -- debugging level of verbosity
+ 
+  vtd_apriori_update.py   checks whether the local host has
+a priori files in the directories specified in the control file.
+If it does not have, vtd_apriori_update.py downloads the apriori
+from remote hosts specified in the control file. If it has,
+then vtd_apriori_update.py compares the local files with those
+at remote hosts. If it finds that the EOP  at remote hosts
+were updated and are newer than the local copies, it initiates
+the process of updating: it downloads the new portion of a prioris.
+NB: EOP files is always updated from the remote host.
+ 
+  When vtd_apriori_update.py is called with option -d (--download),
+it remove the old contents of directories with the ionospheric TEC
+maps, massloading, and slant path delay, if they exists, and downloads
+all the files. This is needed in three cases:
+1) at the very beginning when no a priori files at the local system
+   exits;
+2) when the number of supported stations at the server increased;
+3) when the contents of directories with the ionospheric TEC
+   maps, massloading, and slant path delay at the local computer
+   is corrupted.
+ 
+In all opther cass vtd_apriori_update.py should run in the update mode,
+i.e. without -d option.
+ 
+Since the total size of apriori files is ~100 Gb, downloading
+all apriori files may take time.
+ 
+  It is recommended to run vtd_apriori_update.py regularly, for
+instance using cron job.
+ 
+  In total, 100-150 Gb space is needed for all a priori data.
+ 
+                2.1 What if vtd_apriori_update.py is interrupted
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+   vtd_apriori_update.py downloads data from remote hosts in temporary
+files, and then renames them. Depending on speed of the Internet
+connection download may be long, however renaming is done very quick.
+If vtd_apriori_update.py was interrupted, temporary files in the
+output directories may remain. They need to be removed manually.
+In rare cases when interrupt results in truncation, entire directories
+can be cleaned. This will force vtd_apriori_update.py to download
+full copies of apriori files.
+ 
+        3 vtd_apriori_update.py control file
+        ====================================
+ 
+   vtd_apriori_update.py control files consists of the lines of variable
+lines in ascii coding. The first line identifies the format and
+version of the control file. The parser checks whether the version
+of the control file is supported by vtd_apriori_update.py.
+ 
+   Lines, others than the 1st, that starts with character # are considered
+as comments and ignored by the parser.
+ 
+   Control file supports environment variable in format ${ENV_VAR},
+i.e. enclosed in curly parentheses that start with $. Environment
+variables may be nested.
+ 
+   vtd_apriori_update.py control files consists of definitions in the
+form of keyword: value separated by one or more either blanks or
+tabulations. Columns should terminate the keyword.
+ 
+ 
+                3.1 vtd_apriori_update.py control file
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
+                3.2 SPD_URL:
+                ~~~~~~~~~~~~
+ 
+    SPD_URL:         url_with_slant_path_delay
+ 
+ 
+    This keyword specifies the URL with the expansion coefficients of
+slant path delay files in binary bspd format. At the moment, the
+following URLs provide slant path delays:
+ 
+  http://pathdelay.net/spd/bin
+  http://alt.pathdelay.net/spd/bin
+ 
+  URL http://pathdelay.gsfc.nasa.gov/spd/bin  is planned to be
+accessible in 2019.
+ 
+                3.3 BDS_URL:
+                ~~~~~~~~~~~~
+ 
+   BDS_URL:          url_with_mass_loading_time_series
+ 
+ 
+    This keyword specifies the URL with the time series of
+3D site displacements caused by mass loading for a number
+of stations in in binary bindisp format generated by the
+International Mass Loading Service. At the moment, the
+following URLs provide time series of mass loading in
+bindisp format:
+ 
+  http://massloading.net/imsl/load_bds
+  http://alt.massloading.net/imsl/load_bds
+ 
+  NB: The time series do not contain harmonic variations at
+a number of frequencies. The total displacement is a sum of
+time series and the harmonic variations. Harmonic variations
+of surface pressure were evaluated using least squares and
+subtracted from the surface pressure before computation of
+time series.
+ 
+ 
+                3.4 HPS_URL:
+                ~~~~~~~~~~~~
+ 
+   HPS_URL:          url_with_mass_loading_harmonic_components
+ 
+ 
+    This keyword specifies the URL with harmonic variations in
+3D site displacements caused by mass loading for a number
+of stations in in ascii harpos format generated by the
+International Mass Loading Service. The harmonic variations of
+surface pressure were evaluated using least squares and the
+mass loading was computed for sine and cosine component of
+displacements. The following URLs provide harmonic variations
+of mass loading displacements in harpos format:
+ 
+  http://massloading.net/imsl/load_har_list
+  http://alt.massloading.net/imsl/load_har_list
+ 
+ 
+                3.5 IONO_URL:
+                ~~~~~~~~~~~~~
+ 
+   IONO_URL:         url_with_tec_maps
+ 
+ 
+    This keyword specifies the URL with the time series of
+total electron contents (TEC) maps produced from analysis of GNSS
+data. At the moment, vtd_apriori_update.py supports TEC maps from
+CODE institution only:
+ 
+    http://ftp.aiub.unibe.ch/CODE
+ 
+ 
+                3.6 LOG_FILE:
+                ~~~~~~~~~~~~~
+ 
+   LOG_FILE:         short_log_file
+ 
+ 
+    This keyword specifies the name of the log file with brief
+information about outcome of apriori updates.
+ 
+ 
+                3.7 LOG_VERBOSE_FILE:
+                ~~~~~~~~~~~~~~~~~~~~~
+ 
+    LOG_VERBOSE_FILE:   long_log_file
+ 
+ 
+    This keyword specifies the name of the log file with
+verbose information about outcome of apriori updates. It is
+needed mainly for tracking problems.
+ 
+                3.8 VERBOSITY_LEVEL:
+                ~~~~~~~~~~~~~~~~~~~~
+ 
+    VERBOSITY_LEVEL:  verbosity_level_of_long_log_file
+ 
+ 
+    This keyword specifies verbosity level of the long log file.
+Normal verbosity level is 1. Higher level of verbosity provide
+additional information for problem tracking.
+ 
+                3.9 EOP_FILE:
+                ~~~~~~~~~~~~~
+ 
+    EOP_FILE: name_of_the_eop_file
+ 
+ 
+    This keyword specifies the name of the Earth Orientation
+Parameter file. This file should be writable by the user who
+runs vtd_apriori_update.py and readable by other users.
+This file is re-generated when vtd_apriori_update.py runs.
+vtd_apriori_update.py  calls Network Earth Rotation Service
+(NERS) for regeneration this file.
+ 
+                3.10 IONO_DIR:
+                ~~~~~~~~~~~~~~
+ 
+    IONO_DIR: name_of_tec_directory
+ 
+ 
+    This keyword specifies the name of the directory tree where
+vtd_apriori_update.py writes TEC maps. vtd_apriori_update.py
+will create sub-directories codg_asc/ and codg_bin/ if they do not
+exist. The latter directory will have a number of files with TEC
+maps in vio binary format. Each file has continuous time  series.
+vtd_apriori_update.py creates more than one output file to handle
+discontinuities and change of time resolution. vtd_apriori_update.py
+stores TEC maps in ascii format in directory codg_asc.
+ 
+ 
+                3.11 LOAD_BDS_DIR:
+                ~~~~~~~~~~~~~~~~~~
+ 
+    LOAD_BDS_DIR: name_of_massloading_time_series_directory
+ 
+ 
+   Name of the directory tree with 3D site position variations
+caused by mass loading with subtracted harmonic variations.
+vtd_apriori_update.py creates a tree
+ 
+  nto/mpiom06
+  atm/merra2
+  atm/geosfpit
+  atm/merra2_geosfpit
+  lws/merra2
+  lws/geosfpit
+  lws/merra2_geosfpit
+ 
+   In total, there are over 40,000 files in these directories.
+The files have extension .bds for data in BDS format and .txt
+for the summaries. vtd_apriori_update.py updates bds files
+and the summary files for new mass loading files that it
+discoverers at remote servers.
+ 
+                3.12 LOAD_HPS_DIR:
+                ~~~~~~~~~~~~~~~~~~
+ 
+    LOAD_HPS_DIR: name_of_massloading_harmonic_variations_directory
+ 
+ 
+   Name of the directory with harmonic variations of 3D site position
+variations caused by mass loading.
+ 
+ 
+                3.13 SPD_BIN_DIR:
+                ~~~~~~~~~~~~~~~~~
+ 
+    SPD_BIN_DIR: name_of_slant_path_directory
+ 
+ 
+   Name of the directory tree with coefficients of slant path
+delay expansions over 3D B-spline basis for a predefined set
+of space geodesy stations. vtd_apriroi_update.py creates a tree
+ 
+ 
+  merra
+  geosfpit
+ 
+   In total, there are around 1000 files in binary bspd format in
+these directories. vtd_apriori_update.py updates bds files
+and the summary files for new slant path delays, present in the
+remote server and absent in the local directories that it discoverers
+at remote servers.
+ 
+ 
+                3.14 EOP_SERIES_UPDATE:
+                ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    EOP_SERIES_UPDATE:   yes_or_no
+ 
+ 
+  A flag whether to update the Earth Orientation Parameter series.
+ 
+  Supported values: yes or no
+ 
+ 
+                3.15 IONO_UPDATE:
+                ~~~~~~~~~~~~~~~~~
+ 
+    IONO_UPDATE:         yes_or_no
+ 
+ 
+  A flag whether to update the with total electron contents maps.
+ 
+  Supported values: yes or no
+ 
+ 
+                3.16 SPD_UPDATE:
+                ~~~~~~~~~~~~~~~~
+ 
+    SPD_UPDATE:          yes_or_no
+ 
+ 
+  A flag whether to update the files with expansion of slant path
+delays in the neutral atmosphere into B-spline basis.
+Supported values: yes or no
+ 
+                3.17 LOAD_UPDATE:
+                ~~~~~~~~~~~~~~~~~
+ 
+    LOAD_UPDATE:         yes_or_no
+ 
+ 
+ 
+  A flag whether to update the mass loading files with 3D
+site displacements caused by the mass loading.
+ 
+  Supported values: yes or no
+ 
+ 
+                3.18 MERRA2_GEOSFPIT_ATM:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    MERRA2_GEOSFPIT_ATM: yes_or_no
+ 
+ 
+  A flag whether to update the combined file of the atmospheric
+pressure loading from MERRA2 and GEOSFPIT numerical whether models.
+That file has atmospheric pressure loadings using GEOSFPIT model
+for all epochs that model is available and using MERRA2 model
+for all epochs that model is not available, i.e. for the interval
+1980--2000.
+ 
+  Supported values: yes or no
+ 
+                3.19 MERRA2_GEOSFPIT_LWS:
+                ~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+    MERRA2_GEOSFPIT_LWS: yes_or_no
+ 
+ 
+  A flag whether to update the combined file of the land water
+storage loading from MERRA2 and GEOSFPIT numerical whether models.
+That file has land water storage loadings using GEOSFPIT model
+for all epochs that model is available and using MERRA2 model
+for all epochs that model is not available, i.e. for the interval
+1980--2000.
+ 
+  Supported values: yes or no
+ 
+        4 Example
+        =========
+ 
+                4.1 Example of a vtd_apriori_update.py control file
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
+# Configuration of file vtd_apriori update.  Format version of 2020.03.22
+#
+# Control file for apriori update at astrogeo
+#
+# Last update: 2020.03.22_14:25:24
+#
+# Here we define urls with resources where
+#
+#    1) slant path delay,
+#    2) massloading displaments and
+#    3) the ionosphere parameters reside
+#
+SPD_URL:             http://pathdelay.net/spd/bin
+BDS_URL:             http://massloading.net/imsl/load_bds
+HPS_URL:             http://massloading.net/imsl/load_har_list
+IONO_URL:            http://ftp.aiub.unibe.ch/CODE
+#
+# Log files at the local computer
+#
+LOG_FILE:            /vau/pau.log
+LOG_VERBOSE_FILE:    /vau/vau_verbose.log
+VERBOSITY_LEVEL:     1
+#
+#  Files and directories at local computer that holds output a priori data
+#  to be updated
+#
+EOP_FILE:            /vau/eop_polu.txt
+IONO_DIR:            /vau/iono
+LOAD_BDS_DIR:        /vau/load_bds
+LOAD_HPS_DIR:        /vau/load_hps
+SPD_BIN_DIR:         /vau/spd/bin
+#
+#  Flags yes/no whether a given a priori file needs be updated
+#
+EOP_SERIES_UPDATE:   yes
+IONO_UPDATE:         yes
+SPD_UPDATE:          yes
+LOAD_UPDATE:         yes
+MERRA2_GEOSFPIT_ATM: yes
+MERRA2_GEOSFPIT_LWS: yes
+#
+# End of the vtd_apriori_update.py
+ 
+                4.2 Example of a corresponding VTD control file
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+Here are definitions in the VTD control file that use the apriori
+parameters that are updated with vtd_apriori_update.py that runs
+with the above mentioned control file:
+ 
+EOP_SERIES:  /vau/eop_polu.txt
+ 
+...
+ 
+POSVAR_FIL:  1  /vau/load_bds/atm/merra2_geosfpit/
+POSVAR_MOD:  1  TIME_SERIES
+POSVAR_INT:  1  SPLINE
+POSVAR_USE:  1  IF_AVAILABLE
+#
+POSVAR_FIL:  2  /vau/load_bds/lws/merra2_geosfpit/
+POSVAR_MOD:  2  TIME_SERIES
+POSVAR_INT:  2  SPLINE
+POSVAR_USE:  2  IF_AVAILABLE
+#
+POSVAR_FIL:  3  /vau/load_bds/nto/mpiom06
+POSVAR_MOD:  3  TIME_SERIES
+POSVAR_INT:  3  SPLINE
+POSVAR_USE:  3  IF_AVAILABLE
+#
+POSVAR_FIL:  4  /vau/load_har_list/atm/merra2/atm_merra2_harmod.hps
+POSVAR_MOD:  4  HARMONIC_MODEL
+POSVAR_INT:  4  LINEAR
+POSVAR_USE:  4  IF_AVAILABLE
+#
+POSVAR_FIL:  5  /vau/load_har_list/lws/merra2/lws_merra2_harmod.hps
+POSVAR_MOD:  5  HARMONIC_MODEL
+POSVAR_INT:  5  LINEAR
+POSVAR_USE:  5  IF_AVAILABLE
+#
+POSVAR_FIL:  6  /vau/load_har_list/toc/fes2014b/toc_fes2014b_harmod.hps
+POSVAR_MOD:  6  HARMONIC_MODEL
+POSVAR_INT:  6  LINEAR
+POSVAR_USE:  6  IF_AVAILABLE
+#
+POSVAR_FIL:  7  /vau/load_har_list/toc/equil01/toc_equil01_harmod.hps
+POSVAR_MOD:  7  HARMONIC_MODEL
+POSVAR_INT:  7  LINEAR
+POSVAR_USE:  7  IF_AVAILABLE
+ 
+...
+ 
+SLANT_PATH_DELAY_MODEL:         SPD_3D
+EXTERNAL_DELAY_DIR:             /vau/spd/bin/geosfpit
+EXTERNAL_DELAY_DIR_2ND:         /vau/spd/bin/merra
+EXTERNAL_DELAY_DIR_3RD:         NONE
+EXTERNAL_DELAY_DIR_4TH:         NONE
+ 
+...
+ 
+IONOSPHERE_MODEL:               GNSS_TEC_MAP
+IONOSPHERE_DATA_FILE:           /vau/iono/code_bin/codg_01.vio
+IONOSPHERE_DATA_FILE_2ND:       /vau/iono/code_bin/codg_02.vio
+IONOSPHERE_DATA_FILE_3RD:       /vau/iono/code_bin/codg_03.vio
+IONOSPHERE_DATA_FILE_4TH:       /vau/iono/code_bin/codg_04.vio
+IONOSPHERE_DATA_FILE_5TH:       /vau/iono/code_bin/codg_05.vio
+IONOSPHERE_DATA_FILE_6TH:       /vau/iono/code_bin/codg_06.vio
+IONOSPHERE_DATA_FILE_7TH:       NONE
+IONOSPHERE_DATA_FILE_8TH:       NONE
+IONOSPHERE_DATA_FILE_9TH:       NONE

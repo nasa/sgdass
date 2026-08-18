@@ -1,0 +1,19 @@
+Time series of variations of heights of VLBI antennas due to thermal 
+expansion of antenna mounting. Antenna expansion of two parts of 
+antenna are taken into account: concrete foundation and steel pillar.
+Expansion coefficient of concrete is set to 1.0D-5
+Expansion coefficient of steel is set to 1.2D-5.
+
+Air temperature is taken from numerical weather model. Original
+field of air temperature is expanded into B-spline basis. Using,
+this expansion, air temperature at antenna reference point is 
+computed. The temperature of antenna is set to be equal of air
+temperature with a lag of 1.5 hours.
+
+Antenna dimensions are taken from the database maintained by
+Axel Nothnagel at http://vlbi.geod.uni-bonn.de/Analysis/Thermal/antenna-info.txt
+
+More details can be found at 
+Axel Nothnagel (2009) Conventions on thermal expansion 
+modelling of radio telescopes for geodetic and astrometric VLBI;
+Journal of Geodesy, Vol. 83(3), 787-792, DOI: 10.1007/s00190-008-0284-z

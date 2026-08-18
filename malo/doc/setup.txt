@@ -1,0 +1,15 @@
+2017.02.22_16:24:20
+
+/progs/malo_20170320/bin_static/spr_model \
+     /imsl/heb/geosfpit twland \
+     2000.01.01_00:00 \
+     2017.02.20_00:00 \
+     3 \
+     /s1/temp/lws_geosfpit_model_2000_2017.heb 2
+
+/progs/malo_20170320/bin_static/malo_upgrid \
+     /s1/temp/lws_geosfpit_model_2000_2017.heb \
+     /progs/malo_20170320/share/mod44w_ls_blackman_d2699.heb \
+     21 \
+     /progs/malo_20170320/share/lws_geosfpit_mask_d2699.heb \
+     /progs/malo_20170320/share/twland_lws_geosfpit_model_2000_2017_d2699.heb

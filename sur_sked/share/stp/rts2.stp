@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    RTS2      char       HC
+LAST_UPDATE:   RTS2      char       2025.03.23
+COORD:         RTS2      meters     -1330738.244    -5328056.522     3236477.55
+MOUNT:         RTS2      char       ALTAZ
+#
+SLEW_AZ:       RTS2      deg/sec    9.9
+SLEW_EL:       RTS2      deg/sec    9.9
+ACCL_AZ:       RTS2      deg/sec^2  9.9
+ACCL_EL:       RTS2      deg/sec^2  9.9
+TSETTLE_AZ:    RTS2      sec        0.0
+TSETTLE_EL:    RTS2      sec        0.0
+#
+EL_MIN:        RTS2      deg        2.0
+EL_MAX:        RTS2      deg       90.0
+AZ_RANGE:      RTS2      deg      -90.0 90.0 270.0 450.0
+RECORDER:      RTS2      char      hrtr
+BACKEND:       RTS2      char      hrtr
+SETMODE:       RTS2      sec        0.0
+PREOB:         RTS2      sec        0.0
+POSTOB:        RTS2      sec        0.0
+#
+HOR_AZIM:      RTS2      deg        0.0  360.0
+HOR_ELEV:      RTS2      deg        2.0   2.0
+STOW_AZIM:     RTS2      deg        0.0
+STOW_ELEV:     RTS2      deg       90.0
+#
+CLOCK_DATES:   RTS2      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  RTS2      sec        0.0

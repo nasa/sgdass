@@ -1,0 +1,13 @@
+Pima (plural pimy) is a dialect word in Russian language that 
+describes a winter boot that is suitable when outside temperature
+is in a range -20C, -60C. This word is used in Siberia and north-west
+of Russia. There are two kinds of pima:
+
+1) a high boot with deer fur outside. This is a kind of boots that
+   are used by indigenous nations of the north of Siberia.
+
+2) a high boot made from a 1cm thick layer of felt. This is a traditional 
+   winter boot used by Russians and is called valenok (plural valenki).
+
+You may ask how a winter boot is related to VLBI processing software?
+Honestly speaking, I do not know.

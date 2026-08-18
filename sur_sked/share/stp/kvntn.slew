@@ -1,0 +1,18 @@
+# Station slew format of  2018.02.02
+#
+SHORT_NAME:  KVNTN     Kt
+LAST_UPDATE: KVNTN     2018.01.20
+COORD:       KVNTN     meters     -3171731.4809 4292677.3733 3481040.4580
+MOUNT:       KVNTN     char       ALTAZ
+SLEW_AZ:     KVNTN     deg/sec    2.95
+SLEW_EL:     KVNTN     deg/sec    2.95
+ACCL_AZ:     KVNTN     deg/sec^2  3.00
+ACCL_EL:     KVNTN     deg/sec^2  3.00
+TSETTLE_AZ:  KVNTN     sec        2.0 
+TSETTLE_EL:  KVNTN     sec        2.0 
+EL_MIN:      KVNTN     deg       10.0
+EL_MAX:      KVNTN     deg       88.0
+AZ_RANGE:    KVNTN     deg      -85.0 85.0 275.0 445.0
+RECORDER:    KVNTN     char      mark5
+PREOB:       KVNTN     sec        2.0
+POSTOB:      KVNTN     sec        2.0

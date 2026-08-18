@@ -1,0 +1,59 @@
+# Frequency definition table. Version 1.0   Format of 2024.02.10
+
+# This file describes available frequency range per station for a given
+# wiring. The frequency range is defined here as the range that software
+# supports. Setting frequencies beyond the specified range will cause
+# signal corruption. The usable frequency range may be more restrictive
+# than the available range due to the internal or external radio interference.
+#
+# A wiring describes physical cable connection that is not controlled
+# by software and a specific firmware of the digital backend. 
+# A given station may have more than one wiring. A change of wiring
+# requires re-connect cables and/or flushing firmware.
+#
+# Bands are named alphabetically in this file and may not coincide with
+# internal band names supported by the antenna control software.
+#
+# Format:
+#         STA_NAM  -- two-character long station name
+#         WIRING   -- wiring name
+#         BNAND    -- band name
+#         LOW_FRQ  -- Low frequency of the band range in MHz
+#         HIGH_FRQ -- High frequency of the band range in MHz
+#         FRQ_STEP -- Frequency step in MHz
+#         DAS      -- data acquisition terminal
+#                     Supported data aquisiion terminals:
+#
+#                     mark5b_vdif
+#                     mark5b_geo2
+#                     mark5b_geo3
+#                     mark5b_geo4
+#                     rdbe
+#                     r2dbe
+#                     dbbc2
+#                     dbbc3
+#
+#         LO_TYP   -- type of lo computation
+#                     a -- LO is hard-corded in the LO field of the frequency
+#                          definition file 
+#                     b -- LO = If1 - 512.0 - Bw/2
+#                          where if1 is the positive low edge frequency of the 1st IF
+#                     c -- LO = If1 - 512.0 + Bw/2
+#                     d -- LO = ifl + Bw
+#                          where ifl is the positive low edge frequency of the lat IF
+#
+#         IF_TYP   -- type of IF computation that is put in the procedure file
+#                     a -- IF = LO + offset
+#                          The IF statament defines the offset with respect to the LO
+#                     b -- IF = LO + 1008 - k*32.0, where k is integer
+#                          LO is defined in the file
+#
+#         LO       -- LO frequency in MHz
+#
+#         FLAG     -- can be absent. Supported flags: 
+#                      nop -- designate band as non-operational.
+#
+#
+#Sta wiring band   Freq_low Freq_high fs    backend      lt ft lo_freq  flat
+#
+

@@ -1,0 +1,27 @@
+#!/bin/csh
+# ************************************************************************
+# *                                                                      *
+# *   C-shell script for compiling and linking  demos for DiaGI          *
+# *                                                                      *
+# *  ###  16-OCT-99    make_exec   v1.0  (c)  L. Petrov  16-OCT-99  ###  *
+# *                                                                      *
+# ************************************************************************
+if ( $?SOLVE_PATH == 0 ) then
+    echo "--- (diagi) make_exec Environment variable SOLVE_PATH was not defined  ---"
+    stop 
+endif
+if ( ${?SOLVE_CENTER} == "0" ) then 
+    echo "--- msolve environment variable SOLVE_CENTER was not defined ---"
+    stop
+endif
+cd ${SOLVE_PATH}/diagi
+echo "---  diagi executabels are being compiled and linked for $SOLVE_CENTER  ---"
+if ($#argv == 0) then 
+    echo "Compiling and linking DiaGI demo"    	  
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+    make demo
+  else
+    echo "Compiling and linking DiaGI demo" >>& $1
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >>& $1
+    make demo >>& $1
+endif

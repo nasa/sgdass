@@ -1,0 +1,276 @@
+       PROGRAM    VTD_EXAMPLE_06_MAIN
+       IMPLICIT   NONE 
+       CHARACTER  STR*128
+       INTEGER*8    STACK_SIZE_IN_BYTES, GB, IS
+       PARAMETER  ( GB = 1024*1024*1024 )
+       PARAMETER  ( STACK_SIZE_IN_BYTES = INT8(4) * GB )
+       INTEGER*8, EXTERNAL :: SET_STACKSIZE 
+!
+! ---- Set stacksize. Alterntive is to set stacksize in shell:
+! ---- commands limit stacksize 4000000 or limit -s 4000000
+! ---- and set evironment variable GOMP_STACKSIZE
+! ---- Program will crash in attempt to use default stacksize,
+! ---- because fortran uses stack for storing variables
+!
+       IS = SET_STACKSIZE ( %VAL(STACK_SIZE_IN_BYTES) )
+       CALL INCH8    ( STACK_SIZE_IN_BYTES/INT8(1024), STR )
+       CALL SETENV   ( 'GOMP_STACKSIZE'//CHAR(0), TRIM(STR)//CHAR(0), %VAL(1) )
+       CALL VTD_EXAMPLE_06()
+       END  PROGRAM  VTD_EXAMPLE_06_MAIN
+!
+! ------------------------------------------------------------------------
+!
+       SUBROUTINE  VTD_EXAMPLE_06()
+! ************************************************************************
+! *                                                                      *
+! *   Program VTD_EXAMPLE_06 is for computation of VLBI group delay from *
+! *   a far-zone object (f.e. radiogalaxy) when the remote station is    *
+! *   on the orbit, and orbit clock does not have a continuous sample    *
+! *   counter.                                                           *
+! *                                                                      *
+! *  ### 25-NOV-2012 VTD_EXAMPLE_06  v1.0 (c) L. Petrov  25-NOV-2012 ### *
+! *                                                                      *
+! ************************************************************************
+      IMPLICIT   NONE 
+      INCLUDE   'vtd.i'
+      TYPE     ( VTD__TYPE      ) :: VTD
+      TYPE     ( VTD__OBS_TYPE  ) :: OBS_TYP
+      INTEGER*4  MBUF 
+      PARAMETER  ( MBUF = 8192 )
+      CHARACTER  C_SOU(VTD__M_SOU)*8, C_STA(VTD__M_STA)*8, SOU_NAM*8, &
+     &           STA_NAM(3)*8
+      CHARACTER  VTD_CONF_FILE*128, DATE_OBS*30, DATE_SCA*21, &
+     &           DATE_BEG*21, DATE_END*21
+      INTEGER*4  L_STA, L_SOU, J1, J2, IUER, &
+     &           MJD_BEG, MJD_END, MJD_OBS(MBUF), MJD_OBS_BEG, MJD_SCA
+      REAL*8     TEMP(3), PRES(3), TAU_GR, TAU_PH, &
+     &           RATE_PH, DER_DEL(VTD__NDER), DER_RAT(VTD__NDER), &
+     &           TAI_OBS_BEG, TAI_BEG, TAI_SCA, TAI_END, TAI_OBS(MBUF), &
+     &           TIM_DELAY(MBUF), DELAY_RATE(MBUF), LT_SCA, LT_OBS, REL_CLO
+      REAL*8     FREQ, TAU_GR2, T1(8192), X1(8192) 
+      CHARACTER  BUF(MBUF)*256, FILNZO*128, NZO_NAME*8, CENTER_NAME*16, &
+     &           REF_NAME*16, STR*30
+      INTEGER*4  TIM_CODE, COO_CODE, M_ARR, L_ARR, L_NOD, L_DEG, L_OBS, NZO_REF
+      PARAMETER  ( M_ARR = 256*1024 )
+      INTEGER*4  MJD_ARR(M_ARR)
+      REAL*8     TIM_ARR(M_ARR), POS_ARR(3,M_ARR), VEL_ARR(3,M_ARR)
+      REAL*8,    EXTERNAL :: VTD_REL_ORB
+      CHARACTER, EXTERNAL :: MJDSEC_TO_DATE*30
+      INTEGER*4, EXTERNAL :: ILEN, I_LEN
+!
+      VTD_CONF_FILE = '__VTD_SHARE__/vtd_test_01.cnf'
+      FILNZO        = '__VTD_SHARE__/raes03ci.scf'
+!
+      OBS_TYP%PLRZ    = 'RR'     
+      OBS_TYP%FRQ_REF(1) = 2.2D9
+      OBS_TYP%FRQ_REF(2) = 8.2D9
+      OBS_TYP%N_BND      = 2
+      OBS_TYP%DELAY_TYPE = VTD__MLMH__DTP 
+      OBS_TYP%FRQ_ION_EFF(1) = 2.3D9
+      OBS_TYP%FRQ_ION_EFF(2) = 8.5D9
+      OBS_TYP%EXP_NAME   = 'Test'
+      OBS_TYP%SCAN_NAME  = 'Scan_0001'
+      OBS_TYP%STATUS     = VTD__BND 
+!
+! --- List of stations and sources participated in the observing session
+!
+      L_STA = 4
+      C_STA(1) = 'EFLSBERG'
+      C_STA(2) = 'PUSCHINO'
+      C_STA(3) = 'GEOCENTR'
+      C_STA(4) = 'RADIO-AS'
+      L_OBS    = 16
+!
+! --- List of observed sources
+!
+      L_SOU = 1
+      C_SOU(1)   = '1749+096'
+!
+! --- Date range of the observing session (TAI)
+!
+      DATE_BEG   = '2012.09.17-18:30:35.00' !  Nominal session start
+      DATE_END   = '2012.09.17-22:10:35.00' !  Nominal session end
+      DATE_SCA   = '2012.09.17-19:10:35.00' !  Nominal scan start
+      DATE_OBS   = '2012.09.17-19:12:35.00' !  epoch of the first observation
+!
+! --- Transform the dates from calendar dates to pairs MJD/TAI
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_BEG, MJD_BEG, TAI_BEG, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3721, -2, 'VTD_EXAMPLE_06', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_BEG )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_END, MJD_END, TAI_END, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3722, -2, 'VTD_EXAMPLE_06', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_END )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_SCA, MJD_SCA, TAI_SCA, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3723, -2, 'VTD_EXAMPLE_06', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_SCA )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_OBS, MJD_OBS_BEG, TAI_OBS_BEG, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3724, -2, 'VTD_EXAMPLE_06', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_OBS )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Initialize VTD data structure. This is the first operation with
+! --- the VTD library
+!
+      IUER = -1
+      CALL VTD_INIT ( VTD,  IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3725, -2, 'VTD_EXAMPLE_06', 'Error in an attempt to '// &
+     &         'initialize VTD oibject' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Read and parse VTD configuration file
+!
+      IUER = -1
+      CALL VTD_CONF ( VTD_CONF_FILE, VTD, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3726, -2, 'VTD_EXAMPLE_06', 'Error in an attempt '// &
+     &         'to read configuration file '//VTD_CONF_FILE )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Load catalogues, ephemerides, EOP series and other data files
+!
+      IUER = -1
+      CALL VTD_LOAD  ( VTD, L_STA, C_STA, L_SOU, C_SOU, MJD_BEG, TAI_BEG, &
+     &                 MJD_END, TAI_END, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3727, -2, 'VTD_EXAMPLE_06', 'Error in an '// &
+     &         'attempt to load the data into VTD data structure' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Read the ephemeris of the orbiting station. The ephemeris is
+! --- expected to be in a **FULL conformance**  with 
+! --- Orbit Data Messsages CSSDS 502.0-B-2 standard
+!
+      IUER = -1
+      CALL VTD_READ_NZO ( FILNZO, NZO_NAME, M_ARR, L_ARR, MJD_ARR, &
+     &                    TIM_ARR, POS_ARR, VEL_ARR, CENTER_NAME, &
+     &                    REF_NAME, TIM_CODE, COO_CODE, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3728, -2, 'VTD_EXAMPLE_06', 'Error in an '// &
+     &         'attempt to read NZO data into VTD data structure' )
+           CALL EXIT ( 1 ) 
+      END IF
+      IF ( CENTER_NAME == 'EARTH BARYCENTER' ) THEN
+           NZO_REF = VTD__EME
+      END IF
+!
+! --- Load the ephemeris of the orbiting station that were read 
+! --- by the previous routine VTD_READ_NZO 
+!
+      L_NOD = 256 ! The number of nodes for spline interpolation
+      L_DEG = 3   ! Degree of spline interpolation
+      IUER = -1
+      CALL VTD_LOAD_OBJ_NZO ( NZO_NAME, VTD__ES, VTD__OR, NZO_REF, TIM_CODE, &
+     &                        VTD, L_ARR, MJD_ARR, TIM_ARR, POS_ARR, &
+     &                        L_NOD, L_DEG, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3729, -2, 'VTD_EXAMPLE_06', 'Error in an '// &
+     &         'attempt to load NZO data into VTD data structure' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Compute light time between the orbiting and downlink stations
+!
+      IUER = -1
+      CALL VTD_LT_ORB ( VTD, C_STA(2), C_STA(4), MJD_SCA, TAI_SCA, &
+     &                  LT_SCA, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3730, -2, 'VTD_EXAMPLE_06', 'Error in an '// &
+     &         'attempt to compute light time' )
+           CALL EXIT ( 1 ) 
+      END IF
+      STR = MJDSEC_TO_DATE ( MJD_SCA, TAI_SCA, -2 )
+      WRITE ( 6, 110 ) C_STA(2), C_STA(4), STR(1:21), LT_SCA
+ 110  FORMAT ( 'Light time from ',A, ' to ', A, ' at ', A, &
+     &         ' is ', F16.13, ' s'  )
+!
+! --- Now run a cycple for computing time delay/delat rate series
+!
+      DO 420 J2=1,L_OBS
+!
+! ------ Circumstances of the observation
+!
+         MJD_OBS(J2) = MJD_OBS_BEG
+         TAI_OBS(J2) = TAI_OBS_BEG + (J2-1)*1.0D0
+!
+! ------ Compute geometricv path delay without
+! ------ time dilation at the orbiting station
+!
+         VTD%CONF%IVRB = 0
+         IUER = -1 
+         CALL VTD_DELAY ( C_SOU(1), C_STA(3), C_STA(4), &
+     &                    MJD_OBS(J2), TAI_OBS(J2), &
+     &                    OBS_TYP, VTD, TAU_GR, RATE_PH, DER_DEL, &
+     &                    DER_RAT, IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3732, -2, 'VTD_EXAMPLE_06', 'Error in an '// &
+     &            'attempt to compute VLBI time delay' )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+! ------ Compute light time between the orbiting and downlink stations
+!
+         IUER = -1
+         CALL VTD_LT_ORB ( VTD, C_STA(2), C_STA(4), &
+     &                     MJD_OBS(J2), TAI_OBS(J2), LT_OBS, IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3733, -2, 'VTD_EXAMPLE_06', 'Error in an '// &
+     &            'attempt to compute light time' )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+! ------ Compute time dilation ant the orbiting station.
+! ------ NB: time artument is rediced for the light time,
+! ------ i.e. time dilation is computed on geocentric time 
+! ------ coordinate of the orbiting station
+!
+         IUER = -1 
+         REL_CLO = VTD_REL_ORB ( VTD, C_STA(4), &
+     &                           MJD_SCA,     TAI_SCA     - LT_SCA, &
+     &                           MJD_OBS(J2), TAI_OBS(J2) - LT_OBS, IUER )
+         IF ( IUER .NE. 0 ) THEN
+              CALL ERR_LOG ( 3734, -2, 'VTD_EXAMPLE_06', 'Error '// &
+     &            'in an attempt to compute clock function' )
+              CALL EXIT ( 1 ) 
+         END IF
+!
+! ------ Summ three terms for time delay.
+! ------ NB: Radic was the second (remote) station.
+! ------     Hense, time deliation term is subtracted
+!
+         TIM_DELAY(J2)  = TAU_GR + LT_SCA - REL_CLO
+         DELAY_RATE(J2) = RATE_PH
+!
+! ------ Print results
+!
+         STR = MJDSEC_TO_DATE ( MJD_OBS(J2), TAI_OBS(J2), -2 )
+         WRITE ( 6, 120 ) C_SOU(1), C_STA(3), C_STA(4), &
+     &                    STR(1:21), TIM_DELAY(J2), DELAY_RATE(J2)
+ 120     FORMAT ( 'Sou: ',A, ' Sta: ', A, ' / ', A, ' TAI: ', A, &
+     &            ' Delay: ', F16.13, ' s Rate: ', F18.15 )
+ 420  CONTINUE 
+      IUER = -1
+      CALL VTD_QUIT ( VTD, IUER )
+      END  SUBROUTINE  VTD_EXAMPLE_06  !#!#

@@ -1,0 +1,187 @@
+       PROGRAM    VTD_EXAMPLE_01_MAIN
+       IMPLICIT   NONE 
+       CHARACTER  STR*128
+       INTEGER*8    STACK_SIZE_IN_BYTES, GB, IS
+       PARAMETER  ( GB = 1024*1024*1024 )
+       PARAMETER  ( STACK_SIZE_IN_BYTES = INT8(4) * GB )
+       INTEGER*8, EXTERNAL :: SET_STACKSIZE 
+!
+! ---- Set stacksize. Alterntive is to set stacksize in shell:
+! ---- commands limit stacksize 4000000 or limit -s 4000000
+! ---- and set evironment variable GOMP_STACKSIZE
+! ---- Program will crash in attempt to use default stacksize,
+! ---- because fortran uses stack for storing variables
+!
+       IS = SET_STACKSIZE ( %VAL(STACK_SIZE_IN_BYTES) )
+       CALL INCH8    ( STACK_SIZE_IN_BYTES/INT8(1024), STR )
+       CALL SETENV   ( 'GOMP_STACKSIZE'//CHAR(0), TRIM(STR)//CHAR(0), %VAL(1) )
+       CALL VTD_EXAMPLE_01()
+       END  PROGRAM  VTD_EXAMPLE_01_MAIN
+!
+! ------------------------------------------------------------------------
+!
+       SUBROUTINE  VTD_EXAMPLE_01()
+! ************************************************************************
+! *                                                                      *
+! *   Program VTD_EXAMPLE_01 is for
+! *                                                                      *
+! *  ### 04-AUG-2005 VTD_EXAMPLE_01  v1.2 (c) L. Petrov  17-NOV-2016 ### *
+! *                                                                      *
+! ************************************************************************
+      IMPLICIT   NONE 
+      INCLUDE   'vtd.i'
+      TYPE     ( VTD__TYPE      ) :: VTD
+      TYPE     ( VTD__OBS_TYPE  ) :: OBS_TYP
+      CHARACTER  C_SOU(VTD__M_SOU)*8, C_STA(VTD__M_STA)*8, SOU_NAM*8, &
+     &           STA_NAM(2)*8, STR*128
+      CHARACTER  VTD_CONF_FILE*128, DATE_OBS*21, DATE_BEG*21, DATE_END*21
+      INTEGER*4  L_STA, L_SOU, MJD_BEG, MJD_END, MJD_OBS, IVRB, IUER
+      REAL*8     TEMP(2), PRES(2), TAI_OBS, TAI_BEG, TAI_END, TAU_GR, TAU_PH, &
+     &           RATE_PH, DER_DEL(VTD__NDER), DER_RAT(VTD__NDER), FREQ
+      INTEGER*4, EXTERNAL :: ILEN, I_LEN
+!
+      VTD_CONF_FILE = '__VTD_SHARE__/vtd_test_01.cnf'
+      IVRB = 0
+!
+      OBS_TYP%PLRZ    = 'RR'     
+      OBS_TYP%FRQ_REF(1) = 2.2D9
+      OBS_TYP%FRQ_REF(2) = 8.2D9
+      OBS_TYP%N_BND      = 2
+      OBS_TYP%DELAY_TYPE = VTD__MLMH__DTP 
+      OBS_TYP%FRQ_ION_EFF(1) = 2.3D9
+      OBS_TYP%FRQ_ION_EFF(2) = 8.5D9
+      OBS_TYP%EXP_NAME   = 'Test_01'
+      OBS_TYP%SCAN_NAME  = 'Scan_0001'
+      OBS_TYP%STATUS     = VTD__BND 
+!
+! --- List of stations and sources participated in the observing session
+!
+      L_STA = 2
+      C_STA(1) = 'WESTFORD'
+      C_STA(2) = 'WETTZELL'
+      L_SOU = 1
+      C_SOU(1) = '2318+049'
+!
+! --- Date range of the observing session
+!
+      DATE_BEG   = '2002.12.11-18:00:00.0'
+      DATE_END   = '2002.12.11-19:00:00.0'
+!
+! --- Transform the dates from calendar dates to pairs MJD/TAI
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_BEG, MJD_BEG, TAI_BEG, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3711, -2, 'VTD_EXAMPLE_01', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_BEG )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_END, MJD_END, TAI_END, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3712, -2, 'VTD_EXAMPLE_01', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_END )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Circumstances of the observation
+!
+      SOU_NAM    = '2318+049'
+      STA_NAM(1) = 'WESTFORD'
+      STA_NAM(2) = 'WETTZELL'
+      DATE_OBS   = '2002.12.11-18:24:32.0'
+!
+      IUER = -1
+      CALL DATE_TO_TIME ( DATE_OBS, MJD_OBS, TAI_OBS, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3713, -2, 'VTD_EXAMPLE_01', 'Error in date '// &
+     &         'transformation. Please check the syntax of '//DATE_OBS )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Meteorological parameter for station 1 and station 2
+!
+      PRES(1) = 100170.0D0  ! Pa
+      PRES(2) =  95430.0D0  ! Pa
+      TEMP(1) =    275.55D0 ! K
+      TEMP(2) =    278.55D0 ! K
+!
+      IUER = -1
+      CALL VTD_INIT ( VTD,  IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3714, -2, 'VTD_EXAMPLE_01', 'Error in an attempt to '// &
+     &         'initialize VTD oibject' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Read and parse configuration file
+!
+      IUER = -1
+      CALL VTD_CONF ( VTD_CONF_FILE, VTD, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3715, -2, 'VTD_EXAMPLE_01', 'Error in an attempt '// &
+     &         'to read configuration file '//VTD_CONF_FILE )
+           CALL EXIT ( 1 ) 
+      END IF
+      VTD%CONF%IVRB = IVRB
+!
+! --- Load catalogues, ephemerides, EOP series and other data files
+!
+      IUER = -1
+      CALL VTD_LOAD  ( VTD, L_STA, C_STA, L_SOU, C_SOU, MJD_BEG, TAI_BEG, &
+     &                 MJD_END, TAI_END, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3716, -2, 'VTD_EXAMPLE_01', 'Error in an '// &
+     &         'attempt to load the data into VTD data structure' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Load meteorological parameters of the first station into the VTD record
+!
+      IUER = -1 
+      CALL VTD_METEO_IN ( VTD, STA_NAM(1), PRES(1), TEMP(1), TEMP(1), IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3717, -2, 'VTD_EXAMPLE_01', 'Error in an '// &
+     &         'attempt to load meteorological parameters for station '// &
+     &          STA_NAM(1) )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Load meteorological parameters of the first station into the VTD record
+!
+      IUER = -1 
+      CALL VTD_METEO_IN ( VTD, STA_NAM(2), PRES(2), TEMP(2), TEMP(2), IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3718, -2, 'VTD_EXAMPLE_01', 'Error in an '// &
+     &         'attempt to load meteorological parameters for station '// &
+     &          STA_NAM(2) )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Compute path delay
+!
+      IUER = -1 
+      CALL VTD_DELAY ( SOU_NAM, STA_NAM(1), STA_NAM(2), MJD_OBS, TAI_OBS,   &
+     &                 OBS_TYP, VTD, TAU_GR, RATE_PH, &
+     &                 DER_DEL, DER_RAT, IUER )
+      IF ( IUER .NE. 0 ) THEN
+           CALL ERR_LOG ( 3719, -2, 'VTD_EXAMPLE_01', 'Error in an '// &
+     &         'attempt to comute VLBI time delay' )
+           CALL EXIT ( 1 ) 
+      END IF
+!
+! --- Print results
+!
+      CALL VTD_GET_VERSION ( STR )
+      WRITE ( 6, 110 ) STR(1:I_LEN(STR)), SOU_NAM, STA_NAM, &
+     &                 MJD_OBS, TAI_OBS, TAU_GR, RATE_PH
+ 110  FORMAT ( A/ &
+     &         'Source:   ',A, / &
+     &         'Stations: ', A, ' / ', A, '      MJD= ',I5, &
+     &         ' Tai= ', F12.6/ &
+     &         'Tau_gr=   ',F17.14, ' sec    Fre_ph= ',1PD20.13, ' ' )
+      IUER = -1
+      CALL VTD_QUIT ( VTD, IUER )
+!
+      END  SUBROUTINE  VTD_EXAMPLE_01  !#!#

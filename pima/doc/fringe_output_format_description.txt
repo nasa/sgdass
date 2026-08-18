@@ -1,0 +1,171 @@
+Description of PIMA Fringe results  data format v 1.3, version of 2022.12.15
+=========================================================================================
+Author:       Leonid Petrov
+Last updated: 2025.02.16_22:23:17
+=========================================================================================
+   Bytes  Format Units  Label          Explanations
+-----------------------------------------------------------------------------------------
+   1:6    I6     ------ IND_OBS        Observation index
+   8:11   I4     ------ SCA_IND        Scan index 
+  13:22   A10    ------ SCAN_NAME      Scan name
+  24:31   A8     ------ SOU_NAME       IVS source name 
+  33:40   A8     ------ STA_NAME_1     IVS first or reference station of a given baseline
+  42:49   A8     ------ STA_NAME_2     IVS first or remote    station of a given baseline
+  56:63   F8.2   ------ SNR            Signal to noise ratio defined as the ratio of 
+                                         fringe amplitude to the average amplitude of 
+                                         noise
+  71:79   F9.7   ------ AMPL           Normalized fringe amplitude from the coarse 
+                                         fringe fit, dimensionless
+  83:105  A23    ------ DAT_BEG        Time stamp of the first visibility data used for 
+                                         correlation as YYYY.MM.DD-HH:MM.SS.FFF in TAI 
+ 108:130  A23    ------ DAT_END        Time stamp of the last  visibility data used for 
+                                         correlation as YYYY.MM.DD-HH:MM.SS.FFF in TAI
+ 144:152  F9.7   ------ AMPL           Normalized fringe amplitude from the fine fringe 
+                                         fit using least squares, dimensionless
+ 161:166  I6     ------ NOAP           The number of accumulation periods processed by the 
+                                         correlator
+ 180:195  F16.9  sec    FRT_OFFSET     Fringe reference time offset with respect to 
+                                         DAT_BEG -- time of the first visibility data 
+                                         used for correlation
+ 209:223  D15.8  sec    GR_DEL_DRF     Group delay on the fringe reference time computed 
+                                         using the coarse fringe fitting
+ 237:251  D15.8  sec    GR_DEL_LSQ     Group delay on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         without reweighting                             
+ 265:279  D15.8  sec    GR_DEL_MUL     Group delay on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         with multiplicative reweighting                 
+ 293:307  D15.8  sec    GR_DEL_ADD     Group delay on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         with additive reweighting                       
+ 321:335  D15.8  ------ PH_RAT_DRF     Fringe rate on the fringe reference time computed
+                                         using the coarse fringe fitting, dimensionless
+ 349-363  D15.8  ------ PH_RAF_LSQ     Fringe rate on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         without reweighting, dimensionless
+ 377-391  D15.8  ------ PH_RAT_MUL     Fringe rate on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         with multiplicative reweighting, dimensionless
+ 405-419  D15.8  ------ PH_RAT_ADD     Fringe rate on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         with additive reweighting, dimensionless
+ 429-443  D15.8  sec    GR_RAT         Group delay rate on the fringe reference time using 
+                                         the fine fringe fitting without reweighting
+ 453-467  D15.8  sec    SB_DEL         Single band delay on the fringe reference time using 
+                                         the fine fringe fitting without reweighting
+ 478-486  F9.5   rad    PHS_DRF        Fringe phase on the fringe reference time computed 
+                                         using the coarse fringe fitting
+ 497-505  F9.5   rad    PHS_LSQ        Fringe phase on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         without reweighting                             
+ 516-524  F9.5   rad    PHS_ADD        Fringe phase on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         with additive reweighting                       
+ 535-543  F9.5   rad    PHS_MUL        Fringe phase on the fringe reference time computed 
+                                         using the fine fringe fitting with least squares
+                                         with multiplicative reweighting                 
+ 557-569  D13.6  sec    GD_ERR_DRF     Uncertainty of group delay on the fringe reference 
+                                         time computed using coarse fringe fitting        
+ 583-595  D13.6  sec    GD_ERR_LSQ     Uncertainty of group delay on the fringe reference 
+                                         time computed using fine fringe fitting with     
+                                         least squares without reweighting                  
+ 609-621  D13.6  sec    GD_ERR_MUL     Uncertainty of group delay on the fringe reference 
+                                         time computed using fine fringe fitting with     
+                                         least squares with multiplicative reweighting    
+ 635-647  D13.6  sec    GD_ERR_ADD     Uncertainty of group delay on the fringe reference 
+                                         time computed using fine fringe fitting with     
+                                         least squares with additive reweighting          
+ 661-673  D13.6  ------ PR_ERR_DRF     Uncertainty of phase delay rate on the fringe      
+                                         reference time computed using coarse fringe      
+                                         fitting
+ 687-699  D13.6  ------ PR_ERR_LSQ     Uncertainty of phase delay rate on the fringe 
+                                         reference time computed using fine fringe 
+                                         fitting with least squares without reweighting                 
+ 713-725  D13.6  ------ PR_ERR_MUL     Uncertainty of phase delay rate on the fringe 
+                                         reference time computed using fine fringe 
+                                         fitting with least squares with 
+                                         multiplicative reweighting   
+ 739-751  D13.6  ------ PR_ERR_ADD     Uncertainty of phase delay rate on the fringe 
+                                         reference time computed using fine fringe 
+                                         fitting with least squares with additive 
+                                         reweighting         
+ 765-777  D13.6  sec    GR_RAT_ERR     Uncertainty of group delay rate on the fringe 
+                                         reference time computed using fine fringe 
+                                         fitting       
+ 788-800  D13.6  sec    SB_ERR         Uncertainty of single band delay on the fringe 
+                                         reference time computed using fine fringe 
+                                         fitting       
+ 814-826  D13.6  sec    PD_ERR_DRF     Uncertainty of phase delay on the fringe reference 
+                                         time computed using coarse fringe fitting        
+ 840-852  D13.6  sec    PD_ERR_LSQ     Uncertainty of phase delay on the fringe reference 
+                                         time computed using fine fringe fitting with     
+                                         least squares without reweighting                  
+ 866-878  D13.6  sec    PD_ERR_MUL     Uncertainty of phase delay on the fringe reference 
+                                         time computed using fine fringe fitting with     
+                                         least squares with multiplicative reweighting    
+ 892-904  D13.6  sec    PD_ERR_ADD     Uncertainty of phase delay on the fringe reference 
+                                         time computed using fine fringe fitting with     
+                                         least squares with additive reweighting          
+ 917-931  D15.8  sec    GR_AMB_SP      Group delay ambiguity spacing
+ 943-949  F7.2   sec    DUR            Effective scan duration used for fringe fitting 
+ 962-970  F9.7   sec    AP_LEN         Accumulation period length of visibility data
+ 976-989  D14.7  ------ U_COOR         Projection of the baseline vector on the source
+                                         tangential plane along the right ascension
+                                         axis in units of wavelength corresponding
+                                         to the reference frequency
+ 991-1004 D14.7  ------ V_COOR         Projection of the baseline vector on the source
+                                         tangential plane along the declination axis 
+                                         in units of wavelength corresponding
+                                         to the reference frequency
+1018-1024 F8.5   ------ AMP_INTG       Amplitude bandpass normalization coefficient
+1034-1039 F6.3   deg    ELEV_1         Elevation angle at the 1st (reference) station
+1041-1046 F6.3   deg    ELEV_2         Elevation angle at the 2nd (remote) station
+1052-1062 D10.4  ------ NOI            The amplitude of noise of fringe amplitude
+1073-1091 D19.12 Hz     REF_FRQ        The reference frequency
+1104-1122 D19.12 sec    EFF_FRQ_PHS    Effective ionospheric frequency for phase delay
+1125-1143 D19.12 sec    EFF_FRQ_2      Effective ionospheric frequency for group delay
+1146-1164 D19.12 sec    EFF_FRQ_3      Effective ionospheric frequency for phase delay rate
+1176-1187 D12.5  ------ COV_PR         Covariance between phase delay rate and
+                                         fringe phase
+1197-1208 D12.5  sec    COV_GR         Covariance between group delay and group
+                                         delay rate
+1215-1227 D13.5  TECU   TEC            Differential total electron contents
+1239-1251 D13.5  TECU/s TEC_RATE       Differential total electron contents rate
+1262-1273 D12.5  TECU   TEC_ERR        Error of differential total electron contents
+1289-1300 D12.5  TECU/s TEC_RATE_ERR   Error of differential total electron contents rate
+1311-1316 F6.3   rad    PAR_ANG_1      Parallactic angle for the 1st (reference) station
+1318-1323 F6.3   rad    PAR_ANG_2      Parallactic angle for the 2nd (remote) station
+1336-1340 F5.3   ------ DECOR_TIM      Decorrelation factor: the ratio of the mean 
+                                         visibility coherently averaged over time to the 
+                                         mean visibility incoherently averaged over time.
+1358-1370 D13.6  sec    PCAL_GD_POL1_1 Group delay on phase calibration at the 1st             
+                                         polarization for the 1st (reference) station
+1372-1384 D13.6  sec    PCAL_GD_POL1_2 Group delay on phase calibration at the 1st             
+                                         polarization for the 2nd (remote) station
+1402-1414 D13.6  sec    PCAL_GD_POL2_1 Group delay on phase calibration at the 2nd
+                                         polarization for the 1st (reference) station
+1416-1428 D13.6  sec    PCAL_GD_POL2_1 Group delay on phase calibration at the 2nd             
+                                         polarization for the 2nd (remote) station
+1439-1444 F6.3   rad    PA_USED        The used difference in parallactic angles used
+                                         for computation: 1st station minus the second 
+                                         station
+1453-1454 A2     ------ POLAR          Polarization code. The first letter corresponds
+                                         to the 1st (reference) station, the second
+                                         letter corresponds to the 2nd (remote) station.
+                                         Codes: R,L for circular polarization, H/V
+                                         for the linear polarization for a 2-axis 
+                                         antenna, X/Y for the linear polarization 
+                                         for a 3-axes antenna,
+1461-1476 B16    ------ FRI_STATUS     Bit field of fringe status. Bits are counted
+                                         from right to left starting with zero.
+                                         0 -- Reserved: always zero
+                                         1 -- Data were fringed
+                                         2 -- Results were read
+                                         3 -- Failure in fringing
+                                         4 -- No Data
+                                         5 -- Not detected
+                                         7 -- Lost IF channel
+                                         8 -- No  phase cal for this observation
+-----------------------------------------------------------------------------------------
+Notes:
+-----------------------------------------------------------------------------------------

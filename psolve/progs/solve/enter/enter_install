@@ -1,0 +1,34 @@
+#!/bin/csh -f
+# ************************************************************************
+# *                                                                      *
+# *   Program enter_install make the final steps for installing enter.   *
+# *   It creates file solve in according with user preferences and       *
+# *   makes it executable.                                               *
+# *                                                                      *
+# * ### 26-JUL-2000  enter_install  v1.1  (c) L. Petrov 20-MAY-2003 ###  *
+# *                                                                      *
+# ************************************************************************
+#
+set MK5_BIN   = ${SOLVE_ROOT}/bin
+set LOCAL_FIL = ${SOLVE_ROOT}/local/solve.lcl
+#
+if (-f $LOCAL_FIL) then
+#
+# --- Create solve
+#
+    ${MK5_BIN}/use_local solve_csh.templ ${LOCAL_FIL} csh ${MK5_BIN}/solve
+    if ( $status != 0 ) then
+         echo "enter_install: *** Error in ${LOCAL_FIL} was detected"
+         echo "                   Please correct this file"
+	 exit -2
+    endif
+#
+# --- Make it executable
+#
+    chmod +x ${MK5_BIN}/solve
+  else
+    echo "enter_install: *** $LOCAL_FIL file was not found. "
+    echo "               Installation of VTD/Post-SOLVE failed"
+    exit -3
+endif
+echo "Script solve is successfully installed"

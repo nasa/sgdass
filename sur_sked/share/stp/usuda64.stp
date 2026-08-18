@@ -1,0 +1,31 @@
+# VLBI station parameters Format 2022.04.03
+#
+# 2026.05.04   Created. Email of Ami Sugawara of 2026.05.04
+# 2026.05.04   Values for TSETTLE_AZ, TSETTLE_AZ, RECORDER, PREOB, POSTOB are not confirmed
+#
+SHORT_NAME:    USUDA64   UD
+LAST_UPDATE:   USUDA64   2026.05.04
+COORD:         USUDA64   meters    -3855355.426     3427427.371     3740971.186
+MOUNT:         USUDA64   char       ALTAZ
+#
+SLEW_AZ:       USUDA64   deg/sec    0.3
+SLEW_EL:       USUDA64   deg/sec    0.3
+ACCL_AZ:       USUDA64   deg/sec^2  0.3
+ACCL_EL:       USUDA64   deg/sec^2  0.3
+TSETTLE_AZ:    USUDA64   sec        2.0
+TSETTLE_EL:    USUDA64   sec        2.0
+#
+EL_MIN:        USUDA64   deg        0.0
+EL_MAX:        USUDA64   deg       89.9
+AZ_RANGE:      USUDA64   deg      -45.0   45.0  265.0  445.0
+RECORDER:      USUDA64   char      mark5
+PREOB:         USUDA64   sec        2.0
+POSTOB:        USUDA64   sec        2.0
+#
+HOR_AZIM:      USUDA64   deg        0.0  29.0  38.0  45.0  70.0  90.0 100.0 120.0 133.0 143.0 150.0 165.0 180.0 185.0 200.0 218.0 222.0 240.0 245.0 255.0 265.0 273.0 282.0 323.0 351.0 360.0
+HOR_ELEV:      USUDA64   deg        9.5   0.0   0.0  -1.0  -1.0   1.0   1.0   6.3   9.0   9.0   5.5   3.5   5.0   7.0   6.0   9.5   8.5  11.0  11.0   9.0  12.5  10.7  12.5  11.0  11.5   9.5
+STOW_AZIM      USUDA64   deg      180.0
+STOW_ELEV      USUDA64   deg       89.9
+#
+CLOCK_DATES:   USUDA64   sec        0.0    2049.12.31
+CLOCK_OFFSET:  USUDA64   sec        0.0

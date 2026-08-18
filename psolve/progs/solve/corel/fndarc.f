@@ -1,0 +1,17 @@
+      LOGICAL*2 FUNCTION FNDARC(ROWNUM,ARCNUM,ARCS,IARC)
+      IMPLICIT NONE
+      INTEGER*2 ARCS,IARC,ROWNUM,ARCNUM(ARCS)
+!
+      INTEGER*2 I
+!
+      DO I=1,ARCS
+        IF(ROWNUM.EQ.ARCNUM(I)) THEN
+          IARC=I
+          FNDARC=.TRUE.
+          RETURN
+        ENDIF
+      ENDDO
+      FNDARC=.FALSE.
+!
+      RETURN
+      END

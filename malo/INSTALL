@@ -1,0 +1,274 @@
+Package MALO is supposed to work under Unix.
+It is was tested extensively under Linux.
+
+You need to download two tar-balls: 
+a) with source code
+b) with shared data
+
+Uncompress them to the same main directory.
+
+I. Dependencies:
+
+   MALO depends on 5 packages, which themselves depend on two more 
+packages. MALO and underlying packages uses "no-underscore" conventions
+for external names. Unfortunately, some packages by default appends
+underscores to external names. Therefore, some packages require patches
+and/or custom installation. You need to re-build the packages in the 
+dependency list even you have it in you system! An attempt to use these
+packages built by others may result in failure of MALO building process
+or in a run-time error. You are warned.
+
+  In order to eliminate a chance of breaking some program at your computer
+that depend on these packages, it is recommended MALO and its dependencies 
+be installed in a separate directory. Let us assign environment variable
+PREFIX to that directory. Please append $PREFIX/lib to your LD_LIBRARY_PATH
+environment variable _before_ starting building MALO and its dependencies.
+
+Packages that you need to install:
+
+   a) petools version 20171120 or newer
+   
+      See http://astrogeo.org/petools for source code and
+      installation instructions.
+   
+   b) spd_client version 20171027 or newer
+
+      See http://astrogeo.org/spd for source code and
+      installation instructions. NB: You do not need install spd,
+      you need install spd_client.
+
+   c) ners version 20180628 or newer
+
+      See http://astrogeo.org/ners for source code and
+      installation instructions. NB: You do not need install spd,
+      you need install spd_client.
+
+   d) ners version 20180630 or newer
+
+      See http://astrogeo.org/ners for source code and
+      installation instructions. NB: You do not need install spd,
+      you need install spd_client.
+
+   e) fourpack version 20160428 or newer
+
+      See http://astrogeo.org/fourpack for source code and
+      installation instructions.
+   
+   f) cfitsio-3.37 or newer.
+      ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio3370.tar.gz
+      http://astrogeo.org/pet_inc/cfitsio-3.26.patch
+      mv cfitsio cfitsio-3.37
+      cd cfitsio-3.37
+      patch -Np0 -i /incoming/cfitsio-3.26.patch
+      ./configure --prefix=/opt64 \
+                  --enable-reentrant \
+                  --enable-ssse3 \
+                    CC=gcc \
+                    FC=gfortran \
+                    CFORTRANFLAGS="-fno-underscoring" \
+                    CFLAGS="-DNoUnderscoreAppend -DGNU -m64"
+      make -j 65
+      make install
+      gcc -shared -Wl,--whole-archive -Wl,-soname,libcfitsio.so.1 -o /opt64/lib/libcfitsio.so.1.0 /opt64/lib/libcfitsio.a -Wl,-no-whole-archive
+      rm /opt64/lib/libcfitsio.so
+      ln -sf /opt64/lib/libcfitsio.so.1.0 /opt64/lib/libcfitsio.so.1
+      ln -sf /opt64/lib/libcfitsio.so.1.0 /opt64/lib/libcfitsio.so
+
+   g) vtd version 20180630 or newer
+
+      See http://astrogeo.org/vtd for source code and
+      installation instructions.
+
+   h) hdf5
+   
+      Download ftp://ftp.hdfgroup.org/HDF5/current/src/hdf5-1.10.1.tar.bz2
+   
+      setenv F77     /usr/bin/gfortran
+      setenv FFLAGS  "-fbounds-check -fno-underscoring -fPIC"
+      setenv CFLAGS    -m64
+      setenv CXXFLAGS  -m64
+   
+      ./configure --prefix=$PREFIX \
+                  --enable-fortran \
+                  --enable-cxx   \
+                  FC=/usr/bin/gfortran \
+                  FCFLAGS="-fbounds-check -fno-underscoring -fPIC" \
+                  CFLAGS="-m64" \
+                  CXXFLAGS="-m64"
+      make   -j 12  >& make.log
+      make install  >& install.log
+   
+      unsetenv F77
+      unsetenv FFLAGS
+      unsetenv CFLAGS
+      unsetenv CXXFLAGS
+   
+   i) hdf4
+
+      Download ftp://ftp.hdfgroup.org/HDF/HDF_Current/src/hdf-4.2.13.tar.bz2
+   
+      setenv F77 /usr/bin/gfortran
+      setenv FFLAGS  "-fbounds-check -fno-underscoring -fPIC"
+      setenv CFLAGS  "-m64 -DHAVE_NETCDF -fPIC"
+   
+   
+      ./configure  --prefix=$PREFIX \
+                   --includedir=$PREFIX/include/hdf \
+                   --disable-netcdf \
+                   --enable-fortran \
+                   >& configure.log
+      find ./ -name "Makefile" -exec sed -i "s@LIBS = -ljpeg -lz@LIBS = -ljpeg -lz -lm@g" {} \;
+      make -j 12 >& make.log
+      make       >& install.log
+      gcc -shared -shared -Wl,--whole-archive -o $PREFIX/lib/libdf.so    $PREFIX/lib/libdf.a    -Wl,-no-whole-archive
+      gcc -shared -shared -Wl,--whole-archive -o $PREFIX/lib/libmfhdf.so $PREFIX/lib/libmfhdf.a -Wl,-no-whole-archive
+   
+      unsetenv F77
+      unsetenv FFLAGS
+      unsetenv CFLAGS
+   
+   j) netcdf-4.6.1 (C)
+   
+      Download ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.5.0.tar.gz
+      Download ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz
+      Download  http://astrogeo.org/pet_inc/netcdf_fortran_4.4.1.patch
+      tar -zxvf $INCOMING/netcdf-4.6.1.tar.gz
+   
+      ./configure --prefix=$PREFIX \
+                  --enable-shared \
+                  --enable-netcdf-4 \
+                  --disable-dap \
+                  --enable-pnetcdf \
+                  --enable-hdf4 \
+                  --disable-dap \
+                  --disable-pnetcdf \
+                  CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/hdf" \
+                  LDFLAGS="-L$PREFIX/lib -lhdf5 -lmfhdf -ldf -ljpeg -lgfortran" \
+                  F77="gfortran" \
+                  FFLAGS="-fbounds-check -fno-underscoring -DNoUnderscoreAppend -fPIC"
+      make -j 1    >& comp.log
+      make install >& install.log
+      make check
+   
+   k) netcdf-4.4.4 (Fortran)
+
+      tar -zxvf     $INCOMING/netcdf-fortran-4.4.4.tar.gz
+      cd netcdf-fortran-4.4.4
+      patch -Np0 -i /incoming/netcdf_fortran_4.4.1.patch
+
+      ./configure --prefix=$PREFIX \
+                  --enable-shared \
+                  FC=gfortran \
+                  F90=gfortran \
+                  CPPFLAGS="-DNDEBUG -DpgiFortran -DNoUnderscoreAppend -I$PREFIX/include" \
+                  FFLAGS="-m64 -O3 -fPIC -fno-underscoring" \
+                  F90FLAGS="-m64 -O3 -fPIC -fno-underscoring" \
+                  FCFLAGS="-m64 -O3 -fPIC -fno-underscoring" \
+                  LDFLAGS="-L$PREFIX/lib" \
+                  LIBS="-lgfortran" \
+                  CC=gcc 
+         make -j 1 >& comp.log
+         make install >& install.log
+         make check
+
+  l) w3lib-2.0.6
+     http://www.nco.ncep.noaa.gov/pmb/codes/GRIB2/w3lib-2.0.6.tar
+     http://astrogeo.org/pet_inc/w3lib_01.patch
+     patch -Np0 -i /incoming/w3lib_01.patch
+     make -j 41
+     gfortran -shared -Wl,--whole-archive,-soname,libw3.so.1 -o /opt64/lib/libw3.so.1 libw3.a -Wl,-no-whole-archive
+     ln -sf /opt64/lib/libw3.so.1 /opt64/lib/libw3.so
+
+
+
+II. Configuration.
+
+    Keep in mind that directory with shared data is volumuous. You may want 
+to keep these files in a separate sub-directory.
+
+
+    Usage: ./configure [OPTION]... [VAR=VALUE]...
+    
+    
+    Defaults for the options are specified in brackets.
+    
+    Configuration:
+      -h, --help              display this help and exit
+      -V, --version           display version information and exit
+    
+    Installation directories:
+      --prefix=PREFIX         install architecture-independent files in PREFIX
+                              [$HOME]
+    
+      --share=SHARE           install MALO specific data. Since the data are voluminous
+                              (over 11 Gb), you may want to install them in
+                              a different directory. [$PREFIX/share]
+    
+      --script=PREFIX         install additional C-shell and Python programs.
+                              You may want to to install them in a separate 
+                              directory. [$PREFIX/script]
+    
+    Optional Features:
+      --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+      --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+    
+      --enable-shared         create both shared and static library (default)
+      --disable-shared        create only static library 
+    
+    Optional Packages:
+      --with-PACKAGE[=ARG]          use PACKAGE [ARG=yes]
+      --without-PACKAGE             do not use PACKAGE (same as --with-PACKAGE=no)
+    
+      --with-petools=[dir name]     specifies directory names where package petools
+                                    is installed (default $HOME/petools )
+    
+      --with-fourpack=[dir name]    specifies directory names where package fourpack
+                                    is installed (default: $HOME )
+    
+      --with-netcdf=[dir name]      specifies directory names where package netcdf
+                                    is installed (default: $HOME/netcdf )
+    
+      --with-hdf4=[dir name]        specifies directory names where package hdf4
+                                    is installed (default: $HOME/hdf4 )
+    
+      --with-hdf5=[dir name]        specifies directory names where package hdf5
+                                    is installed (default: $HOME/hdf5 )
+
+      --with-w3lib=[dir name]       specifies directory names where package w3lib
+                                    is installed (default: $HOME/w3lib )
+
+      --with-cfitsio=[dir name]     specifies directory names where package cfitsio
+                                    is installed (default: $HOME/cfitsio )
+
+      --with-vtd=[dir name]         specifies directory names where package vtd
+                                    is installed (default: $HOME/vtd )
+
+      --with-spd_client=[dir name]  specifies directory names where package spd_client
+                                    is installed (default: $HOME/w3lib )
+
+
+Eample:
+
+./configure --prefix=/opt64 \
+            --with-petools=/opt64 \
+            --with-fourpack=/opt64 \
+            --with-spd_client=/opt64 \
+            --with-ners=/opt64 \
+            --with-cfitsio=/opt64 \
+            --with-vtd=/opt64 \
+            --with-netcdf=/opt64 \
+            --with-hdf5=/opt64 \
+            --with-hdf4=/opt64 \
+            --with-w3=/opt64 \
+            --share=/progs/malo_20170618/share \
+            --model=/imsl/oper_model \
+            --dev_model=/t0/imsl_devel_model \
+            --script=/progs/malo_20170618/script 
+
+III. Build
+
+     make
+     make install
+
+
+Last updated on 2018.08.31_13:38:34

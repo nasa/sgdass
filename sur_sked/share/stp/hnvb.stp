@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    HNVB      char       H4
+LAST_UPDATE:   HNVB      char       2025.03.23
+COORD:         HNVB      meters      1446375.065    -4447939.668     4322306.125
+MOUNT:         HNVB      char       ALTAZ
+#
+SLEW_AZ:       HNVB      deg/sec    9.9
+SLEW_EL:       HNVB      deg/sec    9.9
+ACCL_AZ:       HNVB      deg/sec^2  9.9
+ACCL_EL:       HNVB      deg/sec^2  9.9
+TSETTLE_AZ:    HNVB      sec        0.0
+TSETTLE_EL:    HNVB      sec        0.0
+#
+EL_MIN:        HNVB      deg        2.0
+EL_MAX:        HNVB      deg       90.0
+AZ_RANGE:      HNVB      deg      -90.0 90.0 270.0 450.0
+RECORDER:      HNVB      char      hrtr
+BACKEND:       HNVB      char      hrtr
+SETMODE:       HNVB      sec        0.0
+PREOB:         HNVB      sec        0.0
+POSTOB:        HNVB      sec        0.0
+#
+HOR_AZIM:      HNVB      deg        0.0  360.0
+HOR_ELEV:      HNVB      deg        2.0   2.0
+STOW_AZIM:     HNVB      deg        0.0
+STOW_ELEV:     HNVB      deg       90.0
+#
+CLOCK_DATES:   HNVB      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  HNVB      sec        0.0

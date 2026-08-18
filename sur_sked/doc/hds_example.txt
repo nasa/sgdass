@@ -1,0 +1,21 @@
+# VLBI Hardware setup specifications. Version  0.1  2018.01.21
+#
+Hardware_setup: X1024_01
+  IF:  1r  sky_frequency:  8200.0 MHz  bandwidth: 32.0 MHz  polarization: rcp  Setup_name: X1024_01
+  IF:  2r  sky_frequency:  8232.0 MHz  bandwidth: 32.0 MHz  polarization: rcp  Setup_name: X1024_01
+  IF:  3r  sky_frequency:  8456.0 MHz  bandwidth: 32.0 MHz  polarization: rcp  Setup_name: X1024_01
+  IF:  4r  sky_frequency:  8488.0 MHz  bandwidth: 32.0 MHz  polarization: rcp  Setup_name: X1024_01
+  IF:  1l  sky_frequency:  8200.0 MHz  bandwidth: 32.0 MHz  polarization: lcp  Setup_name: X1024_01
+  IF:  2l  sky_frequency:  8232.0 MHz  bandwidth: 32.0 MHz  polarization: lcp  Setup_name: X1024_01
+  IF:  3l  sky_frequency:  8456.0 MHz  bandwidth: 32.0 MHz  polarization: lcp  Setup_name: X1024_01
+  IF:  4l  sky_frequency:  8488.0 MHz  bandwidth: 32.0 MHz  polarization: lcp  Setup_name: X1024_01
+  Bits_per_sample:    2  Setup_name: X1024_01
+  Phase_calibration: on  frequency_step: 1.0 Mhz  Setup_name: X1024_01
+#
+Hardware_setup: X1024_02
+  IF:  1r  sky_frequency:  8200.0 MHz  bandwidth: 64.0 MHz  polarization: rcp  Setup_name: X1024_02
+  IF:  2r  sky_frequency:  8456.0 MHz  bandwidth: 64.0 MHz  polarization: rcp  Setup_name: X1024_02
+  IF:  1l  sky_frequency:  8200.0 MHz  bandwidth: 64.0 MHz  polarization: lcp  Setup_name: X1024_02
+  IF:  2l  sky_frequency:  8456.0 MHz  bandwidth: 64.0 MHz  polarization: lcp  Setup_name: X1024_02
+  Bits_per_sample:   2    Setup_name: X1024_01
+  Phase_calibration: off  Setup_name: X1024_01

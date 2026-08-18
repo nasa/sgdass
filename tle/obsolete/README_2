@@ -1,0 +1,29 @@
+The Library tle_YYYYMMDD is a toolkit for processing Two Line Element
+sets (TLE's). TLE's are files that provide descriptors and orbital
+properties of objects in space at given epochs. The files are updated
+and provided by the North American Aerospace Defence Command (NORAD)
+multiple times a day (see: Hoots & Roehrich (1980); Hoots, et al. (2004)).
+This toolkit takes these TLE files and computes the position and
+velocities of the given space objects at a given epoch, i.e., the state
+vectors. The state vectors can be computed at multiple epochs, be it
+forward or backwards in time, and it doesn't necessarily have to match the
+epoch defined on the TLE. Using the computed state vectors, this toolkit
+can also be used to compute the look angles, azimuth and elevation, of the
+space object from a location on the ground. Which for our interest is the
+location of our radiotelescopes.
+
+Most of the routines for the TLE ingestion are taken directly from David
+Vallado. He took these, either directly from the aforementioned
+references, or others influenced by them. Each such routine credits the
+author ( David Vallado), explicitly states any changes made from their
+original text, and also includes the reference by which the routine was
+influenced.
+
+References:
+1.  Hoots, F. R. and Roehrich, R. L. (1980), "Models for Propagation 
+    of NORAD Elements", Spacetrack Report No. 3.
+2.  Hoots, F. R., Schumacher Jr, P. W., and Glover, R. A., (2004).
+    "History of Analytical Orbit Modeling in the U.S. Space 
+    Surveillance System", Journal of Guidance, Control, and Dynamics,
+    Vol. 27, No. 2, p 174-185, doi:10.2514/1.9161
+

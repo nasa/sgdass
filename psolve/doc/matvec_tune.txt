@@ -1,0 +1,66 @@
+	Tuning matvec library.
+        ======================
+
+      I. Introduction
+
+  Modern computers supports a hierarchy of memory. We can consider three
+level model of memory: registers (fastest), cache memory (medium), RAM
+memory (slow). Modern processor can make several tens of multiplications for
+time of getting operands from main memory. So efficient implementation of
+elemantary vector/matrix operations: dor product, product of a mastrix and
+a vector, matrix product, matrix inversion is far from elementary. If an 
+operand is not found in cache, this event is called cache miss, data will
+be requested rom main memory and processor will wait for completeion of 
+this operation. The purpose of optimization is to minimize the number of cache
+misses. It can be achived by immplementing such a modificaion of alogrithm
+which performs operations under block of vectors and matrix. At the same
+time such algoritms will have low performance at low dimensionns due to
+overheads for groupping operands in blocks. An effricient procedure matches
+several algorithms which have the optimal perfomance at a range of dimensions.
+
+  Some operations, f.e. multiplication of rectangular matrixes, is done
+in highly optimized BLAS library. However, this library does not support
+operations under symmetric matrixes in upper triangular representation.
+Matvec library provides a set of highly optimized routines for these 
+operations whcih in turn call BLAS routines.
+
+      II. How to tune.
+
+  Matvec supports a set of parameters which describes dimensions for
+block algorithms. Optiomal value of these parameters depends on an 
+architecture of the specific processor. There is a program matvec_test
+which execute specific routine under consideration and measures its 
+performance. A user can change values of the matvec parameters, compile
+the routien under consideration, link matvec_test with new version of matvec
+linrary and run a test. Parameters are located in file 
+$MK5_ROOT/include/matvec.i . Upon completion tuning these paramters should be 
+copied to $Mk5_ROOT/local/solve.i file since matvec.i is a temporary file.
+Then Calc/Solve should be re-compiled and re-linked with use of command
+$MK5_ROOT/support/make_all_mk5
+
+
+     III. Parameters to be tuned.
+
+1) MUL_MM_IT_S ( C_s = A_r * B_r(T) ) where is A_r, B_r are rectangular 
+               matrices, C_s is a square symmetric matric un upper triangular 
+               representation.
+
+   DB2__MUL_MM_IT_S -- maximal dimension when result C_s is first held in memory
+                       as a rectangular matrix and them isx transform to
+                       a sym. matrix.
+   DB3__MUL_MM_IT_S -- Block size.
+
+2) MUL_MM_TI_S ( C_s = A_r(T) * B_ ) where is A_r, B_r are rectangular 
+               matrices, C_s is a square symmetric matric un upper triangular 
+               representation.
+
+   DB2__MUL_MM_T_S -- maximal dimension when result C_s is first held in memory
+                       as a rectangular matrix and them isx transform to
+                       a sym. matrix.
+   DB3__MUL_MM_TI_S -- Block size.
+
+
+...  document will be completed later ...
+
+Leonid Petrov
+20-MAY-2003 18:12:45

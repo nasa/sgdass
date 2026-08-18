@@ -1,0 +1,4 @@
+1 Good     RGB
+2 Neutral  RGB
+3 Bad      RGB
+6 Box      RGB

@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+# 2018.07.01  Updated slewing rate and acceleration
+#
+SHORT_NAME:  MOPRA     Mp
+LAST_UPDATE: MOPRA     2018.07.01
+COORD:       MOPRA     meters    -4682769.042  2802618.955 -3291759.321   
+MOUNT:       MOPRA     char       ALTAZ
+SLEW_AZ:     MOPRA     deg/sec    0.633
+SLEW_EL:     MOPRA     deg/sec    0.316
+ACCL_AZ:     MOPRA     deg/sec^2  0.222
+ACCL_EL:     MOPRA     deg/sec^2  0.222
+TSETTLE_AZ:  MOPRA     sec        3.0
+TSETTLE_EL:  MOPRA     sec        3.0
+EL_MIN:      MOPRA     deg       12.0
+EL_MAX:      MOPRA     deg       89.5
+AZ_RANGE:    MOPRA     deg      -150.0 -30.0 210.0 330.0
+RECORDER:    MOPRA     char      lbdar
+PREOB:       MOPRA     sec       10.0
+POSTOB:      MOPRA     sec        2.0

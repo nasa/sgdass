@@ -1,0 +1,40 @@
+NERS forecast message consists of three parts:
+
+a) declaratins
+b) dimenstions
+3) data
+
+Declarations define the format of the NERS forecast message, identifiers
+of the used models, last epochs of used EOP and AAM series.
+
+Dimensions define the number of knots for B-spline expansion of
+final and forecast EOP, thee number of harmonics and cross-harmonic
+consituents.
+
+Data contain the arrays of arguments for B-spline, harmonic and cross-harmonic
+expansions and arrays of coefficients of B-spline, harminc and cross-harmonic
+expansions.
+
+Internally, NERS uses SI units. That means radians (rad) for angles and \
+seconds (s) since 2000.01.01_00:00:00.0 TAI for time.
+
+The Earth orientation parameters are defined as petrubations to Euler angles 
+around axis 1, 2 and 3. Euler angles 1, 2 describe the so-call polar motion.
+Euler angle 3 describes axial rotation of the Earth.
+
+Archaic notation pole coordinates X, Y and UT1 is still commonly used. 
+Euler angle E1 = Y_pole
+Euler angle E2 = X_pole
+Euler angle E3 = k*(UT1 - TAI), where k = -1.00273781191135448D0
+Traditionally, UT1 - TAI is experssed in units of time: seconds.
+1s = pi/43200 rad. UT1 - TAI is not a substraction of two quantities, it 
+is one quantity. Contrary to its name, UT1 is NOT time. UT1 - TAI is angle.
+Change of E1 and E2 with time is called polar motion. Change if E3 with
+time is called axial rotation.
+
+  Some techiniqies uses UTC time tag for recording events. Contrary its name,
+UTC is not time, but a nondifferntial function of time. In the context of 
+Earth sciences TAI is used as time. UTC time tag can be converted to time
+using B-spline of the 0th degree expansion of function UTC - TAI (UTC). 
+The knots of the arguments and the coefficents of the expansion are present
+in the NERS forecast message

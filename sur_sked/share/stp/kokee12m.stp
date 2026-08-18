@@ -1,0 +1,108 @@
+# VLBI station parameters Format 2022.04.03
+# 
+# 2021.06.09  L. Petrov Created
+#
+# 2021.06.30  pet Updated for results of k20001
+# 2021.07.02  pet Added STOW_AZIM and STOW_ELEV fields
+# 2021.08.06  pet Updated for results of k20002
+# 2021.08.27  pet Updated stow position
+# 2021.11.17  pet Added results of gain measurements from SDE K20006
+# 2022.01.28  pet Added BACKEND definition
+# 2022.04.03  pet Added peculiar clock offset
+# 2022.10.11  pet Updated STOW az/el acording to am ial cfrom Chrios Coughlin 2022.10.11_17:40
+# 
+SHORT_NAME:    KOKEE12M  char       K2
+LAST_UPDATE:   KOKEE12M  char       2022.04.03
+COORD:         KOKEE12M  meters     -5543831.582  -2054586.793   2387828.307
+MOUNT:         KOKEE12M  char       ALTAZ   
+#
+SLEW_AZ:       KOKEE12M  deg/sec      11.97
+SLEW_EL:       KOKEE12M  deg/sec       6.12
+ACCL_AZ:       KOKEE12M  deg/sec^2     3.05
+ACCL_EL:       KOKEE12M  deg/sec^2     2.33
+TSETTLE_AZ:    KOKEE12M  sec           5.43
+TSETTLE_EL:    KOKEE12M  sec           5.09
+#
+EL_MIN:        KOKEE12M  deg           2.0
+EL_MAX:        KOKEE12M  deg          88.2
+AZ_RANGE:      KOKEE12M  deg        -177.5   2.3   182.5  362.3
+RECORDER:      KOKEE12M  char       mark6
+BACKEND:       KOKEE12M  char       rdbe
+SETMODE:       KOKEE12M  sec           4.0
+PREOB:         KOKEE12M  sec           3.0
+POSTOB:        KOKEE12M  sec           2.0
+HOR_AZIM:      KOKEE12M  deg           0.0  260.0 280.0 295.0 300.0 305.0 310.0 325.0 330.0 335.0 340.0 350.0 360.0
+HOR_ELEV:      KOKEE12M  deg          10.0   10.0  10.0   5.0  10.0  25.0  35.0  40.0  45.0  40.0  35.0  30.0  10.0
+STOW_AZIM:     KOKEE12M  deg         230.0
+STOW_ELEV:     KOKEE12M  deg          60.0
+#
+CLOCK_DATES:   KOKEE12M  sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  KOKEE12M  sec        0.414E-6
+#
+TSYS_DATES:    KOKEE12M  char      2021.11.14 2099.12.31
+#
+TSYS_FREQS:    KOKEE12M  GHz          3.000    3.032
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     H       43.4   52.3   61.9   65.6   66.8   66.3   62.8   65.9   64.7   71.4
+#
+TSYS_FREQS:    KOKEE12M  GHz          3.000    3.032
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     V       42.6   55.0   65.0   68.2   69.3   69.1   67.8   69.1   69.5   79.7
+#
+TSYS_FREQS:    KOKEE12M  GHz          5.240    5.272
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     H       39.0   45.1   49.8   50.9   50.9   50.5   53.0   64.1   59.8   55.0
+#
+TSYS_FREQS:    KOKEE12M  GHz          5.240    5.272
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     V       40.5   53.9   58.7   57.7   55.9   54.7   58.2   69.4   65.8   51.0
+#
+TSYS_FREQS:    KOKEE12M  GHz          6.360    6.392
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     H       33.2   43.2   51.4   53.5   53.7   53.6   60.4   74.6   69.1   95.4
+#
+TSYS_FREQS:    KOKEE12M  GHz          6.360    6.392
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     V       47.4   53.1   60.0   62.5   63.3   63.5   69.4   83.9   79.2  104.1
+#
+TSYS_FREQS:    KOKEE12M  GHz         10.200   10.232
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     H       73.4  130.6  146.5  141.4  135.8  134.4  154.4  172.6  169.2  138.5
+#
+TSYS_FREQS:    KOKEE12M  GHz         10.200   10.232
+TSYS_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+TSYS_POLVALS:  KOKEE12M  K     V       23.5   83.2   96.0   88.7   82.2   81.5  106.8  141.5  134.0   27.3
+#
+GAIN_DATES:    KOKEE12M  char      2021.11.14 2099.12.31
+#
+GAIN_FREQS:    KOKEE12M  GHz          3.000    3.032
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  H      0.023  0.023  0.023  0.023  0.023  0.023  0.022  0.021  0.020  0.019
+#
+GAIN_FREQS:    KOKEE12M  GHz          3.000    3.032
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  V      0.021  0.022  0.022  0.021  0.021  0.021  0.021  0.020  0.019  0.018
+#
+GAIN_FREQS:    KOKEE12M  GHz          5.240    5.272
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  H      0.024  0.025  0.025  0.025  0.025  0.025  0.025  0.023  0.022  0.020
+#
+GAIN_FREQS:    KOKEE12M  GHz          5.240    5.272
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  V      0.024  0.024  0.024  0.024  0.025  0.025  0.024  0.023  0.023  0.022
+#
+GAIN_FREQS:    KOKEE12M  GHz          6.360    6.392
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  H      0.027  0.027  0.027  0.026  0.026  0.026  0.025  0.024  0.023  0.022
+#
+GAIN_FREQS:    KOKEE12M  GHz          6.360    6.392
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  V      0.026  0.026  0.025  0.025  0.025  0.025  0.024  0.023  0.023  0.023
+#
+GAIN_FREQS:    KOKEE12M  GHz         10.200   10.232
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  H      0.026  0.026  0.026  0.026  0.026  0.026  0.025  0.024  0.024  0.023
+#
+GAIN_FREQS:    KOKEE12M  GHz         10.200   10.232
+GAIN_ELEVS:    KOKEE12M  deg            3.0    8.0   15.0   20.0   25.0   30.0   45.0   70.0   80.0   90.0
+GAIN_POLVALS:  KOKEE12M  K/Jy  V      0.024  0.025  0.026  0.026  0.027  0.027  0.027  0.026  0.024  0.023

@@ -1,0 +1,243 @@
+      SUBROUTINE NUTW(CENT,DPSI,DEPS,ARGP,IDP,NDP)
+      IMPLICIT NONE
+!
+! 1.  NUTW PROGRAM SPECIFICATION
+!
+! 1.1 Evaluate the nutation series and return the values for
+!     nutation in longitude and nutation in obliquity.  The
+!     fundamental lunar/solar argument expressions are from
+!     lunar occultation work by T. C. Van Flanden.
+!
+! 1.2 REFERENCES: Kaplan, G.H. (Ed.), THE IAU RESOLUTIONS ...,
+!                 USNO Circular No. 163, US Naval Observ'y (1981)
+!
+! 2.  NUTW INTERFACE
+!
+! 2.1 Parameter File
+!
+! 2.2 INPUT Variables:
+!
+      INTEGER*2 NDP, IDP(NDP) 
+      REAL*8 CENT
+!
+! CENT - Number of centuries since J2000
+! IDP - Nutation period flags
+! NDP - Number of nutation period flags
+!
+! 2.3 OUTPUT Variables:
+!
+      REAL*8 ARGP(2,NDP),DPSI(2),DEPS(2)
+!
+! ARGP - Array of values of arguments and derivatives of specific terms
+! DEPS - Derivatives of nutaion
+! DPSI -  Nutation
+!
+! 2.4 COMMON BLOCKS USED
+      INTEGER*2 NOT
+      REAL*8 X(9, 20)
+      COMMON / NUTCM_W / NOT,X
+!
+! 2.5 SUBROUTINE INTERFACE
+!
+!       CALLING SUBROUTINES: nut_parts
+!       CALLED SUBROUTINES: None
+!
+! 3.  LOCAL VARIABLES
+!
+      INTEGER*2 I,N,J
+      LOGICAL*2 KBIT
+      REAL*8 ELC(5),ELPC(5),FC(5),DC(5),OMC(5)
+      REAL*8 EL,ELD,ELP,ELPD,F,FD,D,DD,OM,OMD,ARG,ARGDOT
+      REAL*8 SEC360,CENTJ,CONVDS,SECDAY
+!
+!       1. ELC(5)   - COEFFICIENTS USED IN THE CALCULATION OF EL
+!
+!       2. ELPC(5)  - COEFFICIENTS USED IN THE CALCULATION OF ELP
+!
+!       3. FC(5)    - COEFFICIENTS USED IN THE CALCULATION OF F
+!
+!       4. DC(4)    - COEFFICIENTS USED IN THE CALCULATION OF D
+!
+!       5. OMC(5)   - COEFFICIENTS USED IN THE CALCULATION OF OM
+!
+!       COEFFICIENTS ARE IN THE ORDER CUBIC, QUDRATIC, LINEAR, CONSTANT,
+!       AND INTEGRAL NUMBER OF TURNS.
+!
+      DATA ELC /0.064D0,31.310D0,715922.633D0,485866.733D0,1325.0D0/
+      DATA ELPC /-0.012D0,-0.577D0,1292581.224D0,1287099.804D00,99.0D0/
+      DATA FC /0.011D0,-13.257D0,295263.137D0,335778.877D0,1342.0D0/
+      DATA DC /0.019D0,-6.891D0,1105601.328D0,1072261.307D0,1236.0D0/
+      DATA OMC /0.008D0,7.455D0,-482890.539D0,450160.280D0,-5.0D0/
+!
+!       6. SEC360   - ARCSECONDS IN ONE TURN
+!          CENTJ    - DAYS IN A JULIAN CENTURY
+!          CONVDS   - CONVERT FROM ARCSECS TO RADIANS
+!          SECDAY   - SECONDS PER DAY
+!
+      DATA SEC360 / 1296000.0D0 /
+      DATA CENTJ  /   36525.0D0 /
+      DATA CONVDS /       4.8481368110953599D-06 /
+      DATA SECDAY /       8.6400D04 /
+!
+!
+! EL   - MEAN LONGITUDE OF THE MOON MINUS THE MEAN LONGITUDE
+!        OF THE MOON'S PERIGEE (ARCSEC)
+!
+! ELD  - CT TIME DERIVATIVE OF EL (ARCSEC/CENT)
+!
+! ELP  - MEAN LONGITUDE OF THE SUN MINUS THE MEAN LONGITUDE
+!        OF THE SUN'S PERIGEE (ARCSEC)
+!
+! ELPD - CT TIME DERIVATIVE OF ELP (ARCSEC/CENT)
+!
+! F    - MOON'S MEAN LONGITUDE - OM (ARCSEC)
+!
+! FD   - CT TIME DERIVATIVE OF F (ARCSEC/CENT)
+!
+! D    - MEAN ELONGATION OF THE MOON FROM THE SUN (ARCSEC)
+!
+! DD   - CT TIME DERIVATIVE OF D (ARCSEC/CENT)
+!
+! OM   - LONGITUDE OF THE ASCENDING NODE OF THE MOON'S MEAN
+!        ORBIT ON THE ECLIPTIC, MEASURED FROM THE MEAN EQUINOX
+!        OF DATE (ARCSEC)
+!
+! OMD  - CT TIME DERIVATIVE OF OM (ARCSEC/CENT)
+!
+! ARG  - THE COMBINATION OF FUNDAMENTAL ARGUMENTS USED
+!        TO COMPUTE THE NUTATION (RADIANS)
+!
+! ARGDOT - THE DERIVATIVE OF ARG (RADIANS/CENTURY)
+!
+! 4.  HISTORY
+!   WHO   WHEN   WHAT
+!   CMA  810804  Created
+!
+! 5.  NUTW PROGRAM STRUCTURE
+!
+!
+! 1.    COMPUTATION OF FUNDAMENTAL ARGUMENTS AND DERIVATIVES
+!
+      EL = ELC(1) * CENT**3 + ELC(2) * CENT**2 + ELC(3) * CENT &
+     &     + ELC(4) + DMOD( ELC(5) * CENT, 1.D0 ) * SEC360
+      EL = DMOD( EL, SEC360 )
+      ELD = 3.D0 * ELC(1) * CENT**2 + 2.D0 * ELC(2) * CENT + ELC(3) &
+     &      + ELC(5) * SEC360
+!
+      ELP = ELPC(1) * CENT**3 + ELPC(2) * CENT**2 + ELPC(3) * CENT &
+     &     + ELPC(4) + DMOD( ELPC(5) * CENT, 1.D0 ) * SEC360
+      ELP = DMOD( ELP, SEC360 )
+      ELPD = 3.D0 * ELPC(1) * CENT**2 + 2.D0 * ELPC(2) * CENT + ELPC(3) &
+     &       + ELPC(5) * SEC360
+!
+      F = FC(1) * CENT**3 + FC(2) * CENT**2 + FC(3) * CENT &
+     &     + FC(4) + DMOD( FC(5) * CENT, 1.D0 ) * SEC360
+      F = DMOD( F, SEC360 )
+      FD = 3.D0 * FC(1) * CENT**2 + 2.D0 * FC(2) * CENT + FC(3) &
+     &     + FC(5) * SEC360
+!
+      D = DC(1) * CENT**3 + DC(2) * CENT**2 + DC(3) * CENT &
+     &     + DC(4) + DMOD( DC(5) * CENT, 1.D0 ) * SEC360
+      D = DMOD( D, SEC360 )
+      DD = 3.D0 * DC(1) * CENT**2 + 2.D0 * DC(2) * CENT + DC(3) &
+     &     + DC(5) * SEC360
+!
+      OM = OMC(1) * CENT**3 + OMC(2) * CENT**2 + OMC(3) * CENT &
+     &     + OMC(4) + DMOD( OMC(5) * CENT, 1.D0 ) * SEC360
+      OM = DMOD( OM, SEC360 )
+      OMD = 3.D0 * OMC(1) * CENT**2 + 2.D0 * OMC(2) * CENT + OMC(3) &
+     &      + OMC(5) * SEC360
+!
+! 2.    INITIALIZE OUTPUT
+!
+      DPSI(1) = 0.D0
+      DPSI(2) = 0.D0
+      DEPS(1) = 0.D0
+      DEPS(2) = 0.D0
+!
+! 3.    SUM NUTATION SERIES TERMS, FROM SMALLEST TO LARGEST
+!
+      N = NDP
+!
+      DO 300 J=1,NOT
+      I = NOT + 1 - J
+      IF(KBIT(IDP,I)) THEN
+!
+! 3.1   FORMATION OF MULTIPLES OF ARGUMENTS
+!
+      ARG = DBLE(X(1,I)) * EL &
+     &    + DBLE(X(2,I)) * ELP &
+     &    + DBLE(X(3,I)) * F &
+     &    + DBLE(X(4,I)) * D &
+     &    + DBLE(X(5,I)) * OM
+      ARG = DMOD(ARG,SEC360) * CONVDS
+!
+! 3.2   FORMATION OF MULTIPLES FOR DERIVATIVES
+!
+      ARGDOT = DBLE(X(1,I)) * ELD &
+     &    + DBLE(X(2,I)) * ELPD &
+     &    + DBLE(X(3,I)) * FD &
+     &    + DBLE(X(4,I)) * DD &
+     &    + DBLE(X(5,I)) * OMD
+      ARGDOT = ARGDOT * CONVDS
+!
+! 3.3   STORE VALUES OF ARGUMENTS AND DERIVATIVES OF SPECIFIC TERMS
+!
+        ARGP(1,N) = ARG
+        ARGP(2,N) = ARGDOT
+        N = N - 1
+      ENDIF
+!
+! 3.4   EVALUATE NUTATION AND DERIVATIVES OF NUTATION
+!
+!     DPSI(1) = (DBLE(X(6,I)) + DBLE(X(7,I))*CENT) * DSIN(ARG) + DPSI(1)
+!     DPSI(2) = DPSI(2) + DBLE(X(7,I)) * DSIN(ARG) + (DBLE(X(6,I))
+!    .          + DBLE(X(7,I)) * CENT) * ARGDOT * DCOS(ARG)
+!     DEPS(1) = (DBLE(X(8,I)) + DBLE(X(9,I))*CENT) * DCOS(ARG) + DEPS(1)
+!     DEPS(2) = DEPS(2) + DBLE(X(9,I)) * DCOS(ARG) - (DBLE(X(8,I))
+!    .          + DBLE(X(9,I)) * CENT) * ARGDOT * DSIN(ARG)
+!
+300   CONTINUE
+!
+! 4.    CONVERT TO PROPER UNITS
+!
+!     DPSI(1) = DPSI(1) * 1.0D-4
+!     DPSI(2) = DPSI(2) * 1.0D-4 / (CENTJ * SECDAY)
+!     DEPS(1) = DEPS(1) * 1.0D-4
+!     DEPS(2) = DEPS(2) * 1.0D-4 / (CENTJ * SECDAY)
+!
+! 5.    SEE IF WE NEED DEBUG OUTPUT
+!
+!     IF (KNUTD .EQ. 0) GO TO 1000
+!     WRITE (ILUOUT,9100)
+!9100  FORMAT (1X,'DEBUG OUTPUT FOR SUBROUTINE NUTW.')
+!      WRITE(ILUOUT,88888)6HELC   ,ELC
+!88888 FORMAT(1X,A6,5D25.16/(7X,5D25.16))
+!     WRITE(ILUOUT,88888)6HEL    ,EL
+!     WRITE(ILUOUT,88888)6HELD   ,ELD
+!     WRITE(ILUOUT,88888)6HELPC  ,ELPC
+!     WRITE(ILUOUT,88888)6HELP   ,ELP
+!     WRITE(ILUOUT,88888)6HELPD  ,ELPD
+!     WRITE(ILUOUT,88888)6HFC    ,FC
+!     WRITE(ILUOUT,88888)6HF     ,F
+!     WRITE(ILUOUT,88888)6HFD    ,FD
+!     WRITE(ILUOUT,88888)6HDC    ,DC
+!     WRITE(ILUOUT,88888)6HD     ,D
+!     WRITE(ILUOUT,88888)6HDD    ,DD
+!     WRITE(ILUOUT,88888)6HOMC   ,OMC
+!     WRITE(ILUOUT,88888)6HOM    ,OM
+!     WRITE(ILUOUT,88888)6HOMD   ,OMD
+!     WRITE(ILUOUT,88888)6HSEC360,SEC360
+!     WRITE(ILUOUT,88888)6HARG   ,ARG
+!     WRITE(ILUOUT,88888)6HARGDOT,ARGDOT
+!     WRITE (ILUOUT,9200) CONVDS, CENTJ, SECDAY, CENT, DEPS, DPSI
+!9200  FORMAT (1X,'CONVDS = ',D25.16,/,1X,'CENTJ = ',D25.16,/,1X,
+!     1       'SECDAY = ',D25.16,/,1X,'CENT = ',D25.16,/,1X,
+!     2       'DEPS = ',2(D25.16,2X),/,1X,'DPSI = ',2(D25.16,2X), /)
+!
+! 6.    RETURN
+!
+!1000  CONTINUE
+!
+      RETURN
+      END

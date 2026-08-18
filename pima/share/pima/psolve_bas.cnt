@@ -1,0 +1,149 @@
+$SETUP
+**************************************************************************
+**                                                                      **
+**   Control file for psolve baseline type solution.                    **
+**                                                                      **
+**   ###  21-NOV-2021   psolve_bas.cnt   (c) L. Petrov  21-JUL-2007 ### **
+**                                                                      **
+**************************************************************************
+  DEFAULTS   NO
+  SOLUTION   INDEPENDENT
+  CGM        NONE                NONE
+  MERGE_CGM  NONE
+  ARC_FILES  NONE
+  ID         psolve_bas
+*
+  TRAIN NO   GLO_PARLIM 8192      INC_PARLIM 128
+  SORT  YES  STATIONS   ALPHABET  SOURCES    RIGHT_ASCENSION
+*
+  USER_PROGRAM      NONE
+  USER_PARTIALS     NONE
+  USER_CONSTRAINTS  NONE
+*
+  FAST_MODE      B3D
+  FAST_DBG       NONE
+  FAST_COV       SEG
+  SAVING_RATE    1
+  SUPMET         META
+  QUALCODE_LIMIT 5
+  WARNING        ON
+  WEIGHTS        NO
+  SINGULARITY_CHECK ACTION  REPARAMETERIZE \
+                    STAMIN  7              \
+                    SOUMIN  0              \
+                    BASMIN  3
+*
+  SOURCE_WEIGHTS            NO
+  ELEVATION_DEPENDENT_NOISE NO
+  THEORETICAL_DELAY_FILE    IGNORE
+  EMULATION                 NO
+$OUTPUT
+  RESET              YES
+  FORWARD            NO
+  BASELINES          YES
+  MINIMUM            NO
+  SCREEN             NO
+  COVARIANCES        NO
+  CORRELATIONS       NO
+  STATION_TABLE      NO
+  POS_ELLIPSES       NO
+  MOD_FILES          NO
+  RESIDUALS          NONE
+  MINIMIZE_SIGMAS    YES
+  SINEX              NO
+  NORMAL_MATRIX      NO
+  SEG_OUTPUT         NO
+  CRES_EMULATION     NO
+  MAPPED_EOP_OUTPUT  NO
+  APRIORI_ZENDEL     NO
+  NRD_TABLE          YES
+  CHI_SQUARE_TABLE   NO
+  LISTING_OPTIONS    SRC_STAT  POST2021 \
+                     SEG_STYLE POST2005
+$FLAGS
+  CLOCKS      AUTO 60
+  ATMOSPHERES AUTO 20
+*
+  GRADIENTS   NO
+*
+  UT1/PM           NO
+  NUTATION         OFFSET
+  BASELINE_CLOCKS  IN
+*
+  STATIONS        YES
+  VELOCITIES      NO
+  SOURCES         IN
+  PROPER_MOTIONS  NO
+  HI_FREQ_EOP     NO
+  PRECESSION      NO
+  RELATIVITY      NO
+*
+  AXIS            NO
+  HARMONIC_POS    NO
+  SPLINE_POS      NO
+$CARRY
+  SOURCES      NO
+  STATIONS     NO
+  AXIS         NO
+$DATA
+  SOURCES     YES 
+  STATIONS    YES 
+  TYPE        G_GXS
+  ELEVATION   3
+  WVR_MASK    NO
+  EVERY       NO
+  NORATE_FLAG NO
+$CONTRIBUTIONS
+  NONE
+$CALIBRATIONS
+  ION       ON
+  RESET     YES
+  KEEP      cable
+  KEEP      user_cal
+  KEEP      pcal_rmv
+  DISABLE   NMFDRFLY
+$MODE_CALIBRATIONS
+  SET NONE
+$PARTIALS
+  SET NONE
+$MAPPING
+  VTD_CONF           /sol/rfc/rfc_2021d/rfc_2021d_eop.vtd
+$CONSTRAINTS
+  ATMOSPHERES        WEAKEST 40.0
+  CLOCKS             WEAKEST  2.0
+  GRADIENTS          YES      0.5   2.0
+*
+  BASELINE_CLOCKS    YES   SIGMA  5.D-7
+  EARTH_ORIENTATION  NO
+  NUTATION           NO
+*
+  PIECE_WISE_STA     NO
+  SOURCES            YES        SIGMA  1.0D-3
+  STATIONS           XYZ   YES  SIGMA  10.0 10.0 10.0 \
+                     UEN   NO
+*
+  NUVEL_COVAR        NO
+  VELOCITIES         XYZ  NO                                                \
+                     UEN  NO*
+  NO_NET_TRANSLATION NO
+  NO_NET_TRANSLATION_POSITION  LOCAL       SIGMA   1.D-3  ALL  UNIFORM \
+     RIGHT_PART   0.0 0.0 0.0  YES
+  NO_NET_ROTATION_POSITION     NO
+  NO_NET_TRANSLATION_VELOCITY  NO
+  NO_NET_ROTATION_VELOCITY     NO
+  NO_NET_ROTATION_SOURCE       NO
+$SUPPRESSION
+  VELOCITY_TIE       NO
+  VELOCITIES         NO
+  STATIONS           NO
+  RIGHT_ASCENSION    NO
+  DECLINATION        NO
+  STATION_ORIGIN     NO
+  SOURCES            NO
+  PROPER_MOTIONS     NO
+  PRECESSION         NO
+  RELATIVITY         NO
+  DIRECTION          NO
+  VELOCITY_ORIGIN    NO
+  STATION_TIE        NO
+$ARCS  GVF

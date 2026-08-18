@@ -1,0 +1,32 @@
+# VLBI station parameters Format 2022.04.03 #
+#
+# 2023.11.28  L. Petrov  Created
+# 2023.12.17  L. Petrov  Added a dummy horizon mask
+#
+SHORT_NAME:    JILIN12   char       Jl
+LAST_UPDATE:   JILIN12   char       2023.12.17
+COORD:         JILIN12   meters        -2730771.758    3713280.210    4394196.341
+MOUNT:         JILIN12   char       ALTAZ  
+SLEW_AZ:       JILIN12   deg/sec      12.0
+SLEW_EL:       JILIN12   deg/sec       6.0
+ACCL_AZ:       JILIN12   deg/sec^2     1.0
+ACCL_EL:       JILIN12   deg/sec^2     1.0
+TSETTLE_AZ:    JILIN12   sec           3.0
+TSETTLE_EL:    JILIN12   sec           3.0
+EL_MIN:        JILIN12   deg           2.0
+EL_MAX:        JILIN12   deg          89.0
+AZ_RANGE:      JILIN12   deg         0.0   60.0  300.0  420.0
+BACKEND:       JILIN12   char        cdas
+RECORDER:      JILIN12   char        mark5b
+SETMODE:       JILIN12   sec           4.0
+PREOB:         JILIN12   sec           3.0
+POSTOB:        JILIN12   sec           2.0
+HOR_AZIM:      JILIN12   deg           0   360
+HOR_ELEV:      JILIN12   deg           6     6
+STOW_AZIM:     JILIN12   deg          225.0
+STOW_ELEV:     JILIN12   deg           90.0
+HOR_AZIM:      JILIN12   deg           0   360
+HOR_ELEV:      JILIN12   deg           7     7
+#
+CLOCK_DATES:   JILIN12   sec        2020.11.22   2049.12.31
+CLOCK_OFFSET:  JILIN12   sec        0.0E-6

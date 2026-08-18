@@ -1,0 +1,118 @@
+                              User manual to Sima
+ 
+ 
+                                Leonid Petrov
+ 
+ 
+                                2000.10.31
+ 
+ 
+                                Abstract
+ 
+   This document describes using Sima -- program for computation of prediction
+of the measurements of the Earth orientation parameters using simulated VLBI
+observations.
+ 
+ 
+Questions and comments about this document should be sent to:
+ 
+Leonid Petrov ( sgdass@lists.nasa.gov  )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ Overview
+ 
+ 
+2 ................ Usage
+ 
+ 
+3 ................ Format of Sima configuration file
+ 
+   3.1 ........... Descriptions of directives of Sima configuration file
+   3.2 ........... Example of Sima configuration file
+ 
+4 ................ History
+ 
+ 
+________________________________________________________________________________
+ 
+        1 Overview
+        ==========
+ 
+   Sima is a tool which facilitate obtaining prediction of measurements of
+the EOP by VLBI. It assumes that the superfile with simulated VLBI experiment
+has been already created. It runs solve with using template control file,
+parses spool file, formats results and write them in the output file.
+ 
+        2 Usage
+        =======
+ 
+   sima -i <Solve_initials> [-c <control file>] -s <superfile_name>
+ 
+   -i  --  Solve user initials
+ 
+   -c  --  specifies configuration file for Sima. Default is
+           $MK4_ROOT/local/{Center_label}.sim
+ 
+   -s  --  superfile name. Sima digests two forms: without leading dollar
+           sign and with leading dollar sign. Dollar sign should be masked by
+           \ in the latter case. NB: the latest version is considered. Sima
+           doesn't provide the way to analyze not the latest version of the
+           superfile
+ 
+        3 Format of Sima configuration file
+        ===================================
+ 
+  Configuration file contains records of three type:
+  1) comments: any line which beginning from ##
+  2) directives for Sima: the line which starts from # and which is
+     not a comment line.
+     Directive consists of three or more words separated by one or more
+     blanks.
+ 
+     Word1 -- symbol # -- directive attribute
+     Word2 -- keyword
+     Word3,4...  value(s) of the keyword
+ 
+  Configuration file should contain definition of all keywords and all variables
+  listed in the next subsection.
+ 
+                3.1 Descriptions of directives of Sima configuration file
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+BATCH_CONTROL_FILE: Template batch Solve control file for running simulated
+                    solution. This control file should have a record
+                    @arc_line@ in the $ARC section. The actual superfile
+                    will replace this record.
+ 
+TEMP_CONTROL_FILE:  Name of the temporary file where the actual batch control
+                    file will be written.
+ 
+SIMA_OUTPUT_FILE:   Name of the output file which will contains summary of
+                    results of solve run.
+ 
+                3.2 Example of Sima configuration file
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+#############################################################################
+##                                                                         ##
+##  Configuration file for program Sima  at GSFC.                          ##
+##                                                                         ##
+##  02-AUG-2000 12:06:14                                                   ##
+##                                                                         ##
+#############################################################################
+# BATCH_CONTROL_FILE: /box1/control/sima_06.cnt
+# TEMP_CONTROL_FILE:  /tmp/sima.cnt
+# SIMA_OUTPUT_FILE:   /tmp/sima.out
+#!
+ 
+        4 History
+        =========
+ 
+  2000.08.02  L. Petrov  Beginning of development.
+  2000.08.04  L. Petrov  Release of 0.2 version
+  2000.09.19  L. Petrov  Release of 0.5 version. Added check of solve status.
+  2000.10.31  L. Petrov  Release of 1.0 version. Changed syntax of template
+                         file. Release of this document.

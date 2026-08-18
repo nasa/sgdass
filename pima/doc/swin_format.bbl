@@ -1,0 +1,42 @@
+\begin{thebibliography}{4}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\bibAnnoteFile}[1]{%
+  \IfFileExists{#1}{\begin{quotation}\noindent\textsc{Key:} #1\\
+  \textsc{Annotation:}\ \input{#1}\end{quotation}}{}}
+\providecommand{\bibAnnote}[2]{%
+  \begin{quotation}\noindent\textsc{Key:} #1\\
+  \textsc{Annotation:}\ #2\end{quotation}}
+
+\bibitem[{{Deller} et~al.(2011){Deller}, {Brisken}, {Phillips}, {Morgan},
+  {Alef}, {Cappallo}, {Middelberg}, {Romney}, {Rottmann}, {Tingay}, and
+  {Wayth}}]{r:difx2}
+{Deller}, A.~T., W.~F. {Brisken}, C.~J. {Phillips}, J.~{Morgan}, W.~{Alef},
+  R.~{Cappallo}, E.~{Middelberg}, J.~{Romney}, H.~{Rottmann}, S.~J. {Tingay},
+  and R.~{Wayth} (2011), \enquote{{DiFX-2: A More Flexible, Efficient, Robust,
+  and Powerful Software Correlator}.} \emph{\pasp}, 123, 275
+  \doi{10.1086/658907}{}.
+\bibAnnoteFile{r:difx2}
+
+\bibitem[{{Deller} et~al.(2007){Deller}, {Tingay}, {Bailes}, and
+  {West}}]{r:difx1}
+{Deller}, A.~T., S.~J. {Tingay}, M.~{Bailes}, and C.~{West} (2007),
+  \enquote{{DiFX: A Software Correlator for Very Long Baseline Interferometry
+  Using Multiprocessor Computing Environments}.} \emph{\pasp}, 119, 318--336
+  \doi{10.1086/513572}{}.
+\bibAnnoteFile{r:difx1}
+
+\bibitem[{{Himwich}(2021)}]{r:vex}
+{Himwich}, Edward (2021), \enquote{Vex definition.} Technical report, NRAO,
+  \urlprefix\url{https://safe.nrao.edu/wiki/bin/view/VLBA/Vex2doc}.
+\bibAnnoteFile{r:vex}
+
+\bibitem[{{Philips}(2022)}]{r:difx-wiki}
+{Philips}, Christian (2022), \enquote{Difx developer pages.} Technical report,
+  CSIRO,
+  \urlprefix\url{https://www.atnf.csiro.au/vlbi/dokuwiki/doku.php/difx/start}.
+\bibAnnoteFile{r:difx-wiki}
+
+\end{thebibliography}

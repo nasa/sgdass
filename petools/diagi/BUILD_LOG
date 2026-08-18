@@ -1,0 +1,555 @@
+make[1]: Entering directory '/g1/progs/petools_20190515/diagi'
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi.o diagi.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_bst.o diagi_bst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_ccl.o diagi_ccl.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_chf.o diagi_chf.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_dra.o diagi_dra.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_hlp.o diagi_hlp.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_inq.o diagi_inq.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_lst.o diagi_lst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_met.o diagi_met.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_mul.o diagi_mul.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_ost.o diagi_ost.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_prn.o diagi_prn.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_pst.o diagi_pst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_res.o diagi_res.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_sav.o diagi_sav.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_vie.o diagi_vie.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_wst.o diagi_wst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   define_palette.o define_palette.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   hammer_transform.o hammer_transform.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   multi_diagi.o multi_diagi.f  
+diagi.f:43:0:
+
+   43 | #ifdef HPUX  ! Actually, it is a bug in HP-UX Fortran compiler
+      | 
+Warning: extra tokens at end of #ifdef directive
+multi_diagi.f:266:0:
+
+  266 | #ifdef HPUX  ! Actually, it is a bug in HP-UX Fortran compiler
+      | 
+Warning: extra tokens at end of #ifdef directive
+diagi_pst.f:171:17:
+
+  171 |            IDI = DIAGI_INBOX ( MPST, BOX, XC, YC )
+      |                 1
+Warning: Type mismatch in argument 'box' at (1); passed TYPE(diagi_boxes) to TYPE(diagi_boxes) [-Wargument-mismatch]
+diagi_chf.f:49:38:
+
+   49 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:121:38:
+
+  121 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:150:48:
+
+  150 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:178:48:
+
+  178 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:206:48:
+
+  206 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:234:48:
+
+  234 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:262:38:
+
+  262 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:299:48:
+
+  299 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:417:38:
+
+  417 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:484:38:
+
+  484 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:562:38:
+
+  562 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:83:46:
+
+   83 |       CALL DIAGI_SET ( DIAGI_S%IDEV, DIAGI_S )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:1039:70:
+
+ 1039 |      &                  %VAL(DIAGI_S%ADR_X4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                      1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1041:70:
+
+ 1041 |      &                  %VAL(DIAGI_S%ADR_Y4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                      1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1047:75:
+
+ 1047 |      &                       %VAL(DIAGI_S%ADR_E4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                           1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1214:49:
+
+ 1214 |      &                           XMIN_V, XMAX_V )
+      |                                                 1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1217:45:
+
+ 1217 |      &                       YMIN_V, YMAX_V )
+      |                                             1
+Warning: Type mismatch in argument 'arr_r4' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1063:52:
+
+ 1063 |                      CALL DIAGI_MNB ( DIAGI_S, IER )
+      |                                                    1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:135:46:
+
+  135 |       CALL DIAGI_INT ( 1, DIAGI_S, ICLR, IER )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:142:49:
+
+  142 |            CALL DIAGI_INT ( 2, DIAGI_S, ICLR, 0 )
+      |                                                 1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:152:32:
+
+  152 |       CALL DIAGI_CLS ( DIAGI_S )
+      |                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:277:59:
+
+  277 |                    CALL DIAGI_INT ( 2, DIAGI_S, ICLR, IER )
+      |                                                           1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:361:53:
+
+  361 |                    CALL DIAGI_SET ( ID_PRN, DIAGI_S )
+      |                                                     1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:374:50:
+
+  374 |                         CALL DIAGI_CLS ( DIAGI_S )
+      |                                                  1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:419:62:
+
+  419 |                         CALL DIAGI_INT ( 2, DIAGI_S, ICLR, 0 )
+      |                                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:439:59:
+
+  439 |                    CALL DIAGI_SET ( DIAGI_S%IDEV, DIAGI_S )
+      |                                                           1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:510:55:
+
+  510 |               CALL DIAGI_INT ( -1, DIAGI_S, ICLR, IER )
+      |                                                       1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:526:45:
+
+  526 |               CALL DIAGI_MNB ( DIAGI_S, IER )
+      |                                             1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:678:46:
+
+  678 |       CALL DIAGI_INT ( 2, DIAGI_S, ICLR, IER )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+ar r  diagi.a diagi.o diagi_bst.o diagi_ccl.o diagi_chf.o diagi_dra.o diagi_hlp.o diagi_inq.o diagi_lst.o diagi_met.o diagi_mul.o diagi_ost.o diagi_prn.o diagi_pst.o diagi_res.o diagi_sav.o diagi_vie.o diagi_wst.o define_palette.o hammer_transform.o multi_diagi.o
+ar: creating diagi.a
+--- Library diagi.a updated ---
+make[1]: Leaving directory '/g1/progs/petools_20190515/diagi'
+make[1]: Entering directory '/g1/progs/petools_20190515/diagi'
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi.o diagi.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_bst.o diagi_bst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_ccl.o diagi_ccl.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_chf.o diagi_chf.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_dra.o diagi_dra.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_hlp.o diagi_hlp.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_inq.o diagi_inq.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_lst.o diagi_lst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_met.o diagi_met.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_mul.o diagi_mul.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_ost.o diagi_ost.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_prn.o diagi_prn.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_pst.o diagi_pst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_res.o diagi_res.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_sav.o diagi_sav.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_vie.o diagi_vie.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_wst.o diagi_wst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   define_palette.o define_palette.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   hammer_transform.o hammer_transform.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   multi_diagi.o multi_diagi.f  
+diagi.f:43:0:
+
+   43 | #ifdef HPUX  ! Actually, it is a bug in HP-UX Fortran compiler
+      | 
+Warning: extra tokens at end of #ifdef directive
+multi_diagi.f:266:0:
+
+  266 | #ifdef HPUX  ! Actually, it is a bug in HP-UX Fortran compiler
+      | 
+Warning: extra tokens at end of #ifdef directive
+diagi_pst.f:171:17:
+
+  171 |            IDI = DIAGI_INBOX ( MPST, BOX, XC, YC )
+      |                 1
+Warning: Type mismatch in argument 'box' at (1); passed TYPE(diagi_boxes) to TYPE(diagi_boxes) [-Wargument-mismatch]
+diagi_chf.f:49:38:
+
+   49 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:121:38:
+
+  121 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:150:48:
+
+  150 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:178:48:
+
+  178 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:206:48:
+
+  206 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:234:48:
+
+  234 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:262:38:
+
+  262 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:299:48:
+
+  299 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:417:38:
+
+  417 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:484:38:
+
+  484 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:562:38:
+
+  562 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:83:46:
+
+   83 |       CALL DIAGI_SET ( DIAGI_S%IDEV, DIAGI_S )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:1039:70:
+
+ 1039 |      &                  %VAL(DIAGI_S%ADR_X4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                      1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1041:70:
+
+ 1041 |      &                  %VAL(DIAGI_S%ADR_Y4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                      1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1047:75:
+
+ 1047 |      &                       %VAL(DIAGI_S%ADR_E4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                           1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1214:49:
+
+ 1214 |      &                           XMIN_V, XMAX_V )
+      |                                                 1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1217:45:
+
+ 1217 |      &                       YMIN_V, YMAX_V )
+      |                                             1
+Warning: Type mismatch in argument 'arr_r4' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1063:52:
+
+ 1063 |                      CALL DIAGI_MNB ( DIAGI_S, IER )
+      |                                                    1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:135:46:
+
+  135 |       CALL DIAGI_INT ( 1, DIAGI_S, ICLR, IER )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:142:49:
+
+  142 |            CALL DIAGI_INT ( 2, DIAGI_S, ICLR, 0 )
+      |                                                 1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:152:32:
+
+  152 |       CALL DIAGI_CLS ( DIAGI_S )
+      |                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:277:59:
+
+  277 |                    CALL DIAGI_INT ( 2, DIAGI_S, ICLR, IER )
+      |                                                           1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:361:53:
+
+  361 |                    CALL DIAGI_SET ( ID_PRN, DIAGI_S )
+      |                                                     1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:374:50:
+
+  374 |                         CALL DIAGI_CLS ( DIAGI_S )
+      |                                                  1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:419:62:
+
+  419 |                         CALL DIAGI_INT ( 2, DIAGI_S, ICLR, 0 )
+      |                                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:439:59:
+
+  439 |                    CALL DIAGI_SET ( DIAGI_S%IDEV, DIAGI_S )
+      |                                                           1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:510:55:
+
+  510 |               CALL DIAGI_INT ( -1, DIAGI_S, ICLR, IER )
+      |                                                       1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:526:45:
+
+  526 |               CALL DIAGI_MNB ( DIAGI_S, IER )
+      |                                             1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:678:46:
+
+  678 |       CALL DIAGI_INT ( 2, DIAGI_S, ICLR, IER )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+ar r  diagi.a diagi.o diagi_bst.o diagi_ccl.o diagi_chf.o diagi_dra.o diagi_hlp.o diagi_inq.o diagi_lst.o diagi_met.o diagi_mul.o diagi_ost.o diagi_prn.o diagi_pst.o diagi_res.o diagi_sav.o diagi_vie.o diagi_wst.o define_palette.o hammer_transform.o multi_diagi.o
+ar: creating diagi.a
+--- Library diagi.a updated ---
+make[1]: Leaving directory '/g1/progs/petools_20190515/diagi'
+make[1]: Entering directory '/g1/progs/petools_20190515/diagi'
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi.o diagi.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_bst.o diagi_bst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_ccl.o diagi_ccl.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_chf.o diagi_chf.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_dra.o diagi_dra.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_hlp.o diagi_hlp.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_inq.o diagi_inq.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_lst.o diagi_lst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_met.o diagi_met.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_mul.o diagi_mul.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_ost.o diagi_ost.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_prn.o diagi_prn.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_pst.o diagi_pst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_res.o diagi_res.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_sav.o diagi_sav.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_vie.o diagi_vie.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   diagi_wst.o diagi_wst.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   define_palette.o define_palette.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   hammer_transform.o hammer_transform.f  
+/usr/bin/gfortran  -m64 -ffree-form -ffree-line-length-none -fmax-errors=16 -fno-underscoring -fdollar-ok -fopenmp -x f95-cpp-input -finit-integer=-2147483647 -finit-logical=false -finit-real=nan -finit-character=0 -fbacktrace -ftrapv -fPIC -ffpe-trap=overflow,invalid,zero -fexceptions -fPIC -D LINUX -D GNU -D LITTLE_ENDIAN -D ADDRESS__TYPE=INTEGER\(8\) -D ADR_64BIT -fno-diagnostics-color -J /g1/progs/petools_20190515/module -I ./ -I ../include -fcheck=all -O2 -c -o   multi_diagi.o multi_diagi.f  
+diagi.f:43:0:
+
+   43 | #ifdef HPUX  ! Actually, it is a bug in HP-UX Fortran compiler
+      | 
+Warning: extra tokens at end of #ifdef directive
+multi_diagi.f:266:0:
+
+  266 | #ifdef HPUX  ! Actually, it is a bug in HP-UX Fortran compiler
+      | 
+Warning: extra tokens at end of #ifdef directive
+diagi_pst.f:171:17:
+
+  171 |            IDI = DIAGI_INBOX ( MPST, BOX, XC, YC )
+      |                 1
+Warning: Type mismatch in argument 'box' at (1); passed TYPE(diagi_boxes) to TYPE(diagi_boxes) [-Wargument-mismatch]
+diagi_chf.f:49:38:
+
+   49 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:121:38:
+
+  121 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:150:48:
+
+  150 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:178:48:
+
+  178 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:206:48:
+
+  206 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:234:48:
+
+  234 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:262:38:
+
+  262 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:299:48:
+
+  299 |                 CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:417:38:
+
+  417 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:484:38:
+
+  484 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi_chf.f:562:38:
+
+  562 |       CALL DIAGI_PURGE_BOT ( DIAGI_S )
+      |                                      1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:83:46:
+
+   83 |       CALL DIAGI_SET ( DIAGI_S%IDEV, DIAGI_S )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:1039:70:
+
+ 1039 |      &                  %VAL(DIAGI_S%ADR_X4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                      1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1041:70:
+
+ 1041 |      &                  %VAL(DIAGI_S%ADR_Y4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                      1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1047:75:
+
+ 1047 |      &                       %VAL(DIAGI_S%ADR_E4(J2)), EPS_MIN4, EPS_MAX4 )
+      |                                                                           1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1214:49:
+
+ 1214 |      &                           XMIN_V, XMAX_V )
+      |                                                 1
+Warning: Type mismatch in argument 'arr' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1217:45:
+
+ 1217 |      &                       YMIN_V, YMAX_V )
+      |                                             1
+Warning: Type mismatch in argument 'arr_r4' at (1); passed INTEGER(8) to REAL(4) [-Wargument-mismatch]
+diagi.f:1063:52:
+
+ 1063 |                      CALL DIAGI_MNB ( DIAGI_S, IER )
+      |                                                    1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:135:46:
+
+  135 |       CALL DIAGI_INT ( 1, DIAGI_S, ICLR, IER )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:142:49:
+
+  142 |            CALL DIAGI_INT ( 2, DIAGI_S, ICLR, 0 )
+      |                                                 1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:152:32:
+
+  152 |       CALL DIAGI_CLS ( DIAGI_S )
+      |                                1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:277:59:
+
+  277 |                    CALL DIAGI_INT ( 2, DIAGI_S, ICLR, IER )
+      |                                                           1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:361:53:
+
+  361 |                    CALL DIAGI_SET ( ID_PRN, DIAGI_S )
+      |                                                     1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:374:50:
+
+  374 |                         CALL DIAGI_CLS ( DIAGI_S )
+      |                                                  1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:419:62:
+
+  419 |                         CALL DIAGI_INT ( 2, DIAGI_S, ICLR, 0 )
+      |                                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:439:59:
+
+  439 |                    CALL DIAGI_SET ( DIAGI_S%IDEV, DIAGI_S )
+      |                                                           1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:510:55:
+
+  510 |               CALL DIAGI_INT ( -1, DIAGI_S, ICLR, IER )
+      |                                                       1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:526:45:
+
+  526 |               CALL DIAGI_MNB ( DIAGI_S, IER )
+      |                                             1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+diagi.f:678:46:
+
+  678 |       CALL DIAGI_INT ( 2, DIAGI_S, ICLR, IER )
+      |                                              1
+Warning: Type mismatch in argument 'diagi_s' at (1); passed TYPE(diagi_stru) to TYPE(diagi_stru) [-Wargument-mismatch]
+ar r  diagi.a diagi.o diagi_bst.o diagi_ccl.o diagi_chf.o diagi_dra.o diagi_hlp.o diagi_inq.o diagi_lst.o diagi_met.o diagi_mul.o diagi_ost.o diagi_prn.o diagi_pst.o diagi_res.o diagi_sav.o diagi_vie.o diagi_wst.o define_palette.o hammer_transform.o multi_diagi.o
+ar: creating diagi.a
+--- Library diagi.a updated ---
+make[1]: Leaving directory '/g1/progs/petools_20190515/diagi'

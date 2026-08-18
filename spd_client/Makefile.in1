@@ -1,0 +1,14 @@
+#######################################################################
+#								      #
+#	Make file for building spd_client                             #
+#						     		      #
+#  %%%  31-JUL-2014  makefile   v1.0  (c) L. Petrov  31-JUL-2014 %%%  #
+#								      #
+#######################################################################
+.SUFFIXES:
+.SUFFIXES:	.f	.c	.o	.opt_o	.a
+#
+SHELL = /bin/csh -f -c 'umask 0002; eval "$2"'
+
+DATE = `date '+%Y%m%d'`
+

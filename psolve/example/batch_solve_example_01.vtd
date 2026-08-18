@@ -1,0 +1,147 @@
+# VTD Control file.   Format version of 2024.05.02
+#
+#  Created:     2007.07.04_12:31:52
+#  Last update: 2024.01.09_15:00:16
+#
+# --- General files
+#
+LEAP_SECOND:             /apr/eop/leapsec.dat
+DE_EPHEMERIDES:          /apr/eph/de440.eph
+#
+# --- Site positions and source coordinate catalogues
+#
+STATION_DESCRIPTION:     /apr/sta/station.desc
+STATION_COORDINATES:     /apr/sta/glo.sit
+STATION_VELOCITIES:      NONE
+STATION_ECCENTRICITIES:  /apr/sta/ECCDAT.ecc
+PHASE_OFFSET_FILE:       NONE
+SOURCE_COORDINATES:      /apr/sou/glo.src
+SOURCE_COORDINATES_2ND:  NONE
+SOURCE_COORDINATES_3RD:  NONE
+SOURCE_COORDINATES_4TH:  NONE
+SOURCE_PRLX_PRP_MOTION:  NONE
+DIR_NZO:                 NONE
+#
+# --- Options for accounting for the Earth's rotation (ERM formalism)
+#
+AEM_FILE:                NONE
+ERM_FILE:                NONE
+HARMONIC_EOP_FILE:       NONE
+#
+# --- Options for accounting for the Earth's rotation (IERS formalism)
+#
+EOP_SERIES:              /apr/eop/eop_polu.txt
+EOP_TIME_SCALE:          TDB
+UZT_MODEL:               RE2014
+UZT_USE:                 NONE
+EROT_COMPAT:             NONE
+PRECESSION_EXPRESSION:   CAPITAINE_2005
+NUTATION_EXPANSION:      MHB2000
+GEODESIC_NUTATION:       NONE
+#
+# --- Solid Earth tides and the pole tide
+#
+SOLID_EARTH_TIDES_ZERO_FREQ:    MDG97AN
+SOLID_EARTH_TIDES_2ND_DEGREE:   MDG97AN
+SOLID_EARTH_TIDES_3RD_DEGREE:   MDG97
+POLE_TIDE_MODEL:                MDG97AN
+MEAN_POLE_MODEL:                IERS2022
+#
+# --- Position variations
+#
+POSVAR_FIL:  1  /apr/load_bds/atm/merra2_geosfpit/
+POSVAR_MOD:  1  TIME_SERIES
+POSVAR_INT:  1  SPLINE
+POSVAR_USE:  1  IF_AVAILABLE
+#
+POSVAR_FIL:  2  /apr/load_bds/lws/merra2_geosfpit/
+POSVAR_MOD:  2  TIME_SERIES
+POSVAR_INT:  2  SPLINE
+POSVAR_USE:  2  IF_AVAILABLE
+#
+POSVAR_FIL:  3  /apr/load_bds/nto/mpiom06
+POSVAR_MOD:  3  TIME_SERIES
+POSVAR_INT:  3  SPLINE
+POSVAR_USE:  3  IF_AVAILABLE
+#
+POSVAR_FIL:  4  /apr/load_hps/atm_merra2_harmod.hps
+POSVAR_MOD:  4  HARMONIC_MODEL
+POSVAR_INT:  4  LINEAR
+POSVAR_USE:  4  IF_AVAILABLE
+#
+POSVAR_FIL:  5  /apr/load_hps/lws_merra2_harmod.hps
+POSVAR_MOD:  5  HARMONIC_MODEL
+POSVAR_INT:  5  LINEAR
+POSVAR_USE:  5  IF_AVAILABLE
+#
+POSVAR_FIL:  6  /apr/load_hps/toc_fes2014b_harmod.hps
+POSVAR_MOD:  6  HARMONIC_MODEL
+POSVAR_INT:  6  LINEAR
+POSVAR_USE:  6  IF_AVAILABLE
+#
+POSVAR_FIL:  7  /apr/load_hps/toc_equil01_harmod.hps
+POSVAR_MOD:  7  HARMONIC_MODEL
+POSVAR_INT:  7  LINEAR
+POSVAR_USE:  7  IF_AVAILABLE
+#
+# --- Axis offset computations
+#
+AXIS_OFFSET_MODEL:              YES
+#
+# --- Antenna deformations:
+#
+ANTENNA_DEFORMATIONS_FILE: 	NONE
+ANTENNA_THERMAL_EXPANSION:      NONE
+#
+# --- Delays in the propagation media
+#
+METEO_DEF:                      NONE
+#
+HYDROSTATIC_ZENITH_DELAY:       NONE
+WET_ZENITH_DELAY:               NONE
+HYDROSTATIC_MAPPING_FUNCTION:   NONE
+WET_MAPPING_FUNCTION:           NONE
+#
+SLANT_PATH_DELAY_MODEL:         SPD_3D
+EXTERNAL_DELAY_DIR: 		/apr/spd/bin/geosfpit
+EXTERNAL_DELAY_DIR_2ND: 	/apr/spd/bin/merra
+EXTERNAL_DELAY_DIR_3RD: 	/apr/spd/bin/add
+EXTERNAL_DELAY_DIR_4TH: 	NONE
+SLANT_PATH_DELAY_BIAS_FILE:     NONE
+#
+ATMOSPHERE_PATH_DELAY_PARTIAL:  GAUSSIAN_LAYER   5000.0  500.0
+ATMOSPHERE_TILT_PARTIALS:       NORTH_EAST
+#
+IONOSPHERE_MODEL:               NONE
+IONOSPHERE_SCALE:               1.000
+SOU_DEBIAS_MODEL:               NONE
+#
+IONOSPHERE_DATA_FILE:           NONE
+IONOSPHERE_DATA_FILE_2ND: 	NONE
+IONOSPHERE_DATA_FILE_3RD: 	NONE
+IONOSPHERE_DATA_FILE_4TH: 	NONE
+IONOSPHERE_DATA_FILE_5TH: 	NONE
+IONOSPHERE_DATA_FILE_6TH: 	NONE
+IONOSPHERE_DATA_FILE_7TH: 	NONE
+IONOSPHERE_DATA_FILE_8TH: 	NONE
+IONOSPHERE_DATA_FILE_9TH: 	NONE
+#
+# --- Options for computing geometric part of the path delay
+#
+GRS_METRIC:                     ITRF2000
+TROP_AXOF_COUPLING:             NONE
+TROP_GEOMETRIC_COUPLING:        NONE
+PARALLACTIC_ANGLE:              YES
+GALACTIC_ABERRATION:            YES
+#
+DOPPLER_EXPR:                   COARSE_2006
+#
+# --- Coupling effects
+#
+GEOM_EXPR_FAR_ZONE:             PK_2001
+GEOM_EXPR_NEAR_ZONE:            LIGHT_TIME
+SOURCE_STRUCTURE:               NONE
+#
+# --- Whether or not to analytically compute delay rate
+#
+DELAY_RATE:                     YES

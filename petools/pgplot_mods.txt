@@ -1,0 +1,7 @@
+Modifications with respect to pgplot 5.2:
+
+32bit --> 64bit
+increased buffer size
+Fixed statment EXIT
+Fixed a a bug related to procssing an empty string
+Cutomozed xwdriv.c

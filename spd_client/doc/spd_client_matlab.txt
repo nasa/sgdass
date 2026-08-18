@@ -1,0 +1,289 @@
+I Overview
+----------
+
+Computation of path delay for alitmetery is implemented in
+a server-client model. The server runs two processes: the
+data acquition process that is scheduled by cron every hour
+and tghe deamom process that is running continuousluy.
+
+  The data acquisition process checks whether the new output 
+of numerical weather model became available on a remote server.
+If the new output became availalem  the data acquistion process
+downloads the output of the numerical weather models, preprocesses
+it and stores results.
+
+  The SPD daemon process accepts connections from a client on the 
+specified port, executes a command get, ping, or shutdown, and 
+sends the result to the client. The SPD server itself does not
+implement authentification and cryptogrpahy. It is assumed that 
+the client has an account with ssh privelege on the SPD server 
+computer and set an ssh tunnel to the SPD server.
+
+  Package SPD provides a Fortran, C, and MATLAB interface to
+a client. The client sends a request to the SPD server for 
+computation of path delay, waits for completion of the request, 
+and retrieves the output. The client assumes that the server is
+running. For checking whether the server is running, the
+client may send command PING. If no answer is recevied for
+the time out defined in the client-side configuration file,
+an error message is generated. In a similar way, if the 
+the client does not receive a response from the server 
+for a timeout, an error message is issued.
+
+  There are two routines that implement the interface:
+
+1) spd_init -- initializes the interface, allocates memory
+               for the transport data structure spd_2p, and
+               cheks, wheather the server is running.
+
+2) spd_get_delay -- sends a request to the server, waits for 
+                    processing the request and returns 
+                    the result.
+
+The data to and from  of the server are shipped in the array
+of SPD_2P data structures. Here is the description:
+
+spd_2p.tai           (IN,Real)  -- Time in seconds after the midnight
+spd_2p.mjd           (IN,Intg)  -- Integer number of days from 2000.01.01 
+                                   epoch
+spd_2p.emi_1         (IN,Real)  -- X-coordinate of the emitter  in meters
+spd_2p.emi_2         (IN,Real)  -- Y-coordinate of the emitter  in meters
+spd_2p.emi_3         (IN,Real)  -- Z-coordinate of the emitter  in meters
+spd_2p.rec_1         (IN,Real)  -- X-coordinate of the receiver in meters
+spd_2p.rec_2         (IN,Real)  -- Y-coordinate of the receiver in meters
+spd_2p.rec_3         (IN,Real)  -- Z-coordinate of the receiver in meters
+spd_2p.del_1st       (OUT,Real) -- Path delay in the first wavelength range,
+                                   in meters.          
+spd_2p.del_2nd       (OUT,Real) -- Path delay in the second wavelength range,
+                                   in meters.          
+spd_2p.del_rder_1st  (OUT,Real) -- Partial derivative of path delay of the
+                                   first wavelength range on the height of 
+                                   the receiver.             
+spd_2p.del_rder_2nd  (OUT,Real) -- Partial derivative of path delay of the
+                                   first wavelength range on the height of 
+                                   the receiver.             
+spd_2p.del_eder_1st  (OUT,Real) -- Partial derivative of path delay of the
+                                   first wavelength range on the height of 
+                                   the emitter.              
+spd_2p.del_eder_2nd  (OUT,Real) -- Partial derivative of path delay of the
+                                   second wavelength range on the height of 
+                                   the emitter.              
+
+II Installation
+---------------
+
+
+  SPD_CLIENT installs the matlab code in directory $prefix/spd/m,
+where $prefix is the name of the installation directory. It also
+installs libspc library in $prefix/lib and the matlab header file
+libspc.h into $prefix/lib directory.
+
+  Refer to INSTALL file in spd_client library to learn how to 
+install SPD_CLIENT.
+
+  In order to run spd client from matlab you need to define
+environment variable DYLD_INSERT_LIBRARY. That variable
+should define full path names of there shared libraries:
+spc, petools, and gfortran (strictly in this order). 
+
+  In order to define this environment variable, source
+one of these files 
+
+source  $prefix/bin/libspc_vars.csh
+source  $prefix/bin/libspc_vars.sh
+
+A file with extnesions .csh is used for csh or tcsh shell, 
+and a file with extensinot .sh is used for any other shells.
+
+Then check, whether variable DYLD_INSERT_LIBRARY is defined
+NB: A failre to define properly DYLD_INSERT_LIBRARY will
+result in a fatal error.
+
+
+III Detailed routine description
+--------------------------------
+
+1) spd_init
+
+   Routine spd_init initializes interface to SPD client. It creates   
+an array of structures spd_2p that is used for transport of        
+time tag, coordinates of the emitter and the receiver as input and 
+path delay and its partial derivatives as the output. Then         
+spd_init checks whether the SPD server is running. If the server   
+is not not running, spd_init issues and error message and          
+sets iuer>0.                                                       
+                                                                      
+ __________________________ Input parameters: _______________________ 
+                                                                      
+   np           ( int  ) -- maximum size of the buffer spd_2p for     
+                            transferring parameters to and back       
+                            the SPD server.                           
+   cli_conf     ( char ) -- name of the configuration file for        
+                            spd_client.                               
+   spd_lib_path ( char ) -- Installation prefix of the SPD_CLIENT     
+                            library.                                  
+   mjd_beg      ( int  ) -- MJD of the beginning the interval for     
+                            path delay computation.                   
+   tai_beg      ( int  ) -- TAI time of the beginning the interval    
+                            for path delay computation.               
+   mjd_end      ( int  ) -- MJD of the end of the interval for        
+                            path delay computation.                   
+   tai_end      ( int  ) -- TAI time of the end of the interval       
+                            for path delay computation.               
+   ivrb         ( int  ) -- Verbosity parameter.                      
+                            0 -- silent mode. Only error messages are 
+                                 printed.                             
+                            1 -- normal verbosity. Progress messages  
+                                 are printed.                         
+                            2 -- debugging mode.                      
+                                                                      
+ __________________________ Output parameters: ______________________ 
+                                                                      
+   spd_2p    ( struct  ) -- Array of np data data structures for      
+                            transferring data to and back SPD server. 
+  cli_ptr    ( pointer ) -- Pointer to the internal data structure    
+                            of the SPD_CLIENT.                        
+  iuer       ( int     ) -- Error parameter.                          
+                            0 -- no mistakes.                         
+                            1 -- failure to communicate with the      
+                                 server.                              
+
+2) spd_get_delay 
+
+   Routine spd_get_delay communicates with the SPD server. It sends   
+the request to compute path delays, waits for processing the       
+quest and returns the results.                                     
+                                                                      
+   Array of data structures spd_2p is used for transport of time      
+tags, coordinates of the emitter and the receiver as input and     
+path delay and its partial derivatives as the output.              
+                                                                      
+Meaning of the spd_2p array fields:                                
+                                                                      
+   spd_2p(k).tai           TAI time after the midnight, in seconds.   
+   spd_2p(k).emi_1         X-coordinate of emitter position in the    
+                           crust fixed coordinate system, in meters.  
+   spd_2p(k).emi_2         Y-coordinate of emitter position in the    
+                           crust fixed coordinate system, in meters.  
+   spd_2p(k).emi_3         Z-coordinate of emitter position in the    
+                           crust fixed coordinate system, in meters.  
+   spd_2p(k).rec_1         X-coordinate of receiver position in the   
+                           crust fixed coordinate system, in meters.  
+   spd_2p(k).rec_2         Y-coordinate of receiver position in the   
+                           crust fixed coordinate system, in meters.  
+   spd_2p(k).rec_3         Z-coordinate of receiver position in the   
+                           crust fixed coordinate system, in meters.  
+   spd_2p(k).del_1st       Path delay in the first wavelength range,
+                           in meters.          
+   spd_2p(k).del_2nd       Path delay in the second wavelength range,
+                           in meters.          
+   spd_2p(k).del_rder_1st  Partial derivative of path delay of the
+                           first wavelength range on the height of 
+                           the receiver.             
+   spd_2p(k).del_rder_2nd  Partial derivative of path delay of the
+                           first wavelength range on the height of 
+                           the receiver.             
+   spd_2p(k).del_eder_1st  Partial derivative of path delay of the
+                           first wavelength range on the height of 
+                           the emitter.              
+   spd_2p(k).del_eder_2nd  Partial derivative of path delay of the
+                           second wavelength range on the height of 
+                           the emitter.              
+   spd_2p(k).mjd           Integer (sic!) Modified Juilan Date on the 
+                           midnight preceding the event.              
+   spd_2p(k).filler_1      4-bite long filler.                        
+                                                                      
+ __________________________ Input parameters: _______________________ 
+                                                                      
+   np           ( int  ) -- maximum size of the buffer spd_2p for     
+                            transferring parameters to and back       
+                            the SPD server.                           
+   spd_2p    ( struct  ) -- Array of np data data structures for      
+                            transferring data to and back SPD server. 
+   cli_ptr   ( pointer ) -- Pointer to the internal data structure    
+                            of the SPD_CLIENT.                        
+   ivrb         ( int  ) -- Verbosity parameter.                      
+                            0 -- silent mode. Only error messages are 
+                                 printed.                             
+                            1 -- normal verbosity. Progress messages  
+                                 are printed.                         
+                            2 -- debugging mode.                      
+                                                                      
+ __________________________ Output parameters: ______________________ 
+                                                                      
+   spd_2p    ( struct  ) -- Array of np data data structures for      
+                            transferring data to and back SPD server. 
+   iuer      ( int     ) -- Error parameter.                          
+                            0 -- no mistakes.                         
+                            1 -- failure to communicate with the      
+                                 server.                              
+
+IV Congiguration
+----------------
+
+The first line of a valid configuration file should have 
+line SPD_CLIENT  Format version of 2015.01.10
+
+The configuration file should define 6 parameters. The format:
+
+    key: value
+
+Lines that starts with # are considered as comments and are
+discarded by the parser. All parameters should be defined. 
+No implicit defaults are allowed. The following parameters 
+should be defined
+
+SERVER_NAME:  name of the server. If you use a tunnel to access
+              the server, the server name should be local
+
+SERVER_PORT:  Port number whether the server is running. Consult
+              the server administrator to learn which port he has
+              selected.
+
+CONN_TIMEOUT: Connection timeout. 20.0 second is recommended
+
+SPD_LIB_PATH: path to the library path 
+
+SPD_TYPE_1:   The first wavelength range. One of 532nm, 1064nm,
+              and radio. "radio" range is valid for 100MHz -- 100GHz.
+
+SPD_TYPE_2:   The second wavelength range. One of 532nm, 1064nm,
+              radio, and none. If "none" is selected, spd_get_delay
+              will put nothing in spd_2p.del_2nd, spd_2p.del_rder_2nd,
+              spd_2p.del_eder_2nd. This will save time.
+
+
+V Example of the configuration file
+-----------------------------------
+
+
+SPD_CLIENT  Format version of 2015.01.10
+#
+#  SPD client configuration file example at xyz4:
+#
+SERVER_NAME:  localhost
+SERVER_PORT:  16000
+READ_TIMEOUT: 10.0
+CONN_TIMEOUT: 40.0
+SPD_PATH:     /Users/lpetrov/opt/lib 
+SPD_TYPE_1:   532nm
+SPD_TYPE_2:   radio
+
+or 
+
+SPD_CLIENT  Format version of 2015.01.10
+#
+#  SPD client configuration file example
+#
+#  ssh -p 441 -R 16000:localhost:16000  lpetrov@ertha.org
+#  ssh -L 16000:localhost:16000 lpetrov@4x
+#  ssh -fNL 16000:localhost:16000 lpetrov@gs698-xyz4.gsfc.nasa.gov
+#
+SERVER_NAME:  localhost
+SERVER_PORT:  16000
+CONN_TIMEOUT: 20.0
+CONN_TIMEOUT: 40.0
+SPD_PATH:     /opt64/lib
+SPD_TYPE_1:   532nm
+SPD_TYPE_2:   radio
+

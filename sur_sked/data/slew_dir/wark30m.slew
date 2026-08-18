@@ -1,0 +1,21 @@
+# Station slew format of  2018.02.02
+#
+# 2018.03.02 Changed TSETTLE_EL from 5 to 3 sec
+#  2019.04.14  pet Changed recorder to flexbuf
+#
+SHORT_NAME:  WARK30M   Wa
+LAST_UPDATE: WARK30M   2019.04.14
+COORD:       WARK30M   meters    -5115421.012   477880.253   -3767040.155
+MOUNT:       WARK30M   char       ALTAZ
+SLEW_AZ:     WARK30M   deg/sec    0.37
+SLEW_EL:     WARK30M   deg/sec    0.36
+ACCL_AZ:     WARK30M   deg/sec^2  0.20
+ACCL_EL:     WARK30M   deg/sec^2  0.25
+TSETTLE_AZ:  WARK30M   sec        5.0
+TSETTLE_EL:  WARK30M   sec        3.0
+EL_MIN:      WARK30M   deg        6.0
+EL_MAX:      WARK30M   deg       90.1
+AZ_RANGE:    WARK30M   deg      -179.0 -6.0 -1.0 354.0
+RECORDER:    WARK30M   char      flexbuf
+PREOB:       WARK30M   sec       10.0
+POSTOB:      WARK30M   sec        3.0

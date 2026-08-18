@@ -1,0 +1,36 @@
+Specifications of Station Position Evolution 
+Format version 2025.07.20
+
+In general, dependence of station position with time can be
+represented as function of time in a form
+
+X(t) = X0  + 
+       X'(t - t0)  +  
+       sum j=i,i=N ( Hc_i cos omega_i t + Hs_i sin omega_i t )  +  
+       sum k=1-m, k=n-1 f_k Bm_k (t_k)
+
+where the first term describes position at the reference epoch t0
+the second term describes linear rate of change, the third term 
+accounts for harmonic position variations, and the fourth term
+accounts for non-harmonic motion described with a spline of
+degree m, possibly with multiple knots. In addition, other 
+functional dependence of non-linear motion is possible.
+
+The station position evolution file describes the dependence of 
+station position on time in a form of time series with a fixed 
+time span.
+
+======================================================================================
+Byte-by-byte Description:
+--------------------------------------------------------------------------------------
+Bytes Format Units Label   Explanations
+--------------------------------------------------------------------------------------
+
+ 1- 8 A8     ---   Name    IVS station name
+10-28 A19    ---   CalDate Calendar date of the epoch in YYYY.MM.DD-hh:mm:ss format
+30-34 I5     days  MJDDate MJD of the epoch
+36-42 F7.1   sec   TAIDate TAI of the epoch after the midnight
+44-56 F13.4  meter Xpos    X-coordinate of station position on a given epoch
+58-70 F13.4  meter Ypos    Y-coordinate of station position on a given epoch
+72-84 F13.4  meter Zpos    Z-coordinate of station position on a given epoch
+--------------------------------------------------------------------------------------

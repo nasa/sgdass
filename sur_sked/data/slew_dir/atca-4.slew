@@ -1,0 +1,20 @@
+# Station slew format of  2018.02.02
+#
+# 2019.03.26 pet created
+#
+SHORT_NAME:  ATCA-4    A4
+LAST_UPDATE: ATCA-4    2019.03.26
+COORD:       ATCA-4    meters   -4751639.810   2791700.346 -3200491.150   
+MOUNT:       ATCA-4    char       ALTAZ
+SLEW_AZ:     ATCA-4    deg/sec    0.63
+SLEW_EL:     ATCA-4    deg/sec    0.31
+ACCL_AZ:     ATCA-4    deg/sec^2  0.22
+ACCL_EL:     ATCA-4    deg/sec^2  0.22
+TSETTLE_EL:  ATCA-4    sec        5.0
+TSETTLE_AZ:  ATCA-4    sec        5.0
+EL_MIN:      ATCA-4    deg       15.0
+EL_MAX:      ATCA-4    deg       80.0
+AZ_RANGE:    ATCA-4    dec      -205.0  35.0  155.0  325.0
+RECORDER:    ATCA-4    char      caab
+PREOB:       ATCA-4    sec       2.0
+POSTOB:      ATCA-4    sec       2.0

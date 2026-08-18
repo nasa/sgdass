@@ -1,0 +1,619 @@
+Installation instructions of petools
+====================================
+
+Last updated: 2024.01.27_14:10:14
+
+petools runs under
+
+Linux
+Darwin (MACOS)  10.4 and newer
+HP-UX 9, 10 and 11  (Support dropped in 2006)
+SunOS               (Support dropped in 2008)
+
+Dependencies:
+
+1) Fortran 90 compiler. NB: if you compile petools with a certain
+   compiler, you have to compile all your applications with that 
+   compiler. As of 2020, petools supports gfortran and ifort compilers.
+
+2) C compiler. As of 2020, only *genuine* gcc compiler is supported.
+   Attention of MACOS users: MACOS provides a wrapper /usr/bin/gcc
+   to Clang compiler. This a deception. You need install *genuine* 
+   GNU C compiler.    
+
+3) BLAS. (Basic Linear Algebra Software). 
+   Petools supports three options:
+      
+     a) openblas ( https://sourceforge.net/projects/openblas/files )
+        NB: you should compile and install the newest version of openblas
+        library even if you have atlas installed. You should install
+        openblas in a different location than your old installation.
+        Openblas built by other parities may or may not work depending
+        whether it was compiled without appending underscores to 
+        external names.
+
+     b) ATLAS ( http://math-atlas.sourceforge.net/ ) (preferable way).
+        NB: you should compile and install the newest version of atlas
+        library even if you have atlas installed. You should install
+        atlas in a different location than your old installation.
+
+        Petools uses LAPACK. You should configure atlas with support 
+        of LAPACK ( http://www.netlib.org/lapack ) 
+
+        Refer to atlas compilation instructions in the Appendix.
+        Keep in mind: you cannot "install" altas package with yum apt-get
+        or something similar. Atlas is a very special package. Installation
+        of atlas involves its compilation and tuning. Tuning is specific
+        to your hardware: exact version of the processor and memory.
+        If you upgraded the CPU and or memory, you have to re-install
+        blas. 
+
+     c) vendor supplied library,
+        f.e., mkl if you run your application at Intel compatible processor.
+        You can download it from https://software.intel.com/en-us/mkl
+
+     If your application, for example, corel_export, does not need blas,
+     you can configure petools without blas+lapack.
+
+4) tcsh
+   If you do not have tcsh at your system, you need install. Installation
+   of tcsh requires root access. You can install it using a package of
+   you distribution or build from sources code.
+   Download the source-code from http://www.tcsh.org/Home
+ 
+   ./configure --prefix=/usr --bindir=/bin
+   make 
+   (as root) make install
+   (as root) add these two lines in /etc/shells if you do not have them:
+             /bin/tcsh
+             /bin/csh
+
+   NB: there should be a symbolic link of csh to tcsh. That means csh = tcsh.
+       Some very old systems may have free-BSD version of csh that is not 
+       equivalent to tcsh. This case is not supported. To solve this problem,
+       you need execute as a root user the following command:
+
+       update-alternatives --install /bin/csh     csh /usr/bin/tcsh 200
+
+       This will cause tcsh shell be executed when csh is invoked.
+       In event if after installation you might want to undo this change, 
+       just run 
+
+       update-alternatives --remove csh /usr/bin/tcsh
+
+5) make.
+
+6) ncurses library. You need either compile it from sources from sources
+   taken from ( https://ftp.gnu.org/pub/gnu/ncurses/ ) or install two
+   packages: ncurses and development version of ncurses that includes
+   header files.
+
+   Here is an example of installation in the non-standard directory /opt64
+   wget http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.0.tar.gz
+   tar -zxvf ncurses-6.0.tar.gz
+   cd ncurses-6.0
+   ./configure --prefix=/opt64 \
+                --with-shared \
+                --without-debug \
+                --without-ada \
+                --enable-overwrite
+   make
+   make install
+
+   After that you need to check that the loader knows to search directory 
+   /opt64/lib . Check LD_LIBRARY_PATH or run command ldconfig as a root users.
+   For instance, you can the run command (bin only once)
+   setenv LD_LIBRARY_PATH /opt64/bin:$LD_LIBARAY_PATH 
+
+7) readline library. You need either compile it from sources 
+   taken from https://ftp.gnu.org/gnu/readline or install two
+   packages: readline and development version of readline that includes
+   header files.
+
+   Here is an example of installation in the non-standard directory /opt64
+   wget ftp://ftp.cwru.edu/pub/bash/readline-7.0.tar.gz
+   tar -zxvf readline-7.0.tar.gz
+   cd readline-7.0
+   ./configure --prefix=/opt64 \
+               --libdir=/opt64/lib
+   make
+   make install
+ 
+   Comments: readline-6.0 may fail compilation under gcc 4 or 5.
+             If you see a see an error message, upgrade either
+             gcc/gfortran or readline, or both
+
+8) zlib library. You need either compile it from sources or take from
+   https://zlib.net or install development version of zlib library
+   from your distribution.
+
+   Here is an example of installation in the non-standard directory /opt64
+   https://zlib.net/zlib-1.2.11.tar.gz
+   tar -zxvf zlib-1.2.11.tar.gz
+   ./configure --prefix=/opt64 \
+               --libdir=/opt64/lib
+   make
+   make install
+   
+
+
+	I. Checklist before installation
+        --------------------------------
+
+
+1) Check that you have genuine C compiler provide by gcc. 
+   The newer, the better. Compiler should be also called as cc.
+
+
+2) Check that you have Fortran90 compiler. The newer, the better. 
+   Petools supports 
+   1) GNU gfortran (also known as gfortran) 4.7.0 and newer.
+      This is a preferable choice.
+      Installation script will make a guess where your C compiler
+      is installed. If it fails to guess, you can help it by specifying
+      the environment variable MK5_CC with the full path to the compiler 
+      executable.
+
+   2) Intel Fortran compiler, version 10.0 and newer;
+      NB: Intel Fortran compilers 10.1.21 through 11.0.83 and perhaps later
+          have a critical bug that generated code that may produce wrong 
+          result. Intel fixed this bug in March 2010.
+          It is strongly recommended NOT TO use Intel Fortran compiler 
+          of these versions!
+
+   Installation script will make a guess where your Fortran compiler
+   is installed. If it fails to guess, you can help it by specifying
+   the environment variable MK5_FC with the full path to the compiler 
+   executable.
+
+3) Check BLAS, if you are going to use it. Petools supports three
+   BLAS implementations: openblas (preferred), atlas, and Intel MKL.
+   NB: default atlas and opepblas that comes with some Linux 
+   distributions cannot be used for two reasons: a) it is architecture 
+   dependent and cannot be tuned to your system. Performance may be 
+   worse by a factor of 10; b) default atlas or openblas is compiled 
+   with options that make impossible fortran<-->c interoperability.
+   You need to install ATLAS or Openblas yourself.
+
+4) check gmake, tcsh, readline, ncurses, zlib.
+
+	II. Compile and link.
+        ---------------------
+
+
+./configure
+make
+make install
+
+  By default petools puts libraries and binary files in $HOME/lib and
+$HOME/bin . Option --prefix= changes it. If configure does not find blas
+library, you need to specify the name of the library with full path
+explicitly using option --with-blas= . For example, if you installed
+ATLAS in /opt directory when you need to tell to configure where to find
+shared libraries:
+
+    ./configure --with-blas="-L/opt/lib -lsatlas"
+
+or 
+
+    ./configure --with-blas="-L/opt/lib -openblas"
+
+or for static linking
+
+  ./configure --with-blas="/opt/lib/libsatlas.a"
+
+or 
+
+  ./configure --with-blas="/opt/lib/libopenblas.a"
+
+
+  If you use Intel mkl, and you have installed it in /opt/intel directory,
+then your configuration line would be something like that.
+
+./configure --bits=64 --with-blas="/opt/intel/mkl/lib/intel64/libmkl_blas95_lp64.a /opt/intel/mkl/lib/intel64/libmkl_lapack95_lp64.a -L /opt/intel/mkl/lib/intel64 -Wl,--no-as-needed -lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core -lgomp"
+
+Search for file mkl_link_line_advisor.htm in your mkl installation, fill the
+web form, and you will get the command for linking. Do not forget to
+enclose this command in double quotes/
+
+  Under Sun you you may specify something like that:
+
+./configure --with-blas=/opt/SUNWspro/lib/libsunperf.so
+
+  If you are confident that no your application will use blas, you can select 
+./configure --without-blas
+
+  In order to learn other configuration options, run
+./configure --help
+
+  Quite possible the configure script will not automatically find your
+fortran compiler. Then you need to supply the full path to the compiler, f.e.
+example:
+  
+./configure FC=/opt/intel/fortran/bin/ifort
+
+  Similar, you can supply the full path to the C compiler if it is not 
+in the traditional place:
+
+./configure CC=/opt64/bin/gcc
+
+  NB: If you install atlas in other directory than a unix standard place 
+( /usr or /usr/local ) AND you use shared libraries 
+(configuration --with-blas="-L/opt/lib -lstalas"), you will need to
+specify that directory (/opt/lib in this example) either in LD_LIBRARY_PATH or, 
+if you have root access, in /etc/ld.so.conf and then run command ldconfig. 
+This will tell to the loader where to find shared libraries. For example: 
+setenv LD_LIBRARY_PATH "/opt64/lib:/opt64/lib64:/opt64/lib32:/opt32/lib:/opt64/intel/mkl/lib/64:/usr/lib:/usr/local/lib:/usr/lib64:/lib"
+
+  petools builds patched version pgplot unless option --without-pgplot
+was specified in configuration. The installation process requires 
+the tarball files of pgplot version 5.2 specified in the configuration.
+The name of the tarball is specified with option --with-pgplot_tarball
+
+	III. Post installation.
+        -----------------------
+
+a) .Xdefaults
+
+   In order graphic to work properly, you need to add to your
+   file $HOME/.Xdefaults the following line
+
+   pgxwin.Win.iconize:     True
+
+   It is also recommended to add these lines to $HOME/.Xdefaults 
+
+   pgxwin.Win.geometry:	1080x750+0+50
+   pgxwin.server.visible:	True
+   pgxwin.Win.maxColors:   230
+
+   In order to activate this changes, you need to run command
+   xrdb -merge $HOME/.Xdefaults 
+
+   It is recommended to add command xrdb -merge $HOME/.Xdefaults in your 
+   shell startupfile.
+
+b) Environment variables that control graphics
+
+  In order to run PG PLOT you need to specify several environment 
+  variables. Here is an example under tcsh:
+
+  setenv PGPLOT_DEV  "/XW"                      # tells that default is to print 
+                                                # the graphics to the screen
+  setenv PGPLOT_XW_MARGIN "1.0"                 # sets display margins
+  setenv PGPLOT_XSIZE_MM 400.0                  # specifies with width of the PGPLOT window
+
+
+c) It is recommended to add these definitions in $HOME/.login file
+   (assuming you use tcsh):
+
+limit coredumpsize     0
+limit stacksize        8000000
+limit maxproc          16384
+limit descriptors      2048
+setenv GOMP_STACKSIZE  2000000
+
+  Most of the programs are written in gfortran and compiled with -fopenmp
+flag. Gfortran allocates local variables in stack. Default linux stack 
+limit is 16Mb, which is too small. It needs be increased.
+
+
+d) If you intend to use petools, you should apply definition of environment
+   variables listed in file petools_vars which was put in ${prefix}/bin
+   directory, where ${prefix} is the name of the root directory which you have
+   specified with option --with-prefix, or $HOME if you did not use this option.
+   Under tcsh or csh execute a command:
+
+   source ${prefix}/bin/petools_var
+
+   It is recommended to include this line in you shell start-up command file,
+   provided you use tcsh or csh.
+
+
+     IV. Appendix: Openblas installation instruction.
+     ------------------------------------------------
+
+Even if you have openblas installed, you need build it. Often vendors
+deliberately introduces a barrier in interoperability between Fortran and C.
+Openblas should be built without this interoperability barrier.
+
+
+     Define the directory where you will download openblas. For this example
+     we use environmental variable INC,
+
+     Define the directory where you will be building openblas. For this example
+     we use environmental variable DIST.
+
+     Define the directory where you install openblas. For this example
+     we use environmental variable PREFIX.
+
+     Define openblas version
+
+     a) Determine the newest openblas version at 
+        https://sourceforge.net/projects/openblas/files
+        for example, 0.3.10
+        set environment variable openblas_vers to that version
+        set environment variable Openblas_vers to that version with removed dots
+
+        Exampe:
+
+        setenv openblas_vers 0.3.26
+        setenv Openblas_vers 0326
+        
+        cd $INC
+        wget https://github.com/xianyi/OpenBLAS/archive/v${openblas_vers}.tar.gz
+
+     b) get a patch that enables fortran/c interoperability. Required!
+
+        wget http://astrogeo.org/patches/openblas_nous_${Openblas_vers}.patch
+
+     c) Build openblas
+        cd $DIST
+        tar -zxvf $INC/v${openblas_vers}.tar.gz
+        cd OpenBLAS-${openblas_vers}
+        patch -Np0 -i $INC/openblas_nous_${Openblas_vers}.patch
+        make NOUNDERSCORE=1 \
+             CC=$MK5_CC \
+             FC=$MK5_FC \
+             COMMON_OPT="-D NOCHANGE -U NEEDBUNDERSCORE -D NOCHANGE" \
+             FCOMMON_OPT="-fno-underscoring -fPIC" \
+             FFLAGS="-fopenmp -fno-underscoring -fPIC" \
+             USE_OPENMP=1 \
+             CEXTRALIB=-lgomp
+ 
+        In this example $MK5_CC and $MK5_FCC define the full path to C and 
+        Fortran compliers, respectively.    
+
+
+     d) Install openblas
+        make PREFIX=$PREFIX install 
+
+
+     Trouleshooting:
+
+     If openblas did not determine your architecture correctly, compilation
+     my stop with the error message:
+
+     error: inlining failed in call to 'always_inline' ....
+     
+     In that case you need supply an additional option to COMMON_OPT. For example,
+     openblas-0.3.11 failed compilation at Xeon E5-2660 v3. This modificaiton
+     fixed the problem:
+     COMMON_OPT="-D NOCHANGE -U NEEDBUNDERSCORE -D NOCHANGE -mavx2"
+
+        V. Appendix: ATLAS installation instruction.
+        ---------------------------------------------
+
+  NB: If you have atlas installed at your system, you have to uninstall it!!
+  Atlas is an unusual package. Its installation is fundamentally different
+  from installation of other packages. During building, atlas generates a lot
+  trial routines. It measures its performance and on the basis generates new 
+  code of the basis of this analysis. Performance analysis heavily depends on 
+  the CPU, memory, and the motherboard. Therefore pre-compiled packages are 
+  close to useless. They may have performance up to a factor 10 worse.
+
+  Download source code from http://math-atlas.sourceforge.net/ to /tmp/
+  Check the version: it should be 3.10.0 or newer.
+  You also need to get lapack. You can get it from
+  http://www.netlib.org/lapack/lapack.tgz 
+  Version 3.4.0 or newer should be used, the newer, the better.
+
+  Define the build directory and the installation directory. Destination
+  directory should be writable for you, for example as 
+  /opt64 or $HOME/opt
+ 
+  Configuration and compilation of ATLAS.
+
+  It is advised to install atlas when no other process use the CPU
+  extensively. If other processes heavily use CPU, results of tuning may 
+  appear skewed, and ATLAS performance may be sub-optimal.
+  You should also disable CPU frequency throttling. The CPU frequency throttling
+  is the feature that allows the processor to change its frequency dynamically.
+  since Atlas tuning depends on timer and selecting the snippet 
+  of code that requires the minimum CPU, dynamic frequency throttling makes
+  these measurement useless and derails ATLAS installation.
+  You may need ask system administrator to do it. This maybe tricky. 
+
+  Here are several hints how to disable throttling under Linux.
+
+  To check, whether the CPU throttling is disabled, run 
+  <petools_distribution-path>/support/check_cpu_throttling.csh command.
+  In order to learn the reason why the script and ATLAS consider  the CPU 
+  throttling is enabled, run this command with argument -v.
+  You can run program <petools_distribution-path>/support/watch_cpufreq.csh 
+  to see how the CPU is changing with time.
+
+  If you install atlas on laptop, you need to disable CPU throttling 
+  temporarily and enable it back after installation. Throttling should be
+
+  There is more than one way to do it, and, unfortunately, at some systems it 
+  is not easy.
+
+  1) You can try this:
+
+    num_cpu=`ls -c1 /sys/devices/system/cpu | grep -E 'cpu[[:digit:]]'  |wc -l`
+    for proc_num in `seq 0 $num_cpu`;
+    do
+       echo performance > /sys/devices/system/cpu/cpu${proc_num}/cpufreq/scaling_governor
+    done
+
+  2) or this:
+
+     cpupower frequency-set -g performance 2>&1 /dev/null
+
+  If this works, you can put these commands in /etc/rc.local in order to make
+  these changes permanent.
+
+  Package cpupower depends on the kernel. You can either install this package
+  from your distribution (f.e. in Ubuntu the package is called linux-tools) or, 
+  if you compiled your kernel yourself, build it:
+
+  cd <path-to-kernel-tree>/tools/power/cpupower/
+  make 
+  make install # as root user
+
+  CPU released after 2015 may require disabling pstate. 
+  You may need change BIOS parameters like "Powersave/Boost off"
+  and/or reboot the system with kernel parameters intel_pstate=disable
+  during boot. Since change kernel parameters depends on your distribution,
+  this topic is beyond this manual. In order to check whether the kernel
+  parameter was applied, use command "cat /proc/cmdline"
+  It should show line intel_pstate=disable
+
+  However, if you use kernel 4.13 or newer, this may not be sufficient.
+  Then, in order to disable CPU throttling, you need temporarily disable
+  CPU frequency management that is called acpi_cpufreq. If CPU frequency
+  management was compiled as a kernel module, you can disable it without
+  rebooting if you have root access to the system. You need first check
+  whether the module is present: lsmod | grep acpu_cpufreq. If this command
+  returns nothing, CPU frequency management was compiled in the kernel
+  and you have to reboot in order to disable it. If lsmod | grep acpu_cpufreq
+  returns something like "acpi_cpufreq           20480  0" you remove
+  this kernel module as a root user: "rmmod acpi_cpufreq". To restore
+  CPU frequency management, just execute this command as a root user:
+  "modprobe acpi_cpufreq". If the CPU frequency management was compiled
+  in the kernel or you do not have root access, you need reboot with
+  kernel parameters "cpufreq.off=1 cpuidle.off=1" (without quotes). 
+  These parameters are supported in kernels 4.11 and newer. After you 
+  rebooted check whether these parameters where applied by 
+  "cat /proc/cmdline" and then running command 
+  
+  <petools_distribution-path>/support/watch_cpufreq.csh 
+
+  After building atlas, you can reboot without "cpufreq.off=1 cpuidle.off=1"
+  options.
+
+  Disclaimer: I do not know what is the way to disable CPU throttling 
+  at your machine. I do not know how to disable CPU throttling under
+  MACOS. Hint: I am not a developer of atlas and a user like you.
+
+  Set environment variable MK5_FC that should point to the Fortran compiler 
+  executable.
+
+  if you use GNU gfortran compiler 
+      setenv FFLAGS "-m$PETOOLS_BITS -ffixed-form -fno-underscoring -fPIC -O3"
+      setenv MK5_FC gfortran
+    else if you use Intel compiler then
+      setenv FFLAGS "-fpp -nus -Zp16 -align all -ftrapuv -pad -nbs -nofor_main"
+      setenv MK5_FC {path_to_executable_of_ifort_compiler}
+  endif
+#
+# Execute these commands:
+#
+      setenv BUILD {your_build_directory}
+      setenv DEST  {your_atlas_destination_directory}
+      setenv ATLAS_VERSION {atlas_version} # For example, 3.10.3
+      setenv LAPACK_TAR_GZ {lapack_compressed_tar_file} # For example, /tmp/lapack.tgz
+      setenv PETOOLS_BITS # 32 or 64
+#
+# --- For security reasons, it is preferable to have DEST not in /usr tree,
+# --- but in another tree. You to have write permission to DEST directory
+# --- in order to complete installation.
+#
+      cd BUILD
+      tar -jxf /tmp/atlas{ATLAS_VERSION}.tar.bz2
+      mv ATLAS atlas-$ATLAS_VERSION
+      cd atlas-$ATLAS_VERSION
+      mkdir build
+      cd build
+
+      ../configure \
+         --prefix=$DEST \
+         --shared \
+         --with-netlib-lapack-tarfile=$LAPACK_TAR_GZ \
+         -Si omp 1 \
+         -Si latune 1 \
+         -b $PETOOLS_BITS   \
+         -C ic gcc \
+         -C if "$MK5_FC" \
+         -Fa alg "-m$PETOOLS_BITS -fPIC -fopenmp" \
+         -F ic "-m$PETOOLS_BITS -Fa -fPIC -DNoChange -fopenmp" \
+         -F gc "-m$PETOOLS_BITS -Fa -fPIC -DNoChange -fopenmp" \
+         -F if "$FFLAGS" \
+         -v 2 \
+         >& configure.log
+
+       Check file configure.log for possible errors
+
+#
+# ---- Run this and relax. It may take from 15 minutes to 36 hours(!)
+# ---- to complete. Installation process not only compiles, but tunes
+# ---- linear algebra routines. This takes a lot of time, but it is 
+# ---- worth efforts.
+#
+       sed -i 's@soname $(LIBINSTdir)/@soname @g' lib/Makefile
+       date > make_log.txt; make            >>& make_log.txt;  date >> make_log.txt
+       date > check_log.txt; make check     >>& check_log.txt; date >> check_log.txt
+       date > ptcheck_log.txt; make ptcheck >>& check_log.txt; date >> ptcheck_log.txt
+       date > time_log.txt; make time       >>& time_log.txt;  date >> time_log.txt
+
+
+       cd lib
+       make shared    >>& ../make_log.txt
+       make ptshared  >>& ../make_log.txt
+
+       cd ../
+
+       Examine make_log.txt . It should not have an error message at the bottom
+       NB: ptcheck may give errors. You can ignore them.
+
+#
+# ---- Check, whether you have the privilege to write in $DEST directory.
+# ---- You may need root privilege for executing following commands
+#
+       IF YOUR SYSTEM IS LINUX:
+
+          make install    >& install.log
+#
+#         You link your programs against atlas as with "-L$DEST/lib -lsatlas"
+#
+#         NB: as of 2014.08.24 -ltatlas (so called threaded ATLAS) is broken.
+#             Using that version would cause crash of your application.
+#
+       ELSE IF YOUR SYSTEM IS DARWIN (MAC OS):
+
+          Simple "make install" does not work for Darwin (MAC OS). 
+          You need to do it manually:
+
+          mkdir obj
+          cd obj
+          ar -x ../lib/libatlas.a
+          ar -x ../lib/libf77blas.a
+          ar -x ../lib/liblapack.a
+          ar -x ../lib/libcblas.a
+          $OPT/bin/gcc -dynamiclib \
+                   -install_name $BUILD/build_64/libatlas.1.dylib \
+                   -o ../lib/libsatlas.1.dylib \
+                   *.o \
+                   -lgfortran -lc -lpthread -lm -lgcc -lgomp
+          cd ../
+          rm -fR obj
+	  cp lib/*.a               $DEST/lib/
+          cp lib/libsatlas.1.dylib $DEST/lib/
+          install_name_tool -id $DEST/lib/libatlas.1.dylib $DEST/lib/libatlas.1.dylib 
+          ln -sf $DEST/lib/libatlas.1.dylib $DEST/lib/libatlas.dylib
+#
+#         You link your programs against atlas as with "-L$DEST/lib -lsatlas"
+#
+#
+#        NB: as of version 3.11.14 threaded version of atlas crashed on MAC OS. 
+#            For this reason the serial version is to be used
+
+       END ! Your system
+
+#
+# ---- Remove thousands temporary files in /tmp/
+#
+       rm /tmp/file*
+#
+       unsetenv DEST
+       unsetenv BUILD
+       unsetend ATLAS
+       unsetenv FFLAGS
+       unsetenv LAPACK_TAR_GZ
+       unsetenv PETOOLS_BITS
+
+# End of ATLAS installation
+#
+
+   Atlas building may take from 15 minutes to 20 hours, though 1-3 hours is typical.
+

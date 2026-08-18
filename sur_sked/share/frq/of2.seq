@@ -1,0 +1,53 @@
+# FRQ_SEQ  1.4   Format version 2023.06.03
+#
+#  Frequency sequence used for ofb001 experiment
+#
+#  Last updated by L. Petrov on 2025.08.19_09:02:24
+#
+HDS_NAME  h01
+MOD_NAME  of2
+#
+#       station       wiring name
+#
+STATION GGAO12M   Gs  udc_01
+STATION KOKEE12M  K2  udc_01
+STATION MACGO12M  Mg  udc_01
+STATION WESTFORD  Wf  wf_udc
+#
+#  Bnd Low_frq bandwidh  IF Order (dir/inv)
+#
+BAND A  3072.4  32.0     Inv
+BAND A  3104.4  32.0     Inv
+BAND A  3136.4  32.0     Inv
+BAND A  3168.4  32.0     Inv
+BAND A  3200.4  32.0     Inv
+BAND A  3232.4  32.0     Inv
+BAND A  3264.4  32.0     Inv
+BAND A  3328.4  32.0     Inv
+#
+BAND B  5032.4  32.0     Inv
+BAND B  5064.4  32.0     Inv
+BAND B  5096.4  32.0     Inv
+BAND B  5128.4  32.0     Inv
+BAND B  5160.4  32.0     Inv
+BAND B  5192.4  32.0     Inv
+BAND B  5224.4  32.0     Inv
+BAND B  5320.4  32.0     Inv
+#
+BAND C  7200.4  32.0     Inv
+BAND C  7232.4  32.0     Inv
+BAND C  7264.4  32.0     Inv
+BAND C  7296.4  32.0     Inv
+BAND C  7328.4  32.0     Inv
+BAND C  7360.4  32.0     Inv
+BAND C  7392.4  32.0     Inv
+BAND C  7520.4  32.0     Inv
+#
+BAND D 10072.4  32.0     Inv
+BAND D 10104.4  32.0     Inv
+BAND D 10136.4  32.0     Inv
+BAND D 10168.4  32.0     Inv
+BAND D 10200.4  32.0     Inv
+BAND D 10232.4  32.0     Inv
+BAND D 10264.4  32.0     Inv
+BAND D 10424.4  32.0     Inv

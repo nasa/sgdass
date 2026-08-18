@@ -1,0 +1,35 @@
+# VLBI station parameters Format 2022.04.03
+#
+# NOT REAAL NUMBERS: Can be used for simulations only!!!
+#
+SHORT_NAME:   PDBURE    char      Pb
+LAST_UPDATE:  PDBURE    char      2026.07.16_16:00:44
+COORD:        PDBURE    meters    4523987.558      468042.192     4460318.148
+MOUNT:        PDBURE    char       ALTAZ
+SLEW_AZ:      PDBURE    deg/sec    0.5
+SLEW_EL:      PDBURE    deg/sec    0.5
+ACCL_AZ:      PDBURE    deg/sec^2  0.2
+ACCL_EL:      PDBURE    deg/sec^2  0.2
+TSETTLE_AZ:   PDBURE    sec        2.0
+TSETTLE_EL:   PDBURE    sec        2.0
+EL_MIN:       PDBURE    deg        9.0
+EL_MAX:       PDBURE    deg       89.0
+AZ_RANGE:     PDBURE    deg      -90.0   90.0  270.0  450.0
+RECORDER:     PDBURE    char      mark6
+BACKEND:      PDBURE    char      flexbuf
+SETMODE:      PDBURE    sec         4.0
+PREOB:        PDBURE    sec       10.0
+POSTOB:       PDBURE    sec        2.0
+HOR_AZIM:     PDBURE    deg       0   360 
+HOR_ELEV:     PDBURE    deg       9     9
+STOW_AZIM:    PDBURE    deg       80.0
+STOW_ELEV:    PDBURE    deg       80.0
+#
+CLOCK_DATES:  PDBURE    sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: PDBURE    sec        0.0E06
+
+
+
+
+
+

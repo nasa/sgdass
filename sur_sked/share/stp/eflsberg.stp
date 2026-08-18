@@ -1,0 +1,33 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:   EFLSBERG  char       Ef
+LAST_UPDATE:  EFLSBERG  char       2018.01.20
+COORD:        EFLSBERG  meters     4033947.481   486990.515  4900430.816
+MOUNT:        EFLSBERG  char       ALTAZ
+SLEW_AZ:      EFLSBERG  deg/sec    0.41
+SLEW_EL:      EFLSBERG  deg/sec    0.25
+ACCL_AZ:      EFLSBERG  deg/sec^2  0.02
+ACCL_EL:      EFLSBERG  deg/sec^2  0.02
+TSETTLE_AZ:   EFLSBERG  sec        9.0
+TSETTLE_EL:   EFLSBERG  sec        9.0
+EL_MIN:       EFLSBERG  deg       17.0
+EL_MAX:       EFLSBERG  deg       72.0
+AZ_RANGE:     EFLSBERG  deg       34.0 120.0 394.0 480.0
+RECORDER:     EFLSBERG  char      flexbuf
+BACKEND:      YEBES40M  char      dbbc3
+SETMODE:      EFLSBERG  sec         4.0
+PREOB:        EFLSBERG  sec       0.0
+POSTOB:       EFLSBERG  sec       0.0
+HOR_AZIM:     EFLSBERG  deg       0   360 
+HOR_ELEV:     EFLSBERG  deg       9     9
+STOW_AZIM:    EFLSBERG  deg       80.0
+STOW_ELEV:    EFLSBERG  deg       80.0
+#
+CLOCK_DATES:  EFLSBERG  sec        2018.06.24   2049.12.31
+CLOCK_OFFSET: EFLSBERG  sec        0.0E06
+
+
+
+
+
+

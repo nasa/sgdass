@@ -1,0 +1,46 @@
+STRUC_CONTROL  Format version of 2007.03.18
+#
+#  Control file for computation of source structure contribution to
+#  phase and group delay. 
+#
+#  The file consists of two types of records:
+#  1) Macro   definition
+#  2) Source  definition
+#
+#  Format of macro definition records
+#
+#   1:3   A3    Record definition. Must be SET
+#   5:    A     macro name
+#    :    A     Value. If the value is {ENV}, then the actual value will be
+#               taken from the environment variable with the macro name.
+#
+#  Format of source definition records
+#
+#   1:3   A3    Record definition. Must be SOU
+#   6:15  A10   Source name
+#  18:18  A1    Band identifier
+#  21:28  A8    Usage. Supported keywords: 
+#               MAP_FITS -- delay is used computed by Fourier transform of the map
+#               DEL_COMP -- delay is computed from the source model in 
+#                           the form of delta function (Clean components)
+#               GAU_COMP -- delay is computed from the source model in 
+#                           the form of Gaussian components
+#               NONE     -- no source mape is used
+#  31:49  A19   Begin date of the map validity
+#  51:69  A19   End date of the map validity
+#  72:79  F8.2  X pixel coordinate of the reference point with respect to the phase center
+#  81:88  F8.2  Y pixel coordinate of the reference point with respect to the phase center
+#  91:    A     File with the source map in fits format. The file name may 
+#               contain macro strings with defied in the macro definition section
+#               with leading dollar sign, using the same syntax as shell 
+#               environment variables.
+#               
+#
+#
+#  Who        When        What
+#  L. Petrov  2007.04.26  Created
+#
+#
+#
+#    Source      B  Usage     Date_Begin          Date_End               Pixel_Center     File_name
+#

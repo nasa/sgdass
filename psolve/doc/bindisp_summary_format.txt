@@ -1,0 +1,122 @@
+   Specifications of BINDISP_SUMMARY  format version of 2002.12.12
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+  A file in BINDISP_SUMMARY format keeps information extracted from 
+the headers of the set of files of site position variations in 
+BINDISP format. Information in BINDISP_SUMMARY files is in ASCII form 
+and it is designated for visual inspection and for parsing software 
+which can use this information without necessity read all files.
+
+  A file in BINDISP_SUMMARY format consists of records of variable 
+length in ASCII coding. Lines which starts from # are considered as 
+comments and ignored.
+  
+  A file in BINDISP_SUMMARY has the table of the format identifier: 
+which is the first record of a file and data records. The label of
+format identifier is:
+
+BINDISP Summary file. Format version of 2002.12.12
+
+  Date records are of one of the following types which follow in this
+order:
+
+LAST_UPDATE: 
+MIN_EPOCH: 
+MAX_EPOCH: 
+L_STA:     
+L_DSP:    
+STA:      
+
+  LAST_UPDATE record keeps the date of BINDISP_SUMMARY creation.
+Format:
+
+Field    1:12  A12   -- record identifier: LAST_UPDATE
+field   13:13  a1    -- filler: blank
+Field   14:32  A19   -- Date of the last file update in        
+                        YYYY.MM.FF-hh:mm:ss format
+
+  MIN_EPOCH record keeps the earliest time epoch among of all files 
+of site position variations.
+Format:
+
+Field    1:10  A12   -- record identifier: MIN_EPOCH
+field   11:11  a1    -- filler: blank
+Field   12:16  I5    -- MJD at midnight of the earliest date
+field   17:17  a1    -- filler: blank
+Field   18:24  F7.1  -- Time in scale TDT elapsed from midnight
+                        of the earliest date, in sec.
+field   25:25  a1    -- filler: blank
+Field   26:48  A23   -- Date of the last file update in        
+                        YYYY.MM.FF-hh:mm:ss.sss format
+
+
+  MAX_EPOCH record keeps the latest time epoch among of all files 
+of site position variations.
+Format:
+
+Field    1:10  A12   -- record identifier: MAX_EPOCH
+field   11:11  a1    -- filler: blank
+Field   12:16  I5    -- MJD at midnight of the latest date
+field   17:17  a1    -- filler: blank
+Field   18:24  F7.1  -- Time in scale TDT elapsed from midnight
+                        of the earliest date, in sec.
+field   25:25  a1    -- filler: blank
+Field   26:48  A23   -- Date of the last file update in        
+                        YYYY.MM.FF-hh:mm:ss.sss format
+  
+  L_STA record keeps the number of files of file position variations.
+Since each file of position variations keep data for only one site,
+this number is the as the number of sites.
+
+Field    1:6   A6    -- record identifier: L_STA
+field    7:7   a1    -- filler: blank
+Field    8:16  I9    -- The number of files (sites)
+
+  L_DSP record keeps the total number of points in all files of site
+position variations combined.
+
+Field    1:6   A6    -- record identifier: L_DSP
+field    7:7   a1    -- filler: blank
+Field    8:16  I9    -- MJD at midnight of the latest date
+
+  STA records keeps information obtained from the header of the site
+position variations files. The number of STA records is defined in 
+the L_STA record.
+Format:
+
+Field    1:4   A4     -- Record identifier: STA:
+field    5:5   a1     -- filler: blank
+Field    6:9   I4     -- Consecutive index of STA record in the summary
+                         file. Used for information only. Parsing 
+                         software ignores this field
+field   10:10  a1     -- filler: blank
+Field   11:18  A8     -- Site identifier (file name
+field   19:19  a1     -- filler: blank
+Field   20:38  A19    -- Epoch of the first site displacement defined
+                         in this file. Format: YYYY.MM.FF-hh:mm:ss.ss
+field   39:41  a3     -- filler:  / 
+Field   42:60  A19    -- Epoch of the last site displacement defined
+                         in this file. Format: YYYY.MM.FF-hh:mm:ss.ss
+field   61:61  a1     -- filler: blank
+Field   62:70  I9     -- Total number of site displacement epochs 
+                         defined in this file
+field   71:71  a1     -- filler: blank
+Field   72:87  F16.11 -- Sampling interval in days
+field   88:88  a1     -- filler: blank
+Field   89:101 F13.4  -- X coordinate of the site in a crust-fixed       
+                         reference frame
+field  102:102 a1     -- filler: blank
+Field  103:115 F13.4  -- Y coordinate of the site in a crust-fixed       
+                         reference frame
+field  116:116 a1     -- filler: blank
+Field  117:129 F13.4  -- Z coordinate of the site in a crust-fixed       
+                         reference frame
+field  130:130 a1     -- filler: blank
+Field  131:131 A1     -- Big-endian/Little-endian specifier for binary
+                         date: B means that binary data are in 
+                         Big-endian format, L means that binary data
+                         are in Little-endian format
+Field  132:132 A1     -- Float format specifiers: I means that float
+                         data conforms IEEE 754/854 standard. D means
+                         that data follows DEC specifications.

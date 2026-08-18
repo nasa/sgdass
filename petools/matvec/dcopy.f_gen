@@ -1,0 +1,19 @@
+      subroutine  dcopy(n,dx,incx,dy,incy)
+      implicit none
+c
+c     copies a vector, x, to a vector, y.
+c     uses unrolled loops for increments equal to one.
+c     jack dongarra, linpack, 3/11/78.
+c     mwh, 730 vis, 1/27/92
+c
+      double precision dx(1),dy(1)
+      integer incx,incy,ix,iy,n
+c
+      if(n.le.0)return
+      ix = 1
+      iy = 1
+      if(incx.lt.0)ix = (-n+1)*incx + 1
+      if(incy.lt.0)iy = (-n+1)*incy + 1
+      call vec_$dcopy_i(dx(ix),incx,dy(iy),incy,n)
+      return
+      end

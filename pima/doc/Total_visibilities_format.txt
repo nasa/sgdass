@@ -1,0 +1,81 @@
+Description of the format of total visibilities written by
+VLBI data analysis software program PIMA, task splt when 
+keyword SPLT.TOTAL_UV: has value YES.
+
+I. Introduction:
+================
+
+File withe the total visibilities consists of records of
+variables lengths in plain ascii coding. Lines that start with
+# character are considered as comments and ignored.
+
+The field line of the valid file with total visibilities is supposed
+to define the format version. The current supported version is
+
+# Total fringe phases and amplitudes. Format  1.00 Version of 2020.04.18
+
+The file consists of records of two type: IF records that contain
+visibilities averaged over time and frequency within a given IF, and 
+Band records that contain visibilities averaged over time and frequency 
+within the entire band.
+
+II. Format of IF records:
+=========================
+
+  Each IF record starts with "Sou:".
+
+   1:4    A4     Record ID. Always Sou:
+   5:5    A1     Delimiter. Always blank
+   6:15   A10    J2000 source name
+  16:21   A6     Delimiter
+  22:29   A8     IVS 8-character long name of the reference station of a baseline
+  30:30   A1     Delimiter
+  31:38   A8     IVS 8-character long name of the remote station of a baseline
+  39:50   A12    Delimiter
+  51:73   A23    UTC epoch in format YYYY.MM.DD_hh:mm:ss.fffffff
+  74:83   A11    Delimiter
+  84:88   I5     Internal PIMA observation index
+  89:96   A8     Delimiter
+  97:98   I2     IF index
+  99:106  A8     Delimiter
+ 107:107  I1     Polarization index
+ 108:114  A7     Delimiter
+ 115:128  F14.7  Fringe amplitude in Jy. If GAIN: NO was specified, then dimensionless
+ 129:136  A8     Delimiter
+ 137:145  F9.6   Fringe phase referred to the band reference frequency in rad
+ 146:151  A6     Delimiter
+ 153:161  F9.2   SEFD in Jy
+ 162:166  A5     Delimiter
+ 167:179  D13.6  U-coordinate at the band reference frequency. Dimensionless
+ 180:180  A1     Delimiter
+ 181:193  D13.6  V-coordinate at the band reference frequency. Dimensionless
+
+
+II. Format of band records:
+===========================
+
+  Each IF record starts with "SOU:".
+
+   1:4    A4     Record ID. Always SOU:
+   5:5    A1     Delimiter. Always blank
+   6:15   A10    J2000 source name
+  16:21   A6     Delimiter
+  22:29   A8     IVS 8-character long name of the reference station of a baseline
+  30:30   A1     Delimiter
+  31:38   A8     IVS 8-character long name of the remote station of a baseline
+  39:50   A12    Delimiter
+  51:73   A23    UTC epoch in format YYYY.MM.DD_hh:mm:ss.fffffff
+  74:83   A11    Delimiter
+  84:88   I5     Internal PIMA observation index
+  89:96   A8     Delimiter
+ 100:112  D13.6  Band reference frequency in Hz
+ 113:125  A13    Delimiter
+ 126:139  F14.7  Fringe amplitude at the reference frequency averaged over ll IFs and time in Jy. If GAIN: NO was specified, then dimensionless
+ 113:125  A16    Delimiter
+ 154:162  F14.7  Fringe phase at the reference frequency averaged over ll IFs and time in rad.
+ 163:168  A6     Delimiter
+ 169:177  F9.2   SNR
+ 178:190  A13    Delimiter
+ 191:199  F9.2   SEFD in Jy
+ 200:208  A9     Delimiter
+ 209:221  F13.6  SEFD in Jy

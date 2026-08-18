@@ -1,0 +1,30 @@
+# VLBI station parameters Format 2022.04.03
+#
+SHORT_NAME:    FDV3      char       H3
+LAST_UPDATE:   FDV3      char       2025.03.23
+COORD:         FDV3      meters     -1323959.129  -5332231.970  3232012.472
+MOUNT:         FDV3      char       ALTAZ
+#
+SLEW_AZ:       FDV3      deg/sec    9.9
+SLEW_EL:       FDV3      deg/sec    9.9
+ACCL_AZ:       FDV3      deg/sec^2  9.9
+ACCL_EL:       FDV3      deg/sec^2  9.9
+TSETTLE_AZ:    FDV3      sec        0.0
+TSETTLE_EL:    FDV3      sec        0.0
+#
+EL_MIN:        FDV3      deg        2.0
+EL_MAX:        FDV3      deg       90.0
+AZ_RANGE:      FDV3      deg      -90.0 90.0 270.0 450.0
+RECORDER:      FDV3      char      hrtr
+BACKEND:       FDV3      char      hrtr
+SETMODE:       FDV3      sec        0.0
+PREOB:         FDV3      sec        0.0
+POSTOB:        FDV3      sec        0.0
+#
+HOR_AZIM:      FDV3      deg        0.0  360.0
+HOR_ELEV:      FDV3      deg        2.0   2.0
+STOW_AZIM:     FDV3      deg        0.0
+STOW_ELEV:     FDV3      deg       90.0
+#
+CLOCK_DATES:   FDV3      sec        2020.06.11   2049.12.31
+CLOCK_OFFSET:  FDV3      sec        0.0

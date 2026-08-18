@@ -1,0 +1,48 @@
+                 VLBI_AXIS_OFFSET  Format version of 2004.05.18
+ 
+ 
+                                Leonid Petrov
+ 
+ 
+                                2006.10.03
+ 
+ 
+                                Abstract
+ 
+   This document describes the format for a priori and a posteriori
+antenna axis offsets of VLBI stations.
+ 
+ 
+Questions and comments about this guide should be sent to:
+ 
+Leonid Petrov ( sgdass@lists.nasa.gov )
+ 
+ 
+                                Table of contents:
+ 
+ 
+1 ................ Format
+ 
+ 
+________________________________________________________________________________
+ 
+        1 Format
+        ========
+ 
+  File in VLBI_AXIS_OFFSET format consists of records of variable length
+in ASCII coding. The first and the last line of a valid file shuld have
+the format label
+ 
+VLBI_AXIS_OFFSET  Format version of 2004.05.18
+ 
+  A line which starts from character # is considered as comment and
+ignored by parser.
+ 
+Field  1:8   A8    IVS station name
+Field 11:17  F7.4  Apriori offset according to the project
+                   or local measurements in meters
+Field 22:28  F7.4  Aposteriori offset in meters
+Field 33:38  F6.4  Formal uncertainty of the estimate from VLBI solution
+                   in meters. This field is blank if antenna axis offset
+                   was not adjusted for this station
+Field 40:79  A40   Comment

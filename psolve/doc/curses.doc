@@ -1,0 +1,110 @@
+		Curses Library Routines and Their Use
+			Mark Hayes   NVI/GSFC
+			   February 8,1993
+
+
+The Curses library routines described below can be found in the library
+file, /data2/mk3/src/solve/curlib/curlib.a on leo.  In order to use them,
+a copy of that library file should be invoked in your make file.  The make
+file also must invoke the HP-UX curses library by including -lcurses at
+the end of the fc or cc line.
+
+
+addstr_f:	character*(*) string
+		call addstr_f(string)
+
+	Writes the given string to the standard window. (Note: does not
+	include a newline at the end)
+
+beep_mn:	call beep_mn
+
+	Issues a beep from the monitor.
+
+blink_on_mn, blink_off_mn:	call blink_on_mn
+					.
+					.
+				call blink_off_mn
+
+	Text written to the standard window between the two calls will blink 
+	on and off.
+
+clear_mn:	call clear_mn
+
+	Clears the standard window.
+
+clrtobot_mn:	call clrtobot_mn
+
+	Clears the standard window from the current cursor position to the
+	bottom.
+
+clrtoeol_mn:	call clrtoeol_mn
+
+	Clears from the cursor to the end of the current line on the standard
+	window.
+
+deleteln_mn:	call deleteln_mn
+
+	Deletes the line containing the cursor from the standard window.
+
+end_mn:		call end_mn
+
+	Ends window mode.  Should be called after the last curses call.
+
+getstr_f:	character*(*) string
+		call getstr_f(string)
+
+	Reads a string from the keyboard, with termination signalled by a
+	carriage return.
+
+nl_mn:		call nl_mn
+
+	Writes a newline character (CR/LF) to the standard window.
+
+refresh_mn:	call refresh_mn
+
+	Writes the current contents of the standard window to the screen.
+	This routine must be called in order for text written to the standard
+	window to appear on the screen, unless there is a call to getstr_mn,
+	senkr_mn or senxy_mn.
+
+reverse_on_mn, reverse_off_mn:	call reverse_on_mn
+					.
+					.
+				call reverse_off_mn
+
+	Turns inverse video attribute on and off.  Any text written to the 
+	standard window between the two calls will be displayed in inverse
+	video.
+
+senkr_mn:	integer*4 x,y,ikey
+		call senkr_mn(x,y,ikey)
+
+	Returns screen coordinates when a non-arrow key is struck, as well
+	as the character typed.  The character is returned in the low order
+	byte of ikey.  Arrow keys may be used to position the cursor, and
+	will not be picked up by this routine.
+
+senxy_mn:	integer*4 x,y
+		call senxy_mn(x,y)
+
+	Same as senkr_mn, except that the typed character is not returned.
+
+setcr_mn:	integer*4 x,y
+		call setcr_mn(x,y)
+
+	Positions the cursor at the specified coordinates.  (0,0) is the
+	upper left corner of the screen.
+
+setscrreg_mn:	integer*4 top,bot
+		call setscrreg_mn(top,bot)
+
+	Sets scrolling region of the standard window.  Scrolling will occur
+	only for the region between lines top and bot, inclusively.  This
+	is equivalent to locking the portion of the screen outside the range
+	top to bot.
+
+start_mn:	call start_mn
+
+	Initializes things for curses routines; should be called only once,
+	before any other curses calls.
+
