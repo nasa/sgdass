@@ -14,7 +14,7 @@
 # *                                                                      *
 # * Change: classified semicolon ; as inadmissble.                       *
 # *                                                                      *
-# * ### 07-JAN-2024  url_sanitizer.py v1.2 (c) L. Petrov 24-AUG-2026 ### *
+# * ### 07-JAN-2024  url_sanitizer.py v1.2 (c) L. Petrov 26-JUN-2026 ### *
 # *                                                                      *
 # ************************************************************************
 from urllib.parse import unquote
@@ -39,8 +39,6 @@ def url_sanitizer ( string, typ ):
 # ------ If a string contains | or ^ or $ or ` or ; (semicolon) or < or > or char(127) or blank
 # ------ that string is considered "bad". A bad string fails the test
 #
-         if ( "%26" in string or "%26" in string ): # &
-              chars_are_ok = False
          if ( "%2E" in string or "%2e" in string ): # ^
               chars_are_ok = False
          if ( "%3C" in string or "%3c" in string ): # <
