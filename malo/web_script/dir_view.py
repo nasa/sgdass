@@ -2,6 +2,7 @@
 import os, sys, string, stat, datetime, time, urllib, shutil
 sys.path.append('/auto')
 from   bfi_cli           import *
+from   url_sanitizer     import *
 
 ext = [".agr", ".nc", ".eph", ".heb", ".heb.bz2"]
 pref = "/cgi-bin/dir_view.py"

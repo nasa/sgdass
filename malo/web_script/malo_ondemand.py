@@ -6,7 +6,7 @@
 # *   loading computation, checks the input, launches computation,       *
 # *   and redirect the uses to the web page associated with the request. *
 # *                                                                      *
-# * ## 08-MAY-2013  malo_ondemand.py  v3.4 (c) L. Petrov  15-NOV-2022 ## *
+# * ## 08-MAY-2013  malo_ondemand.py  v3.6 (c) L. Petrov  10-SEP-2026 ## *
 # *                                                                      *
 # ************************************************************************
 #
@@ -16,11 +16,15 @@ from   malo_check_stafil import *
 from   malo_subs         import *
 from   malo_set_catcha   import *
 from   set_env           import *
+from   url_sanitizer     import *
+
+aws_host_name = "massloading.sciencecloud.nasa.gov"
 
 #
 # ------------------------------------------------------------------------
 #
 os.umask ( 2 )
+pyvers = "%d.%02d" % ( sys.version_info.major, sys.version_info.minor ) # python version
 
 print ( "404: okay" )
 print ( "Content-type: text/html\n\n" )
@@ -54,9 +58,10 @@ if ( len(os.environ["CONTENT_TYPE"]) > 128 ):
      print ( '</HEAD' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
              "Trap of internal control: too long line CONTENT_TYPE" )
-     print ( '<PRE>' )
-     print ( os.environ )
-     print ( '</PRE>' )
+     if ( config.ivrb >= 3 ):
+          print ( '<PRE>' )
+          print ( os.environ )
+          print ( '</PRE>' )
      print ( '</BODY>' )
      print ( '</HTML>' )
      exit ( 0 )
@@ -69,6 +74,15 @@ if ( len(os.environ["CONTENT_LENGTH"]) > 128 ):
      print ( '</HTML>' )
      exit ( 0 )
 
+     if ( not url_sanitizer ( os.environ["QUERY_STRING"], "url" ) ):
+          print ( '</HEAD' )
+          print ( '<BODY>' )
+          print ( '<FONT COLOR="A04030"><B> Trap of internal control: wrong arg </B></FONT> %s' % os.environ["QUERY_STRING"]  )
+          print ( '</BODY>' )
+          print ( '</HTML>' )
+          exit  ( 0 )
+
+
 boundary = os.environ["CONTENT_TYPE"][30:]
 input_len = int(os.environ["CONTENT_LENGTH"])
 
@@ -76,6 +90,7 @@ input_len = int(os.environ["CONTENT_LENGTH"])
 
 if ( input_len > config.max_len ):
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
              "Your input is too long. Try to reduce the number of " + \
              "stations" )
@@ -136,17 +151,21 @@ if ( config.ivrb > 1 ):
      for var_name, var_value in vars.items():
          print ( var_name, "  >>" + var_value + "<< " )
 
-if   ( vars["model"]  == "ATM_GEOSFPIT" ):
-       vars["model"]   = "GEOSFPIT"       
+elif ( vars["model"]  == "ATM_GEOSIT" ):
+       vars["model"]   = "GEOSIT"       
        vars["service"] = "atm"
 
-elif ( vars["model"]  == "ATM_GEOSFP" ):
-       vars["model"]   = "GEOSFP"       
+elif ( vars["model"]  == "ATM_GEOSFPIT" ):
+       vars["model"]   = "GEOSFPIT"       
        vars["service"] = "atm"
 
 elif ( vars["model"]  == "ATM_MERRA2" ):
        vars["model"]   = "MERRA2"       
        vars["service"] = "atm"
+
+elif ( vars["model"]  == "LWS_GEOSIT" ):
+       vars["model"]   = "GEOSIT"       
+       vars["service"] = "lws"
 
 elif ( vars["model"]  == "LWS_GEOSFPIT" ):
        vars["model"]   = "GEOSFPIT"       
@@ -159,6 +178,18 @@ elif ( vars["model"]  == "LWS_MERRA2" ):
 elif ( vars["model"]  == "NTO_OMCT05" ):
        vars["model"]   = "OMCT05"       
        vars["service"] = "nto"
+
+elif ( vars["model"]  == "NTO_MPIOM07" ):
+       vars["model"]   = "MPIOM06"       
+       vars["service"] = "nto"
+       if ( vars["mode"] == "harmonics" or vars["mode"] == "s1_harmonics" ): 
+              print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
+                      "Harmonics cannot be computed for non-tidal ocean loading, since they " + \
+                      "are already accounted in the ocean tidal loading model. Please select time series." )
+              print ( '</PRE>' )
+              print ( '</BODY>' )
+              print ( '</HTML>' )
+              exit ( 0 )
 
 elif ( vars["model"]  == "NTO_MPIOM06" ):
        vars["model"]   = "MPIOM06"       
@@ -214,6 +245,16 @@ elif ( vars["model"] == "TOC_FES2014B" ):
             print ( '</HTML>' )
             exit ( 0 )
 
+elif ( vars["model"] == "TOC_GOT56P" ):
+       vars["model"] = "GOT56P"       
+       vars["service"] = "toc"
+       if ( vars["mode"] == "series" ): 
+            print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
+                    "Time series cannot be computed for ocean loading. Please select harmonics" )
+            print ( '</BODY>' )
+            print ( '</HTML>' )
+            exit ( 0 )
+
 elif ( vars["model"] == "TOC_EQUIL01" ):
        vars["model"] = "EQUIL01"       
        vars["service"] = "toc"
@@ -236,9 +277,9 @@ elif ( vars["model"] == "TOC_EQUIL02" ):
             print ( '</HTML>' )
             exit ( 0 )
 
-
 else:
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
              "Unsupported model " + vars["model"] )
      print ( '</BODY>' )
@@ -249,6 +290,7 @@ if ( not ( vars["mode"] == "series"       or \
            vars["mode"] == "harmonics"    or \
            vars["mode"] == "s1_harmonics"    ) ):
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
              "Unsupported mode " + vars["mode"] )
      print ( '</BODY>' )
@@ -271,6 +313,7 @@ if ( vars["mode"] == "series" ):
      start_date = check_date ( vars["start_date"], "start_date" )
      if ( start_date == None ):
           print ( '</HEAD' )
+          print ( '<BODY>' )
           print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
                   "Wrong start date " + vars["start_date"] )
           print ( '</BODY>' )
@@ -280,8 +323,25 @@ if ( vars["mode"] == "series" ):
      stop_date = check_date ( vars["stop_date"], "stop_date" )
      if ( stop_date == None ):
           print ( '</HEAD' )
+          print ( '<BODY>' )
           print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
                   "Wrong stop date " + vars["stop_date"] )
+          print ( '</BODY>' )
+          print ( '</HTML>' )
+          exit ( 0 )
+
+     (ret, buf ) = exe_nolog ( "/auto/bfi_ping.py" ) 
+     if ( ret != 0 ):
+          if ( pyvers >= "3.12" ):
+               utc_now_str = datetime.datetime.now(datetime.UTC).strftime("%Y.%m.%d_%H:%M:%S")
+          else:
+               utc_now_str = datetime.datetime.utcnow().strftime("%Y.%m.%d_%H:%M:%S")
+          print ( '</HEAD' )
+          print ( '<BODY>' )
+          print ( '<FONT COLOR="A04030"><B> Backend is not accessible</B></FONT> at %s UTC' % \
+                  utc_now_str )
+          print ( '<BR>' )
+          print ( 'Please notify the web site maintainer' )
           print ( '</BODY>' )
           print ( '</HTML>' )
           exit ( 0 )
@@ -290,10 +350,12 @@ if ( vars["mode"] == "series" ):
            " -s " + vars["service"] + \
            " -m " + vars["model"] + \
            " -a get_loading_first_date"
-     if ( os.environ["SERVER_NAME"] == "massloading.smce.nasa.gov" ):
+
+     if ( os.environ["SERVER_NAME"] == aws_host_name ):
          (ret, buf ) = exe_nolog ( "/auto/bfi_exec.py" + " " + com )
      else:
          (ret, buf ) = exe_nolog ( com )
+
 
      loading_first_date = buf[0][0:4]   + "." + \
                           buf[0][4:6]   + "." + \
@@ -305,7 +367,7 @@ if ( vars["mode"] == "series" ):
            " -m " + vars["model"] + \
            " -a get_loading_last_date"
 
-     if ( os.environ["SERVER_NAME"] == "massloading.smce.nasa.gov" ):
+     if ( os.environ["SERVER_NAME"] == aws_host_name ):
          (ret, buf ) = exe_nolog ( "/auto/bfi_exec.py" + " " + com )
      else:
          (ret, buf ) = exe_nolog ( com )
@@ -321,6 +383,7 @@ if ( vars["mode"] == "series" ):
      
      if ( start_date < loading_first_date ):
           print ( '</HEAD' )
+          print ( '<BODY>' )
           print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
                   "Start date " + start_date + \
                   " is too early: there are no data before " + \
@@ -333,6 +396,7 @@ if ( vars["mode"] == "series" ):
      
      if ( stop_date < start_date ):
           print ( '</HEAD' )
+          print ( '<BODY>' )
           print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
                   "Stop date " + stop_date + \
                   " is before the start date " + start_date )
@@ -342,6 +406,7 @@ if ( vars["mode"] == "series" ):
      
      if ( stop_date > loading_last_date ):
           print ( '</HEAD' )
+          print ( '<BODY>' )
           print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
                   "Stop date " + stop_date + \
                   " is too late: there are no data after " + \
@@ -367,6 +432,7 @@ else:
 (sta_buf, n_sta ) = malo_check_sta_inp ( sta_fil )
 if ( n_sta == 0 ):
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
              "Error was found in your input station file" )
      print ( '</BODY>' )
@@ -375,6 +441,7 @@ if ( n_sta == 0 ):
 
 if ( ip_unlim == 0 and n_sta > config.max_sta ):
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
              "The number of requested stations is too big: " + \
              "more than %d" % config.max_sta )
@@ -386,9 +453,9 @@ if ( ip_unlim == 0 and n_sta > config.max_sta ):
 email      = vars["email"]
 if ( email == "" ): email = "n/a"
 
-
 if ( tim_intrv < 0 ):
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' + \
              "stop date is before the start date" )
      print ( '</BODY>' )
@@ -397,6 +464,7 @@ if ( tim_intrv < 0 ):
 
 if ( ip_unlim == 0 and tim_intrv > config.max_intrv ):
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' \
              'Requested time interval exceeded %3.1f years. ' \
              'Please reduce the time interval. ' % \
@@ -407,6 +475,7 @@ if ( ip_unlim == 0 and tim_intrv > config.max_intrv ):
 
 if ( ip_unlim == 1 and tim_intrv > config.malo_max_intrv ):
      print ( '</HEAD' )
+     print ( '<BODY>' )
      print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' \
              'Requested time interval exceeded %3.1f years. ' \
              'Please reduce the time interval. ' % \
@@ -414,6 +483,16 @@ if ( ip_unlim == 1 and tim_intrv > config.malo_max_intrv ):
      print ( '</BODY>' )
      print ( '</HTML>' )
      exit ( 0 )
+
+if ( not url_sanitizer ( email, "email" ) ):
+     print ( '</HEAD' )
+     print ( '<BODY>' )
+     print ( '<FONT COLOR="A04030"><B> Error: </B></FONT> ' \
+             'Wrong email %s' % email )
+     print ( '</BODY>' )
+     print ( '</HTML>' )
+     exit ( 0 )
+
 
 if ( config.ivrb > 1 ):
      print ( "start_date: ", start_date )
@@ -502,6 +581,13 @@ else:
      query_string = query_string.replace(":","%3A").replace("/","%2F")
 
      os.environ["QUERY_STRING"] = query_string;
+
+     if ( not url_sanitizer ( os.environ["QUERY_STRING"], "url" ) ):
+          print ( '</PRE>' )
+          print ( '<FONT COLOR="A04030"><B> Trap of internal control: wrong arg </B></FONT> %s' % os.environ["QUERY_STRING"]  )
+          print ( '</BODY>' )
+          print ( '</HTML>' )
+          exit  ( 0 )
 
      (ret, buf ) = exe_nolog ( "./malo_check_catcha.py" )
      for i in range(0,len(buf)):

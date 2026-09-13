@@ -14,7 +14,7 @@
 # *                                                                      *
 # * Change: classified semicolon ; as inadmissble.                       *
 # *                                                                      *
-# * ### 07-JAN-2024  url_sanitizer.py v1.2 (c) L. Petrov 24-AUG-2026 ### *
+# * ### 07-JAN-2024  url_sanitizer.py v1.3 (c) L. Petrov 10-SEP-2026 ### *
 # *                                                                      *
 # ************************************************************************
 from urllib.parse import unquote
@@ -22,6 +22,7 @@ from urllib.parse import unquote
 dig_and_dot_set = set('0123456789.')
 date_set = set('0123456789.:_-Tnow')
 allowed_charset = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_&@./:+-=?%')
+allowed_email_charset = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_@.:+-')
 
 max_string_len = 1024
 
@@ -109,6 +110,9 @@ def url_sanitizer ( string, typ ):
 # ------ Check whether this strong is a valid date
 #
          chars_are_ok = all( (temp_char in date_set) for temp_char in string )
+         return chars_are_ok
+    elif ( typ == "email" ):
+         chars_are_ok = all( (temp_char in allowed_email_charset) for temp_char in string )
          return chars_are_ok
     else:
          chars_are_ok = False
